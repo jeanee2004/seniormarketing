@@ -173,7 +173,6 @@ reviews.forEach(r => {
 // ---- Toast / popup (준비중 안내) ----
 const toastContent = {
   save:{emoji:'🌾', title:'출시 예정이에요', text:'저장 기능은 곧 만나보실 수 있어요. 청년 농부가 부지런히 준비 중입니다!'},
-  lang:{emoji:'🌐', title:'다국어 지원 준비 중', text:'유학생 여러분을 위한 다국어 전환 기능을 준비하고 있어요.'},
   login:{emoji:'👤', title:'로그인 준비 중', text:'로그인하고 나만의 맛집 리스트를 관리하는 기능, 곧 만나보세요.'},
   mypage:{emoji:'📌', title:'마이페이지 준비 중', text:'방문 기록과 저장 목록을 한눈에 보는 마이페이지가 곧 열립니다.'},
   more:{emoji:'🍽️', title:'더 많은 맛집 준비 중', text:'9월 개강 후 현장 조사를 통해 더 많은 로컬 맛집을 채워나갈 예정이에요.'},
@@ -213,7 +212,9 @@ document.getElementById('signupForm').addEventListener('submit', function(e){
 
 // ---- Big text mode ----
 function toggleBigText(){
-  document.body.classList.toggle('big-text');
+  const on = document.documentElement.classList.toggle('big-text');
+  const btn = document.querySelector('.a11y-toggle');
+  if(btn) btn.textContent = on ? '🔍 기본 글씨로' : '🔍 큰글씨 모드';
 }
 
 // ---- Header search scrolls to restaurant list ----
@@ -417,11 +418,7 @@ function renderFullDetail(r){
 
 // ================= 3초 컷 빠르게 고르기 =================
 function quickPick(){
-  const pick = restaurants[Math.floor(Math.random() * restaurants.length)];
-  document.getElementById('toastEmoji').textContent = pick.emoji;
-  document.getElementById('toastTitle').textContent = pick.name;
-  document.getElementById('toastText').textContent = `${pick.cat} · ★ ${pick.rating} · ${pick.desc} — 오늘은 여기 어때요?`;
-  overlay.classList.add('show');
+  openGame();
 }
 
 // ================= 메뉴 추천 게임 (타로 / 룰렛) =================
@@ -456,20 +453,29 @@ function renderGameChoice(){
 }
 
 function renderTarot(){
+  // 후보 카드는 12곳 전체를 섞어서 무한 회전 덱으로 보여준다
+  const deck = restaurants.slice().sort(() => Math.random() - 0.5);
   gameBody.innerHTML = `
     <button type="button" class="game-back-btn" id="gameBackBtn">← 다른 게임 고르기</button>
     <h3 class="game-title">오늘의 메뉴 타로</h3>
-    <p class="game-sub">카드를 눌러 오늘의 한 그릇을 뽑아보세요</p>
+    <p class="game-sub">${deck.length}장의 카드가 흐르고 있어요. 눌러서 오늘의 한 그릇을 뽑아보세요</p>
+    <div class="tarot-deck" id="tarotDeck">
+      <div class="tarot-track" id="tarotTrack">
+        ${[...deck, ...deck].map(r => `<div class="tarot-mini">${r.emoji}</div>`).join('')}
+      </div>
+    </div>
     <div class="tarot-card" id="tarotCard">🔮</div>
     <div id="tarotResultWrap"></div>
   `;
   document.getElementById('gameBackBtn').addEventListener('click', renderGameChoice);
-  document.getElementById('tarotCard').addEventListener('click', drawTarot);
+  document.getElementById('tarotCard').addEventListener('click', () => drawTarot(deck));
 }
 
-function drawTarot(){
+function drawTarot(deck){
   const card = document.getElementById('tarotCard');
-  const pick = restaurants[Math.floor(Math.random() * restaurants.length)];
+  const track = document.getElementById('tarotTrack');
+  const pick = deck[Math.floor(Math.random() * deck.length)];
+  if(track) track.classList.add('paused');
   card.classList.add('flipped');
   card.innerHTML = pick.emoji;
   card.style.pointerEvents = 'none';
@@ -627,13 +633,20 @@ function renderAuth(intent){
         </div>
       ` : ''}
       <div class="auth-field">
-        <label>이메일</label>
-        <input type="email" id="authEmail" placeholder="이메일 주소" required>
+        <label>이메일 또는 전화번호</label>
+        <input type="text" id="authId" placeholder="example@mail.com 또는 010-1234-5678" required>
       </div>
       <div class="auth-field">
         <label>비밀번호</label>
         <input type="password" id="authPw" placeholder="비밀번호" required>
       </div>
+      ${authMode==='signup' ? `
+        <div class="auth-field">
+          <label>비밀번호 확인</label>
+          <input type="password" id="authPw2" placeholder="비밀번호를 한 번 더 입력해주세요" required>
+        </div>
+      ` : ''}
+      <p class="auth-error" id="authError"></p>
       <button type="submit" class="auth-submit-btn">${authMode==='signup' ? '손주 등록하고 시작하기' : '로그인하기'}</button>
     </form>
   `;
@@ -641,9 +654,31 @@ function renderAuth(intent){
   document.getElementById('tabLogin').addEventListener('click', () => { authMode='login'; renderAuth(intent); });
   document.getElementById('authForm').addEventListener('submit', (e) => {
     e.preventDefault();
+    const errEl = document.getElementById('authError');
+    const idVal = document.getElementById('authId').value.trim();
+    errEl.textContent = '';
+
+    if(!isEmailOrPhone(idVal)){
+      errEl.textContent = '이메일 주소 또는 전화번호 형식으로 입력해주세요.';
+      return;
+    }
+    if(authMode === 'signup'){
+      const pw = document.getElementById('authPw').value;
+      const pw2 = document.getElementById('authPw2').value;
+      if(pw !== pw2){
+        errEl.textContent = '비밀번호가 서로 달라요. 다시 확인해주세요.';
+        return;
+      }
+    }
     const name = authMode==='signup' ? document.getElementById('authName').value.trim() : '';
     renderAuthWelcome(name);
   });
+}
+
+function isEmailOrPhone(v){
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  const phoneOk = /^0\d{1,2}-?\d{3,4}-?\d{4}$/.test(v.replace(/\s/g, ''));
+  return emailOk || phoneOk;
 }
 
 function renderAuthWelcome(name){
@@ -704,4 +739,55 @@ function renderMypage(){
   `;
   document.getElementById('tabSaved').addEventListener('click', () => { mypageTab='saved'; renderMypage(); });
   document.getElementById('tabVisited').addEventListener('click', () => { mypageTab='visited'; renderMypage(); });
+}
+
+// ================= 언어 선택 (베타: 선택만 저장, 실제 번역은 로드맵) =================
+const langOverlay = document.getElementById('langOverlay');
+const langBody = document.getElementById('langBody');
+let currentLang = 'ko';
+
+// 각 언어 이름은 해당 언어 표기로 (영어를 원하면 English 버튼을 누르도록)
+const languages = [
+  {code:'ko', label:'한국어',   flag:'🇰🇷', note:'기본 언어'},
+  {code:'en', label:'English',  flag:'🇺🇸', note:'English'},
+  {code:'zh', label:'中文',     flag:'🇨🇳', note:'Chinese'},
+  {code:'ja', label:'日本語',   flag:'🇯🇵', note:'Japanese'},
+  {code:'fr', label:'Français', flag:'🇫🇷', note:'French'},
+  {code:'es', label:'Español',  flag:'🇪🇸', note:'Spanish'},
+  {code:'de', label:'Deutsch',  flag:'🇩🇪', note:'German'},
+];
+
+function openLang(){
+  renderLang();
+  langOverlay.classList.add('show');
+}
+function closeLang(){ langOverlay.classList.remove('show'); }
+function closeLangOnOverlay(e){ if(e.target === langOverlay) closeLang(); }
+
+function renderLang(){
+  langBody.innerHTML = `
+    <div class="auth-head">
+      <div class="emoji">🌐</div>
+      <h3>언어 선택 / Language</h3>
+      <p>베타 기간에는 언어 선택만 저장되고, 전체 번역은 정식 오픈 때 제공돼요.</p>
+    </div>
+    <div class="lang-grid">
+      ${languages.map(l => `
+        <button type="button" class="lang-btn ${currentLang===l.code?'active':''}" data-code="${l.code}">
+          <span class="lang-flag">${l.flag}</span>
+          <span class="lang-name">${l.label}</span>
+        </button>
+      `).join('')}
+    </div>
+    <p class="lang-selected" id="langSelected"></p>
+    <button type="button" class="survey-close-btn" onclick="closeLang()">닫기</button>
+  `;
+  langBody.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentLang = btn.dataset.code;
+      const picked = languages.find(l => l.code === currentLang);
+      renderLang();
+      document.getElementById('langSelected').textContent = `✔ ${picked.label} 선택됨 — 정식 오픈 시 적용됩니다`;
+    });
+  });
 }

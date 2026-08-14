@@ -23,7 +23,9 @@ body{
   line-height:1.6;
   overflow-x:hidden;
 }
-body.big-text{ font-size:112.5%; }
+/* 큰글씨 모드는 rem 기준값을 바꿔야 실제로 커진다 (body에 걸면 rem이 안 따라옴) */
+html.big-text{ font-size:131.25%; }
+html.big-text .a11y-toggle{ font-size:0.82rem; }
 h1,h2,h3,.brush{
   font-family:'Gaegu','Gowun Dodum',sans-serif;
   font-weight:700;
@@ -198,7 +200,6 @@ header{
 }
 .grandma-photo img{
   width:100%;height:100%;object-fit:cover;object-position:center center;
-  transform:scale(1.4) translateY(-3%);
 }
 @keyframes floaty{
   0%,100%{transform:translateY(0);}
@@ -302,6 +303,26 @@ header{
 .map-zoom button{width:38px;height:38px;font-size:1.1rem;color:var(--slate-dark);font-weight:700;}
 .map-zoom button:first-child{border-bottom:1px solid rgba(72,96,122,0.15);}
 .map-zoom button:hover{background:var(--slate-tint);}
+
+/* 좁은 화면에서 지도 안내문구/핀/중앙 뱃지가 서로 겹치지 않도록 레이어와 위치를 분리 */
+.map-note{z-index:3;}
+.map-center-badge{position:relative;z-index:2;}
+.map-pin{z-index:1;}
+@media(max-width:720px){
+  .map-placeholder{height:460px;padding:16px;}
+  .map-note{
+    position:static;max-width:none;width:100%;
+    align-self:flex-start;margin-bottom:auto;
+  }
+  .map-placeholder{flex-direction:column;justify-content:flex-start;gap:12px;}
+  .map-center-badge{margin:auto 0;}
+  .map-pin{width:28px;height:28px;}
+  .map-pin span{font-size:0.72rem;}
+  .map-pin.p1{top:46%;left:8%;}
+  .map-pin.p2{top:70%;left:26%;}
+  .map-pin.p3{top:44%;left:82%;}
+  .map-pin.p4{top:72%;left:66%;}
+}
 
 /* ===== Category + cards ===== */
 .cat-bar{
@@ -463,7 +484,6 @@ header{
 }
 .survey-photo img{
   width:100%;height:100%;object-fit:cover;object-position:center center;
-  transform:scale(1.4) translateY(-3%);
 }
 
 /* ===== Share CTA ===== */
@@ -648,6 +668,26 @@ footer ul a:hover{color:#fff;}
   font-family:'Gowun Dodum','Noto Sans KR',sans-serif;display:inline-flex;align-items:center;gap:4px;
 }
 
+.tarot-deck{
+  overflow:hidden;margin-bottom:20px;position:relative;
+  -webkit-mask-image:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image:linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.tarot-track{
+  display:flex;gap:10px;width:max-content;
+  animation:tarotScroll 16s linear infinite;
+}
+.tarot-track.paused{animation-play-state:paused;}
+@keyframes tarotScroll{
+  from{transform:translateX(0);}
+  to{transform:translateX(-50%);}
+}
+.tarot-mini{
+  width:56px;height:76px;flex-shrink:0;border-radius:10px;
+  background:linear-gradient(135deg, var(--slate-dark), var(--slate));
+  display:flex;align-items:center;justify-content:center;font-size:1.5rem;
+  border:2px solid var(--paper);box-shadow:var(--shadow);
+}
 .tarot-card{
   width:170px;height:230px;margin:0 auto 22px;border-radius:18px;
   background:linear-gradient(135deg, var(--slate-dark), var(--slate));
@@ -709,6 +749,10 @@ footer ul a:hover{color:#fff;}
   outline:none;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.9rem;
 }
 .auth-field input:focus{border-color:var(--slate-light);}
+.auth-error{
+  color:var(--red);font-size:0.82rem;font-weight:700;min-height:1.2em;margin-bottom:4px;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
+}
 .auth-submit-btn{
   width:100%;background:var(--red);color:#fff;padding:14px;border-radius:99px;
   font-weight:800;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.94rem;
@@ -735,6 +779,25 @@ footer ul a:hover{color:#fff;}
 .mypage-empty{
   text-align:center;color:var(--ink-soft);font-size:0.86rem;padding:30px 10px;
   font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
+}
+
+/* ===== 언어 선택 ===== */
+.lang-box{ max-width:420px; }
+.lang-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;
+}
+.lang-btn{
+  display:flex;align-items:center;gap:10px;
+  padding:13px 14px;border-radius:14px;border:1.5px solid var(--slate-tint);
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.92rem;color:var(--ink);
+  transition:all .15s ease;text-align:left;
+}
+.lang-btn:hover{border-color:var(--slate-light);}
+.lang-btn.active{border-color:var(--red);background:rgba(214,67,46,0.08);color:var(--red-dark);font-weight:800;}
+.lang-flag{font-size:1.3rem;}
+.lang-selected{
+  min-height:1.3em;font-size:0.82rem;color:var(--slate-dark);font-weight:700;margin-bottom:14px;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;text-align:center;
 }
 
 /* ===== Accessibility toggle (floating) ===== */

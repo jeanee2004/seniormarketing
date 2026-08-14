@@ -4,6 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>밥 먹으러 와 — 조치원 로컬 맛집 발견</title>
+<meta name="description" content="네이버에 없는 조치원 로컬 맛집, 우리 동네 사람들이 직접 발견하고 큐레이션했어요.">
+<meta name="theme-color" content="#F7F4EE">
+<meta property="og:type" content="website">
+<meta property="og:title" content="밥 먹으러 와 — 조치원 로컬 맛집 발견">
+<meta property="og:description" content="네이버에 없는 조치원 로컬 맛집, 우리 동네 사람들이 직접 발견하고 큐레이션했어요.">
+<meta property="og:image" content="assets/og-thumbnail.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="assets/og-thumbnail.png">
+<link rel="icon" href="assets/grandma-hero-square.png">
+<link rel="apple-touch-icon" href="assets/grandma-hero-square.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
@@ -22,7 +32,7 @@
     <div class="nav-actions">
       <button class="icon-btn" title="메뉴 추천 게임" onclick="openGame()">🎲</button>
       <button class="icon-btn" title="취향 설문" onclick="openSurvey()">📝</button>
-      <button class="icon-btn" title="언어 전환" onclick="openToast('lang')">🌐</button>
+      <button class="icon-btn" title="언어 전환" onclick="openLang()">🌐</button>
       <button class="icon-btn" id="authHeaderBtn" title="손주 로그인" onclick="openAuth('login')">👤</button>
       <button class="btn-save" id="saveHeaderBtn" onclick="openAuth('save')"><span>♥</span><span class="nav-label">데이터 저장하기</span></button>
     </div>
@@ -51,7 +61,7 @@
       <span class="steam-float s2">✨</span>
       <div class="grandma-card">
         <div class="grandma-photo">
-          <img src="assets/grandma-hero.png" alt="손 인사하며 밥 먹으러 오라고 부르는 할머니 캐릭터">
+          <img src="assets/grandma-hero-square.png" alt="손 인사하며 밥 먹으러 오라고 부르는 할머니 캐릭터">
         </div>
       </div>
     </div>
@@ -171,7 +181,7 @@
 <!-- ===== Survey CTA ===== -->
 <section class="survey section-pad">
   <div class="container">
-    <div class="survey-photo"><img src="assets/grandma-calm.png" alt="정겹게 웃는 할머니 캐릭터"></div>
+    <div class="survey-photo"><img src="assets/grandma-calm-square.png" alt="정겹게 웃는 할머니 캐릭터"></div>
     <span class="eyebrow" style="background:rgba(255,255,255,0.14);color:#fff;">TASTE MATCH</span>
     <h2 class="section-title">내 취향, 몇 가지만 알려주세요</h2>
     <p>매운맛 강도, 선호 카테고리, 예산 범위 같은 간단한 취향 설문으로 나에게 딱 맞는 맛집을 추천받아 보세요.</p>
@@ -285,6 +295,13 @@
 <div class="survey-overlay" id="mypageOverlay" onclick="closeMypageOnOverlay(event)">
   <div class="survey-box mypage-box" onclick="event.stopPropagation()">
     <div id="mypageBody"></div>
+  </div>
+</div>
+
+<!-- ===== 언어 선택 ===== -->
+<div class="survey-overlay" id="langOverlay" onclick="closeLangOnOverlay(event)">
+  <div class="survey-box lang-box" onclick="event.stopPropagation()">
+    <div id="langBody"></div>
   </div>
 </div>
 
