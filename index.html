@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>밥 먹으러 와 — 조치원 로컬 맛집 발견</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== Header ===== -->
+<header>
+  <div class="nav-wrap">
+    <div class="logo">밥 먹으러 와<span class="dot">.</span></div>
+    <div class="nav-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="headerSearch" type="text" placeholder="오늘 뭐 먹지? 메뉴, 가게 검색">
+    </div>
+    <div class="nav-actions">
+      <button class="icon-btn" title="메뉴 추천 게임" onclick="openGame()">🎲</button>
+      <button class="icon-btn" title="취향 설문" onclick="openSurvey()">📝</button>
+      <button class="icon-btn" title="언어 전환" onclick="openToast('lang')">🌐</button>
+      <button class="icon-btn" id="authHeaderBtn" title="손주 로그인" onclick="openAuth('login')">👤</button>
+      <button class="btn-save" id="saveHeaderBtn" onclick="openAuth('save')"><span>♥</span><span class="nav-label">데이터 저장하기</span></button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== Hero ===== -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">고려대 · 홍익대 세종캠퍼스 로컬 맛집 발견</span>
+      <h1>네이버에 없는 맛집이<br>있다는 거, <span>아세요?</span></h1>
+      <p>조치원읍 골목골목, 오래도록 그 자리를 지켜온 터줏대감 사장님들의 진짜 맛집은 지도 앱에 잘 안 나와요. 우리 동네 사람들이 직접 발견하고 큐레이션한, 가성비 좋은 로컬 맛집을 만나보세요.</p>
+      <div class="hero-ctas">
+        <a href="#restaurants" class="btn-primary">맛집 둘러보기</a>
+        <a href="#signup" class="btn-ghost">오픈 알림 받기</a>
+      </div>
+      <button type="button" class="quickpick-btn" onclick="quickPick()">
+        <span class="quickpick-emoji">⚡</span>
+        <span>결정장애 구조대 · 3초 컷으로 골라드려요</span>
+      </button>
+    </div>
+    <div class="hero-visual">
+      <div class="speech-bubble">밥 먹으러 와!</div>
+      <span class="steam-float s1">🍚</span>
+      <span class="steam-float s2">✨</span>
+      <div class="grandma-card">
+        <div class="grandma-photo">
+          <img src="assets/grandma-hero.png" alt="손 인사하며 밥 먹으러 오라고 부르는 할머니 캐릭터">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Problem ===== -->
+<section class="problem section-pad">
+  <div class="container">
+    <span class="eyebrow">WHY 밥 먹으러 와</span>
+    <h2 class="section-title">지도 앱만 믿으면, 놓치는 맛집이 있어요</h2>
+    <p class="section-sub">고려대·홍익대 세종캠퍼스 학생, 유학생, 교직원, 인근 주민이라면 한 번쯤 겪어본 이야기예요.</p>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <span class="emoji">🗺️</span>
+        <h3>지도에 없어요</h3>
+        <p>터줏대감 사장님 가게는 네이버·카카오맵 등록이 안 됐거나 정보가 부정확해서, 검색해도 아예 나오지 않아요.</p>
+      </div>
+      <div class="problem-card">
+        <span class="emoji">🍚</span>
+        <h3>맨날 교직원식당</h3>
+        <p>더 가성비 좋고 맛있는 로컬 식당이 근처에 있는데도, 알 방법이 없어 늘 같은 선택지만 반복해요.</p>
+      </div>
+      <div class="problem-card">
+        <span class="emoji">🤝</span>
+        <h3>상부상조가 필요해요</h3>
+        <p>손님은 숨은 맛집을 알게 되고, 사장님은 홍보와 매출이 느는 구조 — 우리 동네가 함께 잘되는 방법이에요.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Map ===== -->
+<section class="map-section section-pad" id="map">
+  <div class="container">
+    <span class="eyebrow">MAP</span>
+    <h2 class="section-title">조치원 미니 지도</h2>
+    <p class="section-sub">지도에 잘 나오지 않는 로컬 맛집 위치를 한눈에. 실제 서비스에서는 네이버맵 API로 연동됩니다.</p>
+    <div class="map-wrap">
+      <div class="map-placeholder">
+        <div class="map-note">📍 네이버맵 API 연동 예정 자리입니다 — Client ID 발급 후 실제 지도로 교체됩니다.</div>
+        <div class="map-pin p1"><span>🍜</span></div>
+        <div class="map-pin p2"><span>🥘</span></div>
+        <div class="map-pin p3"><span>🍢</span></div>
+        <div class="map-pin p4"><span>🍚</span></div>
+        <div class="map-center-badge">
+          <strong>조치원읍 일대</strong>
+          <span>세종특별자치시 · 로컬 맛집 12곳 표시 중</span>
+        </div>
+        <div class="map-zoom">
+          <button onclick="toastZoom()">+</button>
+          <button onclick="toastZoom()">−</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Restaurants ===== -->
+<section class="section-pad" id="restaurants">
+  <div class="container">
+    <span class="eyebrow">EAT LOCAL</span>
+    <h2 class="section-title">오늘 뭐 먹지?</h2>
+    <p class="section-sub">카테고리를 골라보세요. 마음에 드는 곳은 하트를 눌러 "가보고 싶은 곳"에 저장할 수 있어요.</p>
+    <div class="cat-bar" id="catBar">
+      <button class="cat-chip active" data-cat="전체">전체</button>
+      <button class="cat-chip" data-cat="한식">한식</button>
+      <button class="cat-chip" data-cat="양식">양식</button>
+      <button class="cat-chip" data-cat="중식">중식</button>
+      <button class="cat-chip" data-cat="일식">일식</button>
+      <button class="cat-chip" data-cat="분식">분식</button>
+    </div>
+    <div class="filter-bar">
+      <div class="filter-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="cardSearch" type="text" placeholder="가게 이름, 메뉴로 검색">
+      </div>
+      <select id="sortSelect" class="sort-select">
+        <option value="recommend">추천순</option>
+        <option value="name">이름순 (가나다)</option>
+        <option value="rating">평점 높은순</option>
+        <option value="reviews">리뷰 많은순</option>
+      </select>
+      <div class="price-range">
+        <span>💰</span>
+        <input id="priceMin" type="number" min="0" step="1000" placeholder="최소">
+        <span>~</span>
+        <input id="priceMax" type="number" min="0" step="1000" placeholder="최대">
+        <span>원</span>
+      </div>
+    </div>
+    <p class="filter-count" id="filterCount"></p>
+    <div class="card-grid" id="cardGrid"></div>
+    <p class="filter-empty" id="filterEmpty" style="display:none;">검색 결과가 없어요. 다른 키워드로 찾아보세요.</p>
+    <div class="load-more-wrap">
+      <button class="btn-ghost" onclick="openToast('more')">맛집 더 보기</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Reviews ===== -->
+<section class="reviews section-pad">
+  <div class="container">
+    <span class="eyebrow">REVIEW</span>
+    <h2 class="section-title">먼저 다녀온 사람들의 이야기</h2>
+    <div class="review-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="리뷰 검색 (가게명, 키워드)">
+    </div>
+    <div class="review-list" id="reviewList"></div>
+    <div class="review-soon">
+      <strong>리뷰 데이터 연결 예정</strong> — 9월 개강 후 실제 방문 후기가 쌓이면, AI 리뷰 요약 기능도 함께 열릴 예정이에요.
+    </div>
+  </div>
+</section>
+
+<!-- ===== Survey CTA ===== -->
+<section class="survey section-pad">
+  <div class="container">
+    <div class="survey-photo"><img src="assets/grandma-calm.png" alt="정겹게 웃는 할머니 캐릭터"></div>
+    <span class="eyebrow" style="background:rgba(255,255,255,0.14);color:#fff;">TASTE MATCH</span>
+    <h2 class="section-title">내 취향, 몇 가지만 알려주세요</h2>
+    <p>매운맛 강도, 선호 카테고리, 예산 범위 같은 간단한 취향 설문으로 나에게 딱 맞는 맛집을 추천받아 보세요.</p>
+    <button class="btn-primary" onclick="openSurvey()">취향 설문 시작하기</button>
+  </div>
+</section>
+
+<!-- ===== Share CTA ===== -->
+<section class="share section-pad">
+  <div class="container">
+    <span class="eyebrow">SHARE</span>
+    <h2 class="section-title">우리 학교 친구에게도 알려주세요</h2>
+    <p class="section-sub" style="margin:0 auto;">숨은 맛집은 나눌수록 더 좋아져요. 친구에게 "밥 먹으러 와"를 추천해보세요.</p>
+    <div class="share-icons">
+      <button title="카카오톡 공유" onclick="openToast('share')">💬</button>
+      <button title="링크 복사" onclick="copyLink()">🔗</button>
+      <button title="문자 공유" onclick="openToast('share')">✉️</button>
+      <button title="인스타그램 공유" onclick="openToast('share')">📷</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Email Signup ===== -->
+<section class="signup section-pad" id="signup">
+  <div class="container">
+    <div class="signup-box">
+      <div class="emoji">🌾</div>
+      <h2 class="section-title" style="font-size:1.5rem;">가장 먼저 소식 받기</h2>
+      <p class="section-sub" style="margin:0 auto;">베타테스트 오픈 소식과 새로운 맛집 업데이트를 이메일로 가장 먼저 알려드릴게요.</p>
+      <form class="signup-form" id="signupForm">
+        <input type="email" id="signupEmail" placeholder="이메일 주소를 입력하세요" required>
+        <button type="submit" class="btn-primary">사전 신청</button>
+      </form>
+      <div class="signup-msg" id="signupMsg">신청 완료! 오픈 소식을 가장 먼저 전해드릴게요 🌾</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">밥 먹으러 와<span class="dot">.</span></div>
+        <p>조치원읍 로컬 맛집을 발견하고, 지역 상권과 함께 성장하는 사회공헌 프로젝트입니다.</p>
+      </div>
+      <div>
+        <h4>서비스</h4>
+        <ul>
+          <li><a href="#restaurants">맛집 둘러보기</a></li>
+          <li><a href="#map">지도로 보기</a></li>
+          <li><a href="javascript:void(0)" onclick="openToast('vendor')">사장님이신가요?<span class="badge-soon">준비중</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>안내</h4>
+        <ul>
+          <li><a href="javascript:void(0)" onclick="openToast('info')">서비스 소개</a></li>
+          <li><a href="javascript:void(0)" onclick="openToast('info')">문의하기</a></li>
+          <li><a href="#signup">오픈 알림 신청</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 밥 먹으러 와. 세종캠퍼스 사회공헌 프로젝트.</div>
+  </div>
+</footer>
+
+<!-- ===== Accessibility toggle ===== -->
+<button class="a11y-toggle" onclick="toggleBigText()">🔍 큰글씨 모드</button>
+
+<!-- ===== Toast overlay (준비중 안내) ===== -->
+<div class="toast-overlay" id="toastOverlay" onclick="closeToastOnOverlay(event)">
+  <div class="toast-box">
+    <div class="farmer" id="toastEmoji">🌾</div>
+    <h3 id="toastTitle">출시 예정이에요</h3>
+    <p id="toastText">지금 열심히 준비하고 있어요. 조금만 기다려주세요!</p>
+    <button onclick="closeToast()">확인</button>
+  </div>
+</div>
+
+<!-- ===== Survey overlay (실제 동작) ===== -->
+<div class="survey-overlay" id="surveyOverlay" onclick="closeSurveyOnOverlay(event)">
+  <div class="survey-box" onclick="event.stopPropagation()">
+    <div class="survey-progress" id="surveyProgress"></div>
+    <div id="surveyBody"></div>
+  </div>
+</div>
+
+<!-- ===== Restaurant detail overlay ===== -->
+<div class="survey-overlay detail-overlay" id="detailOverlay" onclick="closeDetailOnOverlay(event)">
+  <div class="survey-box detail-box" onclick="event.stopPropagation()">
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<!-- ===== 메뉴 추천 게임 ===== -->
+<div class="survey-overlay" id="gameOverlay" onclick="closeGameOnOverlay(event)">
+  <div class="survey-box game-box" onclick="event.stopPropagation()">
+    <div id="gameBody"></div>
+  </div>
+</div>
+
+<!-- ===== 손주 로그인/가입 ===== -->
+<div class="survey-overlay" id="authOverlay" onclick="closeAuthOnOverlay(event)">
+  <div class="survey-box auth-box" onclick="event.stopPropagation()">
+    <div id="authBody"></div>
+  </div>
+</div>
+
+<!-- ===== 마이페이지 (로그인 후 하위 섹션) ===== -->
+<div class="survey-overlay" id="mypageOverlay" onclick="closeMypageOnOverlay(event)">
+  <div class="survey-box mypage-box" onclick="event.stopPropagation()">
+    <div id="mypageBody"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
