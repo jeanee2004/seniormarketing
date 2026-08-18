@@ -813,6 +813,59 @@ footer ul a:hover{color:#fff;}
   font-family:'Gowun Dodum','Noto Sans KR',sans-serif;text-align:center;
 }
 
+/* ===== 확인 모달 (로그인 유도 + 액션 확인 공용) ===== */
+.confirm-box{ max-width:380px; }
+.confirm-head{text-align:center;margin-bottom:22px;}
+.confirm-head .emoji{font-size:2.4rem;margin-bottom:10px;}
+.confirm-head h3{color:var(--slate-dark);font-size:1.2rem;margin-bottom:8px;}
+.confirm-head p{color:var(--ink-soft);font-size:0.88rem;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;}
+
+/* ===== 리뷰 작성 폼 ===== */
+.review-write-wrap{text-align:center;margin-top:28px;}
+.review-form-box{ max-width:440px; }
+.review-star-pick{display:flex;gap:4px;}
+.review-star{
+  font-size:1.7rem;line-height:1;color:var(--slate-tint);
+  padding:2px 2px;transition:color .12s ease,transform .12s ease;
+}
+.review-star.on{color:var(--red);}
+.review-star:hover{transform:scale(1.12);}
+.review-select{
+  width:100%;padding:12px 14px;border:1.5px solid var(--slate-tint);border-radius:12px;
+  background:var(--paper);color:var(--ink);outline:none;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.9rem;
+}
+.review-select:focus{border-color:var(--slate-light);}
+.review-radio-row{display:flex;gap:16px;flex-wrap:wrap;}
+.review-radio{
+  display:flex;align-items:center;gap:6px;cursor:pointer;
+  color:var(--ink-soft);font-size:0.88rem;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
+}
+.review-radio input{accent-color:var(--red);cursor:pointer;}
+.review-optional{
+  font-size:0.7rem;font-weight:800;color:var(--slate);
+  background:var(--slate-tint);padding:2px 8px;border-radius:99px;margin-left:6px;
+}
+.review-file{
+  width:100%;font-size:0.82rem;color:var(--ink-soft);
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
+}
+.review-textarea{
+  width:100%;min-height:110px;resize:vertical;
+  padding:12px 14px;border:1.5px solid var(--slate-tint);border-radius:12px;
+  background:var(--paper);color:var(--ink);outline:none;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.9rem;line-height:1.6;
+}
+.review-textarea:focus{border-color:var(--slate-light);}
+.review-counter{
+  text-align:right;margin-top:6px;font-size:0.76rem;color:var(--slate);
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
+}
+.review-photo{
+  width:100%;max-height:220px;object-fit:cover;
+  border-radius:12px;margin-top:10px;
+}
+
 /* ===== Accessibility toggle (floating) ===== */
 .a11y-toggle{
   position:fixed;bottom:22px;right:22px;z-index:90;

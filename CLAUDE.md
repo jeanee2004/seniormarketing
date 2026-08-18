@@ -49,9 +49,28 @@ Every overlay (survey, restaurant detail, mini-game, auth, mypage) reuses the sa
 - `openX()` / `closeX()` / `closeXOnOverlay(e)` (the latter closes only when the click target is the backdrop itself, via `event.stopPropagation()` on the inner box).
 - Content is rendered by a `renderX()` function that rewrites an empty `<div id="xBody">` via `innerHTML`, then re-binds event listeners on the fresh nodes (there's no diffing — every re-render is a full replace-and-rebind).
 
-State is plain top-level `let` variables in `script.js` (`currentCat`, `currentQuery`, `currentSort`, `isLoggedIn`, `currentUserName`, `rouletteItems`, `surveyAnswers`, etc.) — no store/framework. `updateHeaderAuthUI()` is the one place that reconciles header button state with `isLoggedIn`; call it after any auth state change instead of hand-editing header DOM elsewhere.
+State is plain top-level `let` variables in `script.js` (`currentCat`, `currentQuery`, `currentSort`, `isLoggedIn`, `currentUserName`, `rouletteItems`, `surveyAnswers`, etc.) — no store/framework. The subset that survives a reload is mirrored into `store` and written by `saveState()` (see Persistence below). `updateHeaderAuthUI()` is the one place that reconciles header button state with `isLoggedIn`; call it after any auth state change instead of hand-editing header DOM elsewhere.
 
-Login/mypage is UI-only (no backend) and intentionally uses "손주" (grandchild) framing instead of generic "회원" — see the "손주 로그인/가입" comment block in `script.js`. Signing up just flips `isLoggedIn` client-side; there's no persistence across reloads.
+Login/mypage is UI-only (no backend) and intentionally uses "손주" (grandchild) framing instead of generic "회원" — see the "손주 로그인/가입" comment block in `script.js`. Signing up just flips `isLoggedIn` client-side; there's no credential check of any kind.
+
+### Persistence (`localStorage`, backend swap point)
+
+Auth state, save/visit marks, and user-written reviews persist across reloads via `localStorage` under the key `bmw:v1`. Three functions at the top of `script.js` own this, and **they are the only place that touches storage** — when a real backend (Supabase per `extra.md`) arrives, replace these and nothing else:
+
+- `loadState()` — reads the blob into the top-level `store` object. Wrapped in `try/catch`: if storage is blocked (private mode, some `file://` contexts) the page silently degrades to memory-only instead of throwing.
+- `saveState()` — serializes `store` back out; **returns `false` on failure** (e.g. `QuotaExceededError` from an attached review photo) so callers can tell the user their data didn't stick. Call it after any state mutation.
+- `applyState()` — projects saved marks onto `restaurants[]`. Must run before the initial `renderCards()`.
+
+`store.marks` is keyed by **restaurant name, not array index**, so reordering or inserting entries in `restaurants` can't attach saved data to the wrong listing.
+
+### Gated actions and the shared confirm modal
+
+Save/visit/review actions go through two helpers rather than mutating state inline (per `extra.md` §1–2):
+
+- `requireLogin(intent)` — returns `true` if logged in; otherwise opens the login-prompt popup and returns `false`. Guard clause at the top of any gated handler.
+- `openConfirm({emoji, title, text, okLabel, cancelLabel, onOk})` — one generic two-button modal (`#confirmOverlay`) serving both the login prompt and the "담으시겠습니까?/해제하시겠습니까?" action confirmations. `confirmMark()` wraps it for the save/visit flow. Don't add per-action modals; extend this one.
+
+User-supplied strings (review text, names) are rendered through `escapeHtml()` before hitting `innerHTML`.
 
 ### Design system (from `design.md`)
 

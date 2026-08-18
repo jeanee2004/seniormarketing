@@ -29,6 +29,60 @@ const restaurants = [
   {name:"조치원 파스타공방", cat:"양식", emoji:"🍝", desc:"직접 뽑는 생면 파스타 전문점", rating:4.4, reviewCount:52, price:"₩₩", priceValue:14000, saved:false, visited:false},
 ];
 
+// ================= 로컬 저장 (백엔드 전환 지점) =================
+// 나중에 Supabase 같은 백엔드를 붙일 때는 loadState / saveState 두 함수만 갈아끼우면 된다.
+// marks는 배열 인덱스가 아니라 가게 이름을 키로 잡는다 — restaurants 순서가 바뀌거나
+// 항목이 추가돼도 저장된 값이 엉뚱한 가게에 붙지 않도록.
+const STORE_KEY = 'bmw:v1';
+let store = { auth:{isLoggedIn:false, name:''}, marks:{}, reviews:[] };
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return;
+    const parsed = JSON.parse(raw);
+    store = {
+      auth:{
+        isLoggedIn: !!(parsed.auth && parsed.auth.isLoggedIn),
+        name: (parsed.auth && parsed.auth.name) || '',
+      },
+      marks: parsed.marks || {},
+      reviews: Array.isArray(parsed.reviews) ? parsed.reviews : [],
+    };
+  }catch(e){
+    // 저장소가 막힌 환경(사생활 보호 모드 등) — 조용히 메모리 전용으로 동작한다
+  }
+}
+
+// 저장 성공 여부를 돌려준다 (사진 첨부로 용량을 넘길 수 있어서 호출부에서 안내가 필요함)
+function saveState(){
+  store.auth = { isLoggedIn, name: currentUserName };
+  store.marks = {};
+  restaurants.forEach(r => {
+    if(r.saved || r.visited) store.marks[r.name] = { saved:!!r.saved, visited:!!r.visited };
+  });
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify(store));
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+function applyState(){
+  restaurants.forEach(r => {
+    const m = store.marks[r.name];
+    if(m){ r.saved = !!m.saved; r.visited = !!m.visited; }
+  });
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+loadState();
+applyState();
+
 const cardGrid = document.getElementById('cardGrid');
 const filterCount = document.getElementById('filterCount');
 const filterEmpty = document.getElementById('filterEmpty');
@@ -99,20 +153,39 @@ function renderCards(){
   document.querySelectorAll('.save-toggle').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const idx = e.currentTarget.dataset.idx;
-      restaurants[idx].saved = !restaurants[idx].saved;
-      renderCards();
+      if(!requireLogin('save')) return;
+      const r = restaurants[e.currentTarget.dataset.idx];
+      if(r.saved){
+        confirmMark(r, '💔', '가보고 싶은 곳에서 해제하시겠습니까?', () => { r.saved = false; });
+      } else {
+        confirmMark(r, '💌', '이 맛집을 가보고 싶은 곳에 담으시겠습니까?', () => { r.saved = true; });
+      }
     });
   });
   document.querySelectorAll('.visit-flow-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const idx = e.currentTarget.dataset.idx;
-      const r = restaurants[idx];
-      if(!r.saved){ r.saved = true; }
-      else if(!r.visited){ r.visited = true; }
-      renderCards();
+      const r = restaurants[e.currentTarget.dataset.idx];
+      if(r.visited){
+        openMypage('visited');
+        return;
+      }
+      if(!requireLogin('save')) return;
+      if(!r.saved){
+        confirmMark(r, '💌', '이 맛집을 가보고 싶은 곳에 담으시겠습니까?', () => { r.saved = true; });
+      } else {
+        confirmMark(r, '✔️', '이 맛집을 방문 완료로 표시하시겠습니까?', () => { r.visited = true; });
+      }
     });
+  });
+}
+
+// 저장/방문 상태 변경은 전부 확인 모달을 거친다 (extra.md §2)
+function confirmMark(r, emoji, question, apply){
+  openConfirm({
+    emoji, title:r.name, text:question,
+    okLabel:'확인', cancelLabel:'아니요',
+    onOk: () => { apply(); saveState(); renderCards(); closeConfirm(); }
   });
 }
 
@@ -153,22 +226,29 @@ const reviews = [
   {name:"기숙사생 K", emoji:"🏠", stars:5, place:"골목 손칼국수", text:"면이 쫄깃쫄깃하고 양도 많아서 자취생한테 딱이에요."},
 ];
 const reviewList = document.getElementById('reviewList');
-reviews.forEach(r => {
-  const div = document.createElement('div');
-  div.className = 'review-item';
-  div.innerHTML = `
-    <div class="review-avatar">${r.emoji}</div>
-    <div class="review-body">
-      <div class="review-top">
-        <span class="review-name">${r.name}</span>
-        <span class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</span>
+
+// 사용자가 남긴 리뷰(store.reviews)를 위에, 시드 더미 리뷰를 아래에 붙여 최신순으로 보여준다
+function renderReviews(){
+  reviewList.innerHTML = '';
+  store.reviews.concat(reviews).forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'review-item';
+    div.innerHTML = `
+      <div class="review-avatar">${r.emoji}</div>
+      <div class="review-body">
+        <div class="review-top">
+          <span class="review-name">${escapeHtml(r.name)}</span>
+          <span class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</span>
+        </div>
+        <div class="review-text">${escapeHtml(r.text)}</div>
+        ${r.photo ? `<img class="review-photo" src="${r.photo}" alt="리뷰에 첨부된 사진">` : ''}
+        <span class="review-place">📍 ${escapeHtml(r.place)}</span>
       </div>
-      <div class="review-text">${r.text}</div>
-      <span class="review-place">📍 ${r.place}</span>
-    </div>
-  `;
-  reviewList.appendChild(div);
-});
+    `;
+    reviewList.appendChild(div);
+  });
+}
+renderReviews();
 
 // ---- Toast / popup (준비중 안내) ----
 const toastContent = {
@@ -192,6 +272,48 @@ function closeToast(){ overlay.classList.remove('show'); }
 function closeToastOnOverlay(e){ if(e.target === overlay) closeToast(); }
 
 function toastZoom(){ openToast('info'); }
+
+// ================= 확인 모달 (로그인 유도 + 액션 확인 공용) =================
+// extra.md §1의 로그인 유도 팝업과 §2의 액션 확인 모달은 형태가 같아서 하나로 합쳐 쓴다.
+const confirmOverlay = document.getElementById('confirmOverlay');
+const confirmBody = document.getElementById('confirmBody');
+
+function openConfirm({emoji, title, text, okLabel, cancelLabel, onOk}){
+  confirmBody.innerHTML = `
+    <div class="confirm-head">
+      <div class="emoji">${emoji}</div>
+      <h3>${escapeHtml(title)}</h3>
+      <p>${escapeHtml(text)}</p>
+    </div>
+    <div class="game-action-row">
+      ${cancelLabel ? `<button type="button" class="btn-ghost" style="flex:1;" id="confirmCancel">${cancelLabel}</button>` : ''}
+      <button type="button" class="survey-close-btn" style="flex:1;" id="confirmOk">${okLabel}</button>
+    </div>
+  `;
+  const cancelBtn = document.getElementById('confirmCancel');
+  if(cancelBtn) cancelBtn.addEventListener('click', closeConfirm);
+  document.getElementById('confirmOk').addEventListener('click', () => {
+    if(typeof onOk === 'function') onOk();
+    else closeConfirm();
+  });
+  confirmOverlay.classList.add('show');
+}
+function closeConfirm(){ confirmOverlay.classList.remove('show'); }
+function closeConfirmOnOverlay(e){ if(e.target === confirmOverlay) closeConfirm(); }
+
+// 로그인 필요한 동작 앞에 세우는 게이트. 통과하면 true, 아니면 유도 팝업을 띄우고 false.
+function requireLogin(intent){
+  if(isLoggedIn) return true;
+  openConfirm({
+    emoji:'👤',
+    title:'로그인이 필요해요',
+    text:'로그인이 필요한 기능이에요. 로그인하고 나만의 맛집 목록을 만들어보세요!',
+    okLabel:'로그인하기',
+    cancelLabel:'닫기',
+    onOk: () => { closeConfirm(); openAuth(intent || 'login'); }
+  });
+  return false;
+}
 
 function copyLink(){
   navigator.clipboard.writeText(window.location.href).then(()=>{
@@ -576,8 +698,8 @@ function spinRoulette(){
 const authOverlay = document.getElementById('authOverlay');
 const authBody = document.getElementById('authBody');
 let authMode = 'signup';
-let isLoggedIn = false;
-let currentUserName = '';
+let isLoggedIn = store.auth.isLoggedIn;
+let currentUserName = store.auth.name;
 
 function updateHeaderAuthUI(){
   const authBtn = document.getElementById('authHeaderBtn');
@@ -610,6 +732,7 @@ function closeAuthOnOverlay(e){ if(e.target === authOverlay) closeAuth(); }
 const authIntentCopy = {
   save:{emoji:'💌', text:'가보고 싶은 곳을 저장하려면, 먼저 우리 손주가 되어주세요!'},
   mypage:{emoji:'📌', text:'마이페이지는 손주로 등록하면 이용할 수 있어요.'},
+  review:{emoji:'📝', text:'리뷰를 남기려면 먼저 손주로 등록해주세요.'},
   login:{emoji:'👋', text:'다시 오셨네요! 손주 계정으로 로그인해주세요.'},
 };
 
@@ -683,8 +806,11 @@ function isEmailOrPhone(v){
 
 function renderAuthWelcome(name){
   isLoggedIn = true;
-  currentUserName = name || '';
+  // 로그인 모드에는 이름 입력칸이 없으므로, 저장돼 있던 이름을 지우지 않는다
+  currentUserName = name || currentUserName || '';
   updateHeaderAuthUI();
+  saveState();
+  renderCards();
   const label = name ? `${name} 손주님` : '손주님';
   authBody.innerHTML = `
     <div class="auth-welcome">
@@ -705,7 +831,7 @@ const mypageBody = document.getElementById('mypageBody');
 let mypageTab = 'saved';
 
 function openMypage(tab){
-  if(!isLoggedIn){ openAuth('mypage'); return; }
+  if(!requireLogin('mypage')) return;
   mypageTab = tab || 'saved';
   renderMypage();
   mypageOverlay.classList.add('show');
@@ -739,6 +865,155 @@ function renderMypage(){
   `;
   document.getElementById('tabSaved').addEventListener('click', () => { mypageTab='saved'; renderMypage(); });
   document.getElementById('tabVisited').addEventListener('click', () => { mypageTab='visited'; renderMypage(); });
+}
+
+// ================= 리뷰 작성 =================
+// 노출 조건: 로그인 + 방문 완료로 표시한 맛집이 1곳 이상 (extra.md §3)
+const reviewFormOverlay = document.getElementById('reviewFormOverlay');
+const reviewFormBody = document.getElementById('reviewFormBody');
+const REVIEW_MAX = 300;
+let reviewRating = 5;
+let reviewPhoto = '';
+
+function openReviewForm(){
+  if(!requireLogin('review')) return;
+  if(restaurants.filter(r => r.visited).length === 0){
+    openConfirm({
+      emoji:'📝',
+      title:'아직 리뷰를 남길 수 없어요',
+      text:'방문 완료로 표시한 맛집에만 리뷰를 남길 수 있어요.',
+      okLabel:'맛집 보러가기',
+      cancelLabel:'닫기',
+      onOk: () => { closeConfirm(); document.getElementById('restaurants').scrollIntoView({behavior:'smooth'}); }
+    });
+    return;
+  }
+  reviewRating = 5;
+  reviewPhoto = '';
+  renderReviewForm();
+  reviewFormOverlay.classList.add('show');
+}
+function closeReviewForm(){ reviewFormOverlay.classList.remove('show'); }
+function closeReviewFormOnOverlay(e){ if(e.target === reviewFormOverlay) closeReviewForm(); }
+
+function renderReviewForm(){
+  const visitedList = restaurants.filter(r => r.visited);
+  reviewFormBody.innerHTML = `
+    <div class="auth-head">
+      <div class="emoji">📝</div>
+      <h3>나도 리뷰 남기기</h3>
+      <p>다녀온 맛집의 솔직한 후기를 남겨주세요.</p>
+    </div>
+    <form id="reviewForm">
+      <div class="auth-field">
+        <label>평점</label>
+        <div class="review-star-pick" id="reviewStars">
+          ${[1,2,3,4,5].map(n => `<button type="button" class="review-star ${n<=reviewRating?'on':''}" data-score="${n}" aria-label="${n}점">★</button>`).join('')}
+        </div>
+      </div>
+      <div class="auth-field">
+        <label>방문한 곳</label>
+        <select id="reviewPlace" class="review-select">
+          ${visitedList.map(r => `<option value="${escapeHtml(r.name)}">${r.emoji} ${escapeHtml(r.name)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="auth-field">
+        <label>공개 방식</label>
+        <div class="review-radio-row">
+          <label class="review-radio"><input type="radio" name="reviewVisibility" value="real" checked> 실명 (${escapeHtml(currentUserName || '손주')})</label>
+          <label class="review-radio"><input type="radio" name="reviewVisibility" value="anon"> 익명</label>
+        </div>
+      </div>
+      <div class="auth-field">
+        <label>사진 첨부 <span class="review-optional">선택</span></label>
+        <input type="file" id="reviewPhotoInput" accept="image/*" class="review-file">
+        <div id="reviewPhotoPreview"></div>
+      </div>
+      <div class="auth-field">
+        <label>리뷰 내용</label>
+        <textarea id="reviewText" class="review-textarea" maxlength="${REVIEW_MAX}" placeholder="어떤 점이 좋았나요?"></textarea>
+        <div class="review-counter"><span id="reviewCount">0</span>/${REVIEW_MAX}자</div>
+      </div>
+      <p class="auth-error" id="reviewError"></p>
+      <div class="game-action-row">
+        <button type="button" class="btn-ghost" style="flex:1;" onclick="closeReviewForm()">닫기</button>
+        <button type="submit" class="survey-close-btn" style="flex:1;">리뷰 등록하기</button>
+      </div>
+    </form>
+  `;
+
+  const starBtns = document.querySelectorAll('#reviewStars .review-star');
+  starBtns.forEach(b => {
+    // 별점만 바꿀 때 폼 전체를 다시 그리면 입력하던 내용이 날아간다 — 클래스만 갱신
+    b.addEventListener('click', () => {
+      reviewRating = Number(b.dataset.score);
+      starBtns.forEach(x => x.classList.toggle('on', Number(x.dataset.score) <= reviewRating));
+    });
+  });
+
+  const ta = document.getElementById('reviewText');
+  const counter = document.getElementById('reviewCount');
+  ta.addEventListener('input', () => { counter.textContent = ta.value.length; });
+
+  document.getElementById('reviewPhotoInput').addEventListener('change', handleReviewPhoto);
+  document.getElementById('reviewForm').addEventListener('submit', submitReview);
+}
+
+function handleReviewPhoto(e){
+  const file = e.target.files && e.target.files[0];
+  const preview = document.getElementById('reviewPhotoPreview');
+  if(!file){ reviewPhoto = ''; preview.innerHTML = ''; return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      // 원본 base64를 그대로 저장하면 localStorage 용량 한도를 금방 넘긴다 — 최대 800px JPEG로 줄여 보관
+      const max = 800;
+      const scale = Math.min(1, max / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      reviewPhoto = canvas.toDataURL('image/jpeg', 0.7);
+      preview.innerHTML = `<img class="review-photo" src="${reviewPhoto}" alt="첨부한 사진 미리보기">`;
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function submitReview(e){
+  e.preventDefault();
+  const errEl = document.getElementById('reviewError');
+  const text = document.getElementById('reviewText').value.trim();
+  errEl.textContent = '';
+  if(!text){
+    errEl.textContent = '리뷰 내용을 입력해주세요.';
+    return;
+  }
+  const anonymous = document.querySelector('input[name="reviewVisibility"]:checked').value === 'anon';
+  store.reviews.unshift({
+    name: anonymous ? '익명의 손주' : (currentUserName ? `${currentUserName} 손주` : '손주'),
+    emoji: anonymous ? '🙈' : '🌱',
+    stars: reviewRating,
+    place: document.getElementById('reviewPlace').value,
+    text,
+    photo: reviewPhoto || '',
+  });
+  const stored = saveState();
+  renderReviews();
+  reviewFormBody.innerHTML = `
+    <div class="auth-welcome">
+      <div class="emoji">🌾</div>
+      <h3>리뷰가 등록됐어요!</h3>
+      <p>${stored
+        ? '소중한 후기 고맙습니다. 리뷰 목록에 바로 반영했어요.'
+        : '리뷰 목록에 반영했어요. 다만 사진 용량이 커서 저장하진 못했어요 — 새로고침하면 사라질 수 있어요.'}</p>
+      <div class="game-action-row">
+        <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeReviewForm()">확인</button>
+      </div>
+    </div>
+  `;
 }
 
 // ================= 언어 선택 (베타: 선택만 저장, 실제 번역은 로드맵) =================
