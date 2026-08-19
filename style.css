@@ -475,6 +475,10 @@ header{
   display:inline-block;margin-top:8px;font-size:0.76rem;color:var(--slate-dark);
   background:var(--slate-tint);padding:3px 10px;border-radius:99px;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
 }
+.review-delete-btn{
+  display:block;margin-top:10px;font-size:0.76rem;color:var(--red-dark);font-weight:700;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;text-decoration:underline;
+}
 .review-soon{
   margin-top:28px;background:var(--paper);border:1.5px dashed var(--slate-light);
   border-radius:16px;padding:22px;text-align:center;color:var(--ink-soft);font-size:0.9rem;
@@ -610,8 +614,21 @@ footer ul a:hover{color:#fff;}
   padding:14px;border-radius:14px;border:1px solid rgba(72,96,122,0.12);background:var(--base-bg);
 }
 .survey-result-card .emoji{font-size:1.8rem;}
+.survey-result-card .info{flex:1;min-width:0;}
 .survey-result-card .info strong{display:block;color:var(--slate-dark);font-size:1rem;}
 .survey-result-card .info span{font-size:0.82rem;color:var(--ink-soft);font-family:'Gowun Dodum','Noto Sans KR',sans-serif;}
+.mypage-remove-btn{
+  flex-shrink:0;width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--slate-tint);color:var(--ink-soft);font-size:0.9rem;
+  transition:background .15s ease,color .15s ease;
+}
+.mypage-remove-btn:hover{background:rgba(214,67,46,0.12);color:var(--red-dark);}
+.mypage-reset-link{
+  display:block;margin:12px auto 0;font-size:0.78rem;color:var(--ink-soft);
+  text-decoration:underline;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
+}
+.mypage-reset-link:hover{color:var(--red-dark);}
 .survey-close-btn{
   width:100%;background:var(--slate-dark);color:#fff;padding:13px;border-radius:99px;
   font-weight:700;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;

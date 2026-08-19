@@ -39,7 +39,7 @@ const restaurants = [
 // marks는 배열 인덱스가 아니라 가게 이름을 키로 잡는다 — restaurants 순서가 바뀌거나
 // 항목이 추가돼도 저장된 값이 엉뚱한 가게에 붙지 않도록.
 const STORE_KEY = 'bmw:v1';
-let store = { auth:{isLoggedIn:false, name:''}, marks:{}, reviews:[], passOrders:[] };
+let store = { auth:{isLoggedIn:false, name:''}, marks:{}, reviews:[], passOrders:[], accounts:[] };
 
 function loadState(){
   try{
@@ -54,6 +54,7 @@ function loadState(){
       marks: parsed.marks || {},
       reviews: Array.isArray(parsed.reviews) ? parsed.reviews : [],
       passOrders: Array.isArray(parsed.passOrders) ? parsed.passOrders : [],
+      accounts: Array.isArray(parsed.accounts) ? parsed.accounts : [],
     };
   }catch(e){
     // 저장소가 막힌 환경(사생활 보호 모드 등) — 조용히 메모리 전용으로 동작한다
@@ -258,9 +259,25 @@ function renderReviews(){
         <div class="review-text">${escapeHtml(r.text)}</div>
         ${r.photo ? `<img class="review-photo" src="${r.photo}" alt="리뷰에 첨부된 사진">` : ''}
         <span class="review-place">📍 ${escapeHtml(r.place)}</span>
+        ${(isLoggedIn && r.mine) ? `<button type="button" class="review-delete-btn" data-id="${r.id}">내 리뷰 삭제</button>` : ''}
       </div>
     `;
     reviewList.appendChild(div);
+  });
+  // 내가 쓴 리뷰만 되돌릴 수 있게 삭제 버튼을 건다 (시드 더미 리뷰에는 애초에 버튼이 없다)
+  reviewList.querySelectorAll('.review-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = Number(btn.dataset.id);
+      openConfirm({
+        emoji:'↩️', title:'리뷰 삭제', text:'작성한 리뷰를 삭제하시겠습니까?', okLabel:'삭제', cancelLabel:'취소',
+        onOk: () => {
+          store.reviews = store.reviews.filter(rv => rv.id !== id);
+          saveState();
+          renderReviews();
+          closeConfirm();
+        }
+      });
+    });
   });
 }
 renderReviews();
@@ -724,6 +741,26 @@ function updateHeaderAuthUI(){
 }
 updateHeaderAuthUI();
 
+function logout(){
+  openConfirm({
+    emoji:'👋',
+    title:'로그아웃 하시겠어요?',
+    text:'로그아웃하면 저장 목록·리뷰 작성 등은 다시 로그인한 뒤에 이용할 수 있어요.',
+    okLabel:'로그아웃',
+    cancelLabel:'취소',
+    onOk: () => {
+      isLoggedIn = false;
+      currentUserName = '';
+      saveState();
+      updateHeaderAuthUI();
+      closeConfirm();
+      closeMypage();
+      renderCards();
+      renderReviews();
+    }
+  });
+}
+
 function openAuth(intent){
   authMode = 'signup';
   renderAuth(intent);
@@ -789,16 +826,34 @@ function renderAuth(intent){
       errEl.textContent = '이메일 주소 또는 전화번호 형식으로 입력해주세요.';
       return;
     }
+    const pwVal = document.getElementById('authPw').value;
+    // 백엔드가 없어 실제 인증 서버는 없지만, 아무 값이나 통과되지 않도록
+    // store.accounts(로컬 저장)에 등록된 계정과만 매칭시킨다.
     if(authMode === 'signup'){
-      const pw = document.getElementById('authPw').value;
       const pw2 = document.getElementById('authPw2').value;
-      if(pw !== pw2){
+      if(pwVal !== pw2){
         errEl.textContent = '비밀번호가 서로 달라요. 다시 확인해주세요.';
         return;
       }
+      if(store.accounts.some(a => a.id === idVal)){
+        errEl.textContent = '이미 등록된 계정이에요. "손주 로그인" 탭에서 로그인해주세요.';
+        return;
+      }
+      const name = document.getElementById('authName').value.trim();
+      store.accounts.push({ id: idVal, pw: pwVal, name });
+      renderAuthWelcome(name);
+    } else {
+      const account = store.accounts.find(a => a.id === idVal);
+      if(!account){
+        errEl.textContent = '등록되지 않은 계정이에요. "손주 등록" 탭에서 먼저 등록해주세요.';
+        return;
+      }
+      if(account.pw !== pwVal){
+        errEl.textContent = '비밀번호가 일치하지 않아요.';
+        return;
+      }
+      renderAuthWelcome(account.name);
     }
-    const name = authMode==='signup' ? document.getElementById('authName').value.trim() : '';
-    renderAuthWelcome(name);
   });
 }
 
@@ -815,6 +870,7 @@ function renderAuthWelcome(name){
   updateHeaderAuthUI();
   saveState();
   renderCards();
+  renderReviews();
   const label = name ? `${name} 손주님` : '손주님';
   authBody.innerHTML = `
     <div class="auth-welcome">
@@ -857,11 +913,38 @@ function renderMypage(){
       <button type="button" class="mypage-tab ${mypageTab==='pass'?'active':''}" id="tabPass">식권</button>
     </div>
     <div class="mypage-list">${body}</div>
-    <button type="button" class="survey-close-btn" style="margin-top:16px;" onclick="closeMypage()">닫기</button>
+    <button type="button" class="mypage-reset-link" onclick="resetMyData()">내 활동 기록 전체 초기화</button>
+    <div class="game-action-row" style="margin-top:10px;">
+      <button type="button" class="btn-ghost" style="flex:1;" onclick="logout()">로그아웃</button>
+      <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeMypage()">닫기</button>
+    </div>
   `;
   document.getElementById('tabSaved').addEventListener('click', () => { mypageTab='saved'; renderMypage(); });
   document.getElementById('tabVisited').addEventListener('click', () => { mypageTab='visited'; renderMypage(); });
   document.getElementById('tabPass').addEventListener('click', () => { mypageTab='pass'; renderMypage(); });
+  // 되돌리기: 담기 해제 · 방문 취소 · 식권 예약 취소는 전부 같은 확인 모달을 거친다
+  // (식권 취소 버튼도 같은 .mypage-remove-btn 스타일을 쓰므로, :not()으로 중복 바인딩을 막는다)
+  mypageBody.querySelectorAll('.mypage-remove-btn:not(.mypage-cancel-pass-btn)').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const r = restaurants.find(x => x.name === btn.dataset.name);
+      const field = mypageTab === 'saved' ? 'saved' : 'visited';
+      const question = mypageTab === 'saved' ? '가보고 싶은 곳에서 해제하시겠습니까?' : '방문 기록을 취소하시겠습니까?';
+      openConfirm({
+        emoji:'↩️', title: r.name, text: question, okLabel:'확인', cancelLabel:'아니요',
+        onOk: () => { r[field] = false; saveState(); renderCards(); renderMypage(); closeConfirm(); }
+      });
+    });
+  });
+  mypageBody.querySelectorAll('.mypage-cancel-pass-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const i = Number(btn.dataset.i);
+      const o = store.passOrders[i];
+      openConfirm({
+        emoji:'↩️', title: o.place, text:'이 식권 예약을 취소하시겠습니까?', okLabel:'예약 취소', cancelLabel:'아니요',
+        onOk: () => { store.passOrders.splice(i, 1); saveState(); renderMypage(); closeConfirm(); }
+      });
+    });
+  });
 }
 
 function renderMypagePlaceList(){
@@ -874,6 +957,7 @@ function renderMypagePlaceList(){
         <strong>${r.name}</strong>
         <span>${r.cat} · ★ ${r.rating} · ${r.desc}</span>
       </div>
+      <button type="button" class="mypage-remove-btn" data-name="${escapeHtml(r.name)}" title="${mypageTab==='saved' ? '가보고 싶은 곳에서 해제' : '방문 기록 취소'}">✕</button>
     </div>
   `).join('');
 }
@@ -882,15 +966,37 @@ function renderMypagePassList(){
   if(store.passOrders.length === 0){
     return `<div class="mypage-empty">아직 예약한 식권이 없어요.<br>손주 식권 섹션에서 마음에 드는 가게를 골라보세요.</div>`;
   }
-  return store.passOrders.map(o => `
+  return store.passOrders.map((o, i) => `
     <div class="survey-result-card">
       <span class="emoji">${o.emoji}</span>
       <div class="info">
         <strong>${escapeHtml(o.place)}</strong>
         <span>${o.count + o.bonus}장 (${o.count}장${o.bonus ? ` + 보너스 ${o.bonus}장` : ''}) · ${o.total.toLocaleString()}원 · ${escapeHtml(o.at)} 예약</span>
       </div>
+      <button type="button" class="mypage-remove-btn mypage-cancel-pass-btn" data-i="${i}" title="예약 취소">✕</button>
     </div>
   `).join('');
+}
+
+// 손주 계정에 쌓인 활동(담기·방문·내 리뷰·식권 예약)을 한 번에 되돌리는 초기화 버튼
+function resetMyData(){
+  openConfirm({
+    emoji:'🧹',
+    title:'내 활동 기록 초기화',
+    text:'저장한 곳, 방문 기록, 내가 쓴 리뷰, 식권 예약을 모두 초기화해요. 되돌릴 수 없어요.',
+    okLabel:'초기화',
+    cancelLabel:'취소',
+    onOk: () => {
+      restaurants.forEach(r => { r.saved = false; r.visited = false; });
+      store.reviews = store.reviews.filter(rv => !rv.mine);
+      store.passOrders = [];
+      saveState();
+      renderCards();
+      renderReviews();
+      renderMypage();
+      closeConfirm();
+    }
+  });
 }
 
 // ================= 리뷰 작성 =================
@@ -1019,6 +1125,8 @@ function submitReview(e){
   }
   const anonymous = document.querySelector('input[name="reviewVisibility"]:checked').value === 'anon';
   store.reviews.unshift({
+    id: Date.now(),
+    mine: true,
     name: anonymous ? '익명의 손주' : (currentUserName ? `${currentUserName} 손주` : '손주'),
     emoji: anonymous ? '🙈' : '🌱',
     stars: reviewRating,
@@ -1113,14 +1221,14 @@ function renderIntro(){
       <h3>밥 먹으러 와</h3>
       <p>조치원읍 로컬 맛집 발견 서비스</p>
     </div>
-    <div class="intro-vision">지도에 없는 우리 동네 진짜 맛집을 발굴하고, 소비자와 상인이 함께 상생하는 로컬 상권 생태계를 만든다</div>
+    <div class="intro-vision">지도에 없거나 부실하게 등록된 우리 동네 진짜 맛집을 발굴하고, 소비자와 상인이 함께 상생하는 로컬 상권 생태계를 만든다</div>
     <div class="intro-block">
       <h4>프로젝트 개요</h4>
-      <p>고려대학교 세종캠퍼스 사회공헌 프로젝트로 시작된 학생 주도 서비스예요. 네이버·카카오맵에 잘 등록되지 않은 조치원읍 로컬 맛집을 학생과 주민이 직접 발굴해 소개합니다.</p>
+      <p>"KU구조대! 사장님을 부탁해" — 고려대학교 세종캠퍼스 사회공헌 프로젝트로 시작된 학생 주도 서비스예요. 네이버·카카오맵에 등록이 안 됐거나, 등록은 했어도 정보가 부실한 조치원읍 로컬 맛집을 학생과 주민이 직접 발굴해 소개합니다.</p>
     </div>
     <div class="intro-block">
       <h4>만든 사람</h4>
-      <p>고려대학교 세종캠퍼스 경제정책학전공 학생이 기획·개발한 사회공헌 프로젝트입니다.</p>
+      <p>고려대학교 세종캠퍼스 경제정책학전공 학생 팀 <b>맛집 KU조대</b>가 기획·개발한 사회공헌 프로젝트입니다.</p>
     </div>
     <div class="intro-block">
       <h4>진행 상황</h4>
@@ -1136,7 +1244,7 @@ function renderIntro(){
 // ================= 문의하기 — FAQ (extra.md §4-2) =================
 const faqs = [
   {q:'밥 먹으러 와는 어떤 서비스인가요?',
-   a:'네이버·카카오맵 등 온라인 지도에 잘 등록되지 않은 조치원읍 로컬 맛집을 학생과 주민이 직접 발굴하고 소개하는 서비스예요.'},
+   a:'"KU구조대! 사장님을 부탁해" 프로젝트에서 만든 서비스예요. 네이버·카카오맵 등 온라인 지도에 등록이 안 됐거나, 등록은 했어도 정보가 부실한 조치원읍 로컬 맛집을 학생과 주민이 직접 발굴하고 소개해요.'},
   {q:'아직 정식 오픈 전인가요?',
    a:'네, 현재는 사전 신청을 받고 있는 준비 단계이며, 9월 개강 이후 실제 맛집 데이터를 채워 정식 서비스를 시작할 예정이에요.'},
   {q:'저희 가게도 등록할 수 있나요?',
