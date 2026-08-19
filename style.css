@@ -22,6 +22,7 @@ body{
   font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
   line-height:1.6;
   overflow-x:hidden;
+  word-break:keep-all;
 }
 /* 큰글씨 모드는 rem 기준값을 바꿔야 실제로 커진다 (body에 걸면 rem이 안 따라옴) */
 html.big-text{ font-size:131.25%; }
