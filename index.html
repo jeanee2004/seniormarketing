@@ -170,9 +170,15 @@
   <div class="container">
     <span class="eyebrow">REVIEW</span>
     <h2 class="section-title">먼저 다녀온 사람들의 이야기</h2>
-    <div class="review-search">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" placeholder="리뷰 검색 (가게명, 키워드)">
+    <div class="review-toolbar">
+      <div class="review-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="리뷰 검색 (가게명, 키워드)">
+      </div>
+      <select id="reviewSort" class="sort-select">
+        <option value="recommend">추천순</option>
+        <option value="latest">최신순</option>
+      </select>
     </div>
     <div class="review-list" id="reviewList"></div>
     <div class="review-write-wrap">
@@ -222,7 +228,7 @@
         <strong>사장님이신가요?<span class="badge-soon">준비중</span></strong>
         <span class="join-desc">우리 가게를 소개하고 싶은 조치원 로컬 식당 사장님을 위한 입점 신청 자리예요.</span>
       </button>
-      <button type="button" class="join-card" onclick="openContact('team')">
+      <button type="button" class="join-card" onclick="openContact('team', false)">
         <span class="join-emoji">🙋</span>
         <strong>손주 힘 보태기</strong>
         <span class="join-desc">기획·개발·디자인·현장 조사, 팀원으로 함께할 손길을 기다려요.</span>

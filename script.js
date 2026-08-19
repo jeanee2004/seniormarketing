@@ -39,7 +39,7 @@ const restaurants = [
 // marks는 배열 인덱스가 아니라 가게 이름을 키로 잡는다 — restaurants 순서가 바뀌거나
 // 항목이 추가돼도 저장된 값이 엉뚱한 가게에 붙지 않도록.
 const STORE_KEY = 'bmw:v1';
-let store = { auth:{isLoggedIn:false, name:''}, marks:{}, reviews:[], passOrders:[], accounts:[] };
+let store = { auth:{isLoggedIn:false, name:''}, marks:{}, reviews:[], passOrders:[], accounts:[], reviewLikes:{}, myLikedReviews:[] };
 
 function loadState(){
   try{
@@ -55,6 +55,8 @@ function loadState(){
       reviews: Array.isArray(parsed.reviews) ? parsed.reviews : [],
       passOrders: Array.isArray(parsed.passOrders) ? parsed.passOrders : [],
       accounts: Array.isArray(parsed.accounts) ? parsed.accounts : [],
+      reviewLikes: parsed.reviewLikes || {},
+      myLikedReviews: Array.isArray(parsed.myLikedReviews) ? parsed.myLikedReviews : [],
     };
   }catch(e){
     // 저장소가 막힌 환경(사생활 보호 모드 등) — 조용히 메모리 전용으로 동작한다
@@ -236,17 +238,31 @@ renderCards();
 
 // ---- Dummy reviews ----
 const reviews = [
-  {name:"익명의 재학생", emoji:"🎓", stars:5, place:"할머니 떡볶이", text:"학교 끝나고 늘 여기 와요. 사장님이 항상 반겨주셔서 더 정겹습니다."},
-  {name:"교환학생 Lee", emoji:"🌏", stars:5, place:"세종 스시하루", text:"가격 대비 퀄리티가 정말 좋아요. 한국 온 뒤 최고의 발견이었어요."},
-  {name:"행정팀 직원", emoji:"💼", stars:4, place:"조치원 할매국밥", text:"점심시간에 자주 가는데 국물이 진짜 진해요. 강력 추천합니다."},
-  {name:"기숙사생 K", emoji:"🏠", stars:5, place:"골목 손칼국수", text:"면이 쫄깃쫄깃하고 양도 많아서 자취생한테 딱이에요."},
+  {id:'seed0', name:"익명의 재학생", emoji:"🎓", stars:5, place:"할머니 떡볶이", text:"학교 끝나고 늘 여기 와요. 사장님이 항상 반겨주셔서 더 정겹습니다.", likes:14, at:'2026-08-18'},
+  {id:'seed1', name:"교환학생 Lee", emoji:"🌏", stars:5, place:"세종 스시하루", text:"가격 대비 퀄리티가 정말 좋아요. 한국 온 뒤 최고의 발견이었어요.", likes:9, at:'2026-08-15'},
+  {id:'seed2', name:"행정팀 직원", emoji:"💼", stars:4, place:"조치원 할매국밥", text:"점심시간에 자주 가는데 국물이 진짜 진해요. 강력 추천합니다.", likes:6, at:'2026-08-12'},
+  {id:'seed3', name:"기숙사생 K", emoji:"🏠", stars:5, place:"골목 손칼국수", text:"면이 쫄깃쫄깃하고 양도 많아서 자취생한테 딱이에요.", likes:3, at:'2026-08-10'},
 ];
 const reviewList = document.getElementById('reviewList');
+const reviewSortSelect = document.getElementById('reviewSort');
+let currentReviewSort = 'recommend';
 
-// 사용자가 남긴 리뷰(store.reviews)를 위에, 시드 더미 리뷰를 아래에 붙여 최신순으로 보여준다
+// 시드 기본 likes 위에 이 브라우저에서 누른 좋아요(store.reviewLikes)를 얹은 값이 실제 표시값이다
+// (restaurants의 saved/visited가 store.marks로 오버라이드되는 것과 같은 구조)
+function reviewLikeCount(r){
+  return (r.likes || 0) + (store.reviewLikes[String(r.id)] || 0);
+}
+
+// 사용자가 남긴 리뷰(store.reviews)와 시드 더미 리뷰를 합쳐, 추천순(좋아요순)/최신순으로 정렬해 보여준다
 function renderReviews(){
   reviewList.innerHTML = '';
-  store.reviews.concat(reviews).forEach(r => {
+  const merged = store.reviews.concat(reviews);
+  const sorted = merged.slice().sort((a, b) => {
+    if(currentReviewSort === 'latest') return (b.at || '').localeCompare(a.at || '');
+    return reviewLikeCount(b) - reviewLikeCount(a);
+  });
+  sorted.forEach(r => {
+    const liked = store.myLikedReviews.includes(String(r.id));
     const div = document.createElement('div');
     div.className = 'review-item';
     div.innerHTML = `
@@ -258,11 +274,32 @@ function renderReviews(){
         </div>
         <div class="review-text">${escapeHtml(r.text)}</div>
         ${r.photo ? `<img class="review-photo" src="${r.photo}" alt="리뷰에 첨부된 사진">` : ''}
-        <span class="review-place">📍 ${escapeHtml(r.place)}</span>
+        <div class="review-meta-row">
+          <span class="review-place">📍 ${escapeHtml(r.place)}</span>
+          ${r.at ? `<span class="review-date">${escapeHtml(r.at)}</span>` : ''}
+          <button type="button" class="review-like-btn ${liked ? 'liked' : ''}" data-id="${r.id}">👍 <span>${reviewLikeCount(r)}</span></button>
+        </div>
         ${(isLoggedIn && r.mine) ? `<button type="button" class="review-delete-btn" data-id="${r.id}">내 리뷰 삭제</button>` : ''}
       </div>
     `;
     reviewList.appendChild(div);
+  });
+  // 좋아요: 로그인 게이트를 거치고, 이 브라우저 기준으로 on/off만 토글한다 (누가 눌렀는지는 추적하지 않음)
+  reviewList.querySelectorAll('.review-like-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if(!requireLogin('review')) return;
+      const id = btn.dataset.id;
+      const already = store.myLikedReviews.includes(id);
+      if(already){
+        store.myLikedReviews = store.myLikedReviews.filter(x => x !== id);
+        store.reviewLikes[id] = (store.reviewLikes[id] || 0) - 1;
+      } else {
+        store.myLikedReviews.push(id);
+        store.reviewLikes[id] = (store.reviewLikes[id] || 0) + 1;
+      }
+      saveState();
+      renderReviews();
+    });
   });
   // 내가 쓴 리뷰만 되돌릴 수 있게 삭제 버튼을 건다 (시드 더미 리뷰에는 애초에 버튼이 없다)
   reviewList.querySelectorAll('.review-delete-btn').forEach(btn => {
@@ -281,6 +318,11 @@ function renderReviews(){
   });
 }
 renderReviews();
+
+reviewSortSelect.addEventListener('change', () => {
+  currentReviewSort = reviewSortSelect.value;
+  renderReviews();
+});
 
 // ---- Toast / popup (준비중 안내) ----
 const toastContent = {
@@ -990,6 +1032,8 @@ function resetMyData(){
       restaurants.forEach(r => { r.saved = false; r.visited = false; });
       store.reviews = store.reviews.filter(rv => !rv.mine);
       store.passOrders = [];
+      store.reviewLikes = {};
+      store.myLikedReviews = [];
       saveState();
       renderCards();
       renderReviews();
@@ -1133,6 +1177,8 @@ function submitReview(e){
     place: document.getElementById('reviewPlace').value,
     text,
     photo: reviewPhoto || '',
+    likes: 0,
+    at: new Date().toISOString().slice(0, 10),
   });
   const stored = saveState();
   renderReviews();
@@ -1369,8 +1415,8 @@ function openSupport(){
   renderSupportChoice();
   contactOverlay.classList.add('show');
 }
-function openContact(type){
-  renderContactForm(type);
+function openContact(type, showBack){
+  renderContactForm(type, showBack);
   contactOverlay.classList.add('show');
 }
 function closeContact(){ contactOverlay.classList.remove('show'); }
@@ -1404,14 +1450,18 @@ function renderSupportChoice(){
     </div>
   `;
   contactBody.querySelectorAll('.game-choice-btn').forEach(btn => {
-    btn.addEventListener('click', () => renderContactForm(btn.dataset.type));
+    btn.addEventListener('click', () => renderContactForm(btn.dataset.type, true));
   });
 }
 
-function renderContactForm(type){
+function renderContactForm(type, showBack){
   const c = contactTypes[type] || contactTypes.expand;
-  // 손주 힘 보태기에서 들어온 경우에만 카테고리 선택으로 되돌아갈 수 있다
-  const backBtn = (type === 'team' || type === 'sponsor')
+  // 팀원/후원 선택 화면(renderSupportChoice)을 실제로 거쳐 들어온 경우에만 "뒤로"를 보여준다.
+  // showBack을 명시하지 않으면 기존처럼 type이 team/sponsor일 때만 기본으로 뒤로를 보여주고,
+  // 메인 페이지 "손주 힘 보태기" 버튼처럼 선택 화면 없이 바로 이 폼으로 들어온 경우엔
+  // showBack:false로 명시 호출해 "뒤로"를 감춘다 — 그 뒤로가기가 곧 후원 선택지로 새는 뒷문이 되기 때문.
+  const useBack = showBack !== undefined ? showBack : (type === 'team' || type === 'sponsor');
+  const backBtn = useBack
     ? `<button type="button" class="btn-ghost" style="flex:1;" id="contactBack">뒤로</button>`
     : `<button type="button" class="btn-ghost" style="flex:1;" onclick="closeContact()">닫기</button>`;
   contactBody.innerHTML = `
