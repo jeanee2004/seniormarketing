@@ -157,7 +157,6 @@ function renderCards(){
         <div class="food-desc">${r.desc}</div>
         <div class="food-meta">
           <span class="stars">★ ${r.rating} <span style="color:var(--ink-soft);font-weight:400;">(${r.reviewCount})</span></span>
-          <span>${r.priceValue.toLocaleString()}원</span>
         </div>
         <button class="visit-flow-btn" data-idx="${idx}">${visited ? '✔ 방문 기록 있음' : (saved ? '방문 완료로 표시하기' : '가보고 싶은 곳에 담기')}</button>
       </div>
@@ -709,20 +708,18 @@ let authMode = 'signup';
 
 function updateHeaderAuthUI(){
   const authBtn = document.getElementById('authHeaderBtn');
-  const saveBtn = document.getElementById('saveHeaderBtn');
-  const saveLabel = saveBtn.querySelector('.nav-label');
+  const authIcon = document.getElementById('authHeaderIcon');
+  const authLabel = document.getElementById('authHeaderLabel');
   if(isLoggedIn){
-    authBtn.textContent = '🌱';
+    authIcon.textContent = '🌱';
+    authLabel.textContent = '저장 목록 보기';
     authBtn.title = `${currentUserName || '손주'}님의 마이페이지`;
     authBtn.onclick = () => openMypage('saved');
-    saveBtn.onclick = () => openMypage('saved');
-    saveLabel.textContent = '저장 목록 보기';
   } else {
-    authBtn.textContent = '👤';
+    authIcon.textContent = '👤';
+    authLabel.textContent = '손주 로그인';
     authBtn.title = '손주 로그인';
     authBtn.onclick = () => openAuth('login');
-    saveBtn.onclick = () => openAuth('save');
-    saveLabel.textContent = '데이터 저장하기';
   }
 }
 updateHeaderAuthUI();
