@@ -15,15 +15,20 @@ const restaurants = [
       {name:"순대국밥", price:"9,000원", composition:"순대국밥 1그릇 + 깍두기 + 배추김치 + 부추무침", origin:"돼지고기·순대 국내산, 쌀 국내산(세종)"},
       {name:"수육 (소)", price:"18,000원", composition:"수육 1접시 + 새우젓 + 쌈장 + 쌈채소 + 배추김치", origin:"돼지고기 국내산"},
     ]
-  }},
-  {name:"골목 손칼국수", cat:"한식", emoji:"🍜", desc:"매일 반죽하는 쫄깃한 면발이 일품", rating:4.6, reviewCount:98, price:"₩", priceValue:8000, saved:true, visited:true},
+  },
+  // pass가 있는 가게만 손주 식권 섹션과 검색에 노출된다 (detail과 같은 방식 — 일부만 채워둔 예시)
+  pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:180}},
+  {name:"골목 손칼국수", cat:"한식", emoji:"🍜", desc:"매일 반죽하는 쫄깃한 면발이 일품", rating:4.6, reviewCount:98, price:"₩", priceValue:8000, saved:true, visited:true,
+    pass:{unit:8000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:180}},
   {name:"조치원 화덕피자", cat:"양식", emoji:"🍕", desc:"동네 사장님이 직접 굽는 화덕 피자", rating:4.5, reviewCount:64, price:"₩₩", priceValue:16000, saved:false, visited:false},
-  {name:"역전 왕돈까스", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false},
+  {name:"역전 왕돈까스", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
+    pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:90}},
   {name:"청춘 짜장면", cat:"중식", emoji:"🥡", desc:"30년째 한 자리, 정겨운 노포 중식당", rating:4.4, reviewCount:87, price:"₩", priceValue:7000, saved:false, visited:false},
   {name:"조치원 마라탕", cat:"중식", emoji:"🌶️", desc:"학생들 사이 입소문난 얼큰한 마라탕", rating:4.3, reviewCount:176, price:"₩₩", priceValue:13000, saved:true, visited:false},
   {name:"세종 스시하루", cat:"일식", emoji:"🍣", desc:"가성비 좋은 오마카세급 초밥 정식", rating:4.6, reviewCount:73, price:"₩₩", priceValue:15000, saved:false, visited:false},
   {name:"조치원 라멘야", cat:"일식", emoji:"🍥", desc:"진한 돈코츠 육수, 사장님 손맛 그대로", rating:4.5, reviewCount:59, price:"₩", priceValue:9000, saved:false, visited:true},
-  {name:"할머니 떡볶이", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false},
+  {name:"할머니 떡볶이", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
+    pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", validDays:180}},
   {name:"조치원 김밥천국", cat:"분식", emoji:"🍙", desc:"든든한 한 끼, 다양한 종류의 김밥", rating:4.2, reviewCount:41, price:"₩", priceValue:5000, saved:false, visited:false},
   {name:"등굣길 순대국", cat:"한식", emoji:"🍲", desc:"아침 일찍 여는 든든한 순대국집", rating:4.5, reviewCount:118, price:"₩", priceValue:8000, saved:false, visited:false},
   {name:"조치원 파스타공방", cat:"양식", emoji:"🍝", desc:"직접 뽑는 생면 파스타 전문점", rating:4.4, reviewCount:52, price:"₩₩", priceValue:14000, saved:false, visited:false},
@@ -34,7 +39,7 @@ const restaurants = [
 // marks는 배열 인덱스가 아니라 가게 이름을 키로 잡는다 — restaurants 순서가 바뀌거나
 // 항목이 추가돼도 저장된 값이 엉뚱한 가게에 붙지 않도록.
 const STORE_KEY = 'bmw:v1';
-let store = { auth:{isLoggedIn:false, name:''}, marks:{}, reviews:[] };
+let store = { auth:{isLoggedIn:false, name:''}, marks:{}, reviews:[], passOrders:[] };
 
 function loadState(){
   try{
@@ -48,6 +53,7 @@ function loadState(){
       },
       marks: parsed.marks || {},
       reviews: Array.isArray(parsed.reviews) ? parsed.reviews : [],
+      passOrders: Array.isArray(parsed.passOrders) ? parsed.passOrders : [],
     };
   }catch(e){
     // 저장소가 막힌 환경(사생활 보호 모드 등) — 조용히 메모리 전용으로 동작한다
@@ -82,6 +88,11 @@ function escapeHtml(s){
 
 loadState();
 applyState();
+
+// 로그인 상태는 renderCards()가 첫 렌더 때부터 참조하므로 여기서 선언한다
+// (손주 로그인 섹션에서 선언하면 초기 renderCards() 호출 시점에 TDZ 에러가 난다).
+let isLoggedIn = store.auth.isLoggedIn;
+let currentUserName = store.auth.name;
 
 const cardGrid = document.getElementById('cardGrid');
 const filterCount = document.getElementById('filterCount');
@@ -127,14 +138,18 @@ function renderCards(){
   filterEmpty.style.display = list.length === 0 ? 'block' : 'none';
   list.forEach((r, i) => {
     const idx = restaurants.indexOf(r);
+    // 담기/방문 표시는 로그인한 손주 개인의 기록이므로, 비로그인 상태에서는
+    // 카드를 전부 초기 상태(빈 하트 · 배지 없음 · "가보고 싶은 곳에 담기")로 통일해서 보여준다.
+    const saved = isLoggedIn && r.saved;
+    const visited = isLoggedIn && r.visited;
     const card = document.createElement('div');
     card.className = 'food-card';
     card.addEventListener('click', () => openDetail(idx));
     card.innerHTML = `
       <div class="food-thumb" style="background:${thumbColor(i)}">
         <span>${r.emoji}</span>
-        <button class="save-toggle ${r.saved ? 'saved':''}" data-idx="${idx}" title="가보고 싶은 곳">${r.saved ? '♥':'♡'}</button>
-        <div class="visit-badge ${r.visited ? 'show':''}">✔ 가본 곳</div>
+        <button class="save-toggle ${saved ? 'saved':''}" data-idx="${idx}" title="가보고 싶은 곳">${saved ? '♥':'♡'}</button>
+        <div class="visit-badge ${visited ? 'show':''}">✔ 가본 곳</div>
       </div>
       <div class="food-body">
         <span class="food-cat">${r.cat}</span>
@@ -144,7 +159,7 @@ function renderCards(){
           <span class="stars">★ ${r.rating} <span style="color:var(--ink-soft);font-weight:400;">(${r.reviewCount})</span></span>
           <span>${r.priceValue.toLocaleString()}원</span>
         </div>
-        <button class="visit-flow-btn" data-idx="${idx}">${r.visited ? '✔ 방문 기록 있음' : (r.saved ? '방문 완료로 표시하기' : '가보고 싶은 곳에 담기')}</button>
+        <button class="visit-flow-btn" data-idx="${idx}">${visited ? '✔ 방문 기록 있음' : (saved ? '방문 완료로 표시하기' : '가보고 싶은 곳에 담기')}</button>
       </div>
     `;
     cardGrid.appendChild(card);
@@ -166,11 +181,12 @@ function renderCards(){
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const r = restaurants[e.currentTarget.dataset.idx];
+      // 비로그인 상태에서는 버튼이 전부 "담기"로 보이므로, 로그인 게이트를 먼저 통과시킨다
+      if(!requireLogin('save')) return;
       if(r.visited){
         openMypage('visited');
         return;
       }
-      if(!requireLogin('save')) return;
       if(!r.saved){
         confirmMark(r, '💌', '이 맛집을 가보고 싶은 곳에 담으시겠습니까?', () => { r.saved = true; });
       } else {
@@ -339,16 +355,7 @@ function toggleBigText(){
   if(btn) btn.textContent = on ? '🔍 기본 글씨로' : '🔍 큰글씨 모드';
 }
 
-// ---- Header search scrolls to restaurant list ----
-document.getElementById('headerSearch').addEventListener('keydown', function(e){
-  if(e.key === 'Enter'){
-    e.preventDefault();
-    const q = this.value.trim();
-    if(q){
-      document.getElementById('restaurants').scrollIntoView({behavior:'smooth'});
-    }
-  }
-});
+// 헤더 통합검색은 파일 하단 "통합 검색" 섹션에서 처리한다.
 
 // ================= 취향 설문 (실제 동작) =================
 const surveyQuestions = [
@@ -698,8 +705,7 @@ function spinRoulette(){
 const authOverlay = document.getElementById('authOverlay');
 const authBody = document.getElementById('authBody');
 let authMode = 'signup';
-let isLoggedIn = store.auth.isLoggedIn;
-let currentUserName = store.auth.name;
+// isLoggedIn / currentUserName은 renderCards()보다 먼저 필요해서 파일 상단(로컬 저장 바로 아래)에 선언돼 있다.
 
 function updateHeaderAuthUI(){
   const authBtn = document.getElementById('authHeaderBtn');
@@ -733,6 +739,7 @@ const authIntentCopy = {
   save:{emoji:'💌', text:'가보고 싶은 곳을 저장하려면, 먼저 우리 손주가 되어주세요!'},
   mypage:{emoji:'📌', text:'마이페이지는 손주로 등록하면 이용할 수 있어요.'},
   review:{emoji:'📝', text:'리뷰를 남기려면 먼저 손주로 등록해주세요.'},
+  pass:{emoji:'🎟️', text:'식권은 손주 계정에 담기기 때문에, 먼저 등록이 필요해요.'},
   login:{emoji:'👋', text:'다시 오셨네요! 손주 계정으로 로그인해주세요.'},
 };
 
@@ -840,31 +847,53 @@ function closeMypage(){ mypageOverlay.classList.remove('show'); }
 function closeMypageOnOverlay(e){ if(e.target === mypageOverlay) closeMypage(); }
 
 function renderMypage(){
-  const list = restaurants.filter(r => mypageTab === 'saved' ? r.saved : r.visited);
+  // 식권 탭은 가게 목록이 아니라 예약 내역이라 카드 모양이 달라서 분기한다
+  const body = mypageTab === 'pass' ? renderMypagePassList() : renderMypagePlaceList();
   mypageBody.innerHTML = `
     <div class="mypage-head">
       <div class="emoji">🌱</div>
-      <h3>${currentUserName ? `${currentUserName} 손주님의 마이페이지` : '마이페이지'}</h3>
+      <h3>${currentUserName ? `${escapeHtml(currentUserName)} 손주님의 마이페이지` : '마이페이지'}</h3>
     </div>
     <div class="mypage-tabs">
       <button type="button" class="mypage-tab ${mypageTab==='saved'?'active':''}" id="tabSaved">가보고 싶은 곳</button>
       <button type="button" class="mypage-tab ${mypageTab==='visited'?'active':''}" id="tabVisited">가본 곳</button>
+      <button type="button" class="mypage-tab ${mypageTab==='pass'?'active':''}" id="tabPass">식권</button>
     </div>
-    <div class="mypage-list">
-      ${list.length === 0 ? `<div class="mypage-empty">아직 ${mypageTab==='saved'?'저장한':'방문 기록이 있는'} 맛집이 없어요.</div>` : list.map(r => `
-        <div class="survey-result-card">
-          <span class="emoji">${r.emoji}</span>
-          <div class="info">
-            <strong>${r.name}</strong>
-            <span>${r.cat} · ★ ${r.rating} · ${r.desc}</span>
-          </div>
-        </div>
-      `).join('')}
-    </div>
+    <div class="mypage-list">${body}</div>
     <button type="button" class="survey-close-btn" style="margin-top:16px;" onclick="closeMypage()">닫기</button>
   `;
   document.getElementById('tabSaved').addEventListener('click', () => { mypageTab='saved'; renderMypage(); });
   document.getElementById('tabVisited').addEventListener('click', () => { mypageTab='visited'; renderMypage(); });
+  document.getElementById('tabPass').addEventListener('click', () => { mypageTab='pass'; renderMypage(); });
+}
+
+function renderMypagePlaceList(){
+  const list = restaurants.filter(r => mypageTab === 'saved' ? r.saved : r.visited);
+  if(list.length === 0) return `<div class="mypage-empty">아직 ${mypageTab==='saved'?'저장한':'방문 기록이 있는'} 맛집이 없어요.</div>`;
+  return list.map(r => `
+    <div class="survey-result-card">
+      <span class="emoji">${r.emoji}</span>
+      <div class="info">
+        <strong>${r.name}</strong>
+        <span>${r.cat} · ★ ${r.rating} · ${r.desc}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderMypagePassList(){
+  if(store.passOrders.length === 0){
+    return `<div class="mypage-empty">아직 예약한 식권이 없어요.<br>손주 식권 섹션에서 마음에 드는 가게를 골라보세요.</div>`;
+  }
+  return store.passOrders.map(o => `
+    <div class="survey-result-card">
+      <span class="emoji">${o.emoji}</span>
+      <div class="info">
+        <strong>${escapeHtml(o.place)}</strong>
+        <span>${o.count + o.bonus}장 (${o.count}장${o.bonus ? ` + 보너스 ${o.bonus}장` : ''}) · ${o.total.toLocaleString()}원 · ${escapeHtml(o.at)} 예약</span>
+      </div>
+    </div>
+  `).join('');
 }
 
 // ================= 리뷰 작성 =================
@@ -1066,3 +1095,615 @@ function renderLang(){
     });
   });
 }
+
+// ================= 서비스 소개 (extra.md §4-1) =================
+const SERVICE_VERSION = 'v0.1 베타';
+const introOverlay = document.getElementById('introOverlay');
+const introBody = document.getElementById('introBody');
+
+function openIntro(){
+  renderIntro();
+  introOverlay.classList.add('show');
+}
+function closeIntro(){ introOverlay.classList.remove('show'); }
+function closeIntroOnOverlay(e){ if(e.target === introOverlay) closeIntro(); }
+
+function renderIntro(){
+  introBody.innerHTML = `
+    <div class="auth-head">
+      <div class="emoji">🌾</div>
+      <span class="intro-version">${SERVICE_VERSION}</span>
+      <h3>밥 먹으러 와</h3>
+      <p>조치원읍 로컬 맛집 발견 서비스</p>
+    </div>
+    <div class="intro-vision">지도에 없는 우리 동네 진짜 맛집을 발굴하고, 소비자와 상인이 함께 상생하는 로컬 상권 생태계를 만든다</div>
+    <div class="intro-block">
+      <h4>프로젝트 개요</h4>
+      <p>고려대학교 세종캠퍼스 사회공헌 프로젝트로 시작된 학생 주도 서비스예요. 네이버·카카오맵에 잘 등록되지 않은 조치원읍 로컬 맛집을 학생과 주민이 직접 발굴해 소개합니다.</p>
+    </div>
+    <div class="intro-block">
+      <h4>만든 사람</h4>
+      <p>고려대학교 세종캠퍼스 경제정책학전공 학생이 기획·개발한 사회공헌 프로젝트입니다.</p>
+    </div>
+    <div class="intro-block">
+      <h4>진행 상황</h4>
+      <p>현재는 사전 신청을 받는 준비 단계예요. 9월 개강 이후 현장 조사로 실제 맛집 데이터를 채워 정식 서비스를 시작할 예정입니다.</p>
+    </div>
+    <div class="game-action-row">
+      <button type="button" class="btn-ghost" style="flex:1;" onclick="closeIntro(); openFaq();">자주 묻는 질문</button>
+      <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeIntro()">닫기</button>
+    </div>
+  `;
+}
+
+// ================= 문의하기 — FAQ (extra.md §4-2) =================
+const faqs = [
+  {q:'밥 먹으러 와는 어떤 서비스인가요?',
+   a:'네이버·카카오맵 등 온라인 지도에 잘 등록되지 않은 조치원읍 로컬 맛집을 학생과 주민이 직접 발굴하고 소개하는 서비스예요.'},
+  {q:'아직 정식 오픈 전인가요?',
+   a:'네, 현재는 사전 신청을 받고 있는 준비 단계이며, 9월 개강 이후 실제 맛집 데이터를 채워 정식 서비스를 시작할 예정이에요.'},
+  {q:'저희 가게도 등록할 수 있나요?',
+   a:'네! 사장님 등록 페이지를 준비 중이에요. "사장님이신가요?" 버튼을 통해 순차적으로 안내드릴 예정입니다.'},
+  {q:'리뷰는 아무나 쓸 수 있나요?',
+   a:'방문 완료로 표시한 맛집에 한해 로그인한 회원만 리뷰를 작성할 수 있어요. 허위 리뷰를 방지하기 위한 최소한의 장치예요.'},
+  {q:'제가 남긴 개인정보는 어떻게 쓰이나요?',
+   a:'개인정보처리방침에 명시된 목적(회원 식별, 서비스 제공) 외에는 사용하지 않으며, 관련 법령에 따라 안전하게 관리돼요.'},
+  {q:'봉사활동이나 팀원으로 참여하고 싶어요.',
+   a:'"손주 힘 보태기" 메뉴를 통해 참여·후원 문의를 남겨주시면 안내드릴게요.'},
+];
+const faqOverlay = document.getElementById('faqOverlay');
+const faqBody = document.getElementById('faqBody');
+let faqOpenIndex = -1;
+
+function openFaq(){
+  faqOpenIndex = -1;
+  renderFaq();
+  faqOverlay.classList.add('show');
+}
+function closeFaq(){ faqOverlay.classList.remove('show'); }
+function closeFaqOnOverlay(e){ if(e.target === faqOverlay) closeFaq(); }
+
+function renderFaq(){
+  faqBody.innerHTML = `
+    <div class="auth-head">
+      <div class="emoji">💬</div>
+      <h3>문의하기</h3>
+      <p>자주 묻는 질문을 먼저 확인해보세요.</p>
+    </div>
+    <div class="faq-list">
+      ${faqs.map((f, i) => `
+        <div class="faq-item ${i===faqOpenIndex?'open':''}">
+          <button type="button" class="faq-q" data-index="${i}">
+            <span class="faq-mark">Q${i+1}</span>
+            <span>${escapeHtml(f.q)}</span>
+            <span class="faq-arrow">▾</span>
+          </button>
+          <div class="faq-a">${escapeHtml(f.a)}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="faq-foot">
+      찾는 답이 없다면 <b>손주 힘 보태기</b>로 직접 문의를 남겨주세요.<br>
+      <a href="privacy.html" style="text-decoration:underline;">개인정보처리방침</a> ·
+      <a href="terms.html" style="text-decoration:underline;">이용약관</a>
+    </div>
+    <div class="game-action-row">
+      <button type="button" class="btn-ghost" style="flex:1;" onclick="closeFaq(); openSupport();">문의 남기기</button>
+      <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeFaq()">닫기</button>
+    </div>
+  `;
+  // 아코디언: 열려 있는 항목을 다시 누르면 접힌다 (한 번에 하나만 열림)
+  faqBody.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const i = Number(btn.dataset.index);
+      faqOpenIndex = (faqOpenIndex === i) ? -1 : i;
+      renderFaq();
+    });
+  });
+}
+
+// ================= 참여 / 후원 / 확장 문의 (extra.md §7) =================
+// 백엔드가 없어 접수 확인 화면까지만 동작한다 — Supabase 연동 시 submitContact()만 교체하면 된다.
+const contactOverlay = document.getElementById('contactOverlay');
+const contactBody = document.getElementById('contactBody');
+
+const contactTypes = {
+  team:{
+    emoji:'🙋',
+    title:'팀원으로 참여하고 싶어요',
+    sub:'함께 만들어갈 손주를 기다리고 있어요.',
+    note:'기획·개발·디자인·현장 조사 등 어느 자리든 좋아요. 남겨주신 연락처로 순차적으로 안내드릴게요.',
+    fieldLabel:'참여 희망 분야',
+    options:['현장 조사 (맛집 발굴)','기획 / 운영','디자인','개발','홍보 / 콘텐츠','아직 못 정했어요'],
+    messageLabel:'하고 싶은 말',
+    messagePlaceholder:'참여하고 싶은 이유나 가능한 활동 시간을 자유롭게 적어주세요.',
+  },
+  sponsor:{
+    emoji:'🌱',
+    title:'후원하고 싶어요',
+    sub:'작은 보탬이 동네 맛집 한 곳을 더 발굴합니다.',
+    note:'현재는 비영리 취지로 운영 중이라, 후원금은 현장 조사·운영 비용으로만 사용할 예정이에요.',
+    fieldLabel:'후원 방식',
+    options:['일시 후원','정기 후원','물품 / 재능 기부','아직 상담만 원해요'],
+    messageLabel:'후원 관련 메시지',
+    messagePlaceholder:'후원과 관련해 궁금한 점이나 전하고 싶은 말씀을 적어주세요.',
+  },
+  partnerStore:{
+    emoji:'🧑‍🍳',
+    title:'사장님 제휴 신청',
+    sub:'식권과 학생 혜택을 함께 준비해요.',
+    note:'입점과 제휴 신청은 무료예요. 식권 혜택과 유효기간은 사장님이 직접 정하시고, 수수료 구조는 아직 확정되지 않아 협의 단계입니다.',
+    fieldLabel:'희망 혜택',
+    options:['식권 10+1','학생 할인','세트 메뉴 할인','아직 상담만 원해요'],
+    messageLabel:'가게 소개 · 하고 싶은 말',
+    messagePlaceholder:'가게 이름과 위치, 어떤 혜택을 생각하고 계신지 적어주세요.',
+  },
+  partnerOrg:{
+    emoji:'🎓',
+    title:'학생회 · 동아리 제휴 문의',
+    sub:'우리 단체 회원이 쓸 혜택을 함께 만들어요.',
+    note:'고려대학교 세종캠퍼스에는 이미 KU 멤버십처럼 제휴 식당이 있어요. 지도에 없던 로컬 식당도 같은 자리에 설 수 있게 연결해드리려 합니다 — 다만 아직 협의 단계라 확정된 조건은 없어요.',
+    fieldLabel:'단체 유형',
+    options:['학생회','동아리','교내 기관','기타 단체'],
+    messageLabel:'제휴 희망 내용',
+    messagePlaceholder:'단체 이름과 인원, 어떤 혜택을 원하시는지 알려주세요.',
+  },
+  expand:{
+    emoji:'📍',
+    title:'우리 동네 로컬 맛집도 찾아주세요',
+    sub:'조치원이 아니어도, 이 취지에 공감한다면.',
+    note:'수익 모델은 아직 확정되지 않았어요. 현재는 비영리 취지의 확장 논의 단계이며, 함께할 방법을 같이 찾아보고 있습니다.',
+    fieldLabel:'제안하는 지역',
+    options:null,
+    messageLabel:'제안 내용',
+    messagePlaceholder:'어떤 동네인지, 어떤 점에서 이 서비스가 필요한지 알려주세요.',
+  },
+};
+
+function openSupport(){
+  renderSupportChoice();
+  contactOverlay.classList.add('show');
+}
+function openContact(type){
+  renderContactForm(type);
+  contactOverlay.classList.add('show');
+}
+function closeContact(){ contactOverlay.classList.remove('show'); }
+function closeContactOnOverlay(e){ if(e.target === contactOverlay) closeContact(); }
+
+function renderSupportChoice(){
+  contactBody.innerHTML = `
+    <div class="auth-head">
+      <div class="emoji">🤝</div>
+      <h3>손주 힘 보태기</h3>
+      <p>이 프로젝트에 함께할 손길을 기다려요.</p>
+    </div>
+    <div class="game-choice-grid">
+      <button type="button" class="game-choice-btn" data-type="team">
+        <span class="icon">🙋</span>
+        <span>
+          <strong>팀원으로 참여하고 싶어요</strong>
+          <span class="desc">현장 조사부터 기획·개발까지, 함께할 자리가 열려 있어요.</span>
+        </span>
+      </button>
+      <button type="button" class="game-choice-btn" data-type="sponsor">
+        <span class="icon">🌱</span>
+        <span>
+          <strong>후원하고 싶어요</strong>
+          <span class="desc">비영리 취지로 운영되는 프로젝트에 힘을 보태주세요.</span>
+        </span>
+      </button>
+    </div>
+    <div class="game-action-row">
+      <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeContact()">닫기</button>
+    </div>
+  `;
+  contactBody.querySelectorAll('.game-choice-btn').forEach(btn => {
+    btn.addEventListener('click', () => renderContactForm(btn.dataset.type));
+  });
+}
+
+function renderContactForm(type){
+  const c = contactTypes[type] || contactTypes.expand;
+  // 손주 힘 보태기에서 들어온 경우에만 카테고리 선택으로 되돌아갈 수 있다
+  const backBtn = (type === 'team' || type === 'sponsor')
+    ? `<button type="button" class="btn-ghost" style="flex:1;" id="contactBack">뒤로</button>`
+    : `<button type="button" class="btn-ghost" style="flex:1;" onclick="closeContact()">닫기</button>`;
+  contactBody.innerHTML = `
+    <div class="auth-head">
+      <div class="emoji">${c.emoji}</div>
+      <h3>${escapeHtml(c.title)}</h3>
+      <p>${escapeHtml(c.sub)}</p>
+    </div>
+    <div class="contact-note">${escapeHtml(c.note)}</div>
+    <form id="contactForm">
+      <div class="auth-field">
+        <label>이름</label>
+        <input type="text" id="contactName" placeholder="이름 또는 닉네임" value="${escapeHtml(currentUserName || '')}">
+      </div>
+      <div class="auth-field">
+        <label>연락처 / 이메일</label>
+        <input type="text" id="contactReach" placeholder="연락 받으실 이메일 또는 전화번호">
+      </div>
+      <div class="auth-field">
+        <label>${escapeHtml(c.fieldLabel)}</label>
+        ${c.options
+          ? `<select id="contactField" class="review-select">${c.options.map(o => `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('')}</select>`
+          : `<input type="text" id="contactField" placeholder="예) 세종시 도담동, 청주시 사창동">`}
+      </div>
+      <div class="auth-field">
+        <label>${escapeHtml(c.messageLabel)} <span class="review-optional">선택</span></label>
+        <textarea id="contactMessage" class="contact-textarea" maxlength="500" placeholder="${escapeHtml(c.messagePlaceholder)}"></textarea>
+      </div>
+      <p class="auth-error" id="contactError"></p>
+      <div class="game-action-row">
+        ${backBtn}
+        <button type="submit" class="survey-close-btn" style="flex:1;">문의 남기기</button>
+      </div>
+    </form>
+  `;
+  const back = document.getElementById('contactBack');
+  if(back) back.addEventListener('click', renderSupportChoice);
+  document.getElementById('contactForm').addEventListener('submit', e => submitContact(e, type));
+}
+
+function submitContact(e, type){
+  e.preventDefault();
+  const errEl = document.getElementById('contactError');
+  const name = document.getElementById('contactName').value.trim();
+  const reach = document.getElementById('contactReach').value.trim();
+  errEl.textContent = '';
+  if(!name){ errEl.textContent = '이름을 입력해주세요.'; return; }
+  if(!isEmailOrPhone(reach)){ errEl.textContent = '연락 받으실 이메일 또는 전화번호를 정확히 입력해주세요.'; return; }
+  const c = contactTypes[type] || contactTypes.expand;
+  contactBody.innerHTML = `
+    <div class="auth-welcome">
+      <div class="emoji">🌾</div>
+      <h3>문의가 접수됐어요!</h3>
+      <p>${escapeHtml(name)} 님, 고맙습니다. 남겨주신 연락처로 안내드릴게요.<br>(${escapeHtml(c.title)})</p>
+      <div class="game-action-row">
+        <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeContact()">확인</button>
+      </div>
+    </div>
+  `;
+}
+
+// ================= 손주 식권 (사전 예약) =================
+// 실제 결제는 붙이지 않는다 — 선불 식권 판매는 사업자등록·통신판매업 신고·PG 계약이
+// 선행돼야 해서, 정식 오픈 전까지는 예약 접수까지만 받는다.
+const passOverlay = document.getElementById('passOverlay');
+const passBody = document.getElementById('passBody');
+const passGrid = document.getElementById('passGrid');
+let passIdx = -1;
+let passBundleIdx = 0;
+
+function getPassRestaurants(){
+  return restaurants.filter(r => r.pass);
+}
+
+function renderPassCards(){
+  passGrid.innerHTML = getPassRestaurants().map(r => {
+    const idx = restaurants.indexOf(r);
+    return `
+      <div class="pass-card">
+        <div class="pass-card-head">
+          <span class="pass-emoji">${r.emoji}</span>
+          <div>
+            <strong>${escapeHtml(r.name)}</strong>
+            <span class="pass-cat">${r.cat}</span>
+          </div>
+        </div>
+        <div class="pass-price">장당 <b>${r.pass.unit.toLocaleString()}원</b></div>
+        <span class="pass-benefit-chip">🎁 ${escapeHtml(r.pass.benefit)}</span>
+        <div class="pass-valid">유효기간 ${r.pass.validDays}일</div>
+        <button type="button" class="pass-buy-btn" data-idx="${idx}">식권 예약하기</button>
+      </div>
+    `;
+  }).join('');
+  passGrid.querySelectorAll('.pass-buy-btn').forEach(btn => {
+    btn.addEventListener('click', () => openPass(Number(btn.dataset.idx)));
+  });
+}
+renderPassCards();
+
+function openPass(idx){
+  if(!requireLogin('pass')) return;
+  passIdx = idx;
+  passBundleIdx = 0;
+  renderPassSelect();
+  passOverlay.classList.add('show');
+}
+function closePass(){ passOverlay.classList.remove('show'); }
+function closePassOnOverlay(e){ if(e.target === passOverlay) closePass(); }
+
+function renderPassSelect(){
+  const r = restaurants[passIdx];
+  const p = r.pass;
+  const picked = p.bundles[passBundleIdx];
+  const total = p.unit * picked.count;
+  passBody.innerHTML = `
+    <div class="auth-head">
+      <div class="emoji">${r.emoji}</div>
+      <h3>${escapeHtml(r.name)} 식권</h3>
+      <p>장당 ${p.unit.toLocaleString()}원 · ${escapeHtml(p.benefit)}</p>
+    </div>
+    <div class="auth-field">
+      <label>몇 장 담을까요?</label>
+      <div class="pass-bundle-list">
+        ${p.bundles.map((b, i) => `
+          <button type="button" class="pass-bundle ${i===passBundleIdx?'selected':''}" data-i="${i}">
+            <span class="pass-bundle-count">${b.count}장${b.bonus ? ` <b>+${b.bonus}</b>` : ''}</span>
+            <span class="pass-bundle-price">${(p.unit * b.count).toLocaleString()}원</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+    <div class="pass-summary">
+      <div class="pass-summary-row"><span>식권 ${picked.count}장</span><span>${total.toLocaleString()}원</span></div>
+      ${picked.bonus ? `<div class="pass-summary-row bonus"><span>사장님 혜택 +${picked.bonus}장</span><span>0원</span></div>` : ''}
+      <div class="pass-summary-row total"><span>실제 받는 식권</span><span>${picked.count + picked.bonus}장</span></div>
+      <div class="pass-summary-row total"><span>결제 예정 금액</span><span>${total.toLocaleString()}원</span></div>
+    </div>
+    <div class="game-action-row">
+      <button type="button" class="btn-ghost" style="flex:1;" onclick="closePass()">닫기</button>
+      <button type="button" class="survey-close-btn" style="flex:1;" id="passNext">다음</button>
+    </div>
+  `;
+  passBody.querySelectorAll('.pass-bundle').forEach(btn => {
+    btn.addEventListener('click', () => { passBundleIdx = Number(btn.dataset.i); renderPassSelect(); });
+  });
+  document.getElementById('passNext').addEventListener('click', renderPassConfirm);
+}
+
+function renderPassConfirm(){
+  const r = restaurants[passIdx];
+  const p = r.pass;
+  const picked = p.bundles[passBundleIdx];
+  const total = p.unit * picked.count;
+  passBody.innerHTML = `
+    <div class="auth-head">
+      <div class="emoji">🎟️</div>
+      <h3>이렇게 예약할까요?</h3>
+      <p>아래 내용으로 사전 예약을 접수합니다.</p>
+    </div>
+    <div class="pass-summary">
+      <div class="pass-summary-row"><span>가게</span><span>${r.emoji} ${escapeHtml(r.name)}</span></div>
+      <div class="pass-summary-row"><span>구매 식권</span><span>${picked.count}장</span></div>
+      ${picked.bonus ? `<div class="pass-summary-row bonus"><span>사장님 혜택</span><span>+${picked.bonus}장</span></div>` : ''}
+      <div class="pass-summary-row total"><span>실제 받는 식권</span><span>${picked.count + picked.bonus}장</span></div>
+      <div class="pass-summary-row total"><span>결제 예정 금액</span><span>${total.toLocaleString()}원</span></div>
+      <div class="pass-summary-row"><span>유효기간</span><span>사용 시작일부터 ${p.validDays}일</span></div>
+    </div>
+    <div class="contact-note">지금은 <b>사전 예약</b>만 접수돼요. 실제 결제는 정식 오픈 때 연동될 예정이라, 지금 단계에서는 돈이 빠져나가지 않아요.</div>
+    <div class="game-action-row">
+      <button type="button" class="btn-ghost" style="flex:1;" id="passBack">뒤로</button>
+      <button type="button" class="survey-close-btn" style="flex:1;" id="passSubmit">사전 예약 접수하기</button>
+    </div>
+  `;
+  document.getElementById('passBack').addEventListener('click', renderPassSelect);
+  document.getElementById('passSubmit').addEventListener('click', submitPassOrder);
+}
+
+function submitPassOrder(){
+  const r = restaurants[passIdx];
+  const p = r.pass;
+  const picked = p.bundles[passBundleIdx];
+  store.passOrders.unshift({
+    place: r.name,
+    emoji: r.emoji,
+    count: picked.count,
+    bonus: picked.bonus,
+    unit: p.unit,
+    total: p.unit * picked.count,
+    at: new Date().toISOString().slice(0, 10),
+  });
+  const stored = saveState();
+  passBody.innerHTML = `
+    <div class="auth-welcome">
+      <div class="emoji">🌾</div>
+      <h3>예약이 접수됐어요!</h3>
+      <p>${stored
+        ? `${escapeHtml(r.name)} 식권 ${picked.count + picked.bonus}장을 담아뒀어요. 정식 오픈하면 결제 안내를 드릴게요.`
+        : `${escapeHtml(r.name)} 식권을 담아뒀어요. 다만 저장 공간이 가득 차서 기록은 남기지 못했어요 — 새로고침하면 사라질 수 있어요.`}</p>
+      <div class="game-action-row">
+        <button type="button" class="btn-ghost" style="flex:1;" onclick="closePass()">닫기</button>
+        <button type="button" class="survey-close-btn" style="flex:1;" onclick="closePass(); openMypage('pass');">내 식권 보기</button>
+      </div>
+    </div>
+  `;
+}
+
+// ================= 헤더 통합 검색 =================
+// 검색 대상을 늘리려면 searchSources에 항목을 하나 더 넣으면 된다.
+// 각 item은 {icon, label, sub, keywords, run} 모양이고, run()은 기존 함수를 호출만 한다.
+const headerSearchInput = document.getElementById('headerSearch');
+const searchResults = document.getElementById('searchResults');
+const searchOverlay = document.getElementById('searchOverlay');
+const overlaySearchInput = document.getElementById('overlaySearch');
+const overlaySearchResults = document.getElementById('overlaySearchResults');
+const SEARCH_PER_SOURCE = 4;
+const SEARCH_MAX = 10;
+
+let searchFlat = [];      // 지금 화면에 그려진 항목들 (키보드 이동용)
+let searchActiveIndex = -1;
+
+function goSection(id){
+  closeAllSearch();
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+}
+
+const shortcutItems = [
+  {icon:'🗺️', label:'조치원 미니 지도', sub:'로컬 맛집 위치 보기', keywords:'지도 맵 map 위치 조치원', run:() => goSection('map')},
+  {icon:'🍽️', label:'맛집 둘러보기', sub:'카테고리 · 가격 필터', keywords:'맛집 목록 리스트 카드 오늘 뭐 먹지', run:() => goSection('restaurants')},
+  {icon:'🎟️', label:'손주 식권', sub:'식권 예약과 제휴 안내', keywords:'식권 패스 pass 제휴 구매 예약 할인 멤버십', run:() => goSection('pass')},
+  {icon:'📝', label:'취향 설문', sub:'내 취향에 맞는 맛집 추천', keywords:'취향 설문 추천 테스트', run:() => { closeAllSearch(); openSurvey(); }},
+  {icon:'🎲', label:'메뉴 추천 게임', sub:'타로 · 룰렛으로 고르기', keywords:'게임 룰렛 타로 랜덤 뽑기 결정장애', run:() => { closeAllSearch(); openGame(); }},
+  {icon:'🌱', label:'마이페이지', sub:'저장 · 방문 · 식권 내역', keywords:'마이페이지 내정보 저장목록 방문기록 식권', run:() => { closeAllSearch(); openMypage('saved'); }},
+  {icon:'🌾', label:'서비스 소개', sub:'프로젝트 개요와 비전', keywords:'서비스 소개 about 소개 비전 개발자 버전', run:() => { closeAllSearch(); openIntro(); }},
+  {icon:'💬', label:'문의하기 · FAQ', sub:'자주 묻는 질문', keywords:'문의 faq 질문 도움말 고객센터', run:() => { closeAllSearch(); openFaq(); }},
+  {icon:'✉️', label:'오픈 알림 신청', sub:'사전 신청 이메일 등록', keywords:'알림 신청 사전신청 이메일 오픈 베타', run:() => goSection('signup')},
+  {icon:'🔒', label:'개인정보처리방침', sub:'별도 페이지로 이동', keywords:'개인정보 처리방침 privacy 약관 법적', run:() => { window.location.href = 'privacy.html'; }},
+  {icon:'📄', label:'이용약관', sub:'별도 페이지로 이동', keywords:'이용약관 terms 약관 법적 고지', run:() => { window.location.href = 'terms.html'; }},
+];
+
+const partnerItems = [
+  {icon:'🧑‍🍳', label:'사장님 제휴 신청', sub:'식권 · 학생 혜택 함께 준비하기', keywords:'제휴 사장님 입점 신청 가게 등록 식권 파트너', run:() => { closeAllSearch(); openContact('partnerStore'); }},
+  {icon:'🎓', label:'학생회 · 동아리 제휴 문의', sub:'KU 멤버십 같은 단체 제휴', keywords:'제휴 학생회 동아리 단체 ku 멤버십 기관 학교', run:() => { closeAllSearch(); openContact('partnerOrg'); }},
+  {icon:'🙋', label:'팀원으로 참여하기', sub:'손주 힘 보태기', keywords:'참여 팀원 봉사 활동 지원 손주 힘 보태기', run:() => { closeAllSearch(); openContact('team'); }},
+  {icon:'🌱', label:'후원하기', sub:'손주 힘 보태기', keywords:'후원 기부 스폰서 지원금', run:() => { closeAllSearch(); openContact('sponsor'); }},
+];
+
+const searchSources = [
+  {
+    type:'가게',
+    items: () => restaurants.map((r, i) => ({
+      icon: r.emoji,
+      label: r.name,
+      sub: `${r.cat} · ★ ${r.rating} · ${r.priceValue.toLocaleString()}원`,
+      keywords: `${r.name} ${r.desc} ${r.cat}`,
+      run: () => { closeAllSearch(); openDetail(i); },
+    })),
+  },
+  {
+    type:'손주 식권',
+    items: () => getPassRestaurants().map(r => ({
+      icon:'🎟️',
+      label: `${r.name} 식권`,
+      sub: `장당 ${r.pass.unit.toLocaleString()}원 · ${r.pass.benefit}`,
+      keywords: `${r.name} 식권 패스 pass 쿠폰 ${r.pass.benefit} ${r.cat}`,
+      run: () => { closeAllSearch(); openPass(restaurants.indexOf(r)); },
+    })),
+  },
+  { type:'제휴 · 문의', items: () => partnerItems },
+  { type:'바로가기',   items: () => shortcutItems },
+];
+
+function searchAll(query){
+  const q = query.trim().toLowerCase();
+  if(!q) return [];
+  const groups = [];
+  let picked = 0;
+  for(const src of searchSources){
+    if(picked >= SEARCH_MAX) break;
+    const hits = src.items()
+      .filter(it => it.keywords.toLowerCase().includes(q))
+      .slice(0, Math.min(SEARCH_PER_SOURCE, SEARCH_MAX - picked));
+    if(hits.length){
+      groups.push({type:src.type, hits});
+      picked += hits.length;
+    }
+  }
+  return groups;
+}
+
+function runSearch(query, container){
+  const q = query.trim();
+  searchActiveIndex = -1;
+  searchFlat = [];
+  if(!q){
+    container.innerHTML = '';
+    container.classList.remove('show');
+    return;
+  }
+  const groups = searchAll(q);
+  groups.forEach(g => g.hits.forEach(h => searchFlat.push(h)));
+
+  const hint = `<button type="button" class="search-hint" data-fallback="1">🔍 맛집 목록에서 "${escapeHtml(q)}" 찾아보기</button>`;
+  container.innerHTML = groups.length === 0
+    ? `<div class="search-empty">"${escapeHtml(q)}"에 해당하는 결과가 없어요.</div>${hint}`
+    : groups.map(g => `
+        <div class="search-group">
+          <div class="search-group-title">${escapeHtml(g.type)}</div>
+          ${g.hits.map(h => {
+            const i = searchFlat.indexOf(h);
+            return `
+              <button type="button" class="search-item" data-i="${i}">
+                <span class="search-icon">${h.icon}</span>
+                <span class="search-text">
+                  <span class="search-label">${escapeHtml(h.label)}</span>
+                  <span class="search-sub">${escapeHtml(h.sub)}</span>
+                </span>
+              </button>
+            `;
+          }).join('')}
+        </div>
+      `).join('') + hint;
+  container.classList.add('show');
+
+  container.querySelectorAll('.search-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = searchFlat[Number(btn.dataset.i)];
+      if(item) item.run();
+    });
+  });
+  const fallback = container.querySelector('.search-hint');
+  if(fallback) fallback.addEventListener('click', () => applyHeaderQuery(q));
+}
+
+function paintSearchActive(container){
+  container.querySelectorAll('.search-item').forEach(btn => {
+    const on = Number(btn.dataset.i) === searchActiveIndex;
+    btn.classList.toggle('active', on);
+    if(on) btn.scrollIntoView({block:'nearest'});
+  });
+}
+
+// Enter로 검색어를 맛집 목록 필터에 넘긴다 (기존 헤더 검색은 스크롤만 하고 검색어를 버렸다)
+function applyHeaderQuery(q){
+  currentQuery = q;
+  cardSearch.value = q;
+  renderCards();
+  closeAllSearch();
+  document.getElementById('restaurants').scrollIntoView({behavior:'smooth'});
+}
+
+function handleSearchKey(e, input, container){
+  if(e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+    if(!searchFlat.length) return;
+    e.preventDefault();
+    const last = searchFlat.length - 1;
+    if(e.key === 'ArrowDown') searchActiveIndex = searchActiveIndex >= last ? 0 : searchActiveIndex + 1;
+    else searchActiveIndex = searchActiveIndex <= 0 ? last : searchActiveIndex - 1;
+    paintSearchActive(container);
+    return;
+  }
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    const item = searchFlat[searchActiveIndex];
+    if(item) item.run();
+    else if(input.value.trim()) applyHeaderQuery(input.value.trim());
+    return;
+  }
+  if(e.key === 'Escape'){
+    closeAllSearch();
+  }
+}
+
+function closeSearchDropdown(){
+  searchResults.classList.remove('show');
+  searchActiveIndex = -1;
+}
+function openSearch(){
+  overlaySearchInput.value = headerSearchInput.value;
+  runSearch(overlaySearchInput.value, overlaySearchResults);
+  searchOverlay.classList.add('show');
+  // 모바일 키보드가 바로 올라오도록
+  setTimeout(() => overlaySearchInput.focus(), 50);
+}
+function closeSearch(){ searchOverlay.classList.remove('show'); }
+function closeSearchOnOverlay(e){ if(e.target === searchOverlay) closeSearch(); }
+function closeAllSearch(){
+  closeSearchDropdown();
+  closeSearch();
+}
+
+headerSearchInput.addEventListener('input', () => runSearch(headerSearchInput.value, searchResults));
+headerSearchInput.addEventListener('keydown', e => handleSearchKey(e, headerSearchInput, searchResults));
+headerSearchInput.addEventListener('focus', () => { if(headerSearchInput.value.trim()) runSearch(headerSearchInput.value, searchResults); });
+overlaySearchInput.addEventListener('input', () => runSearch(overlaySearchInput.value, overlaySearchResults));
+overlaySearchInput.addEventListener('keydown', e => handleSearchKey(e, overlaySearchInput, overlaySearchResults));
+
+// 드롭다운 바깥을 누르면 닫는다 (모달 오버레이는 자기 배경 클릭으로 따로 닫힌다)
+document.addEventListener('click', e => {
+  if(!e.target.closest('.nav-search-wrap')) closeSearchDropdown();
+});
