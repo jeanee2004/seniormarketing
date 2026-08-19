@@ -96,7 +96,8 @@ The Gemini-generated character PNGs in `assets/` have a *baked-in* checkerboard 
 
 ### Known gaps (intentional, per PRD roadmap)
 
-- The map section is a static placeholder (no Naver Maps Client ID configured yet); swap in real Naver Maps API once a key exists.
+- The map section is a static placeholder (no Naver Maps Client ID configured yet); swap in real Naver Maps API once a key exists. The planned strategy once that key exists is building-level lat/lng navigation, not just embedding a generic map — Naver Maps currently resolves every campus building to the same road address, so per-building coordinates (a data-collection task, not a code change) are the actual differentiator to build toward.
+- 커뮤니티(community) is intentionally not an in-site chat/board — real-time discussion is meant to live in an existing external SNS group (WhatsApp/Instagram 등). The site's job is only a join link + QR code once a group exists. Keep that link in one place (a single constant, not scattered inline) since invite links expire or get replaced.
 - Login/save/mypage, language switching, and AI review summarization are UI-only stubs — see the PRD's "로드맵으로 분리" section for what's explicitly out of scope for this landing page.
 - The 손주 힘 보태기 / 지역 확장 문의 forms (`extra.md` §7) validate input and then show a confirmation screen without sending anything anywhere. `submitContact()` is the single swap point when a real inbox or Supabase table exists.
 - The legal pages carry deliberate `(기재 예정)` / `(담당자명 기재)` placeholders for operator and privacy-officer details — `extra.md` §5 requires them to be filled with real values before actual operation, so don't invent names or emails there.
