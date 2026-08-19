@@ -196,55 +196,6 @@
   </div>
 </section>
 
-<!-- ===== 손주 식권 · 제휴 ===== -->
-<section class="pass section-pad" id="pass">
-  <div class="container">
-    <span class="eyebrow">PASS</span>
-    <h2 class="section-title">손주 식권<span class="badge-soon">준비중</span></h2>
-    <p class="section-sub">마음에 드는 가게의 식권을 미리 담아두세요. 사장님이 정한 혜택만큼 더 받고, 갈 때마다 한 장씩 쓰면 돼요.</p>
-
-    <div class="pass-benefit-grid">
-      <div class="pass-benefit">
-        <span class="emoji">🎟️</span>
-        <h3>10장 사면 1장 더</h3>
-        <p>묶음으로 담으면 사장님이 정한 만큼 식권을 더 드려요. 혜택은 가게마다 달라요.</p>
-      </div>
-      <div class="pass-benefit">
-        <span class="emoji">💰</span>
-        <h3>미리 담아두는 밥값</h3>
-        <p>한 끼씩 계산하는 대신 미리 담아두면, 그만큼 밥값 부담이 줄어들어요.</p>
-      </div>
-      <div class="pass-benefit">
-        <span class="emoji">🤝</span>
-        <h3>사장님은 단골을</h3>
-        <p>가게는 미리 매출을 만들고 단골을 얻어요. 손님과 사장님이 함께 이득인 구조예요.</p>
-      </div>
-    </div>
-
-    <h3 class="pass-list-title">식권을 준비 중인 가게</h3>
-    <div class="pass-grid" id="passGrid"></div>
-    <p class="pass-more-note">나머지 가게는 9월 현장 조사에서 사장님과 협의한 뒤 순차적으로 열릴 예정이에요.</p>
-
-    <div class="pass-partner">
-      <div class="pass-partner-head">
-        <span class="emoji">🎓</span>
-        <div>
-          <h3>제휴도 함께 준비하고 있어요</h3>
-          <p>고려대학교 세종캠퍼스에는 이미 KU 멤버십처럼 제휴를 맺은 식당들이 있어요. 지도에 없던 로컬 식당도 알려지면 그 자리에 함께 설 수 있다고 생각해요.</p>
-        </div>
-      </div>
-      <div class="pass-partner-btns">
-        <button type="button" class="btn-primary" onclick="openContact('partnerStore')">사장님 제휴 신청</button>
-        <button type="button" class="btn-ghost" onclick="openContact('partnerOrg')">학생회 · 동아리 제휴 문의</button>
-      </div>
-    </div>
-
-    <div class="pass-notice">
-      <strong>결제는 아직 열지 않았어요.</strong> 지금은 비영리 취지의 준비 단계라, 식권은 <b>사전 예약 접수</b>까지만 받고 실제 결제 연동은 정식 오픈 때 진행할 예정이에요. 식권 혜택과 유효기간은 사장님이 정합니다.
-    </div>
-  </div>
-</section>
-
 <!-- ===== Share CTA ===== -->
 <section class="share section-pad">
   <div class="container">
@@ -272,10 +223,10 @@
         <strong>사장님이신가요?<span class="badge-soon">준비중</span></strong>
         <span class="join-desc">우리 가게를 소개하고 싶은 조치원 로컬 식당 사장님을 위한 입점 신청 자리예요.</span>
       </button>
-      <button type="button" class="join-card" onclick="openSupport()">
-        <span class="join-emoji">🤝</span>
+      <button type="button" class="join-card" onclick="openContact('team')">
+        <span class="join-emoji">🙋</span>
         <strong>손주 힘 보태기</strong>
-        <span class="join-desc">이 프로젝트에 함께할 손길을 기다려요. 팀원으로 참여하거나, 후원으로 거들 수 있어요.</span>
+        <span class="join-desc">기획·개발·디자인·현장 조사, 팀원으로 함께할 손길을 기다려요.</span>
       </button>
       <button type="button" class="join-card" onclick="openContact('expand')">
         <span class="join-emoji">📍</span>
@@ -316,8 +267,9 @@
           <li><a href="#restaurants">맛집 둘러보기</a></li>
           <li><a href="#map">지도로 보기</a></li>
           <li><a href="javascript:void(0)" onclick="openToast('vendor')">사장님이신가요?<span class="badge-soon">준비중</span></a></li>
-          <li><a href="#pass">손주 식권<span class="badge-soon">준비중</span></a></li>
+          <li><a href="javascript:void(0)" onclick="openPassInfo()">손주 식권<span class="badge-soon">준비중</span></a></li>
           <li><a href="#join">손주 힘 보태기</a></li>
+          <li><a href="javascript:void(0)" onclick="openContact('sponsor')">후원하기</a></li>
         </ul>
       </div>
       <div>
@@ -389,6 +341,61 @@
 <div class="survey-overlay" id="passOverlay" onclick="closePassOnOverlay(event)">
   <div class="survey-box pass-box" onclick="event.stopPropagation()">
     <div id="passBody"></div>
+  </div>
+</div>
+
+<!-- ===== 손주 식권 · 제휴 안내 (푸터 링크로만 진입) ===== -->
+<div class="survey-overlay" id="passInfoOverlay" onclick="closePassInfoOnOverlay(event)">
+  <div class="survey-box pass-info-box" onclick="event.stopPropagation()">
+    <div class="auth-head">
+      <div class="emoji">🎟️</div>
+      <h3>손주 식권<span class="badge-soon">준비중</span></h3>
+      <p>마음에 드는 가게의 식권을 미리 담아두세요. 사장님이 정한 혜택만큼 더 받고, 갈 때마다 한 장씩 쓰면 돼요.</p>
+    </div>
+
+    <div class="pass-benefit-grid">
+      <div class="pass-benefit">
+        <span class="emoji">🎟️</span>
+        <h3>10장 사면 1장 더</h3>
+        <p>묶음으로 담으면 사장님이 정한 만큼 식권을 더 드려요. 혜택은 가게마다 달라요.</p>
+      </div>
+      <div class="pass-benefit">
+        <span class="emoji">💰</span>
+        <h3>미리 담아두는 밥값</h3>
+        <p>한 끼씩 계산하는 대신 미리 담아두면, 그만큼 밥값 부담이 줄어들어요.</p>
+      </div>
+      <div class="pass-benefit">
+        <span class="emoji">🤝</span>
+        <h3>사장님은 단골을</h3>
+        <p>가게는 미리 매출을 만들고 단골을 얻어요. 손님과 사장님이 함께 이득인 구조예요.</p>
+      </div>
+    </div>
+
+    <h3 class="pass-list-title">식권을 준비 중인 가게</h3>
+    <div class="pass-grid" id="passGrid"></div>
+    <p class="pass-more-note">나머지 가게는 9월 현장 조사에서 사장님과 협의한 뒤 순차적으로 열릴 예정이에요.</p>
+
+    <div class="pass-partner">
+      <div class="pass-partner-head">
+        <span class="emoji">🎓</span>
+        <div>
+          <h3>제휴도 함께 준비하고 있어요</h3>
+          <p>고려대학교 세종캠퍼스에는 이미 KU 멤버십처럼 제휴를 맺은 식당들이 있어요. 지도에 없던 로컬 식당도 알려지면 그 자리에 함께 설 수 있다고 생각해요.</p>
+        </div>
+      </div>
+      <div class="pass-partner-btns">
+        <button type="button" class="btn-primary" onclick="closePassInfo(); openContact('partnerStore');">사장님 제휴 신청</button>
+        <button type="button" class="btn-ghost" onclick="closePassInfo(); openContact('partnerOrg');">학생회 · 동아리 제휴 문의</button>
+      </div>
+    </div>
+
+    <div class="pass-notice">
+      <strong>결제는 아직 열지 않았어요.</strong> 지금은 비영리 취지의 준비 단계라, 식권은 <b>사전 예약 접수</b>까지만 받고 실제 결제 연동은 정식 오픈 때 진행할 예정이에요. 식권 혜택과 유효기간은 사장님이 정합니다.
+    </div>
+
+    <div class="game-action-row">
+      <button type="button" class="survey-close-btn" style="flex:1;" onclick="closePassInfo()">닫기</button>
+    </div>
   </div>
 </div>
 

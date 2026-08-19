@@ -1416,6 +1416,11 @@ function openPass(idx){
 function closePass(){ passOverlay.classList.remove('show'); }
 function closePassOnOverlay(e){ if(e.target === passOverlay) closePass(); }
 
+const passInfoOverlay = document.getElementById('passInfoOverlay');
+function openPassInfo(){ passInfoOverlay.classList.add('show'); }
+function closePassInfo(){ passInfoOverlay.classList.remove('show'); }
+function closePassInfoOnOverlay(e){ if(e.target === passInfoOverlay) closePassInfo(); }
+
 function renderPassSelect(){
   const r = restaurants[passIdx];
   const p = r.pass;
@@ -1535,7 +1540,7 @@ function goSection(id){
 const shortcutItems = [
   {icon:'🗺️', label:'조치원 미니 지도', sub:'로컬 맛집 위치 보기', keywords:'지도 맵 map 위치 조치원', run:() => goSection('map')},
   {icon:'🍽️', label:'맛집 둘러보기', sub:'카테고리 · 가격 필터', keywords:'맛집 목록 리스트 카드 오늘 뭐 먹지', run:() => goSection('restaurants')},
-  {icon:'🎟️', label:'손주 식권', sub:'식권 예약과 제휴 안내', keywords:'식권 패스 pass 제휴 구매 예약 할인 멤버십', run:() => goSection('pass')},
+  {icon:'🎟️', label:'손주 식권', sub:'식권 예약과 제휴 안내', keywords:'식권 패스 pass 제휴 구매 예약 할인 멤버십', run:() => { closeAllSearch(); openPassInfo(); }},
   {icon:'📝', label:'취향 설문', sub:'내 취향에 맞는 맛집 추천', keywords:'취향 설문 추천 테스트', run:() => { closeAllSearch(); openSurvey(); }},
   {icon:'🎲', label:'메뉴 추천 게임', sub:'타로 · 룰렛으로 고르기', keywords:'게임 룰렛 타로 랜덤 뽑기 결정장애', run:() => { closeAllSearch(); openGame(); }},
   {icon:'🌱', label:'마이페이지', sub:'저장 · 방문 · 식권 내역', keywords:'마이페이지 내정보 저장목록 방문기록 식권', run:() => { closeAllSearch(); openMypage('saved'); }},
