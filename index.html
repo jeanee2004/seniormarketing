@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -119,9 +120,7 @@
     <h2 class="section-title">조치원 미니 지도</h2>
     <p class="section-sub">실제로 확인된 가게 위치예요. 핀을 누르면 상세보기로 이동해요. 나머지 가게는 9월 현장 조사 후 하나씩 추가될 예정이에요.</p>
     <div class="map-wrap">
-      <div id="miniMap" class="map-placeholder">
-        <div class="map-note">📍 조치원읍 일대 · 실제 확인 9곳 표시 중 — 핀을 눌러보세요.</div>
-      </div>
+      <div id="miniMap" class="leaflet-map"></div>
     </div>
   </div>
 </section>
@@ -482,6 +481,7 @@
   </div>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="script.js"></script>
 </body>
 </html>

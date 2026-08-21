@@ -757,39 +757,28 @@ function renderGoogleReviewContent(data){
   `;
 }
 
-// ================= 미니 지도 (실제로 확인된 가게 위치, 구글 Maps JS API 없이 자체 렌더) =================
-// Maps JavaScript API는 별도 사용 설정이 필요해서(Places API 키만으로는 안 됨) 쓰지 않는다.
-// 대신 이미 갖고 있는 좌표를 캠퍼스 중심 기준 상대 위치(%)로 계산해 직접 핀을 찍고,
-// 클릭하면 실제 구글맵으로 바로 연결한다 — 새 API를 켤 필요가 전혀 없다.
+// ================= 미니 지도 (OpenStreetMap 타일 + Leaflet — 구글 지도 상품 활성화 불필요) =================
+// 구글 Maps JS/Static API는 Places API와 별도로 Cloud Console에서 켜야 해서 계속 막혔다.
+// OpenStreetMap 타일은 키/사용 설정 없이 바로 쓸 수 있어 실제 지도(도로·건물)를 그대로 보여줄 수 있다.
 const CAMPUS_CENTER = { lat: 36.6109529892437, lng: 127.286987211083 }; // 고려대학교 세종캠퍼스
-const MAP_BOUNDS = { latSpan: 0.006, lngSpan: 0.007 }; // 캠퍼스 중심에서 위아래/좌우 반경(도)
 
 function renderMiniMap(){
   const mapEl = document.getElementById('miniMap');
-  if(!mapEl) return;
-  const realList = restaurants.filter(r => r.liveReview);
+  if(!mapEl || typeof L === 'undefined') return;
 
-  const centerPin = document.createElement('div');
-  centerPin.className = 'map-pin map-pin-center';
-  centerPin.style.top = '50%';
-  centerPin.style.left = '50%';
-  centerPin.innerHTML = `<span>🏫</span>`;
-  centerPin.title = '고려대학교 세종캠퍼스';
-  mapEl.appendChild(centerPin);
+  const map = L.map(mapEl).setView([CAMPUS_CENTER.lat, CAMPUS_CENTER.lng], 16);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 19,
+  }).addTo(map);
 
-  realList.forEach(r => {
+  L.marker([CAMPUS_CENTER.lat, CAMPUS_CENTER.lng]).addTo(map).bindPopup('🏫 고려대학교 세종캠퍼스');
+
+  restaurants.filter(r => r.liveReview).forEach(r => {
     const idx = restaurants.indexOf(r);
-    const xPct = 50 + ((r.lng - CAMPUS_CENTER.lng) / MAP_BOUNDS.lngSpan) * 50;
-    const yPct = 50 - ((r.lat - CAMPUS_CENTER.lat) / MAP_BOUNDS.latSpan) * 50;
-    const pin = document.createElement('button');
-    pin.type = 'button';
-    pin.className = 'map-pin';
-    pin.style.top = `${Math.min(94, Math.max(6, yPct))}%`;
-    pin.style.left = `${Math.min(94, Math.max(6, xPct))}%`;
-    pin.title = r.name;
-    pin.innerHTML = `<span>${r.emoji}</span>`;
-    pin.addEventListener('click', () => openDetail(idx));
-    mapEl.appendChild(pin);
+    L.marker([r.lat, r.lng]).addTo(map)
+      .bindPopup(`${r.emoji} ${escapeHtml(r.name)}`)
+      .on('click', () => openDetail(idx));
   });
 }
 
