@@ -1,6 +1,6 @@
 // ---- Dummy restaurant data ----
 const restaurants = [
-  {name:"조치원 할매국밥", cat:"한식", emoji:"🍚", desc:"40년 전통, 진한 국물의 소문난 국밥집", rating:4.8, reviewCount:212, price:"₩", priceValue:9000, saved:false, visited:false, detail:{
+  {name:"조치원 할매국밥", nameEn:"Jochiwon Grandma's Gukbap (조치원 할매국밥)", cat:"한식", emoji:"🍚", desc:"40년 전통, 진한 국물의 소문난 국밥집", descEn:"A well-known gukbap house with 40 years of tradition and rich broth", rating:4.8, reviewCount:212, price:"₩", priceValue:9000, saved:false, visited:false, detail:{
     isExample:true,
     address:"세종특별자치시 조치원읍 죽림리 123-4 (임의 주소 · 실제 주소 아님)",
     hours:"매일 07:00 - 20:00 (재료 소진 시 조기 마감)",
@@ -19,7 +19,7 @@ const restaurants = [
   },
   // pass가 있는 가게만 손주 식권 섹션과 검색에 노출된다 (detail과 같은 방식 — 일부만 채워둔 예시)
   pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:180}},
-  {name:"역전 왕돈까스", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
+  {name:"역전 왕돈까스", nameEn:"Yeokjeon King Donkatsu (역전 왕돈까스)", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", descEn:"Thick handmade donkatsu with generous portions", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
     pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:90},
     detail:{
       isExample:true,
@@ -37,21 +37,21 @@ const restaurants = [
         {name:"치즈돈까스", price:"10,500원", composition:"돈까스+모짜렐라 + 밥 + 수프", origin:"돼지고기 국내산, 치즈 수입산"},
       ]
     }},
-  {name:"안쉐프고기해물짬뽕", cat:"중식", emoji:"🥡", desc:"고기와 해물을 함께 낸 얼큰한 짬뽕집", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+  {name:"안쉐프고기해물짬뽕", nameEn:"An-Chef Meat & Seafood Jjambbong (안쉐프고기해물짬뽕)", cat:"중식", emoji:"🥡", desc:"고기와 해물을 함께 낸 얼큰한 짬뽕집", descEn:"A spicy jjambbong spot serving both meat and seafood", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.61477503455844, lng:127.2857292835937, realAddress:"세종특별자치시 조치원읍 섭골길 51-21"},
-  {name:"자갈돈돈", cat:"한식", emoji:"🥩", desc:"조치원읍 골목의 고기구이집", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+  {name:"자갈돈돈", nameEn:"Jagal Dondon (자갈돈돈)", cat:"한식", emoji:"🥩", desc:"조치원읍 골목의 고기구이집", descEn:"A grilled-meat restaurant in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
     liveReview:true, lat:36.6080898465768, lng:127.29005819471818, realAddress:"세종특별자치시 조치원읍 내창2길 30"},
-  {name:"우리들식당", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {name:"우리들식당", nameEn:"Wooridul Sikdang (우리들식당)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.6080899912077, lng:127.288885692635, realAddress:"세종특별자치시 조치원읍 내창3길 19"},
-  {name:"폴바나", cat:"양식", emoji:"🍝", desc:"조치원읍 골목의 양식당", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+  {name:"폴바나", nameEn:"Paul, Barna (폴바나)", cat:"양식", emoji:"🍝", desc:"조치원읍 골목의 양식당", descEn:"A Western-style restaurant in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
     liveReview:true, lat:36.60819819730195, lng:127.28885703507063, realAddress:"세종특별자치시 조치원읍 내창3길 19"},
-  {name:"돈스", cat:"일식", emoji:"🍱", desc:"조치원읍 골목의 돈까스·우동집", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+  {name:"돈스", nameEn:"Donseu (돈스)", cat:"일식", emoji:"🍱", desc:"조치원읍 골목의 돈까스·우동집", descEn:"A donkatsu and udon spot in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.60735076086951, lng:127.29343318591735, realAddress:"세종특별자치시 조치원읍 돌마루7길 6"},
-  {name:"더라멘", cat:"일식", emoji:"🍜", desc:"조치원읍 골목의 라멘집", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+  {name:"더라멘", nameEn:"The Ramen (더라멘)", cat:"일식", emoji:"🍜", desc:"조치원읍 골목의 라멘집", descEn:"A ramen shop in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.607796147725, lng:127.289286979365, realAddress:"세종특별자치시 조치원읍 내창3길 16-1"},
-  {name:"초밥발전소12g", cat:"일식", emoji:"🍣", desc:"조치원읍 골목의 초밥·롤 전문점", rating:null, reviewCount:null, price:"₩₩", priceValue:13000, saved:false, visited:false,
+  {name:"초밥발전소12g", nameEn:"Sushi Power Plant 12g (초밥발전소12g)", cat:"일식", emoji:"🍣", desc:"조치원읍 골목의 초밥·롤 전문점", descEn:"A sushi and roll specialist in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩₩", priceValue:13000, saved:false, visited:false,
     liveReview:true, lat:36.60695328676086, lng:127.2894090160121, realAddress:"세종특별자치시 조치원읍 내창3길 8"},
-  {name:"할머니 떡볶이", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
+  {name:"할머니 떡볶이", nameEn:"Grandma's Tteokbokki (할머니 떡볶이)", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", descEn:"Sweet and spicy old-school tteokbokki, a student favorite snack", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
     pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", validDays:180},
     detail:{
       isExample:true,
@@ -69,9 +69,9 @@ const restaurants = [
         {name:"모둠튀김", price:"5,000원", composition:"튀김 5종 모둠", origin:"식용유 국내산"},
       ]
     }},
-  {name:"파랑새분식", cat:"분식", emoji:"🍙", desc:"조치원읍 골목의 분식집", rating:null, reviewCount:null, price:"₩", priceValue:5000, saved:false, visited:false,
+  {name:"파랑새분식", nameEn:"Blue Bird Bunsik (파랑새분식)", cat:"분식", emoji:"🍙", desc:"조치원읍 골목의 분식집", descEn:"A Korean snack (bunsik) shop in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩", priceValue:5000, saved:false, visited:false,
     liveReview:true, lat:36.608516105696, lng:127.290049731247, realAddress:"세종특별자치시 조치원읍 내창1길 34-1"},
-  {name:"숙이네밥상", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {name:"숙이네밥상", nameEn:"Sooki's Table (숙이네밥상)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.608995511335, lng:127.291526952076, realAddress:"세종특별자치시 조치원읍 원마루길 16-1"},
 ];
 
@@ -80,7 +80,7 @@ const restaurants = [
 // marks는 배열 인덱스가 아니라 가게 이름을 키로 잡는다 — restaurants 순서가 바뀌거나
 // 항목이 추가돼도 저장된 값이 엉뚱한 가게에 붙지 않도록.
 const STORE_KEY = 'bmw:v1';
-let store = { auth:{isLoggedIn:false, name:''}, marks:{}, reviews:[], passOrders:[], accounts:[], reviewLikes:{}, myLikedReviews:[], googleReviews:{} };
+let store = { auth:{isLoggedIn:false, name:''}, marks:{}, reviews:[], passOrders:[], accounts:[], reviewLikes:{}, myLikedReviews:[], googleReviews:{}, lang:'ko' };
 
 function loadState(){
   try{
@@ -99,6 +99,7 @@ function loadState(){
       reviewLikes: parsed.reviewLikes || {},
       myLikedReviews: Array.isArray(parsed.myLikedReviews) ? parsed.myLikedReviews : [],
       googleReviews: parsed.googleReviews || {},
+      lang: parsed.lang || 'ko',
     };
   }catch(e){
     // 저장소가 막힌 환경(사생활 보호 모드 등) — 조용히 메모리 전용으로 동작한다
@@ -131,7 +132,136 @@ function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+// ================= 다국어(영어) 지원 =================
+// 정적 HTML은 [data-i18n]/[data-i18n-placeholder]/[data-i18n-title] 속성으로 태그해두고,
+// 최초 방문(한국어)한 그대로의 텍스트를 data-i18n-ko-cache에 보관했다가 언어 전환 시 복원한다.
+// 동적으로 생성되는 카드/모달 문구는 t(key)로 직접 끌어다 쓴다.
+// 범위: 헤더·히어로·문제·로드맵·지도·맛집 카드/상세·구글 리뷰·실시간 검색 등 핵심 경로.
+// 설문·마이페이지·게임·로그인·문의·식권·소개·FAQ 모달과 약관 페이지는 다음 단계에서 번역 예정.
+const i18n = { en: {
+  pageTitle:"Bap Meokeoreo Wa — Discover Jochiwon's Local Restaurants",
+  navSearch:"Search", navGame:"Menu Roulette Game", navSurvey:"Taste Survey", navLang:"Language", navLogin:"Sign in",
+  headerSearchPh:"Search restaurants, meal passes, partners, pages",
+  heroEyebrow:"KU Rescue Squad! Help the Local Owners",
+  heroTitle:'Did you know there are great restaurants missing or barely listed on Naver? <span>Now you do.</span>',
+  heroBody:'A student team from Korea University Sejong Campus, <b>Matjip KU-jodae</b>, walks the backstreets of Jochiwon-eup to find them. We\'re starting by tracking down real local restaurants that are either completely missing from Naver/Kakao Map, or listed with barely any information. Discover great-value local restaurants that Korea University and Hongik University Sejong students and nearby residents can enjoy together.',
+  heroBrowse:"Browse restaurants", heroNotify:"Get notified at launch",
+  heroQuickpick:"Decision Rescue · Pick for me in 3 seconds", heroSpeech:"Come eat with us!",
+  problemEyebrow:"WHY BAP MEOKEOREO WA", problemTitle:"If you only trust map apps, you'll miss out on great food",
+  problemSub:"A familiar story for Korea University and Hongik University Sejong students, exchange students, staff, and nearby residents.",
+  problem1Title:"Missing or barely listed on maps",
+  problem1Body:"Long-time local restaurants are often completely missing from Naver/Kakao Map, or listed without even a single photo — so they don't show up even when you search.",
+  problem2Title:"Always the same cafeteria",
+  problem2Body:"There are better-value, tastier local restaurants nearby, but with no way to find them, you keep making the same choice.",
+  problem3Title:"We need to help each other",
+  problem3Body:"Customers discover hidden gems, and owners get more visibility and sales — a structure where our whole neighborhood thrives together.",
+  discoverEyebrow:"COMING SOON", discoverTitle:"After the semester starts, we'll visit local owners in person",
+  discoverBody:"Real local restaurants that are completely unlisted, or listed with barely any information — our student team will walk the backstreets of Jochiwon-eup after the semester starts in September, meet the owners, and introduce them here one by one. Restaurants with a 🌐 badge below are a preview of how live Google review integration looks; the real list of local restaurants we've personally found and helped will fill this space soon.",
+  discoverStep1:"Field survey of Jochiwon-eup backstreets (after September semester start)",
+  discoverStep2:"Finding under-listed local owners and filling in their info",
+  discoverStep3:"Publishing them here as real local restaurants, one by one",
+  discoverBtn:"Report a local restaurant near you",
+  mapEyebrow:"MAP", mapTitle:"Jochiwon Mini Map",
+  mapBody:"Locations of restaurants we've actually confirmed. Tap a pin to see details. The rest will be added one by one after the September field survey.",
+  eatLocalEyebrow:"EAT LOCAL", eatLocalTitle:"What to eat today?",
+  realGridTitle:"📍 Confirmed real restaurants · Live Google reviews",
+  realGridSub:"Restaurants actually registered on Kakao/Google. Click one to see real ratings and reviews instantly.",
+  liveSearchPh:"Can't find a restaurant? Type a name to search nearby in real time",
+  liveSearchBtn:"Search",
+  catAll:"All", catKorean:"Korean", catWestern:"Western", catChinese:"Chinese", catJapanese:"Japanese", catSnack:"Snacks",
+  sortRecommend:"Recommended", sortName:"Name (A-Z)", sortRating:"Highest rated", sortReviews:"Most reviewed", sortLatest:"Latest",
+  priceMin:"Min", priceMax:"Max", priceWon:"KRW",
+  filterEmpty:"No results found. Try a different keyword.",
+  exampleGridTitle:"🔎 Example restaurants (pending field survey)",
+  exampleGridSub:'Placeholder info until the field survey is done. Tap the heart to save a spot to "Want to visit."',
+  loadMore:"Show more restaurants",
+  reviewEyebrow:"REVIEW", reviewTitle:"Stories from people who've been there",
+  reviewSearchPh:"Search reviews (restaurant name, keyword)",
+  reviewWriteBtn:"Write a review too",
+  reviewSoon:"<strong>Review data coming soon</strong> — once real visit reviews build up after the September semester start, an AI review summary feature will launch too.",
+  surveyTitle:"Tell us a bit about your taste", surveyBody:"Answer a quick survey on spice level, favorite categories, and budget to get restaurant picks matched to you.", surveyBtn:"Start the taste survey",
+  shareEyebrow:"SHARE", shareTitle:"Tell your friends at school too",
+  shareBody:'Hidden gems get even better the more they\'re shared. Recommend "Bap Meokeoreo Wa" to a friend.',
+  shareKakao:"Share on KakaoTalk", shareCopy:"Copy link", shareText:"Share by text", shareInsta:"Share on Instagram",
+  joinEyebrow:"TOGETHER", joinTitle:"Let's build this together",
+  joinBody:"For owners, for us, for neighbors — we've made room for anyone who wants to join this project.",
+  join1Title:'Are you an owner?<span class="badge-soon">Coming soon</span>',
+  join1Body:"A signup spot for Jochiwon local restaurant owners who want their restaurant featured.",
+  join2Title:"Lend us a hand", join2Body:"We're looking for people to join as teammates for planning, development, design, and field research.",
+  join3Title:"Tell us about local spots in your area too", join3Body:"Even outside Jochiwon, if you connect with what we're doing, let's talk anytime.",
+  signupTitle:"Be the first to know", signupBody:"We'll email you first when the beta launches and when new restaurants are added.",
+  signupEmailPh:"Enter your email address", signupBtn:"Sign up early",
+  signupMsg:"You're signed up! We'll let you know first when we launch 🌾",
+  footerAbout:'"KU Rescue Squad! Help the Local Owners" — a social contribution project by Matjip KU-jodae, a Korea University Sejong Campus student team, built to grow together with the local business community.',
+  footerServiceHead:"Service", footerMapLink:"View map", footerPassLink:'Grandchild meal pass<span class="badge-soon">Coming soon</span>', footerSponsorLink:"Support us",
+  footerInfoHead:"Info", footerIntroLink:"About this service", footerFaqLink:"Contact us", footerSignupLink:"Sign up for launch alerts",
+  footerLegalHead:"Legal", footerPrivacyLink:"Privacy Policy", footerTermsLink:"Terms of Service",
+  footerOperator:"<b>Operator</b> Matjip KU-jodae, a Korea University Sejong Campus student team",
+  footerProject:"<b>Project name</b> KU Rescue Squad! Help the Local Owners",
+  footerServiceName:"<b>Service name</b> Bap Meokeoreo Wa",
+  footerEmail:"<b>Contact email</b> (to be announced)",
+  footerOfficer:"<b>Privacy officer</b> (to be announced)",
+  footerBottom:"© 2026 Bap Meokeoreo Wa · KU Rescue Squad! Help the Local Owners. Matjip KU-jodae (Korea University Sejong Campus).",
+  a11yToggle:"🔍 Large text mode",
+  confirmOk:"OK", confirmNo:"No",
+  // 카드/상세/구글 리뷰/실시간 검색 (동적 렌더)
+  cardReviewPending:"🔎 Live reviews coming soon", cardVisitBadge:"✔ Visited", cardLiveBadge:"🌐 Live Google reviews", cardMockTag:"Example data",
+  cardVisitedLabel:"✔ Visit recorded", cardMarkVisited:"Mark as visited", cardWantToVisit:"Add to want-to-visit",
+  filterCountTemplate:"{n} restaurants",
+  detailAddress:"📍 Address", detailHours:"🕐 Hours", detailClosed:"🚫 Closed", detailPhone:"☎️ Phone", detailReservation:"📅 Reservations",
+  detailCapacity:"🪑 Capacity", detailParking:"🚗 Parking", detailMobilePay:"📱 Mobile pay", detailVouchers:"🎟️ Vouchers/passes",
+  detailMenuTitle:"Menu", detailOrigin:"Origin: ", detailExampleNote:"* This is example info — real details will be added after the field survey.",
+  detailStubTitle:"Details coming soon", detailStubBody:" will be added after the September field survey. See the Jochiwon Grandma's Gukbap card for a preview of what will be included.",
+  detailStubBodyFull:"Address, hours, menu, and ingredient origin",
+  detailStubBodyPartial:"Hours, menu, and ingredient origin",
+  closeBtn:"Close",
+  googleReviewTitle:"Google Reviews", googleReviewLoading:"Loading reviews...", googleReviewError:"Couldn't load reviews. Please try again shortly.",
+  googleReviewNotFound:"😢 We couldn't find this restaurant on Google Maps.", googleReviewNone:"No reviews yet.",
+  googleReviewLink:"See all reviews on Google Maps →", googleReviewAnon:"Anonymous",
+  liveSearchLoading:"Searching...", liveSearchEmpty:"No results found.", liveSearchError:"Search failed. Please try again shortly.",
+  confirmLoginTitle:"Sign-in required", confirmLoginBody:"This feature requires signing in. Sign in and build your own restaurant list!", confirmLoginOk:"Sign in", confirmLoginCancel:"Close",
+  confirmUnsave:"Remove from your want-to-visit list?", confirmSave:"Add this restaurant to your want-to-visit list?", confirmVisited:"Mark this restaurant as visited?",
+} };
+
+let currentLang = 'ko';
+
+function t(key){
+  return (i18n.en[key] !== undefined && currentLang === 'en') ? i18n.en[key] : null;
+}
+
+// 정적 HTML용 — [data-i18n] 등 태그된 요소를 영어로 바꾸거나 원래 한국어로 되돌린다
+function applyStaticTranslations(){
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if(el.dataset.i18nKoCache === undefined) el.dataset.i18nKoCache = el.innerHTML;
+    el.innerHTML = (currentLang === 'en' && i18n.en[key] !== undefined) ? i18n.en[key] : el.dataset.i18nKoCache;
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    if(el.dataset.i18nKoPhCache === undefined) el.dataset.i18nKoPhCache = el.placeholder;
+    el.placeholder = (currentLang === 'en' && i18n.en[key] !== undefined) ? i18n.en[key] : el.dataset.i18nKoPhCache;
+  });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.dataset.i18nTitle;
+    if(el.dataset.i18nKoTitleCache === undefined) el.dataset.i18nKoTitleCache = el.title;
+    el.title = (currentLang === 'en' && i18n.en[key] !== undefined) ? i18n.en[key] : el.dataset.i18nKoTitleCache;
+  });
+  document.documentElement.lang = currentLang;
+}
+
+// 언어 전환의 실제 진입점 — 정적 텍스트 갱신 + 동적 렌더 함수 재실행 + 저장
+function applyLanguage(lang){
+  currentLang = lang;
+  applyStaticTranslations();
+  if(typeof renderCards === 'function') renderCards();
+  if(typeof renderExampleCards === 'function') renderExampleCards();
+  store.lang = currentLang;
+  saveState();
+}
+
 loadState();
+currentLang = store.lang || 'ko';
+applyStaticTranslations();
 applyState();
 
 // 로그인 상태는 renderCards()가 첫 렌더 때부터 참조하므로 여기서 선언한다
@@ -173,10 +303,15 @@ function getFilteredList(){
   return list;
 }
 
+// 레스토랑 이름/설명 다국어 헬퍼 — 영어 번역이 있고 영어 모드일 때만 대체, 없으면 한국어 원문
+function rName(r){ return (currentLang === 'en' && r.nameEn) ? r.nameEn : r.name; }
+function rDesc(r){ return (currentLang === 'en' && r.descEn) ? r.descEn : r.desc; }
+function rCat(r){ return t('cat' + {'전체':'All','한식':'Korean','양식':'Western','중식':'Chinese','일식':'Japanese','분식':'Snack'}[r.cat]) || r.cat; }
+
 function renderCards(){
   cardGrid.innerHTML = "";
   const list = getFilteredList();
-  filterCount.textContent = `${list.length}곳의 맛집`;
+  filterCount.textContent = (t('filterCountTemplate') || '{n}곳의 맛집').replace('{n}', list.length);
   filterEmpty.style.display = list.length === 0 ? 'block' : 'none';
   list.forEach((r, i) => {
     const idx = restaurants.indexOf(r);
@@ -189,23 +324,23 @@ function renderCards(){
     card.addEventListener('click', () => openDetail(idx));
     const cardRatingHtml = r.rating != null
       ? `★ ${r.rating} <span style="color:var(--ink-soft);font-weight:400;">(${r.reviewCount})</span>`
-      : `<span style="color:var(--ink-soft);font-weight:400;">🔎 실제 리뷰 준비중</span>`;
+      : `<span style="color:var(--ink-soft);font-weight:400;">${t('cardReviewPending') || '🔎 실제 리뷰 준비중'}</span>`;
     card.innerHTML = `
       <div class="food-thumb" style="background:${thumbColor(i)}">
         <span>${r.emoji}</span>
         <button class="save-toggle ${saved ? 'saved':''}" data-idx="${idx}" title="가보고 싶은 곳">${saved ? '♥':'♡'}</button>
-        <div class="visit-badge ${visited ? 'show':''}">✔ 가본 곳</div>
-        <div class="live-review-badge ${r.liveReview ? 'show':''}">🌐 구글 실시간 리뷰</div>
+        <div class="visit-badge ${visited ? 'show':''}">${t('cardVisitBadge') || '✔ 가본 곳'}</div>
+        <div class="live-review-badge ${r.liveReview ? 'show':''}">${t('cardLiveBadge') || '🌐 구글 실시간 리뷰'}</div>
       </div>
       <div class="food-body">
-        <span class="food-cat">${r.cat}</span>
-        ${r.detail && r.detail.isExample ? '<span class="mock-tag">예시 데이터</span>' : ''}
-        <div class="food-name">${r.name}</div>
-        <div class="food-desc">${r.desc}</div>
+        <span class="food-cat">${rCat(r)}</span>
+        ${r.detail && r.detail.isExample ? `<span class="mock-tag">${t('cardMockTag') || '예시 데이터'}</span>` : ''}
+        <div class="food-name">${rName(r)}</div>
+        <div class="food-desc">${rDesc(r)}</div>
         <div class="food-meta">
           <span class="stars">${cardRatingHtml}</span>
         </div>
-        <button class="visit-flow-btn" data-idx="${idx}">${visited ? '✔ 방문 기록 있음' : (saved ? '방문 완료로 표시하기' : '가보고 싶은 곳에 담기')}</button>
+        <button class="visit-flow-btn" data-idx="${idx}">${visited ? (t('cardVisitedLabel')||'✔ 방문 기록 있음') : (saved ? (t('cardMarkVisited')||'방문 완료로 표시하기') : (t('cardWantToVisit')||'가보고 싶은 곳에 담기'))}</button>
       </div>
     `;
     cardGrid.appendChild(card);
@@ -223,9 +358,9 @@ function bindFoodCardButtons(container){
       if(!requireLogin('save')) return;
       const r = restaurants[e.currentTarget.dataset.idx];
       if(r.saved){
-        confirmMark(r, '💔', '가보고 싶은 곳에서 해제하시겠습니까?', () => { r.saved = false; });
+        confirmMark(r, '💔', t('confirmUnsave') || '가보고 싶은 곳에서 해제하시겠습니까?', () => { r.saved = false; });
       } else {
-        confirmMark(r, '💌', '이 맛집을 가보고 싶은 곳에 담으시겠습니까?', () => { r.saved = true; });
+        confirmMark(r, '💌', t('confirmSave') || '이 맛집을 가보고 싶은 곳에 담으시겠습니까?', () => { r.saved = true; });
       }
     });
   });
@@ -240,9 +375,9 @@ function bindFoodCardButtons(container){
         return;
       }
       if(!r.saved){
-        confirmMark(r, '💌', '이 맛집을 가보고 싶은 곳에 담으시겠습니까?', () => { r.saved = true; });
+        confirmMark(r, '💌', t('confirmSave') || '이 맛집을 가보고 싶은 곳에 담으시겠습니까?', () => { r.saved = true; });
       } else {
-        confirmMark(r, '✔️', '이 맛집을 방문 완료로 표시하시겠습니까?', () => { r.visited = true; });
+        confirmMark(r, '✔️', t('confirmVisited') || '이 맛집을 방문 완료로 표시하시겠습니까?', () => { r.visited = true; });
       }
     });
   });
@@ -263,22 +398,22 @@ function renderExampleCards(){
     card.addEventListener('click', () => openDetail(idx));
     const cardRatingHtml = r.rating != null
       ? `★ ${r.rating} <span style="color:var(--ink-soft);font-weight:400;">(${r.reviewCount})</span>`
-      : `<span style="color:var(--ink-soft);font-weight:400;">🔎 실제 리뷰 준비중</span>`;
+      : `<span style="color:var(--ink-soft);font-weight:400;">${t('cardReviewPending') || '🔎 실제 리뷰 준비중'}</span>`;
     card.innerHTML = `
       <div class="food-thumb" style="background:${thumbColor(idx)}">
         <span>${r.emoji}</span>
         <button class="save-toggle ${saved ? 'saved':''}" data-idx="${idx}" title="가보고 싶은 곳">${saved ? '♥':'♡'}</button>
-        <div class="visit-badge ${visited ? 'show':''}">✔ 가본 곳</div>
+        <div class="visit-badge ${visited ? 'show':''}">${t('cardVisitBadge') || '✔ 가본 곳'}</div>
       </div>
       <div class="food-body">
-        <span class="food-cat">${r.cat}</span>
-        ${r.detail && r.detail.isExample ? '<span class="mock-tag">예시 데이터</span>' : ''}
-        <div class="food-name">${r.name}</div>
-        <div class="food-desc">${r.desc}</div>
+        <span class="food-cat">${rCat(r)}</span>
+        ${r.detail && r.detail.isExample ? `<span class="mock-tag">${t('cardMockTag') || '예시 데이터'}</span>` : ''}
+        <div class="food-name">${rName(r)}</div>
+        <div class="food-desc">${rDesc(r)}</div>
         <div class="food-meta">
           <span class="stars">${cardRatingHtml}</span>
         </div>
-        <button class="visit-flow-btn" data-idx="${idx}">${visited ? '✔ 방문 기록 있음' : (saved ? '방문 완료로 표시하기' : '가보고 싶은 곳에 담기')}</button>
+        <button class="visit-flow-btn" data-idx="${idx}">${visited ? (t('cardVisitedLabel')||'✔ 방문 기록 있음') : (saved ? (t('cardMarkVisited')||'방문 완료로 표시하기') : (t('cardWantToVisit')||'가보고 싶은 곳에 담기'))}</button>
       </div>
     `;
     exampleCardGrid.appendChild(card);
@@ -289,8 +424,8 @@ function renderExampleCards(){
 // 저장/방문 상태 변경은 전부 확인 모달을 거친다 (extra.md §2)
 function confirmMark(r, emoji, question, apply){
   openConfirm({
-    emoji, title:r.name, text:question,
-    okLabel:'확인', cancelLabel:'아니요',
+    emoji, title:rName(r), text:question,
+    okLabel:t('confirmOk') || '확인', cancelLabel:t('confirmNo') || '아니요',
     onOk: () => { apply(); saveState(); renderCards(); renderExampleCards(); closeConfirm(); }
   });
 }
@@ -303,7 +438,7 @@ function thumbColor(i){
 function ratingLabel(r){
   return r.rating != null
     ? `★ ${r.rating} (${r.reviewCount})`
-    : `🔎 실제 리뷰 준비중`;
+    : (t('cardReviewPending') || '🔎 실제 리뷰 준비중');
 }
 
 document.querySelectorAll('.cat-chip').forEach(chip => {
@@ -468,10 +603,10 @@ function requireLogin(intent){
   if(isLoggedIn) return true;
   openConfirm({
     emoji:'👤',
-    title:'로그인이 필요해요',
-    text:'로그인이 필요한 기능이에요. 로그인하고 나만의 맛집 목록을 만들어보세요!',
-    okLabel:'로그인하기',
-    cancelLabel:'닫기',
+    title:t('confirmLoginTitle') || '로그인이 필요해요',
+    text:t('confirmLoginBody') || '로그인이 필요한 기능이에요. 로그인하고 나만의 맛집 목록을 만들어보세요!',
+    okLabel:t('confirmLoginOk') || '로그인하기',
+    cancelLabel:t('confirmLoginCancel') || '닫기',
     onOk: () => { closeConfirm(); openAuth(intent || 'login'); }
   });
   return false;
@@ -624,54 +759,57 @@ function closeDetail(){ detailOverlay.classList.remove('show'); }
 function closeDetailOnOverlay(e){ if(e.target === detailOverlay) closeDetail(); }
 
 function renderStubDetail(r){
+  const isEn = currentLang === 'en';
   return `
     <div class="detail-head">
       <span class="detail-emoji">${r.emoji}</span>
       <div>
-        <span class="food-cat">${r.cat}</span>
-        <h3>${r.name}</h3>
+        <span class="food-cat">${rCat(r)}</span>
+        <h3>${rName(r)}</h3>
         <div class="detail-rating">${ratingLabel(r)} · ${r.price}</div>
       </div>
     </div>
-    <p class="detail-desc">${r.desc}</p>
+    <p class="detail-desc">${rDesc(r)}</p>
     ${r.realAddress ? `
     <div class="detail-info-grid">
       <div class="detail-info-row">
-        <span class="detail-info-label">📍 주소</span>
+        <span class="detail-info-label">${t('detailAddress') || '📍 주소'}</span>
         <span class="detail-info-val">${escapeHtml(r.realAddress)}</span>
       </div>
     </div>` : ''}
     <div class="detail-stub-note">
-      <strong>상세 정보 준비 중</strong> — ${r.realAddress ? '영업시간·메뉴 구성·원산지' : '주소·영업시간·메뉴 구성·원산지'} 같은 상세 정보는 9월 현장 조사 후 채워질 예정이에요. 예시로 <b>조치원 할매국밥</b> 카드에서 어떤 정보가 담길지 미리 확인해보세요.
+      ${isEn
+        ? `<strong>${t('detailStubTitle')}</strong> — ${r.realAddress ? t('detailStubBodyPartial') : t('detailStubBodyFull')}${t('detailStubBody')}`
+        : `<strong>상세 정보 준비 중</strong> — ${r.realAddress ? '영업시간·메뉴 구성·원산지' : '주소·영업시간·메뉴 구성·원산지'} 같은 상세 정보는 9월 현장 조사 후 채워질 예정이에요. 예시로 <b>${escapeHtml(rName(restaurants[0]))}</b> 카드에서 어떤 정보가 담길지 미리 확인해보세요.`}
     </div>
     ${r.lat && r.lng ? renderGoogleReviewShell() : ''}
-    <button type="button" class="survey-close-btn" onclick="closeDetail()">닫기</button>
+    <button type="button" class="survey-close-btn" onclick="closeDetail()">${t('closeBtn') || '닫기'}</button>
   `;
 }
 
 function renderFullDetail(r){
   const d = r.detail;
   const infoRows = [
-    ['📍 주소', d.address],
-    ['🕐 영업시간', d.hours],
-    ['🚫 휴무일', d.closed],
-    ['☎️ 전화', d.phone],
-    ['📅 예약', d.reservation],
-    ['🪑 수용 인원', d.capacity],
-    ['🚗 주차', d.parking],
-    ['📱 모바일페이', d.mobilePay],
-    ['🎟️ 상품권/식권', d.vouchers],
+    [t('detailAddress') || '📍 주소', d.address],
+    [t('detailHours') || '🕐 영업시간', d.hours],
+    [t('detailClosed') || '🚫 휴무일', d.closed],
+    [t('detailPhone') || '☎️ 전화', d.phone],
+    [t('detailReservation') || '📅 예약', d.reservation],
+    [t('detailCapacity') || '🪑 수용 인원', d.capacity],
+    [t('detailParking') || '🚗 주차', d.parking],
+    [t('detailMobilePay') || '📱 모바일페이', d.mobilePay],
+    [t('detailVouchers') || '🎟️ 상품권/식권', d.vouchers],
   ];
   return `
     <div class="detail-head">
       <span class="detail-emoji">${r.emoji}</span>
       <div>
-        <span class="food-cat">${r.cat}</span>
-        <h3>${r.name}</h3>
+        <span class="food-cat">${rCat(r)}</span>
+        <h3>${rName(r)}</h3>
         <div class="detail-rating">${ratingLabel(r)} · ${r.price}</div>
       </div>
     </div>
-    <p class="detail-desc">${r.desc}</p>
+    <p class="detail-desc">${rDesc(r)}</p>
 
     <div class="detail-info-grid">
       ${infoRows.map(([label,val]) => `
@@ -682,7 +820,7 @@ function renderFullDetail(r){
       `).join('')}
     </div>
 
-    <h4 class="detail-menu-title">메뉴</h4>
+    <h4 class="detail-menu-title">${t('detailMenuTitle') || '메뉴'}</h4>
     <div class="detail-menu-list">
       ${d.menu.map(m => `
         <div class="detail-menu-item">
@@ -691,13 +829,13 @@ function renderFullDetail(r){
             <span class="detail-menu-price">${m.price}</span>
           </div>
           <div class="detail-menu-comp">${m.composition}</div>
-          <div class="detail-menu-origin">원산지: ${m.origin}</div>
+          <div class="detail-menu-origin">${t('detailOrigin') || '원산지: '}${m.origin}</div>
         </div>
       `).join('')}
     </div>
-    ${d.isExample ? '<p class="detail-example-note">* 예시로 채워둔 상세 정보이며, 실제 데이터는 현장 조사 후 반영됩니다.</p>' : ''}
+    ${d.isExample ? `<p class="detail-example-note">${t('detailExampleNote') || '* 예시로 채워둔 상세 정보이며, 실제 데이터는 현장 조사 후 반영됩니다.'}</p>` : ''}
     ${r.lat && r.lng ? renderGoogleReviewShell() : ''}
-    <button type="button" class="survey-close-btn" onclick="closeDetail()">닫기</button>
+    <button type="button" class="survey-close-btn" onclick="closeDetail()">${t('closeBtn') || '닫기'}</button>
   `;
 }
 
@@ -705,9 +843,9 @@ function renderFullDetail(r){
 function renderGoogleReviewShell(){
   return `
     <div class="detail-google-section">
-      <h4 class="detail-menu-title">구글 리뷰</h4>
+      <h4 class="detail-menu-title">${t('googleReviewTitle') || '구글 리뷰'}</h4>
       <div id="googleReviewBody" class="google-review-body">
-        <div class="google-review-loading">리뷰를 불러오는 중...</div>
+        <div class="google-review-loading">${t('googleReviewLoading') || '리뷰를 불러오는 중...'}</div>
       </div>
     </div>`;
 }
@@ -728,32 +866,32 @@ async function loadGoogleReviews(r){
     saveState();
   }catch(e){
     if(document.getElementById('googleReviewBody') === box){
-      box.innerHTML = `<div class="google-review-error">리뷰를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</div>`;
+      box.innerHTML = `<div class="google-review-error">${t('googleReviewError') || '리뷰를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.'}</div>`;
     }
   }
 }
 
 function renderGoogleReviewContent(data){
   if(!data || !data.found){
-    return `<div class="google-review-empty">😢 구글 지도에서 이 가게를 찾지 못했습니다.</div>`;
+    return `<div class="google-review-empty">${t('googleReviewNotFound') || '😢 구글 지도에서 이 가게를 찾지 못했습니다.'}</div>`;
   }
   const reviewsHtml = (data.reviews || []).map(rv => `
     <div class="review-item">
       <div class="review-avatar">👤</div>
       <div class="review-body">
         <div class="review-top">
-          <span class="review-name">${escapeHtml(rv.author || '익명')}</span>
+          <span class="review-name">${escapeHtml(rv.author || (t('googleReviewAnon') || '익명'))}</span>
           <span class="review-stars">${'★'.repeat(rv.rating||0)}${'☆'.repeat(5-(rv.rating||0))}</span>
         </div>
         <div class="review-text">${escapeHtml(rv.text || '')}</div>
         <div class="review-meta-row"><span class="review-date">${escapeHtml(rv.relativeTime || '')}</span></div>
       </div>
-    </div>`).join('') || `<p class="google-review-none">아직 등록된 리뷰가 없어요.</p>`;
+    </div>`).join('') || `<p class="google-review-none">${t('googleReviewNone') || '아직 등록된 리뷰가 없어요.'}</p>`;
 
   return `
     <div class="google-review-summary detail-rating">★ ${data.rating ?? '-'} (${data.reviewCount ?? 0})</div>
     <div class="review-list">${reviewsHtml}</div>
-    ${data.mapsUri ? `<a class="google-review-link" href="${escapeHtml(data.mapsUri)}" target="_blank" rel="noopener">구글 맵에서 전체 리뷰 보기 →</a>` : ''}
+    ${data.mapsUri ? `<a class="google-review-link" href="${escapeHtml(data.mapsUri)}" target="_blank" rel="noopener">${t('googleReviewLink') || '구글 맵에서 전체 리뷰 보기 →'}</a>` : ''}
   `;
 }
 
@@ -772,12 +910,12 @@ function renderMiniMap(){
     maxZoom: 19,
   }).addTo(map);
 
-  L.marker([CAMPUS_CENTER.lat, CAMPUS_CENTER.lng]).addTo(map).bindPopup('🏫 고려대학교 세종캠퍼스');
+  L.marker([CAMPUS_CENTER.lat, CAMPUS_CENTER.lng]).addTo(map).bindPopup(currentLang === 'en' ? '🏫 Korea University Sejong Campus' : '🏫 고려대학교 세종캠퍼스');
 
   restaurants.filter(r => r.liveReview).forEach(r => {
     const idx = restaurants.indexOf(r);
     L.marker([r.lat, r.lng]).addTo(map)
-      .bindPopup(`${r.emoji} ${escapeHtml(r.name)}`)
+      .bindPopup(`${r.emoji} ${escapeHtml(rName(r))}`)
       .on('click', () => openDetail(idx));
   });
 }
@@ -792,14 +930,14 @@ let liveSearchList = [];
 async function runLiveSearch(){
   const q = liveSearchInput.value.trim();
   if(!q) return;
-  liveSearchResults.innerHTML = `<div class="google-review-loading">검색 중...</div>`;
+  liveSearchResults.innerHTML = `<div class="google-review-loading">${t('liveSearchLoading') || '검색 중...'}</div>`;
   try{
     const res = await fetch(`/api/kakao-search?query=${encodeURIComponent(q)}`);
     const data = await res.json();
     liveSearchList = (data && data.results) || [];
     renderLiveSearchResults();
   }catch(e){
-    liveSearchResults.innerHTML = `<div class="google-review-error">검색에 실패했습니다. 잠시 후 다시 시도해주세요.</div>`;
+    liveSearchResults.innerHTML = `<div class="google-review-error">${t('liveSearchError') || '검색에 실패했습니다. 잠시 후 다시 시도해주세요.'}</div>`;
   }
 }
 
@@ -807,7 +945,7 @@ liveSearchInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') runLi
 
 function renderLiveSearchResults(){
   if(liveSearchList.length === 0){
-    liveSearchResults.innerHTML = `<div class="google-review-empty">검색 결과가 없어요.</div>`;
+    liveSearchResults.innerHTML = `<div class="google-review-empty">${t('liveSearchEmpty') || '검색 결과가 없어요.'}</div>`;
     return;
   }
   liveSearchResults.innerHTML = liveSearchList.map((place, i) => `
@@ -839,7 +977,7 @@ async function loadLiveSearchGoogleReviews(i){
     return;
   }
 
-  box.innerHTML = `<div class="google-review-loading">리뷰를 불러오는 중...</div>`;
+  box.innerHTML = `<div class="google-review-loading">${t('googleReviewLoading') || '리뷰를 불러오는 중...'}</div>`;
   try{
     const url = `/api/google-reviews?name=${encodeURIComponent(place.name)}&lat=${place.lat}&lng=${place.lng}`;
     const res = await fetch(url);
@@ -849,7 +987,7 @@ async function loadLiveSearchGoogleReviews(i){
     store.googleReviews[place.name] = { data, fetchedAt: Date.now() };
     saveState();
   }catch(e){
-    box.innerHTML = `<div class="google-review-error">리뷰를 불러오지 못했습니다.</div>`;
+    box.innerHTML = `<div class="google-review-error">${t('googleReviewError') || '리뷰를 불러오지 못했습니다.'}</div>`;
   }
 }
 
@@ -1446,10 +1584,12 @@ function submitReview(e){
   `;
 }
 
-// ================= 언어 선택 (베타: 선택만 저장, 실제 번역은 로드맵) =================
+// ================= 언어 선택 =================
+// 한국어/English는 실제로 동작(핵심 경로 번역, applyLanguage 참고).
+// 나머지 언어는 아직 번역이 없어 선택만 저장되고 "준비중" 안내만 뜬다.
 const langOverlay = document.getElementById('langOverlay');
 const langBody = document.getElementById('langBody');
-let currentLang = 'ko';
+const SUPPORTED_LANGS = ['ko', 'en'];
 
 // 각 언어 이름은 해당 언어 표기로 (영어를 원하면 English 버튼을 누르도록)
 const languages = [
@@ -1474,7 +1614,7 @@ function renderLang(){
     <div class="auth-head">
       <div class="emoji">🌐</div>
       <h3>언어 선택 / Language</h3>
-      <p>베타 기간에는 언어 선택만 저장되고, 전체 번역은 정식 오픈 때 제공돼요.</p>
+      <p>한국어/English는 바로 적용돼요. 나머지 언어는 정식 오픈 때 제공될 예정이에요.</p>
     </div>
     <div class="lang-grid">
       ${languages.map(l => `
@@ -1489,10 +1629,16 @@ function renderLang(){
   `;
   langBody.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      currentLang = btn.dataset.code;
-      const picked = languages.find(l => l.code === currentLang);
-      renderLang();
-      document.getElementById('langSelected').textContent = `✔ ${picked.label} 선택됨 — 정식 오픈 시 적용됩니다`;
+      const code = btn.dataset.code;
+      const picked = languages.find(l => l.code === code);
+      if(SUPPORTED_LANGS.includes(code)){
+        applyLanguage(code);
+        renderLang();
+        document.getElementById('langSelected').textContent = `✔ ${picked.label} 적용됨`;
+      } else {
+        renderLang();
+        document.getElementById('langSelected').textContent = `${picked.label} — 정식 오픈 때 제공될 예정이에요`;
+      }
     });
   });
 }
