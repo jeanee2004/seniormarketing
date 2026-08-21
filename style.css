@@ -458,6 +458,11 @@ header{
   font-size:0.72rem;font-weight:800;color:var(--red);letter-spacing:0.04em;
   font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
 }
+.mock-tag{
+  font-size:0.68rem;font-weight:700;color:var(--ink-soft);margin-left:6px;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
+  background:var(--base-bg);border:1px solid rgba(72,96,122,0.14);border-radius:99px;padding:2px 8px;
+}
 .food-name{font-size:1.15rem;color:var(--slate-dark);}
 .food-desc{font-size:0.86rem;color:var(--ink-soft);font-family:'Gowun Dodum','Noto Sans KR',sans-serif;}
 .food-meta{

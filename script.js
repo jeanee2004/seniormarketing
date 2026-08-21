@@ -1,6 +1,7 @@
 // ---- Dummy restaurant data ----
 const restaurants = [
   {name:"조치원 할매국밥", cat:"한식", emoji:"🍚", desc:"40년 전통, 진한 국물의 소문난 국밥집", rating:4.8, reviewCount:212, price:"₩", priceValue:9000, saved:false, visited:false, detail:{
+    isExample:true,
     address:"세종특별자치시 조치원읍 죽림리 123-4 (임의 주소 · 실제 주소 아님)",
     hours:"매일 07:00 - 20:00 (재료 소진 시 조기 마감)",
     closed:"매주 일요일 휴무",
@@ -19,22 +20,150 @@ const restaurants = [
   // pass가 있는 가게만 손주 식권 섹션과 검색에 노출된다 (detail과 같은 방식 — 일부만 채워둔 예시)
   pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:180}},
   {name:"골목 손칼국수", cat:"한식", emoji:"🍜", desc:"매일 반죽하는 쫄깃한 면발이 일품", rating:4.6, reviewCount:98, price:"₩", priceValue:8000, saved:true, visited:true,
-    pass:{unit:8000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:180}},
-  {name:"조치원 화덕피자", cat:"양식", emoji:"🍕", desc:"동네 사장님이 직접 굽는 화덕 피자", rating:4.5, reviewCount:64, price:"₩₩", priceValue:16000, saved:false, visited:false},
+    pass:{unit:8000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:180},
+    detail:{
+      isExample:true,
+      address:"세종특별자치시 조치원읍 원리 45-2 (임의 주소 · 실제 주소 아님)",
+      hours:"매일 10:30 - 20:00 (재료 소진 시 조기 마감)",
+      closed:"매주 월요일 휴무",
+      phone:"044-123-4568",
+      reservation:"워크인 전용 (예약 불가)",
+      capacity:"최대 20명 (2인 테이블 4개, 4인 테이블 3개)",
+      parking:"가게 앞 노상 주차 2대",
+      mobilePay:"카카오페이 · 네이버페이 가능",
+      vouchers:"온누리상품권 가능 · 세종사랑카드(지역화폐) 가능",
+      menu:[
+        {name:"손칼국수", price:"8,000원", composition:"칼국수 1그릇 + 겉절이", origin:"밀가루 국내산, 바지락 국내산"},
+        {name:"손만두", price:"7,000원", composition:"찐만두 8개 + 간장종지", origin:"돼지고기·부추 국내산"},
+      ]
+    }},
+  {name:"조치원 화덕피자", cat:"양식", emoji:"🍕", desc:"동네 사장님이 직접 굽는 화덕 피자", rating:4.5, reviewCount:64, price:"₩₩", priceValue:16000, saved:false, visited:false,
+    detail:{
+      isExample:true,
+      address:"세종특별자치시 조치원읍 침산리 12-3 (임의 주소 · 실제 주소 아님)",
+      hours:"매일 11:30 - 21:00 (브레이크타임 15:00-17:00)",
+      closed:"매주 화요일 휴무",
+      phone:"044-234-5671",
+      reservation:"전화 예약 권장 (주말 저녁 대기 있을 수 있음)",
+      capacity:"최대 16명 (테이블 5개)",
+      parking:"건물 뒤편 3대 무료 주차",
+      mobilePay:"카카오페이 · 네이버페이 · 삼성페이 가능",
+      vouchers:"온누리상품권 미사용 · 세종사랑카드 가능",
+      menu:[
+        {name:"마르게리타", price:"16,000원", composition:"토마토소스+모짜렐라+바질, 화덕 직화", origin:"토마토 국내산, 치즈 수입산"},
+        {name:"고르곤졸라", price:"18,000원", composition:"고르곤졸라치즈+꿀, 반죽 매일 숙성", origin:"치즈 수입산, 밀가루 국내산"},
+      ]
+    }},
   {name:"역전 왕돈까스", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
-    pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:90}},
-  {name:"맛나네차코", cat:"중식", emoji:"🥡", desc:"조치원읍 골목의 중식당", rating:null, reviewCount:null, price:"₩", priceValue:7000, saved:false, visited:false,
-    liveReview:true, lat:36.6080331477201, lng:127.289286746737},
-  {name:"조치원 마라탕", cat:"중식", emoji:"🌶️", desc:"학생들 사이 입소문난 얼큰한 마라탕", rating:4.3, reviewCount:176, price:"₩₩", priceValue:13000, saved:true, visited:false},
-  {name:"세종 스시하루", cat:"일식", emoji:"🍣", desc:"가성비 좋은 오마카세급 초밥 정식", rating:4.6, reviewCount:73, price:"₩₩", priceValue:15000, saved:false, visited:false},
-  {name:"조치원 라멘야", cat:"일식", emoji:"🍥", desc:"진한 돈코츠 육수, 사장님 손맛 그대로", rating:4.5, reviewCount:59, price:"₩", priceValue:9000, saved:false, visited:true},
+    pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:90},
+    detail:{
+      isExample:true,
+      address:"세종특별자치시 조치원읍 원리 78-1 (임의 주소 · 실제 주소 아님)",
+      hours:"매일 11:00 - 20:30",
+      closed:"매주 수요일 휴무",
+      phone:"044-234-5672",
+      reservation:"워크인 전용",
+      capacity:"최대 28명 (4인 테이블 7개)",
+      parking:"공영주차장 도보 2분",
+      mobilePay:"카카오페이 · 네이버페이 가능",
+      vouchers:"온누리상품권 가능 · 세종사랑카드 가능",
+      menu:[
+        {name:"왕돈까스", price:"9,000원", composition:"두툼한 돈까스 1장 + 밥 + 수프 + 샐러드", origin:"돼지고기 국내산"},
+        {name:"치즈돈까스", price:"10,500원", composition:"돈까스+모짜렐라 + 밥 + 수프", origin:"돼지고기 국내산, 치즈 수입산"},
+      ]
+    }},
+  {name:"안쉐프고기해물짬뽕", cat:"중식", emoji:"🥡", desc:"고기와 해물을 함께 낸 얼큰한 짬뽕집", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+    liveReview:true, lat:36.61477503455844, lng:127.2857292835937},
+  {name:"조치원 마라탕", cat:"중식", emoji:"🌶️", desc:"학생들 사이 입소문난 얼큰한 마라탕", rating:4.3, reviewCount:176, price:"₩₩", priceValue:13000, saved:true, visited:false,
+    detail:{
+      isExample:true,
+      address:"세종특별자치시 조치원읍 신흥리 34-6 (임의 주소 · 실제 주소 아님)",
+      hours:"매일 11:00 - 21:30",
+      closed:"매주 첫째·셋째 월요일 휴무",
+      phone:"044-345-6781",
+      reservation:"워크인 전용",
+      capacity:"최대 18명",
+      parking:"인근 공영주차장 이용 (유료)",
+      mobilePay:"카카오페이 · 네이버페이 가능",
+      vouchers:"온누리상품권 가능 · 세종사랑카드 가능",
+      menu:[
+        {name:"마라탕 (매운맛 선택)", price:"13,000원", composition:"재료 무게 계량제 + 밥 1공기", origin:"향신료 수입산, 채소 국내산"},
+        {name:"마라샹궈", price:"15,000원", composition:"건식 볶음 + 땅콩가루", origin:"향신료 수입산, 고기 국내산"},
+      ]
+    }},
+  {name:"세종 스시하루", cat:"일식", emoji:"🍣", desc:"가성비 좋은 오마카세급 초밥 정식", rating:4.6, reviewCount:73, price:"₩₩", priceValue:15000, saved:false, visited:false,
+    detail:{
+      isExample:true,
+      address:"세종특별자치시 조치원읍 상리 9-1 (임의 주소 · 실제 주소 아님)",
+      hours:"화-일 11:30 - 20:00 (재료 소진 시 조기 마감)",
+      closed:"매주 월요일 휴무",
+      phone:"044-345-6782",
+      reservation:"전화 예약 권장 (점심 오마카세는 예약 필수)",
+      capacity:"최대 14명 (카운터석 6, 테이블석 8)",
+      parking:"가게 앞 1대 · 공영주차장 도보 5분",
+      mobilePay:"카카오페이 · 네이버페이 · 삼성페이 가능",
+      vouchers:"온누리상품권 미사용 · 세종사랑카드 가능",
+      menu:[
+        {name:"초밥 정식", price:"15,000원", composition:"초밥 10피스 + 미소시루 + 계란찜", origin:"광어·연어 국내 유통, 밥 국내산(세종)"},
+        {name:"모둠회덮밥", price:"14,000원", composition:"회덮밥 1그릇 + 미소시루", origin:"활어 국내 유통"},
+      ]
+    }},
+  {name:"조치원 라멘야", cat:"일식", emoji:"🍥", desc:"진한 돈코츠 육수, 사장님 손맛 그대로", rating:4.5, reviewCount:59, price:"₩", priceValue:9000, saved:false, visited:true,
+    detail:{
+      isExample:true,
+      address:"세종특별자치시 조치원읍 남리 22-4 (임의 주소 · 실제 주소 아님)",
+      hours:"매일 11:00 - 21:00 (브레이크타임 15:00-17:00)",
+      closed:"매주 목요일 휴무",
+      phone:"044-456-7891",
+      reservation:"워크인 전용",
+      capacity:"최대 12명 (카운터석 위주)",
+      parking:"주차 공간 없음 · 공영주차장 도보 4분",
+      mobilePay:"카카오페이 · 네이버페이 가능",
+      vouchers:"온누리상품권 가능 · 세종사랑카드 가능",
+      menu:[
+        {name:"돈코츠라멘", price:"9,000원", composition:"진한 돼지뼈 육수 + 차슈 2장 + 반숙란", origin:"돼지고기 국내산, 면 자가제면"},
+        {name:"차슈덮밥", price:"7,000원", composition:"차슈 덮밥 + 미니 된장국", origin:"돼지고기 국내산"},
+      ]
+    }},
   {name:"할머니 떡볶이", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
-    pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", validDays:180}},
+    pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", validDays:180},
+    detail:{
+      isExample:true,
+      address:"세종특별자치시 조치원읍 봉산리 5-2 (임의 주소 · 실제 주소 아님)",
+      hours:"매일 12:00 - 19:00 (재료 소진 시 조기 마감)",
+      closed:"매주 일요일 휴무",
+      phone:"044-456-7892",
+      reservation:"워크인 전용",
+      capacity:"최대 10명 (분식 좌식 테이블 3개)",
+      parking:"가게 앞 노상 주차 1대",
+      mobilePay:"카카오페이 가능 (네이버페이 준비중)",
+      vouchers:"온누리상품권 가능 · 세종사랑카드 가능 · 학생식권 가능",
+      menu:[
+        {name:"떡볶이 (1인분)", price:"4,000원", composition:"즉석 떡볶이 + 어묵 2개", origin:"떡 국내산, 고춧가루 국내산"},
+        {name:"모둠튀김", price:"5,000원", composition:"튀김 5종 모둠", origin:"식용유 국내산"},
+      ]
+    }},
   {name:"파랑새분식", cat:"분식", emoji:"🍙", desc:"조치원읍 골목의 분식집", rating:null, reviewCount:null, price:"₩", priceValue:5000, saved:false, visited:false,
     liveReview:true, lat:36.608516105696, lng:127.290049731247},
-  {name:"쌍둥이식당", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 한식 백반집", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
-    liveReview:true, lat:36.60815246428958, lng:127.28539747580568},
-  {name:"조치원 파스타공방", cat:"양식", emoji:"🍝", desc:"직접 뽑는 생면 파스타 전문점", rating:4.4, reviewCount:52, price:"₩₩", priceValue:14000, saved:false, visited:false},
+  {name:"숙이네밥상", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+    liveReview:true, lat:36.608995511335, lng:127.291526952076},
+  {name:"조치원 파스타공방", cat:"양식", emoji:"🍝", desc:"직접 뽑는 생면 파스타 전문점", rating:4.4, reviewCount:52, price:"₩₩", priceValue:14000, saved:false, visited:false,
+    detail:{
+      isExample:true,
+      address:"세종특별자치시 조치원읍 고성리 17-9 (임의 주소 · 실제 주소 아님)",
+      hours:"매일 11:30 - 21:00 (브레이크타임 15:00-17:30)",
+      closed:"매주 화요일 휴무",
+      phone:"044-567-8901",
+      reservation:"전화 예약 권장 (주말 저녁)",
+      capacity:"최대 20명",
+      parking:"건물 옆 2대 무료 주차",
+      mobilePay:"카카오페이 · 네이버페이 · 삼성페이 가능",
+      vouchers:"온누리상품권 미사용 · 세종사랑카드 가능",
+      menu:[
+        {name:"명란크림파스타", price:"14,000원", composition:"생면 파스타 + 명란크림소스", origin:"면 매일 생면 압출, 명란 국내 유통"},
+        {name:"토마토해물파스타", price:"15,000원", composition:"생면 파스타 + 토마토소스 + 해산물", origin:"해산물 국내 유통"},
+      ]
+    }},
 ];
 
 // ================= 로컬 저장 (백엔드 전환 지점) =================
@@ -164,6 +293,7 @@ function renderCards(){
       </div>
       <div class="food-body">
         <span class="food-cat">${r.cat}</span>
+        ${r.detail && r.detail.isExample ? '<span class="mock-tag">예시 데이터</span>' : ''}
         <div class="food-name">${r.name}</div>
         <div class="food-desc">${r.desc}</div>
         <div class="food-meta">
@@ -614,7 +744,7 @@ function renderFullDetail(r){
         </div>
       `).join('')}
     </div>
-    <p class="detail-example-note">* 예시로 채워둔 상세 정보이며, 실제 데이터는 현장 조사 후 반영됩니다.</p>
+    ${d.isExample ? '<p class="detail-example-note">* 예시로 채워둔 상세 정보이며, 실제 데이터는 현장 조사 후 반영됩니다.</p>' : ''}
     ${r.lat && r.lng ? renderGoogleReviewShell() : ''}
     <button type="button" class="survey-close-btn" onclick="closeDetail()">닫기</button>
   `;
@@ -720,15 +850,26 @@ async function loadLiveSearchGoogleReviews(i){
   const place = liveSearchList[i];
   const box = document.getElementById(`liveSearchGoogle-${i}`);
   if(!place || !box) return;
-  if(box.dataset.loaded){ box.classList.toggle('show'); return; }
-  box.dataset.loaded = '1';
+  // 이미 이 카드에 내용을 채운 적 있으면(캐시든 방금 불러온 것이든) 재요청 없이 펼치기/접기만 토글
+  if(box.dataset.filled){ box.classList.toggle('show'); return; }
   box.classList.add('show');
+
+  const cached = store.googleReviews[place.name];
+  if(cached){
+    box.dataset.filled = '1';
+    box.innerHTML = renderGoogleReviewContent(cached.data);
+    return;
+  }
+
   box.innerHTML = `<div class="google-review-loading">리뷰를 불러오는 중...</div>`;
   try{
     const url = `/api/google-reviews?name=${encodeURIComponent(place.name)}&lat=${place.lat}&lng=${place.lng}`;
     const res = await fetch(url);
     const data = await res.json();
+    box.dataset.filled = '1';
     box.innerHTML = renderGoogleReviewContent(data);
+    store.googleReviews[place.name] = { data, fetchedAt: Date.now() };
+    saveState();
   }catch(e){
     box.innerHTML = `<div class="google-review-error">리뷰를 불러오지 못했습니다.</div>`;
   }
