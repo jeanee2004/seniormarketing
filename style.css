@@ -295,7 +295,6 @@ header{
   border:1px solid rgba(72,96,122,0.14);box-shadow:var(--shadow);
   position:relative;
 }
-.google-map{ height:420px;width:100%; }
 .map-placeholder{
   height:420px;position:relative;
   background:
@@ -322,6 +321,7 @@ header{
   animation:drop .5s ease;
 }
 .map-pin span{transform:rotate(45deg);font-size:0.85rem;}
+.map-pin-center{background:var(--slate-dark);box-shadow:0 4px 10px rgba(51,69,90,0.35);pointer-events:none;}
 .map-pin.p1{top:38%;left:30%;}
 .map-pin.p2{top:55%;left:52%;animation-delay:.1s;}
 .map-pin.p3{top:30%;left:65%;animation-delay:.2s;}

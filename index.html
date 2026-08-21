@@ -117,11 +117,14 @@
   <div class="container">
     <span class="eyebrow">MAP</span>
     <h2 class="section-title">조치원 미니 지도</h2>
-    <p class="section-sub">실제로 확인된 가게 위치를 구글맵으로 바로 볼 수 있어요. 나머지 가게는 9월 현장 조사 후 하나씩 추가될 예정이에요.</p>
+    <p class="section-sub">실제로 확인된 가게 위치예요. 핀을 누르면 상세보기로 이동해요. 나머지 가게는 9월 현장 조사 후 하나씩 추가될 예정이에요.</p>
     <div class="map-wrap">
-      <div id="googleMap" class="google-map"></div>
-      <div id="mapFallback" class="map-placeholder" style="display:none;">
-        <div class="map-note">📍 지도를 불러오지 못했습니다 — 카드에서 🌐 배지가 붙은 가게는 상세보기에서 구글 실제 리뷰를 볼 수 있어요.</div>
+      <div id="miniMap" class="map-placeholder">
+        <div class="map-note">📍 실제로 확인된 가게만 표시돼요 — 핀을 눌러보세요.</div>
+        <div class="map-center-badge">
+          <strong>조치원읍 일대</strong>
+          <span>세종특별자치시 · 실제 확인 9곳 표시 중</span>
+        </div>
       </div>
     </div>
   </div>
