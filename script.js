@@ -1,6 +1,6 @@
 // ---- Dummy restaurant data ----
 const restaurants = [
-  {name:"조치원 할매국밥", nameEn:"Jochiwon Grandma's Gukbap (조치원 할매국밥)", cat:"한식", emoji:"🍚", desc:"40년 전통, 진한 국물의 소문난 국밥집", descEn:"A well-known gukbap house with 40 years of tradition and rich broth", rating:4.8, reviewCount:212, price:"₩", priceValue:9000, saved:false, visited:false, detail:{
+  {name:"조치원 할매국밥", nameEn:"Jochiwon Grandma's Gukbap (조치원 할매국밥)", nameZh:"调治院奶奶汤饭 (조치원 할매국밥)", cat:"한식", emoji:"🍚", desc:"40년 전통, 진한 국물의 소문난 국밥집", descEn:"A well-known gukbap house with 40 years of tradition and rich broth", descZh:"有着40年传统、汤底浓郁的知名汤饭店", rating:4.8, reviewCount:212, price:"₩", priceValue:9000, saved:false, visited:false, detail:{
     isExample:true,
     address:"세종특별자치시 조치원읍 죽림리 123-4 (임의 주소 · 실제 주소 아님)",
     hours:"매일 07:00 - 20:00 (재료 소진 시 조기 마감)",
@@ -19,7 +19,7 @@ const restaurants = [
   },
   // pass가 있는 가게만 손주 식권 섹션과 검색에 노출된다 (detail과 같은 방식 — 일부만 채워둔 예시)
   pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", validDays:180}},
-  {name:"역전 왕돈까스", nameEn:"Yeokjeon King Donkatsu (역전 왕돈까스)", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", descEn:"Thick handmade donkatsu with generous portions", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
+  {name:"역전 왕돈까스", nameEn:"Yeokjeon King Donkatsu (역전 왕돈까스)", nameZh:"驿前炸猪排大王 (역전 왕돈까스)", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", descEn:"Thick handmade donkatsu with generous portions", descZh:"厚实的手工炸猪排，分量十足", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
     pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", validDays:90},
     detail:{
       isExample:true,
@@ -37,21 +37,21 @@ const restaurants = [
         {name:"치즈돈까스", price:"10,500원", composition:"돈까스+모짜렐라 + 밥 + 수프", origin:"돼지고기 국내산, 치즈 수입산"},
       ]
     }},
-  {name:"안쉐프고기해물짬뽕", nameEn:"An-Chef Meat & Seafood Jjambbong (안쉐프고기해물짬뽕)", cat:"중식", emoji:"🥡", desc:"고기와 해물을 함께 낸 얼큰한 짬뽕집", descEn:"A spicy jjambbong spot serving both meat and seafood", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+  {name:"안쉐프고기해물짬뽕", nameEn:"An-Chef Meat & Seafood Jjambbong (안쉐프고기해물짬뽕)", nameZh:"安主厨肉类海鲜炒码面 (안쉐프고기해물짬뽕)", cat:"중식", emoji:"🥡", desc:"고기와 해물을 함께 낸 얼큰한 짬뽕집", descEn:"A spicy jjambbong spot serving both meat and seafood", descZh:"肉类与海鲜同煮的辣味炒码面店", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.61477503455844, lng:127.2857292835937, realAddress:"세종특별자치시 조치원읍 섭골길 51-21"},
-  {name:"자갈돈돈", nameEn:"Jagal Dondon (자갈돈돈)", cat:"한식", emoji:"🥩", desc:"조치원읍 골목의 고기구이집", descEn:"A grilled-meat restaurant in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+  {name:"자갈돈돈", nameEn:"Jagal Dondon (자갈돈돈)", nameZh:"紫葛顿顿 (자갈돈돈)", cat:"한식", emoji:"🥩", desc:"조치원읍 골목의 고기구이집", descEn:"A grilled-meat restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的烤肉店", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
     liveReview:true, lat:36.6080898465768, lng:127.29005819471818, realAddress:"세종특별자치시 조치원읍 내창2길 30"},
-  {name:"우리들식당", nameEn:"Wooridul Sikdang (우리들식당)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {name:"우리들식당", nameEn:"Wooridul Sikdang (우리들식당)", nameZh:"我们食堂 (우리들식당)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的家常韩式套餐店", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.6080899912077, lng:127.288885692635, realAddress:"세종특별자치시 조치원읍 내창3길 19"},
-  {name:"폴바나", nameEn:"Paul, Barna (폴바나)", cat:"양식", emoji:"🍝", desc:"조치원읍 골목의 양식당", descEn:"A Western-style restaurant in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+  {name:"폴바나", nameEn:"Paul, Barna (폴바나)", nameZh:"波尔巴纳 (폴바나)", cat:"양식", emoji:"🍝", desc:"조치원읍 골목의 양식당", descEn:"A Western-style restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的西餐厅", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
     liveReview:true, lat:36.60819819730195, lng:127.28885703507063, realAddress:"세종특별자치시 조치원읍 내창3길 19"},
-  {name:"돈스", nameEn:"Donseu (돈스)", cat:"일식", emoji:"🍱", desc:"조치원읍 골목의 돈까스·우동집", descEn:"A donkatsu and udon spot in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+  {name:"돈스", nameEn:"Donseu (돈스)", nameZh:"顿思 (돈스)", cat:"일식", emoji:"🍱", desc:"조치원읍 골목의 돈까스·우동집", descEn:"A donkatsu and udon spot in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的炸猪排、乌冬面店", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.60735076086951, lng:127.29343318591735, realAddress:"세종특별자치시 조치원읍 돌마루7길 6"},
-  {name:"더라멘", nameEn:"The Ramen (더라멘)", cat:"일식", emoji:"🍜", desc:"조치원읍 골목의 라멘집", descEn:"A ramen shop in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+  {name:"더라멘", nameEn:"The Ramen (더라멘)", nameZh:"拉面屋 (더라멘)", cat:"일식", emoji:"🍜", desc:"조치원읍 골목의 라멘집", descEn:"A ramen shop in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的拉面店", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.607796147725, lng:127.289286979365, realAddress:"세종특별자치시 조치원읍 내창3길 16-1"},
-  {name:"초밥발전소12g", nameEn:"Sushi Power Plant 12g (초밥발전소12g)", cat:"일식", emoji:"🍣", desc:"조치원읍 골목의 초밥·롤 전문점", descEn:"A sushi and roll specialist in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩₩", priceValue:13000, saved:false, visited:false,
+  {name:"초밥발전소12g", nameEn:"Sushi Power Plant 12g (초밥발전소12g)", nameZh:"寿司发电站12g (초밥발전소12g)", cat:"일식", emoji:"🍣", desc:"조치원읍 골목의 초밥·롤 전문점", descEn:"A sushi and roll specialist in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的寿司卷专门店", rating:null, reviewCount:null, price:"₩₩", priceValue:13000, saved:false, visited:false,
     liveReview:true, lat:36.60695328676086, lng:127.2894090160121, realAddress:"세종특별자치시 조치원읍 내창3길 8"},
-  {name:"할머니 떡볶이", nameEn:"Grandma's Tteokbokki (할머니 떡볶이)", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", descEn:"Sweet and spicy old-school tteokbokki, a student favorite snack", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
+  {name:"할머니 떡볶이", nameEn:"Grandma's Tteokbokki (할머니 떡볶이)", nameZh:"奶奶炒年糕 (할머니 떡볶이)", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", descEn:"Sweet and spicy old-school tteokbokki, a student favorite snack", descZh:"香辣香甜的怀旧炒年糕，学生们的最爱零食", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
     pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", benefitEn:"Buy 20, get 3 free", validDays:180},
     detail:{
       isExample:true,
@@ -69,9 +69,9 @@ const restaurants = [
         {name:"모둠튀김", price:"5,000원", composition:"튀김 5종 모둠", origin:"식용유 국내산"},
       ]
     }},
-  {name:"파랑새분식", nameEn:"Blue Bird Bunsik (파랑새분식)", cat:"분식", emoji:"🍙", desc:"조치원읍 골목의 분식집", descEn:"A Korean snack (bunsik) shop in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩", priceValue:5000, saved:false, visited:false,
+  {name:"파랑새분식", nameEn:"Blue Bird Bunsik (파랑새분식)", nameZh:"青鸟小吃 (파랑새분식)", cat:"분식", emoji:"🍙", desc:"조치원읍 골목의 분식집", descEn:"A Korean snack (bunsik) shop in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩式小吃店", rating:null, reviewCount:null, price:"₩", priceValue:5000, saved:false, visited:false,
     liveReview:true, lat:36.608516105696, lng:127.290049731247, realAddress:"세종특별자치시 조치원읍 내창1길 34-1"},
-  {name:"숙이네밥상", nameEn:"Sooki's Table (숙이네밥상)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {name:"숙이네밥상", nameEn:"Sooki's Table (숙이네밥상)", nameZh:"淑姬家饭桌 (숙이네밥상)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的家常韩式套餐店", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.608995511335, lng:127.291526952076, realAddress:"세종특별자치시 조치원읍 원마루길 16-1"},
 ];
 
@@ -163,6 +163,7 @@ const i18n = { en: {
   discoverBtn:"Report a local restaurant near you",
   mapEyebrow:"MAP", mapTitle:"Jochiwon Mini Map",
   mapBody:"Locations of restaurants we've actually confirmed. Tap a pin to see details. The rest will be added one by one after the September field survey.",
+  mapCampusLabel:"🏫 Korea University Sejong Campus",
   eatLocalEyebrow:"EAT LOCAL", eatLocalTitle:"What to eat today?",
   realGridTitle:"📍 Confirmed real restaurants · Live Google reviews",
   realGridSub:"Restaurants actually registered on Kakao/Google. Click one to see real ratings and reviews instantly.",
@@ -372,30 +373,89 @@ const i18n = { en: {
   communityJoinBtn:"Join the group",
   communityQrReady:"Scan the QR code below or tap the button to join.",
   communityQrSoon:"The group hasn't been created yet. Once it's open, a QR code will appear here.",
+}, zh: {
+  // 중국어는 핵심 경로(헤더·히어로·문제·로드맵·지도·맛집 카드/상세·구글 리뷰·실시간 검색)만 지원 —
+  // 그 외 키가 없으면 t()가 null을 반환해 한국어 원문으로 자동 대체된다.
+  pageTitle:"Bap Meokeoreo Wa — 发现调治院本地美食",
+  navSearch:"搜索", navGame:"菜单推荐游戏", navSurvey:"口味问卷", navLang:"语言", navLogin:"登录",
+  headerSearchPh:"搜索餐厅、餐券、合作、页面",
+  heroEyebrow:"KU救援队！拜托了老板",
+  heroTitle:'你知道吗，有些好吃的餐厅在Naver地图上找不到，或者信息很少？<span>现在你知道了。</span>',
+  heroBody:'高丽大学世宗校区学生团队<b>味集KU助队</b>亲自走遍调治院邑的大街小巷去发掘。我们从寻找那些完全没有在Naver/Kakao地图上登记，或者登记了但几乎没有信息的本地老字号餐厅开始。快来发现高丽大学、弘益大学世宗校区学生和附近居民都能享受的高性价比本地美食吧。',
+  heroBrowse:"浏览餐厅", heroNotify:"获取开放通知",
+  heroQuickpick:"选择困难症救援 · 3秒帮你选好", heroSpeech:"来吃饭吧！",
+  problemEyebrow:"为什么选择来吃饭吧", problemTitle:"只相信地图App，会错过好吃的餐厅",
+  problemSub:"高丽大学、弘益大学世宗校区学生、留学生、教职员工和附近居民都曾经历过的故事。",
+  problem1Title:"地图上没有，或信息不全",
+  problem1Body:"老字号老板的店常常完全没有登记在Naver/Kakao地图上，或者登记了却连一张照片都没有，信息不全，搜索也看不到。",
+  problem2Title:"总是吃教职工食堂",
+  problem2Body:"明明附近就有性价比更高、更好吃的本地餐厅，却没办法知道，只能一直重复相同的选择。",
+  problem3Title:"需要互相帮助",
+  problem3Body:"顾客能发现隐藏的美食，老板能获得宣传和销量的增长——这是让我们整个社区一起变好的方法。",
+  discoverEyebrow:"即将推出", discoverTitle:"开学后，我们将亲自拜访老字号老板",
+  discoverBody:"完全没有登记在地图上，或者登记了但信息不全的真正本地美食——学生团队将在9月开学后走遍调治院邑的巷子，与老板见面，逐一在这里介绍。下方带有🌐标志的餐厅是谷歌实时评论功能的预览示例，我们亲自发掘并提供帮助的真正本地店铺列表将很快填充在这里。",
+  discoverStep1:"调治院邑巷弄实地调查（9月开学后）",
+  discoverStep2:"发掘登记信息不全的老字号老板 · 补充信息",
+  discoverStep3:"在此处逐一公开真正的本地店铺",
+  discoverBtn:"举报你身边的本地美食",
+  mapEyebrow:"地图", mapTitle:"调治院迷你地图",
+  mapBody:"这里是已确认的实际店铺位置。点击图钉可跳转到详情页。其余店铺将在9月实地调查后陆续添加。",
+  mapCampusLabel:"🏫 高丽大学世宗校区",
+  eatLocalEyebrow:"本地美食", eatLocalTitle:"今天吃什么？",
+  realGridTitle:"📍 已确认的实际店铺 · 谷歌实时评论",
+  realGridSub:"在Kakao/谷歌上真实登记的店铺。点击即可立即查看真实评分和评论。",
+  liveSearchPh:"找不到想要的餐厅？输入店名在学校周边实时搜索更多",
+  liveSearchBtn:"搜索",
+  catAll:"全部", catKorean:"韩餐", catWestern:"西餐", catChinese:"中餐", catJapanese:"日料", catSnack:"小吃",
+  sortRecommend:"推荐排序", sortName:"名称排序（拼音）", sortRating:"评分最高", sortReviews:"评论最多", sortLatest:"最新",
+  priceMin:"最低", priceMax:"最高", priceWon:"韩元",
+  filterEmpty:"没有找到结果。请尝试其他关键词。",
+  exampleGridTitle:"🔎 示例店铺（待实地调查）",
+  exampleGridSub:'这是实地调查完成前的示例信息。点击爱心可保存到"想去的地方"。',
+  loadMore:"查看更多餐厅",
+  confirmOk:"确认", confirmNo:"否",
+  cardReviewPending:"🔎 真实评论准备中", cardVisitBadge:"✔ 去过", cardLiveBadge:"🌐 谷歌实时评论", cardMockTag:"示例数据",
+  cardVisitedLabel:"✔ 已记录到访", cardMarkVisited:"标记为已到访", cardWantToVisit:"添加到想去的地方",
+  filterCountTemplate:"{n}家餐厅",
+  detailAddress:"📍 地址", detailHours:"🕐 营业时间", detailClosed:"🚫 休息日", detailPhone:"☎️ 电话", detailReservation:"📅 预约",
+  detailCapacity:"🪑 可容纳人数", detailParking:"🚗 停车", detailMobilePay:"📱 移动支付", detailVouchers:"🎟️ 代金券/餐券",
+  detailMenuTitle:"菜单", detailOrigin:"产地：", detailExampleNote:"* 这是示例信息，实地调查后将更新为真实数据。",
+  detailStubTitle:"详细信息准备中", detailStubBody:"，将在9月实地调查后补充完整。可先在调治院奶奶汤饭卡片中预览会包含哪些信息。",
+  detailStubBodyFull:"地址、营业时间、菜单构成和食材产地",
+  detailStubBodyPartial:"营业时间、菜单构成和食材产地",
+  closeBtn:"关闭",
+  googleReviewTitle:"谷歌评论", googleReviewLoading:"正在加载评论...", googleReviewError:"无法加载评论，请稍后再试。",
+  googleReviewNotFound:"😢 在谷歌地图上找不到这家店。", googleReviewNone:"暂无评论。",
+  googleReviewLink:"在谷歌地图查看全部评论 →", googleReviewAnon:"匿名",
+  liveSearchLoading:"搜索中...", liveSearchEmpty:"没有找到结果。", liveSearchError:"搜索失败，请稍后再试。",
+  confirmLoginTitle:"需要登录", confirmLoginBody:"此功能需要登录。登录后即可创建你自己的餐厅列表！", confirmLoginOk:"登录", confirmLoginCancel:"关闭",
+  confirmUnsave:"要从想去的地方中移除吗？", confirmSave:"要把这家餐厅添加到想去的地方吗？", confirmVisited:"要将这家餐厅标记为已到访吗？",
 } };
 
 let currentLang = 'ko';
 
 function t(key){
-  return (i18n.en[key] !== undefined && currentLang === 'en') ? i18n.en[key] : null;
+  const dict = i18n[currentLang];
+  return (dict && dict[key] !== undefined) ? dict[key] : null;
 }
 
-// 정적 HTML용 — [data-i18n] 등 태그된 요소를 영어로 바꾸거나 원래 한국어로 되돌린다
+// 정적 HTML용 — [data-i18n] 등 태그된 요소를 currentLang 사전 값으로 바꾸거나 원래 한국어로 되돌린다
 function applyStaticTranslations(){
+  const dict = i18n[currentLang];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.dataset.i18n;
     if(el.dataset.i18nKoCache === undefined) el.dataset.i18nKoCache = el.innerHTML;
-    el.innerHTML = (currentLang === 'en' && i18n.en[key] !== undefined) ? i18n.en[key] : el.dataset.i18nKoCache;
+    el.innerHTML = (dict && dict[key] !== undefined) ? dict[key] : el.dataset.i18nKoCache;
   });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
     const key = el.dataset.i18nPlaceholder;
     if(el.dataset.i18nKoPhCache === undefined) el.dataset.i18nKoPhCache = el.placeholder;
-    el.placeholder = (currentLang === 'en' && i18n.en[key] !== undefined) ? i18n.en[key] : el.dataset.i18nKoPhCache;
+    el.placeholder = (dict && dict[key] !== undefined) ? dict[key] : el.dataset.i18nKoPhCache;
   });
   document.querySelectorAll('[data-i18n-title]').forEach(el => {
     const key = el.dataset.i18nTitle;
     if(el.dataset.i18nKoTitleCache === undefined) el.dataset.i18nKoTitleCache = el.title;
-    el.title = (currentLang === 'en' && i18n.en[key] !== undefined) ? i18n.en[key] : el.dataset.i18nKoTitleCache;
+    el.title = (dict && dict[key] !== undefined) ? dict[key] : el.dataset.i18nKoTitleCache;
   });
   document.documentElement.lang = currentLang;
 }
@@ -456,9 +516,17 @@ function getFilteredList(){
   return list;
 }
 
-// 레스토랑 이름/설명 다국어 헬퍼 — 영어 번역이 있고 영어 모드일 때만 대체, 없으면 한국어 원문
-function rName(r){ return (currentLang === 'en' && r.nameEn) ? r.nameEn : r.name; }
-function rDesc(r){ return (currentLang === 'en' && r.descEn) ? r.descEn : r.desc; }
+// 레스토랑 이름/설명 다국어 헬퍼 — 해당 언어 번역이 있을 때만 대체, 없으면 한국어 원문
+function rName(r){
+  if(currentLang === 'en' && r.nameEn) return r.nameEn;
+  if(currentLang === 'zh' && r.nameZh) return r.nameZh;
+  return r.name;
+}
+function rDesc(r){
+  if(currentLang === 'en' && r.descEn) return r.descEn;
+  if(currentLang === 'zh' && r.descZh) return r.descZh;
+  return r.desc;
+}
 function pBenefit(p){ return (currentLang === 'en' && p.benefitEn) ? p.benefitEn : p.benefit; }
 function rCat(r){ return t('cat' + {'전체':'All','한식':'Korean','양식':'Western','중식':'Chinese','일식':'Japanese','분식':'Snack'}[r.cat]) || r.cat; }
 
@@ -917,7 +985,7 @@ function closeDetail(){ detailOverlay.classList.remove('show'); }
 function closeDetailOnOverlay(e){ if(e.target === detailOverlay) closeDetail(); }
 
 function renderStubDetail(r){
-  const isEn = currentLang === 'en';
+  const isKo = currentLang === 'ko';
   return `
     <div class="detail-head">
       <span class="detail-emoji">${r.emoji}</span>
@@ -936,9 +1004,9 @@ function renderStubDetail(r){
       </div>
     </div>` : ''}
     <div class="detail-stub-note">
-      ${isEn
-        ? `<strong>${t('detailStubTitle')}</strong> — ${r.realAddress ? t('detailStubBodyPartial') : t('detailStubBodyFull')}${t('detailStubBody')}`
-        : `<strong>상세 정보 준비 중</strong> — ${r.realAddress ? '영업시간·메뉴 구성·원산지' : '주소·영업시간·메뉴 구성·원산지'} 같은 상세 정보는 9월 현장 조사 후 채워질 예정이에요. 예시로 <b>${escapeHtml(rName(restaurants[0]))}</b> 카드에서 어떤 정보가 담길지 미리 확인해보세요.`}
+      ${isKo
+        ? `<strong>상세 정보 준비 중</strong> — ${r.realAddress ? '영업시간·메뉴 구성·원산지' : '주소·영업시간·메뉴 구성·원산지'} 같은 상세 정보는 9월 현장 조사 후 채워질 예정이에요. 예시로 <b>${escapeHtml(rName(restaurants[0]))}</b> 카드에서 어떤 정보가 담길지 미리 확인해보세요.`
+        : `<strong>${t('detailStubTitle')}</strong> — ${r.realAddress ? t('detailStubBodyPartial') : t('detailStubBodyFull')}${t('detailStubBody')}`}
     </div>
     ${r.lat && r.lng ? renderGoogleReviewShell() : ''}
     <button type="button" class="survey-close-btn" onclick="closeDetail()">${t('closeBtn') || '닫기'}</button>
@@ -1068,7 +1136,7 @@ function renderMiniMap(){
     maxZoom: 19,
   }).addTo(map);
 
-  L.marker([CAMPUS_CENTER.lat, CAMPUS_CENTER.lng]).addTo(map).bindPopup(currentLang === 'en' ? '🏫 Korea University Sejong Campus' : '🏫 고려대학교 세종캠퍼스');
+  L.marker([CAMPUS_CENTER.lat, CAMPUS_CENTER.lng]).addTo(map).bindPopup(t('mapCampusLabel') || '🏫 고려대학교 세종캠퍼스');
 
   restaurants.filter(r => r.liveReview).forEach(r => {
     const idx = restaurants.indexOf(r);
@@ -1749,7 +1817,7 @@ function submitReview(e){
 // 나머지 언어는 아직 번역이 없어 선택만 저장되고 "준비중" 안내만 뜬다.
 const langOverlay = document.getElementById('langOverlay');
 const langBody = document.getElementById('langBody');
-const SUPPORTED_LANGS = ['ko', 'en'];
+const SUPPORTED_LANGS = ['ko', 'en', 'zh'];
 
 // 각 언어 이름은 해당 언어 표기로 (영어를 원하면 English 버튼을 누르도록)
 const languages = [
