@@ -137,6 +137,12 @@
     <p class="section-sub">카카오·구글에 실제로 등록된 가게예요. 클릭하면 진짜 평점·리뷰를 바로 볼 수 있어요.</p>
     <div class="card-grid" id="realCardGrid"></div>
 
+    <div class="live-search-box">
+      <input id="liveSearchInput" type="text" placeholder="찾는 가게가 없나요? 이름을 입력해 학교 주변에서 실시간으로 더 찾아보세요">
+      <button type="button" class="btn-primary" onclick="runLiveSearch()">찾아보기</button>
+    </div>
+    <div id="liveSearchResults" class="live-search-results"></div>
+
     <h3 class="subsection-title">🔎 예시 가게 (현장 조사 예정)</h3>
     <p class="section-sub">카테고리를 골라보세요. 마음에 드는 곳은 하트를 눌러 "가보고 싶은 곳"에 저장할 수 있어요. 여기 있는 가게들은 아직 현장 조사 전이라 예시로 채운 정보예요.</p>
     <div class="cat-bar" id="catBar">
@@ -172,20 +178,6 @@
     <div class="load-more-wrap">
       <button class="btn-ghost" onclick="openToast('more')">맛집 더 보기</button>
     </div>
-  </div>
-</section>
-
-<!-- ===== 실시간 가게 검색 ===== -->
-<section class="live-search-section section-pad" id="liveSearch">
-  <div class="container">
-    <span class="eyebrow">SEARCH</span>
-    <h2 class="section-title">동네 가게, 아무거나 찾아보기</h2>
-    <p class="section-sub">위 목록에 없는 가게도 괜찮아요. 이름을 입력하면 학교 주변에서 실시간으로 찾아드리고, 클릭하면 구글 실제 평점·리뷰까지 바로 보여드려요.</p>
-    <div class="live-search-box">
-      <input id="liveSearchInput" type="text" placeholder="가게 이름을 입력하세요 (예: 김밥천국)">
-      <button type="button" class="btn-primary" onclick="runLiveSearch()">찾아보기</button>
-    </div>
-    <div id="liveSearchResults" class="live-search-results"></div>
   </div>
 </section>
 
