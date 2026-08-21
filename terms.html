@@ -130,13 +130,39 @@
     footerNavHome:"Home", footerNavPrivacy:"Privacy Policy", footerNavTerms:"Terms of Service",
     footerBottom:"© 2026 Bap Meokeoreo Wa · KU Rescue Squad! Help the Local Owners. Matjip KU-jodae (Korea University Sejong Campus).",
   };
+  var ZH = {
+    metaTitle:"服务条款 — Bap Meokeoreo Wa",
+    navHome:"首页",
+    backHome:"← 返回 来吃饭吧 首页",
+    h1:"服务条款",
+    legalMeta:"本文件是反映《电子商务消费者保护法》及《信息通信网络利用促进法》立法意图的必备条款草案。「来吃饭吧」目前作为非营利社区服务项目运营，如未来转型为收费或广告支持的商业运营，本条款及运营方的企业信息将依据相关法律进行更新。",
+    translationNote:"本页面的中文翻译仅供参考，以韩文原文为准。",
+    art1:'<h3>第1条（目的）</h3><p>本条款旨在规定「来吃饭吧」（以下简称"本服务"）提供的所有服务的使用条件及程序，以及用户与服务运营方的权利、义务及责任事项。</p>',
+    art2:'<h3>第2条（术语定义）</h3><ol><li>"会员"指同意本条款并注册使用本服务的人。</li><li>"内容"指用户在本服务内发布的评论、照片等内容。</li></ol>',
+    art3:'<h3>第3条（条款的效力及变更）</h3><p>本条款自在服务页面公示或以其他方式通知会员起生效，并可在不违反相关法令的范围内进行修订。</p>',
+    art4:'<h3>第4条（服务的提供及变更）</h3><p>本服务包括本地餐厅信息提供、收藏及评论等功能，可根据运营及技术需要变更提供内容。</p>',
+    art5:'<h3>第5条（会员义务）</h3><p>会员不得登记虚假信息、盗用他人信息或妨碍服务运营，撰写评论时须基于事实内容。</p>',
+    art6:'<h3>第6条（帖子的管理）</h3><p>若会员发布的内容侵犯他人权利或违反公序良俗，本服务可不经事先通知予以删除。</p>',
+    art7:'<h3>第7条（免责条款）</h3><p>本服务不保证会员登记信息（餐厅信息、评论等）的准确性，并对由此产生的损害不承担责任。</p>',
+    art8:'<h3>附则 — 运营方信息公示</h3><p>未来如通过企业登记转为正式商业运营（收费功能、广告收入等），将依据《电子商务消费者保护法》在页面底部追加公示商号、代表人姓名、企业登记号、通信销售业申报号、地址及电话号码。</p>',
+    footerOperator:"<b>运营机构</b> 高丽大学世宗校区学生团队 味集KU助队",
+    footerProject:"<b>项目名称</b> KU救援队！拜托了老板",
+    footerServiceName:"<b>服务名称</b> Bap Meokeoreo Wa",
+    footerEmail:"<b>咨询邮箱</b>（待公布）",
+    footerOfficer:"<b>个人信息保护负责人</b>（待公布）",
+    footerNavHome:"首页", footerNavPrivacy:"隐私政策", footerNavTerms:"服务条款",
+    footerBottom:"© 2026 Bap Meokeoreo Wa · KU救援队！拜托了老板。味集KU助队（高丽大学世宗校区）。",
+  };
+  var DICTS = { en: EN, zh: ZH };
+  var CYCLE = ['ko', 'en', 'zh'];
+  var NEXT_LABEL = { ko:'English', en:'中文', zh:'한국어' };
   var STORE_KEY = 'bmw:v1';
   function getStoredLang(){
     try {
       var raw = localStorage.getItem(STORE_KEY);
       if(!raw) return 'ko';
       var parsed = JSON.parse(raw);
-      return parsed.lang === 'en' ? 'en' : 'ko';
+      return CYCLE.indexOf(parsed.lang) !== -1 ? parsed.lang : 'ko';
     } catch(e){ return 'ko'; }
   }
   function setStoredLang(lang){
@@ -149,17 +175,18 @@
   }
   var currentLang = getStoredLang();
   function apply(){
+    var dict = DICTS[currentLang];
     document.querySelectorAll('[data-i18n]').forEach(function(el){
       var key = el.getAttribute('data-i18n');
       if(el.dataset.koCache === undefined) el.dataset.koCache = el.innerHTML;
-      el.innerHTML = (currentLang === 'en' && EN[key]) ? EN[key] : el.dataset.koCache;
+      el.innerHTML = (dict && dict[key]) ? dict[key] : el.dataset.koCache;
     });
     document.documentElement.lang = currentLang;
     var btn = document.getElementById('legalLangToggle');
-    if(btn) btn.textContent = currentLang === 'en' ? '한국어' : 'English';
+    if(btn) btn.textContent = NEXT_LABEL[currentLang];
   }
   window.toggleLegalLang = function(){
-    currentLang = currentLang === 'en' ? 'ko' : 'en';
+    currentLang = CYCLE[(CYCLE.indexOf(currentLang) + 1) % CYCLE.length];
     setStoredLang(currentLang);
     apply();
   };

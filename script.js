@@ -18,9 +18,9 @@ const restaurants = [
     ]
   },
   // pass가 있는 가게만 손주 식권 섹션과 검색에 노출된다 (detail과 같은 방식 — 일부만 채워둔 예시)
-  pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", validDays:180}},
+  pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", benefitZh:"买10送1", validDays:180}},
   {name:"역전 왕돈까스", nameEn:"Yeokjeon King Donkatsu (역전 왕돈까스)", nameZh:"驿前炸猪排大王 (역전 왕돈까스)", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", descEn:"Thick handmade donkatsu with generous portions", descZh:"厚实的手工炸猪排，分量十足", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
-    pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", validDays:90},
+    pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", benefitZh:"买10送1", validDays:90},
     detail:{
       isExample:true,
       address:"세종특별자치시 조치원읍 원리 78-1 (임의 주소 · 실제 주소 아님)",
@@ -52,7 +52,7 @@ const restaurants = [
   {name:"초밥발전소12g", nameEn:"Sushi Power Plant 12g (초밥발전소12g)", nameZh:"寿司发电站12g (초밥발전소12g)", cat:"일식", emoji:"🍣", desc:"조치원읍 골목의 초밥·롤 전문점", descEn:"A sushi and roll specialist in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的寿司卷专门店", rating:null, reviewCount:null, price:"₩₩", priceValue:13000, saved:false, visited:false,
     liveReview:true, lat:36.60695328676086, lng:127.2894090160121, realAddress:"세종특별자치시 조치원읍 내창3길 8"},
   {name:"할머니 떡볶이", nameEn:"Grandma's Tteokbokki (할머니 떡볶이)", nameZh:"奶奶炒年糕 (할머니 떡볶이)", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", descEn:"Sweet and spicy old-school tteokbokki, a student favorite snack", descZh:"香辣香甜的怀旧炒年糕，学生们的最爱零食", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
-    pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", benefitEn:"Buy 20, get 3 free", validDays:180},
+    pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", benefitEn:"Buy 20, get 3 free", benefitZh:"买20送3", validDays:180},
     detail:{
       isExample:true,
       address:"세종특별자치시 조치원읍 봉산리 5-2 (임의 주소 · 실제 주소 아님)",
@@ -373,6 +373,9 @@ const i18n = { en: {
   communityJoinBtn:"Join the group",
   communityQrReady:"Scan the QR code below or tap the button to join.",
   communityQrSoon:"The group hasn't been created yet. Once it's open, a QR code will appear here.",
+  // 손주 로그인/식권 흐름의 잡다한 fallback 단어들
+  grandchildDefaultName:"Grandchild", mealPassWord:"Meal Pass", ownerBonusLabel:"Owner bonus",
+  mypagePassBonusWord:"bonus", mypagePassDateLine:"Reserved {date}", reviewCharUnit:"",
 }, zh: {
   // 중국어는 핵심 경로(헤더·히어로·문제·로드맵·지도·맛집 카드/상세·구글 리뷰·실시간 검색)만 지원 —
   // 그 외 키가 없으면 t()가 null을 반환해 한국어 원문으로 자동 대체된다.
@@ -430,6 +433,188 @@ const i18n = { en: {
   liveSearchLoading:"搜索中...", liveSearchEmpty:"没有找到结果。", liveSearchError:"搜索失败，请稍后再试。",
   confirmLoginTitle:"需要登录", confirmLoginBody:"此功能需要登录。登录后即可创建你自己的餐厅列表！", confirmLoginOk:"登录", confirmLoginCancel:"关闭",
   confirmUnsave:"要从想去的地方中移除吗？", confirmSave:"要把这家餐厅添加到想去的地方吗？", confirmVisited:"要将这家餐厅标记为已到访吗？",
+  // 리뷰(랜딩) / 설문 CTA / 공유 / 함께하기 / 이메일 신청 / 푸터 / 접근성
+  reviewEyebrow:"评价", reviewTitle:"亲身体验过的人的故事",
+  reviewSearchPh:"搜索评论（餐厅名、关键词）",
+  reviewWriteBtn:"我也来写评论",
+  reviewSoon:"<strong>评论数据即将上线</strong> — 9月开学后真实到访评论积累起来后，AI评论摘要功能也将同步推出。",
+  surveyTitle:"告诉我们你的口味", surveyBody:"回答关于辣度、喜爱类型和预算的简单问卷，获取为你量身定制的餐厅推荐。", surveyBtn:"开始口味问卷",
+  shareEyebrow:"分享", shareTitle:"也告诉学校的朋友们吧",
+  shareBody:'分享得越多，隐藏的美食就会变得更好——把"来吃饭吧"推荐给朋友吧。',
+  shareKakao:"分享到KakaoTalk", shareCopy:"复制链接", shareText:"短信分享", shareInsta:"分享到Instagram",
+  joinEyebrow:"一起", joinTitle:"让我们一起打造这个项目",
+  joinBody:"为老板，为我们，为邻居——我们为想要加入这个项目的所有人留出了空间。",
+  join1Title:'你是店主吗？<span class="badge-soon">即将推出</span>',
+  join1Body:"为希望自己的店铺被介绍的调治院本地店主准备的登记入口。",
+  join2Title:"帮我们一把", join2Body:"我们正在寻找愿意加入企划、开发、设计、实地调查等岗位的队友。",
+  join3Title:"也告诉我们你所在地区的本地美食", join3Body:"即使不在调治院，只要和我们做的事情有共鸣，随时欢迎联系。",
+  signupTitle:"第一时间获知消息", signupBody:"测试版上线和新增餐厅时，我们会第一时间发邮件通知你。",
+  signupEmailPh:"请输入邮箱地址", signupBtn:"提前注册",
+  signupMsg:"注册成功！上线时我们会第一时间通知你 🌾",
+  footerAbout:'"KU救援队！拜托了老板"——高丽大学世宗校区学生团队味集KU助队发起的社会公益项目，致力于与本地商圈一起成长。',
+  footerServiceHead:"服务", footerMapLink:"查看地图", footerPassLink:'孙辈餐券<span class="badge-soon">即将推出</span>', footerSponsorLink:"支持我们",
+  footerInfoHead:"信息", footerIntroLink:"关于本服务", footerFaqLink:"联系我们", footerSignupLink:"订阅上线通知",
+  footerLegalHead:"法律", footerPrivacyLink:"隐私政策", footerTermsLink:"服务条款",
+  footerOperator:"<b>运营机构</b> 高丽大学世宗校区学生团队 味集KU助队",
+  footerProject:"<b>项目名称</b> KU救援队！拜托了老板",
+  footerServiceName:"<b>服务名称</b> Bap Meokeoreo Wa",
+  footerEmail:"<b>咨询邮箱</b>（待公布）",
+  footerOfficer:"<b>隐私保护负责人</b>（待公布）",
+  footerBottom:"© 2026 Bap Meokeoreo Wa · KU救援队！拜托了老板。味集KU助队（高丽大学世宗校区）。",
+  a11yToggle:"🔍 大字模式",
+  // 취향 설문
+  surveyPrev:"上一步", surveyNext:"下一步", surveyResult:"查看结果",
+  surveyResultTitle:"这些怎么样？", surveyResultSub:"根据你的口味挑选的本地美食",
+  // 메뉴 추천 게임
+  gameTitle:"用游戏的方式决定吃什么吧", gameSub:"告别选择困难！两者选一个",
+  gameTarotName:"今日菜单塔罗", gameTarotDesc:"抽一张卡，揭晓今天的美食命运",
+  gameRouletteName:"菜单转盘", gameRouletteDesc:"输入你想吃的东西，让转盘帮你决定",
+  gameBack:"← 选择其他游戏",
+  tarotTitle:"今日菜单塔罗", tarotSub:"{n}张卡牌正在流动。点击抽取今天的一餐",
+  tarotRedraw:"重新抽取",
+  rouletteTitle:"菜单转盘", rouletteSub:"添加2个以上想吃的菜品，然后转动",
+  roulettePh:"例如：汤饭、披萨、麻辣烫", rouletteAdd:"添加",
+  rouletteEmpty:"请添加菜品", rouletteMin:"请添加2个以上菜品",
+  rouletteReady:"共{n}个选项可供选择", rouletteSpin:"🎡 转动", rouletteRespin:"🎡 再转一次",
+  // 손주 로그인/가입
+  authIntentSave:"要保存想去的地方，请先成为我们的孙辈！",
+  authIntentMypage:"使用我的页面需要先注册。",
+  authIntentReview:"请先注册后再撰写评论。",
+  authIntentPass:"餐券会保存到你的账户，请先注册。",
+  authIntentLogin:"欢迎回来！请登录你的账户。",
+  authTitle:"成为我们的孙辈", authTabSignup:"注册", authTabLogin:"登录",
+  authNameLabel:"姓名", authNamePh:"该怎么称呼你？",
+  authIdLabel:"邮箱或手机号", authIdPh:"example@mail.com 或 010-1234-5678",
+  authPwLabel:"密码", authPwPh:"密码",
+  authPw2Label:"确认密码", authPw2Ph:"请再次输入密码",
+  authSubmitSignup:"注册并开始使用", authSubmitLogin:"登录",
+  authErrFormat:"请输入有效的邮箱地址或手机号。",
+  authErrPwMismatch:"两次输入的密码不一致，请重新确认。",
+  authErrDupe:'该账户已存在，请通过"登录"标签页登录。',
+  authErrNotFound:'找不到该账户，请先通过"注册"标签页注册。',
+  authErrWrongPw:"密码错误。",
+  authWelcomeTitle:"欢迎，{name}！", authWelcomeBody:"注册完成。正式上线时我们会第一时间通知你。",
+  authWelcomeMypageBtn:"前往我的页面",
+  headerAuthSavedLabel:"我保存的地方", headerAuthMypageTitle:"{name}的我的页面",
+  logoutTitle:"要登出吗？", logoutBody:"登出后，使用保存列表、撰写评论等功能需要重新登录。",
+  logoutOk:"登出", logoutCancel:"取消",
+  // 마이페이지
+  mypageTitle:"{name}的我的页面", mypageTitleGeneric:"我的页面",
+  mypageTabSaved:"想去的地方", mypageTabVisited:"去过的地方", mypageTabPass:"餐券",
+  mypageResetLink:"重置我的全部活动记录", mypageLogoutBtn:"登出",
+  mypageEmptySaved:"还没有保存的餐厅。", mypageEmptyVisited:"还没有到访记录。",
+  mypageEmptyPass:"还没有预订的餐券。<br>请在孙辈餐券栏目中选择你喜欢的餐厅。",
+  mypageRemoveSavedTitle:"从想去的地方中移除", mypageRemoveVisitedTitle:"取消到访记录",
+  mypageConfirmUnvisit:"要取消这条到访记录吗？",
+  mypageCancelPassTitle:"取消预订", mypageConfirmCancelPass:"要取消这份餐券预订吗？", mypageCancelPassOk:"取消预订",
+  resetTitle:"重置我的活动记录", resetBody:"这会清除你保存的地方、到访记录、你写的评论和餐券预订。此操作无法撤销。",
+  resetOk:"重置", resetCancel:"取消",
+  // 리뷰 작성
+  reviewFormTitle:"我也来写评论", reviewFormSub:"分享你对到访过的餐厅的真实评价。",
+  reviewFormNoVisitTitle:"还不能写评论", reviewFormNoVisitBody:"只能评论已标记为到访过的餐厅。",
+  reviewFormNoVisitOk:"浏览餐厅",
+  reviewRatingLabel:"评分", reviewPlaceLabel:"到访的餐厅",
+  reviewVisibilityLabel:"显示方式", reviewVisibilityReal:"真实姓名（{name}）", reviewVisibilityAnon:"匿名",
+  reviewPhotoLabel:"添加照片", reviewOptional:"可选",
+  reviewContentLabel:"评论内容", reviewContentPh:"你喜欢这里的哪一点？",
+  reviewSubmitBtn:"发布评论", reviewErrEmpty:"请填写评论内容。",
+  reviewSuccessTitle:"评论发布成功！",
+  reviewSuccessBodyOk:"感谢分享！评论已发布到评论列表中。",
+  reviewSuccessBodyFail:"已添加到评论列表，但照片过大未能保存——刷新页面后可能会消失。",
+  anonReviewerName:"匿名孙辈", namedReviewerSuffix:"（孙辈）", defaultReviewerName:"一位孙辈",
+  // 서비스 소개
+  introSub:"调治院邑本地美食发现平台",
+  introVision:"寻找那些在地图上缺失或信息不全的真正社区餐厅，打造顾客与店主共同繁荣的本地商圈生态",
+  introOverviewHead:"项目概述",
+  introOverviewBody:'"KU救援队！拜托了老板"——始于高丽大学世宗校区社会公益项目的学生主导服务。学生和居民亲自寻找并介绍那些在Naver/Kakao地图上缺失或信息不全的调治院邑本地餐厅。',
+  introMakerHead:"关于我们",
+  introMakerBody:"由高丽大学世宗校区经济政策学专业学生团队味集KU助队企划并打造的社会公益项目。",
+  introProgressHead:"进展情况",
+  introProgressBody:"目前正处于正式上线前接受提前注册的准备阶段。计划在9月开学后通过实地调查填充真实餐厅数据，然后启动完整服务。",
+  introFaqBtn:"常见问题",
+  // FAQ
+  faqTitle:"联系我们", faqSub:"请先查看常见问题，可能会有快速答案。",
+  faqQ1:"什么是「来吃饭吧」？",
+  faqA1:'这是「KU救援队！拜托了老板」项目打造的服务。学生和居民亲自寻找并介绍那些在Naver/Kakao地图等在线地图上缺失或信息不全的调治院邑本地餐厅。',
+  faqQ2:"现在是正式上线前吗？",
+  faqA2:"是的，目前正处于准备阶段，接受提前注册，计划在9月开学后携带真实餐厅数据启动完整服务。",
+  faqQ3:"我的餐厅也能被收录吗？",
+  faqA3:'当然可以！我们正在准备店主登记页面。功能上线后，会通过"你是店主吗？"按钮引导你完成登记。',
+  faqQ4:"任何人都能写评论吗？",
+  faqA4:"只有登录会员才能写评论，且仅限已标记为到访过的餐厅——这是防止虚假评论的最低限度保障措施。",
+  faqQ5:"我的个人信息会如何使用？",
+  faqA5:"仅用于隐私政策中列明的目的（会员身份确认、提供服务），并依据相关法律安全管理。",
+  faqQ6:"我想做志愿者或加入团队。",
+  faqA6:'请通过"帮我们一把"菜单留下咨询，我们会引导你了解后续步骤。',
+  faqFootPrefix:"没找到你要的答案？可以通过", faqFootBold:"帮我们一把", faqFootSuffix:"联系我们。",
+  faqContactBtn:"发送咨询",
+  // 참여/후원/제휴 문의
+  supportTitle:"帮我们一把", supportSub:"我们正在等待愿意帮忙的人加入这个项目。",
+  supportTeamTitle:"我想加入团队", supportTeamDesc:"从实地调查到企划开发——总有适合你的位置。",
+  supportSponsorTitle:"我想支持这个项目", supportSponsorDesc:"为以非营利方式运营的项目提供助力。",
+  contactNameLabel:"姓名", contactNamePh:"姓名或昵称",
+  contactReachLabel:"联系方式/邮箱", contactReachPh:"可联系到你的邮箱或电话号码",
+  contactMessageOptional:"可选", contactSubmitBtn:"发送咨询",
+  contactErrName:"请输入姓名。", contactErrReach:"请输入有效的邮箱或电话号码。",
+  contactBack:"返回", contactSuccessTitle:"咨询已提交！",
+  contactSuccessBody:"谢谢你，{name}。我们会通过你留下的联系方式跟进。<br>（{type}）",
+  ct_team_title:"我想加入团队", ct_team_sub:"我们正在等待愿意一起打造这个项目的队友。",
+  ct_team_note:"企划、开发、设计、实地调查——欢迎任何角色。我们会通过你留下的联系方式联系你。",
+  ct_team_field:"你想帮忙的领域",
+  ct_team_opt1:"实地调查（发掘餐厅）", ct_team_opt2:"企划/运营", ct_team_opt3:"设计", ct_team_opt4:"开发", ct_team_opt5:"营销/内容", ct_team_opt6:"还没想好",
+  ct_team_msgLabel:"还有什么想告诉我们的", ct_team_msgPh:"欢迎分享你想加入的理由或你的可用时间。",
+  ct_sponsor_title:"我想支持这个项目", ct_sponsor_sub:"每一份支持都能帮我们多发掘一家本地美食。",
+  ct_sponsor_note:"本项目目前以非营利方式运营，捐款仅用于实地调查和运营成本。",
+  ct_sponsor_field:"支持方式",
+  ct_sponsor_opt1:"一次性捐款", ct_sponsor_opt2:"定期捐款", ct_sponsor_opt3:"实物/技能捐赠", ct_sponsor_opt4:"只是想先咨询一下",
+  ct_sponsor_msgLabel:"关于你的支持的留言", ct_sponsor_msgPh:"欢迎分享关于支持我们的疑问或想法。",
+  ct_partnerStore_title:"店主合作申请", ct_partnerStore_sub:"让我们一起准备餐券和学生福利吧。",
+  ct_partnerStore_note:"登记和合作申请均免费。餐券福利和有效期由你自行设定；具体费用结构仍在讨论中。",
+  ct_partnerStore_field:"希望提供的福利",
+  ct_partnerStore_opt1:"10+1餐券", ct_partnerStore_opt2:"学生折扣", ct_partnerStore_opt3:"套餐折扣", ct_partnerStore_opt4:"只是想先咨询一下",
+  ct_partnerStore_msgLabel:"关于你的餐厅/其他补充说明", ct_partnerStore_msgPh:"请分享你的餐厅名称、位置以及考虑提供的福利。",
+  ct_partnerOrg_title:"学生会/社团合作咨询", ct_partnerOrg_sub:"让我们一起为你所在组织的成员打造福利吧。",
+  ct_partnerOrg_note:"高丽大学世宗校区已经有像KU会员计划这样的合作餐厅。我们希望帮助那些不在地图上的本地餐厅加入同样的合作空间——具体条款仍在讨论中。",
+  ct_partnerOrg_field:"组织类型",
+  ct_partnerOrg_opt1:"学生会", ct_partnerOrg_opt2:"社团", ct_partnerOrg_opt3:"校园组织", ct_partnerOrg_opt4:"其他团体",
+  ct_partnerOrg_msgLabel:"你希望的合作方式", ct_partnerOrg_msgPh:"请分享你所在组织的名称、规模以及希望获得的福利。",
+  ct_expand_title:"也想让我所在地区的本地美食被发掘", ct_expand_sub:"即使不在调治院，只要和我们做的事情有共鸣。",
+  ct_expand_note:"盈利模式尚未确定。我们目前正在讨论非营利式扩张，并探索合作方式。",
+  ct_expand_field:"你建议的地区", ct_expand_fieldPh:"例如：世宗市都潭洞、清州市梳仓洞",
+  ct_expand_msgLabel:"你的建议", ct_expand_msgPh:"请告诉我们这个社区的情况，以及为什么这项服务在那里会有帮助。",
+  // 손주 식권
+  passPerUnit:"每张", passValidDays:"有效期{n}天", passBuyBtn:"预订餐券",
+  passSelectTitle:"{name}餐券", passHowMany:"你想要多少张？",
+  passSummaryCount:"{n}张", passSummaryBonus:"老板赠送+{n}张", passSummaryTotal:"实际获得的餐券", passSummaryAmount:"应付金额",
+  passNextBtn:"下一步", passConfirmTitle:"确认预订这些内容吗？", passConfirmSub:"我们会提交以下信息的预订。",
+  passSummaryStore:"餐厅", passSummaryBought:"购买的餐券", passSummaryValid:"有效期", passSummaryValidVal:"首次使用后{n}天内有效",
+  passPrepayNote:"目前仅提交<b>预订</b>。正式上线后将接入真实支付——此阶段不会产生任何费用。",
+  passSubmitBtn:"提交预订", passBackBtn:"返回",
+  passSuccessTitle:"预订已提交！",
+  passSuccessBodyOk:"已为{name}保存{n}张餐券。正式上线后我们会通知你付款事宜。",
+  passSuccessBodyFail:"已保存你的{name}餐券，但存储空间已满未能记录——刷新页面后可能会消失。",
+  passSeeMyPasses:"查看我的餐券",
+  // 손주 식권 안내 (정적 페이지)
+  passInfoTitle:'孙辈餐券<span class="badge-soon">即将推出</span>',
+  passInfoBody:"为你喜欢的餐厅预先充值餐券。根据店主提供的福利获得额外餐券，每次到访使用一张。",
+  passBenefit1Title:"买10送1", passBenefit1Body:"批量购买可获得店主设定的额外餐券。福利因店而异。",
+  passBenefit2Title:"预付餐费", passBenefit2Body:"无需每次单独付款，提前预付，减轻你的钱包负担。",
+  passBenefit3Title:"老板获得回头客", passBenefit3Body:"餐厅提前获得营收并收获常客——对双方都是双赢。",
+  passListTitle:"正在准备餐券的餐厅",
+  passMoreNote:"9月实地调查期间与店主协商后，会陆续为更多餐厅开放餐券。",
+  passPartnerTitle:"我们也在准备合作项目",
+  passPartnerBody:"高丽大学世宗校区已经有像KU会员计划这样的合作餐厅。我们相信那些不在地图上的本地餐厅一旦被发掘，也能加入同样的合作空间。",
+  passPartnerStoreBtn:"店主合作申请", passPartnerOrgBtn:"学生会/社团合作咨询",
+  passNotice:"<strong>付款功能尚未开放。</strong>目前处于非营利准备阶段，餐券仅接受<b>预订</b>——正式付款功能将在后续上线。福利和有效期由店主设定。",
+  // 커뮤니티
+  join4Title:"加入我们的社区", join4Body:"实时交流在我们的外部SNS群组进行。",
+  communityTitle:"加入我们的社区",
+  communityBody:"实时交流在KakaoTalk、Instagram等外部SNS群组进行。本网站仅提供加入链接和二维码。",
+  communityJoinBtn:"加入群组",
+  communityQrReady:"扫描下方二维码或点击按钮加入。",
+  communityQrSoon:"群组尚未建立。群组开放后，二维码将显示在这里。",
+  grandchildDefaultName:"孙辈", mealPassWord:"餐券", ownerBonusLabel:"老板赠送",
+  mypagePassBonusWord:"奖励", mypagePassDateLine:"{date} 预订", reviewCharUnit:"字",
 } };
 
 let currentLang = 'ko';
@@ -527,8 +712,24 @@ function rDesc(r){
   if(currentLang === 'zh' && r.descZh) return r.descZh;
   return r.desc;
 }
-function pBenefit(p){ return (currentLang === 'en' && p.benefitEn) ? p.benefitEn : p.benefit; }
+function pBenefit(p){
+  if(currentLang === 'en' && p.benefitEn) return p.benefitEn;
+  if(currentLang === 'zh' && p.benefitZh) return p.benefitZh;
+  return p.benefit;
+}
 function rCat(r){ return t('cat' + {'전체':'All','한식':'Korean','양식':'Western','중식':'Chinese','일식':'Japanese','분식':'Snack'}[r.cat]) || r.cat; }
+
+// 손주 식권 흐름 전용 — 통화/수량 단위 표기 헬퍼 (언어별 어순·단위가 달라 공용 함수로 뺐다)
+function wonSuffix(n){
+  if(currentLang === 'en') return `₩${n.toLocaleString()}`;
+  if(currentLang === 'zh') return `${n.toLocaleString()}韩元`;
+  return `${n.toLocaleString()}원`;
+}
+function passUnit(n){
+  if(currentLang === 'en') return `${n}`;
+  if(currentLang === 'zh') return `${n}张`;
+  return `${n}장`;
+}
 
 function renderCards(){
   cardGrid.innerHTML = "";
@@ -864,24 +1065,27 @@ function toggleBigText(){
 const surveyQuestions = [
   {
     key:'spice',
-    title:'매운맛은 어느 정도가 좋아요?', titleEn:'How spicy do you like it?',
-    sub:'취향에 맞는 맛집을 찾는 데 참고할게요', subEn:"We'll use this to find restaurants that match your taste",
+    title:'매운맛은 어느 정도가 좋아요?', titleEn:'How spicy do you like it?', titleZh:'你喜欢多辣的口味？',
+    sub:'취향에 맞는 맛집을 찾는 데 참고할게요', subEn:"We'll use this to find restaurants that match your taste", subZh:'我们会据此为你寻找符合口味的餐厅',
     options:['안 매운 게 좋아요','보통이 좋아요','매콤한 게 좋아요','아주 매워야 해요'],
-    optionsEn:['Not spicy at all','A little spicy is fine','I like it spicy','Has to be very spicy']
+    optionsEn:['Not spicy at all','A little spicy is fine','I like it spicy','Has to be very spicy'],
+    optionsZh:['完全不辣', '微辣就好', '喜欢辣一点', '必须非常辣']
   },
   {
     key:'cat',
-    title:'어떤 음식이 제일 끌리세요?', titleEn:'What kind of food sounds best?',
-    sub:'가장 자주 생각나는 카테고리를 골라주세요', subEn:'Pick the category you crave most often',
+    title:'어떤 음식이 제일 끌리세요?', titleEn:'What kind of food sounds best?', titleZh:'你最想吃哪种类型的食物？',
+    sub:'가장 자주 생각나는 카테고리를 골라주세요', subEn:'Pick the category you crave most often', subZh:'请选择你最常想到的类型',
     options:['한식','양식','중식','일식','분식'],
-    optionsEn:['Korean','Western','Chinese','Japanese','Snacks']
+    optionsEn:['Korean','Western','Chinese','Japanese','Snacks'],
+    optionsZh:['韩餐','西餐','中餐','日料','小吃']
   },
   {
     key:'budget',
-    title:'한 끼 예산은 어느 정도가 좋아요?', titleEn:"What's your budget for a meal?",
-    sub:'가성비에 맞는 곳부터 보여드릴게요', subEn:"We'll show you great-value spots first",
+    title:'한 끼 예산은 어느 정도가 좋아요?', titleEn:"What's your budget for a meal?", titleZh:'你一餐的预算大概是多少？',
+    sub:'가성비에 맞는 곳부터 보여드릴게요', subEn:"We'll show you great-value spots first", subZh:'我们会优先展示性价比高的地方',
     options:['₩ 가볍게','₩₩ 넉넉하게'],
-    optionsEn:['₩ Light meal','₩₩ Generous meal']
+    optionsEn:['₩ Light meal','₩₩ Generous meal'],
+    optionsZh:['₩ 简单一餐','₩₩ 丰盛一餐']
   },
 ];
 const priceMap = {'₩ 가볍게':'₩', '₩₩ 넉넉하게':'₩₩'};
@@ -910,14 +1114,16 @@ function renderSurvey(){
   if(surveyStep < surveyQuestions.length){
     const q = surveyQuestions[surveyStep];
     const picked = surveyAnswers[q.key];
-    const isEn = currentLang === 'en';
+    const qTitle = (currentLang === 'en' && q.titleEn) ? q.titleEn : (currentLang === 'zh' && q.titleZh) ? q.titleZh : q.title;
+    const qSub = (currentLang === 'en' && q.subEn) ? q.subEn : (currentLang === 'zh' && q.subZh) ? q.subZh : q.sub;
+    const qOptions = (currentLang === 'en' && q.optionsEn) ? q.optionsEn : (currentLang === 'zh' && q.optionsZh) ? q.optionsZh : q.options;
     surveyBody.innerHTML = `
       <div class="survey-step">
-        <h3>${isEn ? q.titleEn : q.title}</h3>
-        <p class="step-sub">${isEn ? q.subEn : q.sub}</p>
+        <h3>${qTitle}</h3>
+        <p class="step-sub">${qSub}</p>
         <div class="survey-options">
           ${q.options.map((opt,i) => `
-            <button type="button" class="survey-option ${picked === opt ? 'selected':''}" data-opt="${opt}">${isEn ? q.optionsEn[i] : opt}</button>
+            <button type="button" class="survey-option ${picked === opt ? 'selected':''}" data-opt="${opt}">${qOptions[i]}</button>
           `).join('')}
         </div>
         <div class="survey-nav">
@@ -1388,7 +1594,7 @@ function updateHeaderAuthUI(){
   if(isLoggedIn){
     authIcon.textContent = '🌱';
     authLabel.textContent = t('headerAuthSavedLabel') || '저장 목록 보기';
-    authBtn.title = (t('headerAuthMypageTitle') || '{name}님의 마이페이지').replace('{name}', currentUserName || (currentLang==='en' ? 'Grandchild' : '손주'));
+    authBtn.title = (t('headerAuthMypageTitle') || '{name}님의 마이페이지').replace('{name}', currentUserName || (currentLang==='ko' ? '손주' : (t('grandchildDefaultName')||'Grandchild')));
     authBtn.onclick = () => openMypage('saved');
   } else {
     authIcon.textContent = '👤';
@@ -1529,7 +1735,7 @@ function renderAuthWelcome(name){
   saveState();
   renderCards();
   renderReviews();
-  const label = currentLang === 'en' ? (name || 'Grandchild') : (name ? `${name} 손주님` : '손주님');
+  const label = currentLang === 'ko' ? (name ? `${name} 손주님` : '손주님') : (name || t('grandchildDefaultName') || 'Grandchild');
   authBody.innerHTML = `
     <div class="auth-welcome">
       <div class="emoji">🌾</div>
@@ -1629,7 +1835,7 @@ function renderMypagePassList(){
       <span class="emoji">${o.emoji}</span>
       <div class="info">
         <strong>${escapeHtml(o.place)}</strong>
-        <span>${o.count + o.bonus}장 (${o.count}장${o.bonus ? ` + 보너스 ${o.bonus}장` : ''}) · ${o.total.toLocaleString()}원 · ${escapeHtml(o.at)} 예약</span>
+        <span>${passUnit(o.count + o.bonus)} (${passUnit(o.count)}${o.bonus ? ` + ${t('mypagePassBonusWord')||'보너스'} ${passUnit(o.bonus)}` : ''}) · ${wonSuffix(o.total)} · ${(t('mypagePassDateLine')||'{date} 예약').replace('{date}', escapeHtml(o.at))}</span>
       </div>
       <button type="button" class="mypage-remove-btn mypage-cancel-pass-btn" data-i="${i}" title="${t('mypageCancelPassTitle')||'예약 취소'}">✕</button>
     </div>
@@ -1712,7 +1918,7 @@ function renderReviewForm(){
       <div class="auth-field">
         <label>${t('reviewVisibilityLabel') || '공개 방식'}</label>
         <div class="review-radio-row">
-          <label class="review-radio"><input type="radio" name="reviewVisibility" value="real" checked> ${(t('reviewVisibilityReal')||'실명 ({name})').replace('{name}', escapeHtml(currentUserName || (currentLang==='en'?'Grandchild':'손주')))}</label>
+          <label class="review-radio"><input type="radio" name="reviewVisibility" value="real" checked> ${(t('reviewVisibilityReal')||'실명 ({name})').replace('{name}', escapeHtml(currentUserName || (currentLang==='ko'?'손주':(t('grandchildDefaultName')||'Grandchild'))))}</label>
           <label class="review-radio"><input type="radio" name="reviewVisibility" value="anon"> ${t('reviewVisibilityAnon') || '익명'}</label>
         </div>
       </div>
@@ -1724,7 +1930,7 @@ function renderReviewForm(){
       <div class="auth-field">
         <label>${t('reviewContentLabel') || '리뷰 내용'}</label>
         <textarea id="reviewText" class="review-textarea" maxlength="${REVIEW_MAX}" placeholder="${t('reviewContentPh') || '어떤 점이 좋았나요?'}"></textarea>
-        <div class="review-counter"><span id="reviewCount">0</span>/${REVIEW_MAX}${currentLang==='en'?'':'자'}</div>
+        <div class="review-counter"><span id="reviewCount">0</span>/${REVIEW_MAX}${currentLang==='ko'?'자':(t('reviewCharUnit')||'')}</div>
       </div>
       <p class="auth-error" id="reviewError"></p>
       <div class="game-action-row">
@@ -1972,7 +2178,7 @@ function closeFaq(){ faqOverlay.classList.remove('show'); }
 function closeFaqOnOverlay(e){ if(e.target === faqOverlay) closeFaq(); }
 
 function renderFaq(){
-  const isEn = currentLang === 'en';
+  const useTranslated = currentLang !== 'ko';
   faqBody.innerHTML = `
     <div class="auth-head">
       <div class="emoji">💬</div>
@@ -1984,10 +2190,10 @@ function renderFaq(){
         <div class="faq-item ${i===faqOpenIndex?'open':''}">
           <button type="button" class="faq-q" data-index="${i}">
             <span class="faq-mark">Q${i+1}</span>
-            <span>${escapeHtml(isEn ? (t(`faqQ${i+1}`) || f.q) : f.q)}</span>
+            <span>${escapeHtml(useTranslated ? (t(`faqQ${i+1}`) || f.q) : f.q)}</span>
             <span class="faq-arrow">▾</span>
           </button>
-          <div class="faq-a">${escapeHtml(isEn ? (t(`faqA${i+1}`) || f.a) : f.a)}</div>
+          <div class="faq-a">${escapeHtml(useTranslated ? (t(`faqA${i+1}`) || f.a) : f.a)}</div>
         </div>
       `).join('')}
     </div>
@@ -2119,8 +2325,8 @@ function renderSupportChoice(){
 
 function renderContactForm(type, showBack){
   const c = contactTypes[type] || contactTypes.expand;
-  const isEn = currentLang === 'en';
-  const ck = (suffix, fallback) => isEn && c.key ? (t(`${c.key}_${suffix}`) || fallback) : fallback;
+  const useTranslated = currentLang !== 'ko';
+  const ck = (suffix, fallback) => useTranslated && c.key ? (t(`${c.key}_${suffix}`) || fallback) : fallback;
   // 팀원/후원 선택 화면(renderSupportChoice)을 실제로 거쳐 들어온 경우에만 "뒤로"를 보여준다.
   // showBack을 명시하지 않으면 기존처럼 type이 team/sponsor일 때만 기본으로 뒤로를 보여주고,
   // 메인 페이지 "손주 힘 보태기" 버튼처럼 선택 화면 없이 바로 이 폼으로 들어온 경우엔
@@ -2129,7 +2335,7 @@ function renderContactForm(type, showBack){
   const backBtn = useBack
     ? `<button type="button" class="btn-ghost" style="flex:1;" id="contactBack">${t('contactBack') || '뒤로'}</button>`
     : `<button type="button" class="btn-ghost" style="flex:1;" onclick="closeContact()">${t('closeBtn') || '닫기'}</button>`;
-  const options = isEn && c.key ? (c.options || []).map((o, i) => t(`${c.key}_opt${i+1}`) || o) : c.options;
+  const options = useTranslated && c.key ? (c.options || []).map((o, i) => t(`${c.key}_opt${i+1}`) || o) : c.options;
   contactBody.innerHTML = `
     <div class="auth-head">
       <div class="emoji">${c.emoji}</div>
@@ -2177,8 +2383,8 @@ function submitContact(e, type){
   if(!name){ errEl.textContent = t('contactErrName') || '이름을 입력해주세요.'; return; }
   if(!isEmailOrPhone(reach)){ errEl.textContent = t('contactErrReach') || '연락 받으실 이메일 또는 전화번호를 정확히 입력해주세요.'; return; }
   const c = contactTypes[type] || contactTypes.expand;
-  const isEn = currentLang === 'en';
-  const cTitle = isEn && c.key ? (t(`${c.key}_title`) || c.title) : c.title;
+  const useTranslated = currentLang !== 'ko';
+  const cTitle = useTranslated && c.key ? (t(`${c.key}_title`) || c.title) : c.title;
   contactBody.innerHTML = `
     <div class="auth-welcome">
       <div class="emoji">🌾</div>
@@ -2216,7 +2422,7 @@ function renderPassCards(){
             <span class="pass-cat">${rCat(r)}</span>
           </div>
         </div>
-        <div class="pass-price">${currentLang==='en' ? `<b>${r.pass.unit.toLocaleString()}₩</b> ${t('passPerUnit')}` : `장당 <b>${r.pass.unit.toLocaleString()}원</b>`}</div>
+        <div class="pass-price">${currentLang==='ko' ? `장당 <b>${r.pass.unit.toLocaleString()}원</b>` : `<b>${wonSuffix(r.pass.unit)}</b> ${t('passPerUnit')}`}</div>
         <span class="pass-benefit-chip">🎁 ${escapeHtml(pBenefit(r.pass))}</span>
         <div class="pass-valid">${(t('passValidDays')||'유효기간 {n}일').replace('{n}', r.pass.validDays)}</div>
         <button type="button" class="pass-buy-btn" data-idx="${idx}">${t('passBuyBtn') || '식권 예약하기'}</button>
@@ -2249,19 +2455,18 @@ function renderPassSelect(){
   const p = r.pass;
   const picked = p.bundles[passBundleIdx];
   const total = p.unit * picked.count;
-  const wonSuffix = (n) => currentLang==='en' ? `₩${n.toLocaleString()}` : `${n.toLocaleString()}원`;
   passBody.innerHTML = `
     <div class="auth-head">
       <div class="emoji">${r.emoji}</div>
-      <h3>${escapeHtml(rName(r))} ${currentLang==='en' ? 'Meal Pass' : '식권'}</h3>
-      <p>${currentLang==='en' ? `${wonSuffix(p.unit)} ${t('passPerUnit')}` : `장당 ${p.unit.toLocaleString()}원`} · ${escapeHtml(pBenefit(p))}</p>
+      <h3>${escapeHtml(rName(r))} ${currentLang==='ko' ? '식권' : (t('mealPassWord')||'Meal Pass')}</h3>
+      <p>${currentLang==='ko' ? `장당 ${p.unit.toLocaleString()}원` : `${wonSuffix(p.unit)} ${t('passPerUnit')}`} · ${escapeHtml(pBenefit(p))}</p>
     </div>
     <div class="auth-field">
       <label>${t('passHowMany') || '몇 장 담을까요?'}</label>
       <div class="pass-bundle-list">
         ${p.bundles.map((b, i) => `
           <button type="button" class="pass-bundle ${i===passBundleIdx?'selected':''}" data-i="${i}">
-            <span class="pass-bundle-count">${currentLang==='en' ? b.count : `${b.count}장`}${b.bonus ? ` <b>+${b.bonus}</b>` : ''}</span>
+            <span class="pass-bundle-count">${passUnit(b.count)}${b.bonus ? ` <b>+${b.bonus}</b>` : ''}</span>
             <span class="pass-bundle-price">${wonSuffix(p.unit * b.count)}</span>
           </button>
         `).join('')}
@@ -2270,7 +2475,7 @@ function renderPassSelect(){
     <div class="pass-summary">
       <div class="pass-summary-row"><span>${(t('passSummaryCount')||'식권 {n}장').replace('{n}', picked.count)}</span><span>${wonSuffix(total)}</span></div>
       ${picked.bonus ? `<div class="pass-summary-row bonus"><span>${(t('passSummaryBonus')||'사장님 혜택 +{n}장').replace('{n}', picked.bonus)}</span><span>${wonSuffix(0)}</span></div>` : ''}
-      <div class="pass-summary-row total"><span>${t('passSummaryTotal') || '실제 받는 식권'}</span><span>${currentLang==='en' ? (picked.count+picked.bonus) : `${picked.count + picked.bonus}장`}</span></div>
+      <div class="pass-summary-row total"><span>${t('passSummaryTotal') || '실제 받는 식권'}</span><span>${passUnit(picked.count+picked.bonus)}</span></div>
       <div class="pass-summary-row total"><span>${t('passSummaryAmount') || '결제 예정 금액'}</span><span>${wonSuffix(total)}</span></div>
     </div>
     <div class="game-action-row">
@@ -2289,7 +2494,6 @@ function renderPassConfirm(){
   const p = r.pass;
   const picked = p.bundles[passBundleIdx];
   const total = p.unit * picked.count;
-  const wonSuffix = (n) => currentLang==='en' ? `₩${n.toLocaleString()}` : `${n.toLocaleString()}원`;
   passBody.innerHTML = `
     <div class="auth-head">
       <div class="emoji">🎟️</div>
@@ -2298,9 +2502,9 @@ function renderPassConfirm(){
     </div>
     <div class="pass-summary">
       <div class="pass-summary-row"><span>${t('passSummaryStore') || '가게'}</span><span>${r.emoji} ${escapeHtml(rName(r))}</span></div>
-      <div class="pass-summary-row"><span>${t('passSummaryBought') || '구매 식권'}</span><span>${currentLang==='en' ? picked.count : `${picked.count}장`}</span></div>
-      ${picked.bonus ? `<div class="pass-summary-row bonus"><span>${currentLang==='en' ? 'Owner bonus' : '사장님 혜택'}</span><span>+${picked.bonus}${currentLang==='en'?'':'장'}</span></div>` : ''}
-      <div class="pass-summary-row total"><span>${t('passSummaryTotal') || '실제 받는 식권'}</span><span>${currentLang==='en' ? (picked.count+picked.bonus) : `${picked.count + picked.bonus}장`}</span></div>
+      <div class="pass-summary-row"><span>${t('passSummaryBought') || '구매 식권'}</span><span>${passUnit(picked.count)}</span></div>
+      ${picked.bonus ? `<div class="pass-summary-row bonus"><span>${currentLang==='ko' ? '사장님 혜택' : (t('ownerBonusLabel')||'Owner bonus')}</span><span>+${passUnit(picked.bonus)}</span></div>` : ''}
+      <div class="pass-summary-row total"><span>${t('passSummaryTotal') || '실제 받는 식권'}</span><span>${passUnit(picked.count+picked.bonus)}</span></div>
       <div class="pass-summary-row total"><span>${t('passSummaryAmount') || '결제 예정 금액'}</span><span>${wonSuffix(total)}</span></div>
       <div class="pass-summary-row"><span>${t('passSummaryValid') || '유효기간'}</span><span>${(t('passSummaryValidVal')||'사용 시작일부터 {n}일').replace('{n}', p.validDays)}</span></div>
     </div>
@@ -2328,7 +2532,9 @@ function submitPassOrder(){
     at: new Date().toISOString().slice(0, 10),
   });
   const stored = saveState();
-  const passCount = currentLang==='en' ? (picked.count + picked.bonus) : `${picked.count + picked.bonus}장`;
+  // ko 폴백 템플릿은 '{n}장'이 붙어 있어 단위까지 포함해 통째로 치환해야 하고,
+  // en/zh 사전 값은 단위를 이미 문구 안에 풀어써 뒀으므로 숫자만 넘긴다.
+  const passCount = currentLang==='ko' ? `${picked.count + picked.bonus}장` : (picked.count + picked.bonus);
   passBody.innerHTML = `
     <div class="auth-welcome">
       <div class="emoji">🌾</div>
