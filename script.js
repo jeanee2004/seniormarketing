@@ -18,9 +18,9 @@ const restaurants = [
     ]
   },
   // pass가 있는 가게만 손주 식권 섹션과 검색에 노출된다 (detail과 같은 방식 — 일부만 채워둔 예시)
-  pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:180}},
+  pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", validDays:180}},
   {name:"역전 왕돈까스", nameEn:"Yeokjeon King Donkatsu (역전 왕돈까스)", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", descEn:"Thick handmade donkatsu with generous portions", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
-    pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:90},
+    pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", validDays:90},
     detail:{
       isExample:true,
       address:"세종특별자치시 조치원읍 원리 78-1 (임의 주소 · 실제 주소 아님)",
@@ -52,7 +52,7 @@ const restaurants = [
   {name:"초밥발전소12g", nameEn:"Sushi Power Plant 12g (초밥발전소12g)", cat:"일식", emoji:"🍣", desc:"조치원읍 골목의 초밥·롤 전문점", descEn:"A sushi and roll specialist in a Jochiwon-eup backstreet", rating:null, reviewCount:null, price:"₩₩", priceValue:13000, saved:false, visited:false,
     liveReview:true, lat:36.60695328676086, lng:127.2894090160121, realAddress:"세종특별자치시 조치원읍 내창3길 8"},
   {name:"할머니 떡볶이", nameEn:"Grandma's Tteokbokki (할머니 떡볶이)", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", descEn:"Sweet and spicy old-school tteokbokki, a student favorite snack", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
-    pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", validDays:180},
+    pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", benefitEn:"Buy 20, get 3 free", validDays:180},
     detail:{
       isExample:true,
       address:"세종특별자치시 조치원읍 봉산리 5-2 (임의 주소 · 실제 주소 아님)",
@@ -221,6 +221,150 @@ const i18n = { en: {
   liveSearchLoading:"Searching...", liveSearchEmpty:"No results found.", liveSearchError:"Search failed. Please try again shortly.",
   confirmLoginTitle:"Sign-in required", confirmLoginBody:"This feature requires signing in. Sign in and build your own restaurant list!", confirmLoginOk:"Sign in", confirmLoginCancel:"Close",
   confirmUnsave:"Remove from your want-to-visit list?", confirmSave:"Add this restaurant to your want-to-visit list?", confirmVisited:"Mark this restaurant as visited?",
+  // 취향 설문
+  surveyPrev:"Previous", surveyNext:"Next", surveyResult:"See results",
+  surveyResultTitle:"How about these?", surveyResultSub:"Local restaurants picked to match your taste",
+  // 메뉴 추천 게임
+  gameTitle:"Let's decide what to eat, game-style", gameSub:"No more indecision! Pick one of the two",
+  gameTarotName:"Today's Menu Tarot", gameTarotDesc:"Draw a card and reveal your restaurant destiny",
+  gameRouletteName:"Menu Roulette", gameRouletteDesc:"Type what you're craving and let the roulette decide",
+  gameBack:"← Pick a different game",
+  tarotTitle:"Today's Menu Tarot", tarotSub:"{n} cards are flowing by. Tap to draw today's meal",
+  tarotRedraw:"Draw again",
+  rouletteTitle:"Menu Roulette", rouletteSub:"Add 2 or more items you're craving, then spin",
+  roulettePh:"e.g. gukbap, pizza, malatang", rouletteAdd:"Add",
+  rouletteEmpty:"Add some menu items", rouletteMin:"Add 2 or more menu items",
+  rouletteReady:"{n} items to pick from", rouletteSpin:"🎡 Spin", rouletteRespin:"🎡 Spin again",
+  // 손주 로그인/가입
+  authIntentSave:"To save places you want to visit, become one of our grandchildren first!",
+  authIntentMypage:"You'll need to register to use My Page.",
+  authIntentReview:"Please register first to leave a review.",
+  authIntentPass:"Meal passes are saved to your account, so please register first.",
+  authIntentLogin:"Welcome back! Please sign in to your account.",
+  authTitle:"Become one of our grandchildren", authTabSignup:"Register", authTabLogin:"Sign in",
+  authNameLabel:"Name", authNamePh:"What should we call you?",
+  authIdLabel:"Email or phone number", authIdPh:"example@mail.com or 010-1234-5678",
+  authPwLabel:"Password", authPwPh:"Password",
+  authPw2Label:"Confirm password", authPw2Ph:"Enter your password again",
+  authSubmitSignup:"Register and get started", authSubmitLogin:"Sign in",
+  authErrFormat:"Please enter a valid email address or phone number.",
+  authErrPwMismatch:"Passwords don't match. Please check again.",
+  authErrDupe:'This account already exists. Please sign in from the "Sign in" tab.',
+  authErrNotFound:'No account found. Please register first from the "Register" tab.',
+  authErrWrongPw:"Incorrect password.",
+  authWelcomeTitle:"Welcome, {name}!", authWelcomeBody:"Registration complete. We'll let you know first when we officially launch.",
+  authWelcomeMypageBtn:"Go to My Page",
+  headerAuthSavedLabel:"My saved places", headerAuthMypageTitle:"{name}'s My Page",
+  logoutTitle:"Sign out?", logoutBody:"After signing out, you'll need to sign in again to use saved lists, write reviews, and more.",
+  logoutOk:"Sign out", logoutCancel:"Cancel",
+  // 마이페이지
+  mypageTitle:"{name}'s My Page", mypageTitleGeneric:"My Page",
+  mypageTabSaved:"Want to visit", mypageTabVisited:"Visited", mypageTabPass:"Meal passes",
+  mypageResetLink:"Reset all my activity", mypageLogoutBtn:"Sign out",
+  mypageEmptySaved:"No saved restaurants yet.", mypageEmptyVisited:"No visit records yet.",
+  mypageEmptyPass:"No meal passes reserved yet.<br>Pick a restaurant you like in the grandchild meal pass section.",
+  mypageRemoveSavedTitle:"Remove from want-to-visit", mypageRemoveVisitedTitle:"Cancel visit record",
+  mypageConfirmUnvisit:"Cancel this visit record?",
+  mypageCancelPassTitle:"Cancel reservation", mypageConfirmCancelPass:"Cancel this meal pass reservation?", mypageCancelPassOk:"Cancel reservation",
+  resetTitle:"Reset my activity", resetBody:"This clears your saved places, visit records, your reviews, and meal pass reservations. This can't be undone.",
+  resetOk:"Reset", resetCancel:"Cancel",
+  // 리뷰 작성
+  reviewFormTitle:"Write a review too", reviewFormSub:"Share an honest review of a restaurant you've visited.",
+  reviewFormNoVisitTitle:"You can't write a review yet", reviewFormNoVisitBody:"You can only review restaurants you've marked as visited.",
+  reviewFormNoVisitOk:"Browse restaurants",
+  reviewRatingLabel:"Rating", reviewPlaceLabel:"Restaurant visited",
+  reviewVisibilityLabel:"Show as", reviewVisibilityReal:"Real name ({name})", reviewVisibilityAnon:"Anonymous",
+  reviewPhotoLabel:"Attach a photo", reviewOptional:"Optional",
+  reviewContentLabel:"Review", reviewContentPh:"What did you like about it?",
+  reviewSubmitBtn:"Post review", reviewErrEmpty:"Please write your review.",
+  reviewSuccessTitle:"Your review is posted!",
+  reviewSuccessBodyOk:"Thanks for sharing! It's now live in the review list.",
+  reviewSuccessBodyFail:"Added to the review list. The photo was too large to save, though — it may disappear on reload.",
+  anonReviewerName:"Anonymous grandchild", namedReviewerSuffix:" (grandchild)", defaultReviewerName:"A grandchild",
+  // 서비스 소개
+  introSub:"Local restaurant discovery for Jochiwon-eup",
+  introVision:"Finding real neighborhood restaurants that are missing or poorly listed on maps, and building a local business ecosystem where customers and owners thrive together",
+  introOverviewHead:"Project overview",
+  introOverviewBody:'"KU Rescue Squad! Help the Local Owners" — a student-led service that began as a Korea University Sejong Campus social contribution project. Students and residents personally find and introduce local Jochiwon-eup restaurants that are missing from Naver/Kakao Map, or listed with barely any information.',
+  introMakerHead:"Who made this",
+  introMakerBody:"A social contribution project planned and built by Matjip KU-jodae, an Economic Policy student team at Korea University Sejong Campus.",
+  introProgressHead:"Progress",
+  introProgressBody:"We're currently in the pre-launch stage taking early sign-ups. We plan to start the full service after filling in real restaurant data through a field survey following the September semester start.",
+  introFaqBtn:"Frequently asked questions",
+  // FAQ
+  faqTitle:"Contact us", faqSub:"Check the FAQ first for a quick answer.",
+  faqQ1:"What is Bap Meokeoreo Wa?",
+  faqA1:'It\'s a service created by the "KU Rescue Squad! Help the Local Owners" project. Students and residents personally find and introduce local Jochiwon-eup restaurants that are missing from online maps like Naver/Kakao Map, or listed with barely any information.',
+  faqQ2:"Is this before the official launch?",
+  faqA2:"Yes, we're currently taking early sign-ups in a preparation stage, and plan to launch the full service with real restaurant data after the September semester starts.",
+  faqQ3:"Can my restaurant be listed too?",
+  faqA3:'Yes! We\'re preparing an owner registration page. We\'ll guide you through it via the "Are you an owner?" button as it becomes available.',
+  faqQ4:"Can anyone write a review?",
+  faqA4:"Only signed-in members can write a review, and only for restaurants they've marked as visited — a minimal safeguard against fake reviews.",
+  faqQ5:"How is my personal information used?",
+  faqA5:"It's used only for the purposes stated in our Privacy Policy (member identification, providing the service), and is managed securely under relevant laws.",
+  faqQ6:"I'd like to volunteer or join as a team member.",
+  faqA6:'Leave an inquiry via the "Lend us a hand" menu and we\'ll guide you through next steps.',
+  faqFootPrefix:"Can't find your answer? Reach out through ", faqFootBold:"Lend us a hand", faqFootSuffix:".",
+  faqContactBtn:"Send an inquiry",
+  // 참여/후원/제휴 문의
+  supportTitle:"Lend us a hand", supportSub:"We're waiting for helping hands on this project.",
+  supportTeamTitle:"I'd like to join as a team member", supportTeamDesc:"From field research to planning and development — there's a place for you.",
+  supportSponsorTitle:"I'd like to support this project", supportSponsorDesc:"Help power a project run on a non-profit basis.",
+  contactNameLabel:"Name", contactNamePh:"Name or nickname",
+  contactReachLabel:"Contact / email", contactReachPh:"Email or phone number to reach you",
+  contactMessageOptional:"Optional", contactSubmitBtn:"Send inquiry",
+  contactErrName:"Please enter your name.", contactErrReach:"Please enter a valid email or phone number.",
+  contactBack:"Back", contactSuccessTitle:"Your inquiry is in!",
+  contactSuccessBody:"Thanks, {name}. We'll follow up using the contact info you left.<br>({type})",
+  ct_team_title:"I'd like to join as a team member", ct_team_sub:"We're waiting for teammates to help build this with us.",
+  ct_team_note:"Planning, development, design, field research — any role is welcome. We'll reach out using the contact info you leave.",
+  ct_team_field:"Area you'd like to help with",
+  ct_team_opt1:"Field research (finding restaurants)", ct_team_opt2:"Planning / Operations", ct_team_opt3:"Design", ct_team_opt4:"Development", ct_team_opt5:"Marketing / Content", ct_team_opt6:"Not sure yet",
+  ct_team_msgLabel:"Anything else you'd like to share", ct_team_msgPh:"Feel free to share why you'd like to join or when you're available.",
+  ct_sponsor_title:"I'd like to support this project", ct_sponsor_sub:"Every bit of support helps us find one more local restaurant.",
+  ct_sponsor_note:"This project currently runs on a non-profit basis, so donations will only be used for field research and operating costs.",
+  ct_sponsor_field:"Type of support",
+  ct_sponsor_opt1:"One-time donation", ct_sponsor_opt2:"Recurring donation", ct_sponsor_opt3:"In-kind / skill donation", ct_sponsor_opt4:"Just want to ask first",
+  ct_sponsor_msgLabel:"Message about your support", ct_sponsor_msgPh:"Share any questions or thoughts about supporting us.",
+  ct_partnerStore_title:"Owner partnership application", ct_partnerStore_sub:"Let's prepare meal passes and student perks together.",
+  ct_partnerStore_note:"Listing and partnership applications are free. You set the meal pass benefits and validity period; the fee structure is still under discussion.",
+  ct_partnerStore_field:"Preferred benefit",
+  ct_partnerStore_opt1:"10+1 meal pass", ct_partnerStore_opt2:"Student discount", ct_partnerStore_opt3:"Set menu discount", ct_partnerStore_opt4:"Just want to ask first",
+  ct_partnerStore_msgLabel:"About your restaurant / anything else", ct_partnerStore_msgPh:"Share your restaurant's name, location, and what benefit you're considering.",
+  ct_partnerOrg_title:"Student council / club partnership inquiry", ct_partnerOrg_sub:"Let's create benefits for your organization's members.",
+  ct_partnerOrg_note:"Korea University Sejong Campus already has partner restaurants like the KU Membership program. We want to help local restaurants not on the map join that same space — terms are still under discussion.",
+  ct_partnerOrg_field:"Organization type",
+  ct_partnerOrg_opt1:"Student council", ct_partnerOrg_opt2:"Club", ct_partnerOrg_opt3:"Campus organization", ct_partnerOrg_opt4:"Other group",
+  ct_partnerOrg_msgLabel:"What kind of partnership you'd like", ct_partnerOrg_msgPh:"Share your organization's name, size, and what benefit you'd like.",
+  ct_expand_title:"Find local restaurants in my area too", ct_expand_sub:"Even outside Jochiwon, if you connect with what we're doing.",
+  ct_expand_note:"The revenue model isn't finalized yet. We're currently discussing non-profit expansion and figuring out how to work together.",
+  ct_expand_field:"Area you're suggesting", ct_expand_fieldPh:"e.g. Dodam-dong Sejong, Sachang-dong Cheongju",
+  ct_expand_msgLabel:"Your suggestion", ct_expand_msgPh:"Tell us about the neighborhood and why this service would help there.",
+  // 손주 식권
+  passPerUnit:"per pass", passValidDays:"Valid for {n} days", passBuyBtn:"Reserve meal pass",
+  passSelectTitle:"{name} meal pass", passHowMany:"How many would you like?",
+  passSummaryCount:"{n} passes", passSummaryBonus:"Owner bonus +{n} passes", passSummaryTotal:"Passes you'll receive", passSummaryAmount:"Amount due",
+  passNextBtn:"Next", passConfirmTitle:"Reserve like this?", passConfirmSub:"We'll submit a reservation with the details below.",
+  passSummaryStore:"Restaurant", passSummaryBought:"Passes purchased", passSummaryValid:"Valid period", passSummaryValidVal:"{n} days from first use",
+  passPrepayNote:"This only submits a <b>pre-order</b> right now. Real payment will connect at official launch — no money is charged at this stage.",
+  passSubmitBtn:"Submit pre-order", passBackBtn:"Back",
+  passSuccessTitle:"Your reservation is in!",
+  passSuccessBodyOk:"We've saved {n} passes for {name}. We'll notify you about payment once we officially launch.",
+  passSuccessBodyFail:"We've saved your {name} pass, but storage was full so we couldn't record it — it may disappear on reload.",
+  passSeeMyPasses:"See my meal passes",
+  // 손주 식권 안내 (정적 페이지)
+  passInfoTitle:'Grandchild Meal Pass<span class="badge-soon">Coming soon</span>',
+  passInfoBody:"Pre-load a meal pass for a restaurant you like. Get extra passes based on what the owner offers, then use one each visit.",
+  passBenefit1Title:"Buy 10, get 1 free", passBenefit1Body:"Buy in bulk and get extra passes set by the owner. Benefits vary by restaurant.",
+  passBenefit2Title:"Prepay for meals", passBenefit2Body:"Prepay instead of paying meal by meal, and lighten the burden on your wallet.",
+  passBenefit3Title:"Owners gain regulars", passBenefit3Body:"Restaurants get revenue upfront and gain regular customers — a win-win for both sides.",
+  passListTitle:"Restaurants preparing meal passes",
+  passMoreNote:"More restaurants will open passes gradually after discussing with owners during the September field survey.",
+  passPartnerTitle:"We're also preparing partnerships",
+  passPartnerBody:"Korea University Sejong Campus already has partner restaurants like the KU Membership program. We believe local restaurants that aren't on the map can join that same space once they're discovered.",
+  passPartnerStoreBtn:"Owner partnership application", passPartnerOrgBtn:"Student council / club partnership inquiry",
+  passNotice:"<strong>Payment isn't open yet.</strong> This is currently a non-profit preparation stage, so meal passes only accept <b>pre-orders</b> — real payment integration will launch officially later. Benefits and validity periods are set by the owner.",
 } };
 
 let currentLang = 'ko';
@@ -255,6 +399,8 @@ function applyLanguage(lang){
   applyStaticTranslations();
   if(typeof renderCards === 'function') renderCards();
   if(typeof renderExampleCards === 'function') renderExampleCards();
+  if(typeof updateHeaderAuthUI === 'function') updateHeaderAuthUI();
+  if(typeof renderPassCards === 'function') renderPassCards();
   store.lang = currentLang;
   saveState();
 }
@@ -306,6 +452,7 @@ function getFilteredList(){
 // 레스토랑 이름/설명 다국어 헬퍼 — 영어 번역이 있고 영어 모드일 때만 대체, 없으면 한국어 원문
 function rName(r){ return (currentLang === 'en' && r.nameEn) ? r.nameEn : r.name; }
 function rDesc(r){ return (currentLang === 'en' && r.descEn) ? r.descEn : r.desc; }
+function pBenefit(p){ return (currentLang === 'en' && p.benefitEn) ? p.benefitEn : p.benefit; }
 function rCat(r){ return t('cat' + {'전체':'All','한식':'Korean','양식':'Western','중식':'Chinese','일식':'Japanese','분식':'Snack'}[r.cat]) || r.cat; }
 
 function renderCards(){
@@ -642,21 +789,24 @@ function toggleBigText(){
 const surveyQuestions = [
   {
     key:'spice',
-    title:'매운맛은 어느 정도가 좋아요?',
-    sub:'취향에 맞는 맛집을 찾는 데 참고할게요',
-    options:['안 매운 게 좋아요','보통이 좋아요','매콤한 게 좋아요','아주 매워야 해요']
+    title:'매운맛은 어느 정도가 좋아요?', titleEn:'How spicy do you like it?',
+    sub:'취향에 맞는 맛집을 찾는 데 참고할게요', subEn:"We'll use this to find restaurants that match your taste",
+    options:['안 매운 게 좋아요','보통이 좋아요','매콤한 게 좋아요','아주 매워야 해요'],
+    optionsEn:['Not spicy at all','A little spicy is fine','I like it spicy','Has to be very spicy']
   },
   {
     key:'cat',
-    title:'어떤 음식이 제일 끌리세요?',
-    sub:'가장 자주 생각나는 카테고리를 골라주세요',
-    options:['한식','양식','중식','일식','분식']
+    title:'어떤 음식이 제일 끌리세요?', titleEn:'What kind of food sounds best?',
+    sub:'가장 자주 생각나는 카테고리를 골라주세요', subEn:'Pick the category you crave most often',
+    options:['한식','양식','중식','일식','분식'],
+    optionsEn:['Korean','Western','Chinese','Japanese','Snacks']
   },
   {
     key:'budget',
-    title:'한 끼 예산은 어느 정도가 좋아요?',
-    sub:'가성비에 맞는 곳부터 보여드릴게요',
-    options:['₩ 가볍게','₩₩ 넉넉하게']
+    title:'한 끼 예산은 어느 정도가 좋아요?', titleEn:"What's your budget for a meal?",
+    sub:'가성비에 맞는 곳부터 보여드릴게요', subEn:"We'll show you great-value spots first",
+    options:['₩ 가볍게','₩₩ 넉넉하게'],
+    optionsEn:['₩ Light meal','₩₩ Generous meal']
   },
 ];
 const priceMap = {'₩ 가볍게':'₩', '₩₩ 넉넉하게':'₩₩'};
@@ -685,18 +835,19 @@ function renderSurvey(){
   if(surveyStep < surveyQuestions.length){
     const q = surveyQuestions[surveyStep];
     const picked = surveyAnswers[q.key];
+    const isEn = currentLang === 'en';
     surveyBody.innerHTML = `
       <div class="survey-step">
-        <h3>${q.title}</h3>
-        <p class="step-sub">${q.sub}</p>
+        <h3>${isEn ? q.titleEn : q.title}</h3>
+        <p class="step-sub">${isEn ? q.subEn : q.sub}</p>
         <div class="survey-options">
-          ${q.options.map(opt => `
-            <button type="button" class="survey-option ${picked === opt ? 'selected':''}" data-opt="${opt}">${opt}</button>
+          ${q.options.map((opt,i) => `
+            <button type="button" class="survey-option ${picked === opt ? 'selected':''}" data-opt="${opt}">${isEn ? q.optionsEn[i] : opt}</button>
           `).join('')}
         </div>
         <div class="survey-nav">
-          ${surveyStep > 0 ? `<button type="button" class="survey-back" id="surveyBackBtn">이전</button>` : `<span></span>`}
-          <button type="button" class="survey-next" id="surveyNextBtn" ${picked ? '' : 'disabled'}>${surveyStep === surveyQuestions.length - 1 ? '결과 보기' : '다음'}</button>
+          ${surveyStep > 0 ? `<button type="button" class="survey-back" id="surveyBackBtn">${t('surveyPrev') || '이전'}</button>` : `<span></span>`}
+          <button type="button" class="survey-next" id="surveyNextBtn" ${picked ? '' : 'disabled'}>${surveyStep === surveyQuestions.length - 1 ? (t('surveyResult')||'결과 보기') : (t('surveyNext')||'다음')}</button>
         </div>
       </div>
     `;
@@ -713,20 +864,20 @@ function renderSurvey(){
     const picks = getSurveyRecommendations();
     surveyBody.innerHTML = `
       <div class="survey-step">
-        <h3>이런 맛집은 어때요?</h3>
-        <p class="step-sub">취향에 맞춰 골라본 로컬 맛집이에요</p>
+        <h3>${t('surveyResultTitle') || '이런 맛집은 어때요?'}</h3>
+        <p class="step-sub">${t('surveyResultSub') || '취향에 맞춰 골라본 로컬 맛집이에요'}</p>
         <div class="survey-result-list">
           ${picks.map(r => `
             <div class="survey-result-card">
               <span class="emoji">${r.emoji}</span>
               <div class="info">
-                <strong>${r.name}</strong>
-                <span>${r.cat} · ★ ${r.rating} · ${r.desc}</span>
+                <strong>${rName(r)}</strong>
+                <span>${rCat(r)} · ★ ${r.rating} · ${rDesc(r)}</span>
               </div>
             </div>
           `).join('')}
         </div>
-        <button type="button" class="survey-close-btn" id="surveyDoneBtn">확인</button>
+        <button type="button" class="survey-close-btn" id="surveyDoneBtn">${t('confirmOk') || '확인'}</button>
       </div>
     `;
     document.getElementById('surveyDoneBtn').addEventListener('click', closeSurvey);
@@ -1010,16 +1161,16 @@ function closeGameOnOverlay(e){ if(e.target === gameOverlay) closeGame(); }
 
 function renderGameChoice(){
   gameBody.innerHTML = `
-    <h3 class="game-title">오늘 뭐 먹지, 게임으로 정해요</h3>
-    <p class="game-sub">결정장애 탈출! 둘 중 하나를 골라보세요</p>
+    <h3 class="game-title">${t('gameTitle') || '오늘 뭐 먹지, 게임으로 정해요'}</h3>
+    <p class="game-sub">${t('gameSub') || '결정장애 탈출! 둘 중 하나를 골라보세요'}</p>
     <div class="game-choice-grid">
       <button type="button" class="game-choice-btn" id="pickTarot">
         <span class="icon">🔮</span>
-        <span><strong>오늘의 메뉴 타로</strong><span class="desc">카드 한 장 뽑고 오늘의 맛집 운명 확인하기</span></span>
+        <span><strong>${t('gameTarotName') || '오늘의 메뉴 타로'}</strong><span class="desc">${t('gameTarotDesc') || '카드 한 장 뽑고 오늘의 맛집 운명 확인하기'}</span></span>
       </button>
       <button type="button" class="game-choice-btn" id="pickRoulette">
         <span class="icon">🎡</span>
-        <span><strong>메뉴 룰렛</strong><span class="desc">먹고 싶은 메뉴를 직접 적고 룰렛으로 정하기</span></span>
+        <span><strong>${t('gameRouletteName') || '메뉴 룰렛'}</strong><span class="desc">${t('gameRouletteDesc') || '먹고 싶은 메뉴를 직접 적고 룰렛으로 정하기'}</span></span>
       </button>
     </div>
   `;
@@ -1031,9 +1182,9 @@ function renderTarot(){
   // 후보 카드는 12곳 전체를 섞어서 무한 회전 덱으로 보여준다
   const deck = restaurants.slice().sort(() => Math.random() - 0.5);
   gameBody.innerHTML = `
-    <button type="button" class="game-back-btn" id="gameBackBtn">← 다른 게임 고르기</button>
-    <h3 class="game-title">오늘의 메뉴 타로</h3>
-    <p class="game-sub">${deck.length}장의 카드가 흐르고 있어요. 눌러서 오늘의 한 그릇을 뽑아보세요</p>
+    <button type="button" class="game-back-btn" id="gameBackBtn">${t('gameBack') || '← 다른 게임 고르기'}</button>
+    <h3 class="game-title">${t('tarotTitle') || '오늘의 메뉴 타로'}</h3>
+    <p class="game-sub">${(t('tarotSub') || '{n}장의 카드가 흐르고 있어요. 눌러서 오늘의 한 그릇을 뽑아보세요').replace('{n}', deck.length)}</p>
     <div class="tarot-deck" id="tarotDeck">
       <div class="tarot-track" id="tarotTrack">
         ${[...deck, ...deck].map(r => `<div class="tarot-mini">${r.emoji}</div>`).join('')}
@@ -1057,12 +1208,12 @@ function drawTarot(deck){
   document.getElementById('tarotResultWrap').innerHTML = `
     <div class="tarot-result">
       <div class="emoji">✨</div>
-      <strong>${pick.name}</strong>
-      <span>${pick.cat} · ★ ${pick.rating} · ${pick.desc}</span>
+      <strong>${rName(pick)}</strong>
+      <span>${rCat(pick)} · ★ ${pick.rating} · ${rDesc(pick)}</span>
     </div>
     <div class="game-action-row">
-      <button type="button" class="btn-ghost" id="tarotRedraw">다시 뽑기</button>
-      <button type="button" class="survey-close-btn" style="flex:1;" id="tarotClose">닫기</button>
+      <button type="button" class="btn-ghost" id="tarotRedraw">${t('tarotRedraw') || '다시 뽑기'}</button>
+      <button type="button" class="survey-close-btn" style="flex:1;" id="tarotClose">${t('closeBtn') || '닫기'}</button>
     </div>
   `;
   document.getElementById('tarotRedraw').addEventListener('click', renderTarot);
@@ -1072,17 +1223,17 @@ function drawTarot(deck){
 function renderRoulette(){
   rouletteItems = [];
   gameBody.innerHTML = `
-    <button type="button" class="game-back-btn" id="gameBackBtn">← 다른 게임 고르기</button>
-    <h3 class="game-title">메뉴 룰렛</h3>
-    <p class="game-sub">먹고 싶은 메뉴를 2개 이상 적고 돌려보세요</p>
+    <button type="button" class="game-back-btn" id="gameBackBtn">${t('gameBack') || '← 다른 게임 고르기'}</button>
+    <h3 class="game-title">${t('rouletteTitle') || '메뉴 룰렛'}</h3>
+    <p class="game-sub">${t('rouletteSub') || '먹고 싶은 메뉴를 2개 이상 적고 돌려보세요'}</p>
     <div class="roulette-input-row">
-      <input type="text" id="rouletteInput" placeholder="예: 국밥, 피자, 마라탕">
-      <button type="button" class="roulette-add-btn" id="rouletteAddBtn">추가</button>
+      <input type="text" id="rouletteInput" placeholder="${t('roulettePh') || '예: 국밥, 피자, 마라탕'}">
+      <button type="button" class="roulette-add-btn" id="rouletteAddBtn">${t('rouletteAdd') || '추가'}</button>
     </div>
     <div class="roulette-chips" id="rouletteChips"></div>
-    <div class="roulette-display" id="rouletteDisplay">메뉴를 추가해주세요</div>
+    <div class="roulette-display" id="rouletteDisplay">${t('rouletteEmpty') || '메뉴를 추가해주세요'}</div>
     <div class="game-action-row">
-      <button type="button" class="btn-primary" style="flex:1;" id="rouletteSpinBtn" disabled>🎡 돌리기</button>
+      <button type="button" class="btn-primary" style="flex:1;" id="rouletteSpinBtn" disabled>${t('rouletteSpin') || '🎡 돌리기'}</button>
     </div>
   `;
   document.getElementById('gameBackBtn').addEventListener('click', renderGameChoice);
@@ -1113,7 +1264,9 @@ function updateRouletteSpinState(){
   if(!spinBtn) return;
   spinBtn.disabled = rouletteItems.length < 2;
   display.classList.remove('landed');
-  display.textContent = rouletteItems.length < 2 ? '메뉴를 2개 이상 추가해주세요' : `${rouletteItems.length}개의 메뉴 중에서 골라드릴게요`;
+  display.textContent = rouletteItems.length < 2
+    ? (t('rouletteMin') || '메뉴를 2개 이상 추가해주세요')
+    : (t('rouletteReady') || '{n}개의 메뉴 중에서 골라드릴게요').replace('{n}', rouletteItems.length);
 }
 
 function addRouletteItem(){
@@ -1142,7 +1295,7 @@ function spinRoulette(){
       display.textContent = `🎉 ${finalPick}`;
       display.classList.add('landed');
       spinBtn.disabled = false;
-      spinBtn.textContent = '🎡 다시 돌리기';
+      spinBtn.textContent = t('rouletteRespin') || '🎡 다시 돌리기';
     }
   }, 90 + ticks * 4);
 }
@@ -1159,13 +1312,13 @@ function updateHeaderAuthUI(){
   const authLabel = document.getElementById('authHeaderLabel');
   if(isLoggedIn){
     authIcon.textContent = '🌱';
-    authLabel.textContent = '저장 목록 보기';
-    authBtn.title = `${currentUserName || '손주'}님의 마이페이지`;
+    authLabel.textContent = t('headerAuthSavedLabel') || '저장 목록 보기';
+    authBtn.title = (t('headerAuthMypageTitle') || '{name}님의 마이페이지').replace('{name}', currentUserName || (currentLang==='en' ? 'Grandchild' : '손주'));
     authBtn.onclick = () => openMypage('saved');
   } else {
     authIcon.textContent = '👤';
-    authLabel.textContent = '손주 로그인';
-    authBtn.title = '손주 로그인';
+    authLabel.textContent = t('navLogin') || '손주 로그인';
+    authBtn.title = t('navLogin') || '손주 로그인';
     authBtn.onclick = () => openAuth('login');
   }
 }
@@ -1174,10 +1327,10 @@ updateHeaderAuthUI();
 function logout(){
   openConfirm({
     emoji:'👋',
-    title:'로그아웃 하시겠어요?',
-    text:'로그아웃하면 저장 목록·리뷰 작성 등은 다시 로그인한 뒤에 이용할 수 있어요.',
-    okLabel:'로그아웃',
-    cancelLabel:'취소',
+    title:t('logoutTitle') || '로그아웃 하시겠어요?',
+    text:t('logoutBody') || '로그아웃하면 저장 목록·리뷰 작성 등은 다시 로그인한 뒤에 이용할 수 있어요.',
+    okLabel:t('logoutOk') || '로그아웃',
+    cancelLabel:t('logoutCancel') || '취소',
     onOk: () => {
       isLoggedIn = false;
       currentUserName = '';
@@ -1200,11 +1353,11 @@ function closeAuth(){ authOverlay.classList.remove('show'); }
 function closeAuthOnOverlay(e){ if(e.target === authOverlay) closeAuth(); }
 
 const authIntentCopy = {
-  save:{emoji:'💌', text:'가보고 싶은 곳을 저장하려면, 먼저 우리 손주가 되어주세요!'},
-  mypage:{emoji:'📌', text:'마이페이지는 손주로 등록하면 이용할 수 있어요.'},
-  review:{emoji:'📝', text:'리뷰를 남기려면 먼저 손주로 등록해주세요.'},
-  pass:{emoji:'🎟️', text:'식권은 손주 계정에 담기기 때문에, 먼저 등록이 필요해요.'},
-  login:{emoji:'👋', text:'다시 오셨네요! 손주 계정으로 로그인해주세요.'},
+  save:{emoji:'💌', text:'가보고 싶은 곳을 저장하려면, 먼저 우리 손주가 되어주세요!', key:'authIntentSave'},
+  mypage:{emoji:'📌', text:'마이페이지는 손주로 등록하면 이용할 수 있어요.', key:'authIntentMypage'},
+  review:{emoji:'📝', text:'리뷰를 남기려면 먼저 손주로 등록해주세요.', key:'authIntentReview'},
+  pass:{emoji:'🎟️', text:'식권은 손주 계정에 담기기 때문에, 먼저 등록이 필요해요.', key:'authIntentPass'},
+  login:{emoji:'👋', text:'다시 오셨네요! 손주 계정으로 로그인해주세요.', key:'authIntentLogin'},
 };
 
 function renderAuth(intent){
@@ -1212,36 +1365,36 @@ function renderAuth(intent){
   authBody.innerHTML = `
     <div class="auth-head">
       <div class="emoji">${info.emoji}</div>
-      <h3>손주가 되어주세요</h3>
-      <p>${info.text}</p>
+      <h3>${t('authTitle') || '손주가 되어주세요'}</h3>
+      <p>${t(info.key) || info.text}</p>
     </div>
     <div class="auth-tabs">
-      <button type="button" class="auth-tab ${authMode==='signup'?'active':''}" id="tabSignup">손주 등록</button>
-      <button type="button" class="auth-tab ${authMode==='login'?'active':''}" id="tabLogin">손주 로그인</button>
+      <button type="button" class="auth-tab ${authMode==='signup'?'active':''}" id="tabSignup">${t('authTabSignup') || '손주 등록'}</button>
+      <button type="button" class="auth-tab ${authMode==='login'?'active':''}" id="tabLogin">${t('authTabLogin') || '손주 로그인'}</button>
     </div>
     <form id="authForm">
       ${authMode==='signup' ? `
         <div class="auth-field">
-          <label>손주 이름</label>
-          <input type="text" id="authName" placeholder="어떻게 불러드릴까요?" required>
+          <label>${t('authNameLabel') || '손주 이름'}</label>
+          <input type="text" id="authName" placeholder="${t('authNamePh') || '어떻게 불러드릴까요?'}" required>
         </div>
       ` : ''}
       <div class="auth-field">
-        <label>이메일 또는 전화번호</label>
-        <input type="text" id="authId" placeholder="example@mail.com 또는 010-1234-5678" required>
+        <label>${t('authIdLabel') || '이메일 또는 전화번호'}</label>
+        <input type="text" id="authId" placeholder="${t('authIdPh') || 'example@mail.com 또는 010-1234-5678'}" required>
       </div>
       <div class="auth-field">
-        <label>비밀번호</label>
-        <input type="password" id="authPw" placeholder="비밀번호" required>
+        <label>${t('authPwLabel') || '비밀번호'}</label>
+        <input type="password" id="authPw" placeholder="${t('authPwPh') || '비밀번호'}" required>
       </div>
       ${authMode==='signup' ? `
         <div class="auth-field">
-          <label>비밀번호 확인</label>
-          <input type="password" id="authPw2" placeholder="비밀번호를 한 번 더 입력해주세요" required>
+          <label>${t('authPw2Label') || '비밀번호 확인'}</label>
+          <input type="password" id="authPw2" placeholder="${t('authPw2Ph') || '비밀번호를 한 번 더 입력해주세요'}" required>
         </div>
       ` : ''}
       <p class="auth-error" id="authError"></p>
-      <button type="submit" class="auth-submit-btn">${authMode==='signup' ? '손주 등록하고 시작하기' : '로그인하기'}</button>
+      <button type="submit" class="auth-submit-btn">${authMode==='signup' ? (t('authSubmitSignup')||'손주 등록하고 시작하기') : (t('authSubmitLogin')||'로그인하기')}</button>
     </form>
   `;
   document.getElementById('tabSignup').addEventListener('click', () => { authMode='signup'; renderAuth(intent); });
@@ -1253,7 +1406,7 @@ function renderAuth(intent){
     errEl.textContent = '';
 
     if(!isEmailOrPhone(idVal)){
-      errEl.textContent = '이메일 주소 또는 전화번호 형식으로 입력해주세요.';
+      errEl.textContent = t('authErrFormat') || '이메일 주소 또는 전화번호 형식으로 입력해주세요.';
       return;
     }
     const pwVal = document.getElementById('authPw').value;
@@ -1262,11 +1415,11 @@ function renderAuth(intent){
     if(authMode === 'signup'){
       const pw2 = document.getElementById('authPw2').value;
       if(pwVal !== pw2){
-        errEl.textContent = '비밀번호가 서로 달라요. 다시 확인해주세요.';
+        errEl.textContent = t('authErrPwMismatch') || '비밀번호가 서로 달라요. 다시 확인해주세요.';
         return;
       }
       if(store.accounts.some(a => a.id === idVal)){
-        errEl.textContent = '이미 등록된 계정이에요. "손주 로그인" 탭에서 로그인해주세요.';
+        errEl.textContent = t('authErrDupe') || '이미 등록된 계정이에요. "손주 로그인" 탭에서 로그인해주세요.';
         return;
       }
       const name = document.getElementById('authName').value.trim();
@@ -1275,11 +1428,11 @@ function renderAuth(intent){
     } else {
       const account = store.accounts.find(a => a.id === idVal);
       if(!account){
-        errEl.textContent = '등록되지 않은 계정이에요. "손주 등록" 탭에서 먼저 등록해주세요.';
+        errEl.textContent = t('authErrNotFound') || '등록되지 않은 계정이에요. "손주 등록" 탭에서 먼저 등록해주세요.';
         return;
       }
       if(account.pw !== pwVal){
-        errEl.textContent = '비밀번호가 일치하지 않아요.';
+        errEl.textContent = t('authErrWrongPw') || '비밀번호가 일치하지 않아요.';
         return;
       }
       renderAuthWelcome(account.name);
@@ -1301,15 +1454,15 @@ function renderAuthWelcome(name){
   saveState();
   renderCards();
   renderReviews();
-  const label = name ? `${name} 손주님` : '손주님';
+  const label = currentLang === 'en' ? (name || 'Grandchild') : (name ? `${name} 손주님` : '손주님');
   authBody.innerHTML = `
     <div class="auth-welcome">
       <div class="emoji">🌾</div>
-      <h3>환영해요, ${label}!</h3>
-      <p>손주 등록이 완료됐어요. 정식 오픈하면 가장 먼저 알려드릴게요.</p>
+      <h3>${(t('authWelcomeTitle') || '환영해요, {name}!').replace('{name}', label)}</h3>
+      <p>${t('authWelcomeBody') || '손주 등록이 완료됐어요. 정식 오픈하면 가장 먼저 알려드릴게요.'}</p>
       <div class="game-action-row">
-        <button type="button" class="btn-ghost" style="flex:1;" onclick="closeAuth()">닫기</button>
-        <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeAuth(); openMypage('saved');">마이페이지 보러가기</button>
+        <button type="button" class="btn-ghost" style="flex:1;" onclick="closeAuth()">${t('closeBtn') || '닫기'}</button>
+        <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeAuth(); openMypage('saved');">${t('authWelcomeMypageBtn') || '마이페이지 보러가기'}</button>
       </div>
     </div>
   `;
@@ -1335,18 +1488,18 @@ function renderMypage(){
   mypageBody.innerHTML = `
     <div class="mypage-head">
       <div class="emoji">🌱</div>
-      <h3>${currentUserName ? `${escapeHtml(currentUserName)} 손주님의 마이페이지` : '마이페이지'}</h3>
+      <h3>${currentUserName ? (t('mypageTitle')||'{name} 손주님의 마이페이지').replace('{name}', escapeHtml(currentUserName)) : (t('mypageTitleGeneric')||'마이페이지')}</h3>
     </div>
     <div class="mypage-tabs">
-      <button type="button" class="mypage-tab ${mypageTab==='saved'?'active':''}" id="tabSaved">가보고 싶은 곳</button>
-      <button type="button" class="mypage-tab ${mypageTab==='visited'?'active':''}" id="tabVisited">가본 곳</button>
-      <button type="button" class="mypage-tab ${mypageTab==='pass'?'active':''}" id="tabPass">식권</button>
+      <button type="button" class="mypage-tab ${mypageTab==='saved'?'active':''}" id="tabSaved">${t('mypageTabSaved') || '가보고 싶은 곳'}</button>
+      <button type="button" class="mypage-tab ${mypageTab==='visited'?'active':''}" id="tabVisited">${t('mypageTabVisited') || '가본 곳'}</button>
+      <button type="button" class="mypage-tab ${mypageTab==='pass'?'active':''}" id="tabPass">${t('mypageTabPass') || '식권'}</button>
     </div>
     <div class="mypage-list">${body}</div>
-    <button type="button" class="mypage-reset-link" onclick="resetMyData()">내 활동 기록 전체 초기화</button>
+    <button type="button" class="mypage-reset-link" onclick="resetMyData()">${t('mypageResetLink') || '내 활동 기록 전체 초기화'}</button>
     <div class="game-action-row" style="margin-top:10px;">
-      <button type="button" class="btn-ghost" style="flex:1;" onclick="logout()">로그아웃</button>
-      <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeMypage()">닫기</button>
+      <button type="button" class="btn-ghost" style="flex:1;" onclick="logout()">${t('mypageLogoutBtn') || '로그아웃'}</button>
+      <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeMypage()">${t('closeBtn') || '닫기'}</button>
     </div>
   `;
   document.getElementById('tabSaved').addEventListener('click', () => { mypageTab='saved'; renderMypage(); });
@@ -1358,9 +1511,9 @@ function renderMypage(){
     btn.addEventListener('click', () => {
       const r = restaurants.find(x => x.name === btn.dataset.name);
       const field = mypageTab === 'saved' ? 'saved' : 'visited';
-      const question = mypageTab === 'saved' ? '가보고 싶은 곳에서 해제하시겠습니까?' : '방문 기록을 취소하시겠습니까?';
+      const question = mypageTab === 'saved' ? (t('confirmUnsave')||'가보고 싶은 곳에서 해제하시겠습니까?') : (t('mypageConfirmUnvisit')||'방문 기록을 취소하시겠습니까?');
       openConfirm({
-        emoji:'↩️', title: r.name, text: question, okLabel:'확인', cancelLabel:'아니요',
+        emoji:'↩️', title: rName(r), text: question, okLabel:t('confirmOk')||'확인', cancelLabel:t('confirmNo')||'아니요',
         onOk: () => { r[field] = false; saveState(); renderCards(); renderMypage(); closeConfirm(); }
       });
     });
@@ -1370,7 +1523,7 @@ function renderMypage(){
       const i = Number(btn.dataset.i);
       const o = store.passOrders[i];
       openConfirm({
-        emoji:'↩️', title: o.place, text:'이 식권 예약을 취소하시겠습니까?', okLabel:'예약 취소', cancelLabel:'아니요',
+        emoji:'↩️', title: o.place, text:t('mypageConfirmCancelPass')||'이 식권 예약을 취소하시겠습니까?', okLabel:t('mypageCancelPassOk')||'예약 취소', cancelLabel:t('confirmNo')||'아니요',
         onOk: () => { store.passOrders.splice(i, 1); saveState(); renderMypage(); closeConfirm(); }
       });
     });
@@ -1379,22 +1532,22 @@ function renderMypage(){
 
 function renderMypagePlaceList(){
   const list = restaurants.filter(r => mypageTab === 'saved' ? r.saved : r.visited);
-  if(list.length === 0) return `<div class="mypage-empty">아직 ${mypageTab==='saved'?'저장한':'방문 기록이 있는'} 맛집이 없어요.</div>`;
+  if(list.length === 0) return `<div class="mypage-empty">${mypageTab==='saved' ? (t('mypageEmptySaved')||'아직 저장한 맛집이 없어요.') : (t('mypageEmptyVisited')||'아직 방문 기록이 있는 맛집이 없어요.')}</div>`;
   return list.map(r => `
     <div class="survey-result-card">
       <span class="emoji">${r.emoji}</span>
       <div class="info">
-        <strong>${r.name}</strong>
-        <span>${r.cat} · ★ ${r.rating} · ${r.desc}</span>
+        <strong>${rName(r)}</strong>
+        <span>${rCat(r)} · ★ ${r.rating} · ${rDesc(r)}</span>
       </div>
-      <button type="button" class="mypage-remove-btn" data-name="${escapeHtml(r.name)}" title="${mypageTab==='saved' ? '가보고 싶은 곳에서 해제' : '방문 기록 취소'}">✕</button>
+      <button type="button" class="mypage-remove-btn" data-name="${escapeHtml(r.name)}" title="${mypageTab==='saved' ? (t('mypageRemoveSavedTitle')||'가보고 싶은 곳에서 해제') : (t('mypageRemoveVisitedTitle')||'방문 기록 취소')}">✕</button>
     </div>
   `).join('');
 }
 
 function renderMypagePassList(){
   if(store.passOrders.length === 0){
-    return `<div class="mypage-empty">아직 예약한 식권이 없어요.<br>손주 식권 섹션에서 마음에 드는 가게를 골라보세요.</div>`;
+    return `<div class="mypage-empty">${t('mypageEmptyPass') || '아직 예약한 식권이 없어요.<br>손주 식권 섹션에서 마음에 드는 가게를 골라보세요.'}</div>`;
   }
   return store.passOrders.map((o, i) => `
     <div class="survey-result-card">
@@ -1403,7 +1556,7 @@ function renderMypagePassList(){
         <strong>${escapeHtml(o.place)}</strong>
         <span>${o.count + o.bonus}장 (${o.count}장${o.bonus ? ` + 보너스 ${o.bonus}장` : ''}) · ${o.total.toLocaleString()}원 · ${escapeHtml(o.at)} 예약</span>
       </div>
-      <button type="button" class="mypage-remove-btn mypage-cancel-pass-btn" data-i="${i}" title="예약 취소">✕</button>
+      <button type="button" class="mypage-remove-btn mypage-cancel-pass-btn" data-i="${i}" title="${t('mypageCancelPassTitle')||'예약 취소'}">✕</button>
     </div>
   `).join('');
 }
@@ -1412,10 +1565,10 @@ function renderMypagePassList(){
 function resetMyData(){
   openConfirm({
     emoji:'🧹',
-    title:'내 활동 기록 초기화',
-    text:'저장한 곳, 방문 기록, 내가 쓴 리뷰, 식권 예약을 모두 초기화해요. 되돌릴 수 없어요.',
-    okLabel:'초기화',
-    cancelLabel:'취소',
+    title:t('resetTitle') || '내 활동 기록 초기화',
+    text:t('resetBody') || '저장한 곳, 방문 기록, 내가 쓴 리뷰, 식권 예약을 모두 초기화해요. 되돌릴 수 없어요.',
+    okLabel:t('resetOk') || '초기화',
+    cancelLabel:t('resetCancel') || '취소',
     onOk: () => {
       restaurants.forEach(r => { r.saved = false; r.visited = false; });
       store.reviews = store.reviews.filter(rv => !rv.mine);
@@ -1444,10 +1597,10 @@ function openReviewForm(){
   if(restaurants.filter(r => r.visited).length === 0){
     openConfirm({
       emoji:'📝',
-      title:'아직 리뷰를 남길 수 없어요',
-      text:'방문 완료로 표시한 맛집에만 리뷰를 남길 수 있어요.',
-      okLabel:'맛집 보러가기',
-      cancelLabel:'닫기',
+      title:t('reviewFormNoVisitTitle') || '아직 리뷰를 남길 수 없어요',
+      text:t('reviewFormNoVisitBody') || '방문 완료로 표시한 맛집에만 리뷰를 남길 수 있어요.',
+      okLabel:t('reviewFormNoVisitOk') || '맛집 보러가기',
+      cancelLabel:t('closeBtn') || '닫기',
       onOk: () => { closeConfirm(); document.getElementById('restaurants').scrollIntoView({behavior:'smooth'}); }
     });
     return;
@@ -1465,43 +1618,43 @@ function renderReviewForm(){
   reviewFormBody.innerHTML = `
     <div class="auth-head">
       <div class="emoji">📝</div>
-      <h3>나도 리뷰 남기기</h3>
-      <p>다녀온 맛집의 솔직한 후기를 남겨주세요.</p>
+      <h3>${t('reviewFormTitle') || '나도 리뷰 남기기'}</h3>
+      <p>${t('reviewFormSub') || '다녀온 맛집의 솔직한 후기를 남겨주세요.'}</p>
     </div>
     <form id="reviewForm">
       <div class="auth-field">
-        <label>평점</label>
+        <label>${t('reviewRatingLabel') || '평점'}</label>
         <div class="review-star-pick" id="reviewStars">
           ${[1,2,3,4,5].map(n => `<button type="button" class="review-star ${n<=reviewRating?'on':''}" data-score="${n}" aria-label="${n}점">★</button>`).join('')}
         </div>
       </div>
       <div class="auth-field">
-        <label>방문한 곳</label>
+        <label>${t('reviewPlaceLabel') || '방문한 곳'}</label>
         <select id="reviewPlace" class="review-select">
-          ${visitedList.map(r => `<option value="${escapeHtml(r.name)}">${r.emoji} ${escapeHtml(r.name)}</option>`).join('')}
+          ${visitedList.map(r => `<option value="${escapeHtml(r.name)}">${r.emoji} ${escapeHtml(rName(r))}</option>`).join('')}
         </select>
       </div>
       <div class="auth-field">
-        <label>공개 방식</label>
+        <label>${t('reviewVisibilityLabel') || '공개 방식'}</label>
         <div class="review-radio-row">
-          <label class="review-radio"><input type="radio" name="reviewVisibility" value="real" checked> 실명 (${escapeHtml(currentUserName || '손주')})</label>
-          <label class="review-radio"><input type="radio" name="reviewVisibility" value="anon"> 익명</label>
+          <label class="review-radio"><input type="radio" name="reviewVisibility" value="real" checked> ${(t('reviewVisibilityReal')||'실명 ({name})').replace('{name}', escapeHtml(currentUserName || (currentLang==='en'?'Grandchild':'손주')))}</label>
+          <label class="review-radio"><input type="radio" name="reviewVisibility" value="anon"> ${t('reviewVisibilityAnon') || '익명'}</label>
         </div>
       </div>
       <div class="auth-field">
-        <label>사진 첨부 <span class="review-optional">선택</span></label>
+        <label>${t('reviewPhotoLabel') || '사진 첨부'} <span class="review-optional">${t('reviewOptional') || '선택'}</span></label>
         <input type="file" id="reviewPhotoInput" accept="image/*" class="review-file">
         <div id="reviewPhotoPreview"></div>
       </div>
       <div class="auth-field">
-        <label>리뷰 내용</label>
-        <textarea id="reviewText" class="review-textarea" maxlength="${REVIEW_MAX}" placeholder="어떤 점이 좋았나요?"></textarea>
-        <div class="review-counter"><span id="reviewCount">0</span>/${REVIEW_MAX}자</div>
+        <label>${t('reviewContentLabel') || '리뷰 내용'}</label>
+        <textarea id="reviewText" class="review-textarea" maxlength="${REVIEW_MAX}" placeholder="${t('reviewContentPh') || '어떤 점이 좋았나요?'}"></textarea>
+        <div class="review-counter"><span id="reviewCount">0</span>/${REVIEW_MAX}${currentLang==='en'?'':'자'}</div>
       </div>
       <p class="auth-error" id="reviewError"></p>
       <div class="game-action-row">
-        <button type="button" class="btn-ghost" style="flex:1;" onclick="closeReviewForm()">닫기</button>
-        <button type="submit" class="survey-close-btn" style="flex:1;">리뷰 등록하기</button>
+        <button type="button" class="btn-ghost" style="flex:1;" onclick="closeReviewForm()">${t('closeBtn') || '닫기'}</button>
+        <button type="submit" class="survey-close-btn" style="flex:1;">${t('reviewSubmitBtn') || '리뷰 등록하기'}</button>
       </div>
     </form>
   `;
@@ -1552,14 +1705,14 @@ function submitReview(e){
   const text = document.getElementById('reviewText').value.trim();
   errEl.textContent = '';
   if(!text){
-    errEl.textContent = '리뷰 내용을 입력해주세요.';
+    errEl.textContent = t('reviewErrEmpty') || '리뷰 내용을 입력해주세요.';
     return;
   }
   const anonymous = document.querySelector('input[name="reviewVisibility"]:checked').value === 'anon';
   store.reviews.unshift({
     id: Date.now(),
     mine: true,
-    name: anonymous ? '익명의 손주' : (currentUserName ? `${currentUserName} 손주` : '손주'),
+    name: anonymous ? (t('anonReviewerName')||'익명의 손주') : (currentUserName ? `${currentUserName}${t('namedReviewerSuffix')||' 손주'}` : (t('defaultReviewerName')||'손주')),
     emoji: anonymous ? '🙈' : '🌱',
     stars: reviewRating,
     place: document.getElementById('reviewPlace').value,
@@ -1573,12 +1726,12 @@ function submitReview(e){
   reviewFormBody.innerHTML = `
     <div class="auth-welcome">
       <div class="emoji">🌾</div>
-      <h3>리뷰가 등록됐어요!</h3>
+      <h3>${t('reviewSuccessTitle') || '리뷰가 등록됐어요!'}</h3>
       <p>${stored
-        ? '소중한 후기 고맙습니다. 리뷰 목록에 바로 반영했어요.'
-        : '리뷰 목록에 반영했어요. 다만 사진 용량이 커서 저장하진 못했어요 — 새로고침하면 사라질 수 있어요.'}</p>
+        ? (t('reviewSuccessBodyOk') || '소중한 후기 고맙습니다. 리뷰 목록에 바로 반영했어요.')
+        : (t('reviewSuccessBodyFail') || '리뷰 목록에 반영했어요. 다만 사진 용량이 커서 저장하진 못했어요 — 새로고침하면 사라질 수 있어요.')}</p>
       <div class="game-action-row">
-        <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeReviewForm()">확인</button>
+        <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeReviewForm()">${t('confirmOk') || '확인'}</button>
       </div>
     </div>
   `;
@@ -1661,24 +1814,24 @@ function renderIntro(){
       <div class="emoji">🌾</div>
       <span class="intro-version">${SERVICE_VERSION}</span>
       <h3>밥 먹으러 와</h3>
-      <p>조치원읍 로컬 맛집 발견 서비스</p>
+      <p>${t('introSub') || '조치원읍 로컬 맛집 발견 서비스'}</p>
     </div>
-    <div class="intro-vision">지도에 없거나 부실하게 등록된 우리 동네 진짜 맛집을 발굴하고, 소비자와 상인이 함께 상생하는 로컬 상권 생태계를 만든다</div>
+    <div class="intro-vision">${t('introVision') || '지도에 없거나 부실하게 등록된 우리 동네 진짜 맛집을 발굴하고, 소비자와 상인이 함께 상생하는 로컬 상권 생태계를 만든다'}</div>
     <div class="intro-block">
-      <h4>프로젝트 개요</h4>
-      <p>"KU구조대! 사장님을 부탁해" — 고려대학교 세종캠퍼스 사회공헌 프로젝트로 시작된 학생 주도 서비스예요. 네이버·카카오맵에 등록이 안 됐거나, 등록은 했어도 정보가 부실한 조치원읍 로컬 맛집을 학생과 주민이 직접 발굴해 소개합니다.</p>
-    </div>
-    <div class="intro-block">
-      <h4>만든 사람</h4>
-      <p>고려대학교 세종캠퍼스 경제정책학전공 학생 팀 <b>맛집 KU조대</b>가 기획·개발한 사회공헌 프로젝트입니다.</p>
+      <h4>${t('introOverviewHead') || '프로젝트 개요'}</h4>
+      <p>${t('introOverviewBody') || '"KU구조대! 사장님을 부탁해" — 고려대학교 세종캠퍼스 사회공헌 프로젝트로 시작된 학생 주도 서비스예요. 네이버·카카오맵에 등록이 안 됐거나, 등록은 했어도 정보가 부실한 조치원읍 로컬 맛집을 학생과 주민이 직접 발굴해 소개합니다.'}</p>
     </div>
     <div class="intro-block">
-      <h4>진행 상황</h4>
-      <p>현재는 사전 신청을 받는 준비 단계예요. 9월 개강 이후 현장 조사로 실제 맛집 데이터를 채워 정식 서비스를 시작할 예정입니다.</p>
+      <h4>${t('introMakerHead') || '만든 사람'}</h4>
+      <p>${t('introMakerBody') || '고려대학교 세종캠퍼스 경제정책학전공 학생 팀 <b>맛집 KU조대</b>가 기획·개발한 사회공헌 프로젝트입니다.'}</p>
+    </div>
+    <div class="intro-block">
+      <h4>${t('introProgressHead') || '진행 상황'}</h4>
+      <p>${t('introProgressBody') || '현재는 사전 신청을 받는 준비 단계예요. 9월 개강 이후 현장 조사로 실제 맛집 데이터를 채워 정식 서비스를 시작할 예정입니다.'}</p>
     </div>
     <div class="game-action-row">
-      <button type="button" class="btn-ghost" style="flex:1;" onclick="closeIntro(); openFaq();">자주 묻는 질문</button>
-      <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeIntro()">닫기</button>
+      <button type="button" class="btn-ghost" style="flex:1;" onclick="closeIntro(); openFaq();">${t('introFaqBtn') || '자주 묻는 질문'}</button>
+      <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeIntro()">${t('closeBtn') || '닫기'}</button>
     </div>
   `;
 }
@@ -1711,32 +1864,33 @@ function closeFaq(){ faqOverlay.classList.remove('show'); }
 function closeFaqOnOverlay(e){ if(e.target === faqOverlay) closeFaq(); }
 
 function renderFaq(){
+  const isEn = currentLang === 'en';
   faqBody.innerHTML = `
     <div class="auth-head">
       <div class="emoji">💬</div>
-      <h3>문의하기</h3>
-      <p>자주 묻는 질문을 먼저 확인해보세요.</p>
+      <h3>${t('faqTitle') || '문의하기'}</h3>
+      <p>${t('faqSub') || '자주 묻는 질문을 먼저 확인해보세요.'}</p>
     </div>
     <div class="faq-list">
       ${faqs.map((f, i) => `
         <div class="faq-item ${i===faqOpenIndex?'open':''}">
           <button type="button" class="faq-q" data-index="${i}">
             <span class="faq-mark">Q${i+1}</span>
-            <span>${escapeHtml(f.q)}</span>
+            <span>${escapeHtml(isEn ? (t(`faqQ${i+1}`) || f.q) : f.q)}</span>
             <span class="faq-arrow">▾</span>
           </button>
-          <div class="faq-a">${escapeHtml(f.a)}</div>
+          <div class="faq-a">${escapeHtml(isEn ? (t(`faqA${i+1}`) || f.a) : f.a)}</div>
         </div>
       `).join('')}
     </div>
     <div class="faq-foot">
-      찾는 답이 없다면 <b>손주 힘 보태기</b>로 직접 문의를 남겨주세요.<br>
-      <a href="privacy.html" style="text-decoration:underline;">개인정보처리방침</a> ·
-      <a href="terms.html" style="text-decoration:underline;">이용약관</a>
+      ${t('faqFootPrefix') || '찾는 답이 없다면 '}<b>${t('faqFootBold') || '손주 힘 보태기'}</b>${t('faqFootSuffix') || '로 직접 문의를 남겨주세요.'}<br>
+      <a href="privacy.html" style="text-decoration:underline;">${t('footerPrivacyLink') || '개인정보처리방침'}</a> ·
+      <a href="terms.html" style="text-decoration:underline;">${t('footerTermsLink') || '이용약관'}</a>
     </div>
     <div class="game-action-row">
-      <button type="button" class="btn-ghost" style="flex:1;" onclick="closeFaq(); openSupport();">문의 남기기</button>
-      <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeFaq()">닫기</button>
+      <button type="button" class="btn-ghost" style="flex:1;" onclick="closeFaq(); openSupport();">${t('faqContactBtn') || '문의 남기기'}</button>
+      <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeFaq()">${t('closeBtn') || '닫기'}</button>
     </div>
   `;
   // 아코디언: 열려 있는 항목을 다시 누르면 접힌다 (한 번에 하나만 열림)
@@ -1756,6 +1910,7 @@ const contactBody = document.getElementById('contactBody');
 
 const contactTypes = {
   team:{
+    key:'ct_team',
     emoji:'🙋',
     title:'팀원으로 참여하고 싶어요',
     sub:'함께 만들어갈 손주를 기다리고 있어요.',
@@ -1766,6 +1921,7 @@ const contactTypes = {
     messagePlaceholder:'참여하고 싶은 이유나 가능한 활동 시간을 자유롭게 적어주세요.',
   },
   sponsor:{
+    key:'ct_sponsor',
     emoji:'🌱',
     title:'후원하고 싶어요',
     sub:'작은 보탬이 동네 맛집 한 곳을 더 발굴합니다.',
@@ -1776,6 +1932,7 @@ const contactTypes = {
     messagePlaceholder:'후원과 관련해 궁금한 점이나 전하고 싶은 말씀을 적어주세요.',
   },
   partnerStore:{
+    key:'ct_partnerStore',
     emoji:'🧑‍🍳',
     title:'사장님 제휴 신청',
     sub:'식권과 학생 혜택을 함께 준비해요.',
@@ -1786,6 +1943,7 @@ const contactTypes = {
     messagePlaceholder:'가게 이름과 위치, 어떤 혜택을 생각하고 계신지 적어주세요.',
   },
   partnerOrg:{
+    key:'ct_partnerOrg',
     emoji:'🎓',
     title:'학생회 · 동아리 제휴 문의',
     sub:'우리 단체 회원이 쓸 혜택을 함께 만들어요.',
@@ -1796,6 +1954,7 @@ const contactTypes = {
     messagePlaceholder:'단체 이름과 인원, 어떤 혜택을 원하시는지 알려주세요.',
   },
   expand:{
+    key:'ct_expand',
     emoji:'📍',
     title:'우리 동네 로컬 맛집도 찾아주세요',
     sub:'조치원이 아니어도, 이 취지에 공감한다면.',
@@ -1822,27 +1981,27 @@ function renderSupportChoice(){
   contactBody.innerHTML = `
     <div class="auth-head">
       <div class="emoji">🤝</div>
-      <h3>손주 힘 보태기</h3>
-      <p>이 프로젝트에 함께할 손길을 기다려요.</p>
+      <h3>${t('supportTitle') || '손주 힘 보태기'}</h3>
+      <p>${t('supportSub') || '이 프로젝트에 함께할 손길을 기다려요.'}</p>
     </div>
     <div class="game-choice-grid">
       <button type="button" class="game-choice-btn" data-type="team">
         <span class="icon">🙋</span>
         <span>
-          <strong>팀원으로 참여하고 싶어요</strong>
-          <span class="desc">현장 조사부터 기획·개발까지, 함께할 자리가 열려 있어요.</span>
+          <strong>${t('supportTeamTitle') || '팀원으로 참여하고 싶어요'}</strong>
+          <span class="desc">${t('supportTeamDesc') || '현장 조사부터 기획·개발까지, 함께할 자리가 열려 있어요.'}</span>
         </span>
       </button>
       <button type="button" class="game-choice-btn" data-type="sponsor">
         <span class="icon">🌱</span>
         <span>
-          <strong>후원하고 싶어요</strong>
-          <span class="desc">비영리 취지로 운영되는 프로젝트에 힘을 보태주세요.</span>
+          <strong>${t('supportSponsorTitle') || '후원하고 싶어요'}</strong>
+          <span class="desc">${t('supportSponsorDesc') || '비영리 취지로 운영되는 프로젝트에 힘을 보태주세요.'}</span>
         </span>
       </button>
     </div>
     <div class="game-action-row">
-      <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeContact()">닫기</button>
+      <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeContact()">${t('closeBtn') || '닫기'}</button>
     </div>
   `;
   contactBody.querySelectorAll('.game-choice-btn').forEach(btn => {
@@ -1852,44 +2011,47 @@ function renderSupportChoice(){
 
 function renderContactForm(type, showBack){
   const c = contactTypes[type] || contactTypes.expand;
+  const isEn = currentLang === 'en';
+  const ck = (suffix, fallback) => isEn && c.key ? (t(`${c.key}_${suffix}`) || fallback) : fallback;
   // 팀원/후원 선택 화면(renderSupportChoice)을 실제로 거쳐 들어온 경우에만 "뒤로"를 보여준다.
   // showBack을 명시하지 않으면 기존처럼 type이 team/sponsor일 때만 기본으로 뒤로를 보여주고,
   // 메인 페이지 "손주 힘 보태기" 버튼처럼 선택 화면 없이 바로 이 폼으로 들어온 경우엔
   // showBack:false로 명시 호출해 "뒤로"를 감춘다 — 그 뒤로가기가 곧 후원 선택지로 새는 뒷문이 되기 때문.
   const useBack = showBack !== undefined ? showBack : (type === 'team' || type === 'sponsor');
   const backBtn = useBack
-    ? `<button type="button" class="btn-ghost" style="flex:1;" id="contactBack">뒤로</button>`
-    : `<button type="button" class="btn-ghost" style="flex:1;" onclick="closeContact()">닫기</button>`;
+    ? `<button type="button" class="btn-ghost" style="flex:1;" id="contactBack">${t('contactBack') || '뒤로'}</button>`
+    : `<button type="button" class="btn-ghost" style="flex:1;" onclick="closeContact()">${t('closeBtn') || '닫기'}</button>`;
+  const options = isEn && c.key ? (c.options || []).map((o, i) => t(`${c.key}_opt${i+1}`) || o) : c.options;
   contactBody.innerHTML = `
     <div class="auth-head">
       <div class="emoji">${c.emoji}</div>
-      <h3>${escapeHtml(c.title)}</h3>
-      <p>${escapeHtml(c.sub)}</p>
+      <h3>${escapeHtml(ck('title', c.title))}</h3>
+      <p>${escapeHtml(ck('sub', c.sub))}</p>
     </div>
-    <div class="contact-note">${escapeHtml(c.note)}</div>
+    <div class="contact-note">${escapeHtml(ck('note', c.note))}</div>
     <form id="contactForm">
       <div class="auth-field">
-        <label>이름</label>
-        <input type="text" id="contactName" placeholder="이름 또는 닉네임" value="${escapeHtml(currentUserName || '')}">
+        <label>${t('contactNameLabel') || '이름'}</label>
+        <input type="text" id="contactName" placeholder="${t('contactNamePh') || '이름 또는 닉네임'}" value="${escapeHtml(currentUserName || '')}">
       </div>
       <div class="auth-field">
-        <label>연락처 / 이메일</label>
-        <input type="text" id="contactReach" placeholder="연락 받으실 이메일 또는 전화번호">
+        <label>${t('contactReachLabel') || '연락처 / 이메일'}</label>
+        <input type="text" id="contactReach" placeholder="${t('contactReachPh') || '연락 받으실 이메일 또는 전화번호'}">
       </div>
       <div class="auth-field">
-        <label>${escapeHtml(c.fieldLabel)}</label>
+        <label>${escapeHtml(ck('field', c.fieldLabel))}</label>
         ${c.options
-          ? `<select id="contactField" class="review-select">${c.options.map(o => `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('')}</select>`
-          : `<input type="text" id="contactField" placeholder="예) 세종시 도담동, 청주시 사창동">`}
+          ? `<select id="contactField" class="review-select">${c.options.map((o,i) => `<option value="${escapeHtml(o)}">${escapeHtml((options && options[i]) || o)}</option>`).join('')}</select>`
+          : `<input type="text" id="contactField" placeholder="${ck('fieldPh', '예) 세종시 도담동, 청주시 사창동')}">`}
       </div>
       <div class="auth-field">
-        <label>${escapeHtml(c.messageLabel)} <span class="review-optional">선택</span></label>
-        <textarea id="contactMessage" class="contact-textarea" maxlength="500" placeholder="${escapeHtml(c.messagePlaceholder)}"></textarea>
+        <label>${escapeHtml(ck('msgLabel', c.messageLabel))} <span class="review-optional">${t('contactMessageOptional') || '선택'}</span></label>
+        <textarea id="contactMessage" class="contact-textarea" maxlength="500" placeholder="${escapeHtml(ck('msgPh', c.messagePlaceholder))}"></textarea>
       </div>
       <p class="auth-error" id="contactError"></p>
       <div class="game-action-row">
         ${backBtn}
-        <button type="submit" class="survey-close-btn" style="flex:1;">문의 남기기</button>
+        <button type="submit" class="survey-close-btn" style="flex:1;">${t('contactSubmitBtn') || '문의 남기기'}</button>
       </div>
     </form>
   `;
@@ -1904,16 +2066,18 @@ function submitContact(e, type){
   const name = document.getElementById('contactName').value.trim();
   const reach = document.getElementById('contactReach').value.trim();
   errEl.textContent = '';
-  if(!name){ errEl.textContent = '이름을 입력해주세요.'; return; }
-  if(!isEmailOrPhone(reach)){ errEl.textContent = '연락 받으실 이메일 또는 전화번호를 정확히 입력해주세요.'; return; }
+  if(!name){ errEl.textContent = t('contactErrName') || '이름을 입력해주세요.'; return; }
+  if(!isEmailOrPhone(reach)){ errEl.textContent = t('contactErrReach') || '연락 받으실 이메일 또는 전화번호를 정확히 입력해주세요.'; return; }
   const c = contactTypes[type] || contactTypes.expand;
+  const isEn = currentLang === 'en';
+  const cTitle = isEn && c.key ? (t(`${c.key}_title`) || c.title) : c.title;
   contactBody.innerHTML = `
     <div class="auth-welcome">
       <div class="emoji">🌾</div>
-      <h3>문의가 접수됐어요!</h3>
-      <p>${escapeHtml(name)} 님, 고맙습니다. 남겨주신 연락처로 안내드릴게요.<br>(${escapeHtml(c.title)})</p>
+      <h3>${t('contactSuccessTitle') || '문의가 접수됐어요!'}</h3>
+      <p>${(t('contactSuccessBody') || '{name} 님, 고맙습니다. 남겨주신 연락처로 안내드릴게요.<br>({type})').replace('{name}', escapeHtml(name)).replace('{type}', escapeHtml(cTitle))}</p>
       <div class="game-action-row">
-        <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeContact()">확인</button>
+        <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeContact()">${t('confirmOk') || '확인'}</button>
       </div>
     </div>
   `;
@@ -1940,14 +2104,14 @@ function renderPassCards(){
         <div class="pass-card-head">
           <span class="pass-emoji">${r.emoji}</span>
           <div>
-            <strong>${escapeHtml(r.name)}</strong>
-            <span class="pass-cat">${r.cat}</span>
+            <strong>${escapeHtml(rName(r))}</strong>
+            <span class="pass-cat">${rCat(r)}</span>
           </div>
         </div>
-        <div class="pass-price">장당 <b>${r.pass.unit.toLocaleString()}원</b></div>
-        <span class="pass-benefit-chip">🎁 ${escapeHtml(r.pass.benefit)}</span>
-        <div class="pass-valid">유효기간 ${r.pass.validDays}일</div>
-        <button type="button" class="pass-buy-btn" data-idx="${idx}">식권 예약하기</button>
+        <div class="pass-price">${currentLang==='en' ? `<b>${r.pass.unit.toLocaleString()}₩</b> ${t('passPerUnit')}` : `장당 <b>${r.pass.unit.toLocaleString()}원</b>`}</div>
+        <span class="pass-benefit-chip">🎁 ${escapeHtml(pBenefit(r.pass))}</span>
+        <div class="pass-valid">${(t('passValidDays')||'유효기간 {n}일').replace('{n}', r.pass.validDays)}</div>
+        <button type="button" class="pass-buy-btn" data-idx="${idx}">${t('passBuyBtn') || '식권 예약하기'}</button>
       </div>
     `;
   }).join('');
@@ -1977,32 +2141,33 @@ function renderPassSelect(){
   const p = r.pass;
   const picked = p.bundles[passBundleIdx];
   const total = p.unit * picked.count;
+  const wonSuffix = (n) => currentLang==='en' ? `₩${n.toLocaleString()}` : `${n.toLocaleString()}원`;
   passBody.innerHTML = `
     <div class="auth-head">
       <div class="emoji">${r.emoji}</div>
-      <h3>${escapeHtml(r.name)} 식권</h3>
-      <p>장당 ${p.unit.toLocaleString()}원 · ${escapeHtml(p.benefit)}</p>
+      <h3>${escapeHtml(rName(r))} ${currentLang==='en' ? 'Meal Pass' : '식권'}</h3>
+      <p>${currentLang==='en' ? `${wonSuffix(p.unit)} ${t('passPerUnit')}` : `장당 ${p.unit.toLocaleString()}원`} · ${escapeHtml(pBenefit(p))}</p>
     </div>
     <div class="auth-field">
-      <label>몇 장 담을까요?</label>
+      <label>${t('passHowMany') || '몇 장 담을까요?'}</label>
       <div class="pass-bundle-list">
         ${p.bundles.map((b, i) => `
           <button type="button" class="pass-bundle ${i===passBundleIdx?'selected':''}" data-i="${i}">
-            <span class="pass-bundle-count">${b.count}장${b.bonus ? ` <b>+${b.bonus}</b>` : ''}</span>
-            <span class="pass-bundle-price">${(p.unit * b.count).toLocaleString()}원</span>
+            <span class="pass-bundle-count">${currentLang==='en' ? b.count : `${b.count}장`}${b.bonus ? ` <b>+${b.bonus}</b>` : ''}</span>
+            <span class="pass-bundle-price">${wonSuffix(p.unit * b.count)}</span>
           </button>
         `).join('')}
       </div>
     </div>
     <div class="pass-summary">
-      <div class="pass-summary-row"><span>식권 ${picked.count}장</span><span>${total.toLocaleString()}원</span></div>
-      ${picked.bonus ? `<div class="pass-summary-row bonus"><span>사장님 혜택 +${picked.bonus}장</span><span>0원</span></div>` : ''}
-      <div class="pass-summary-row total"><span>실제 받는 식권</span><span>${picked.count + picked.bonus}장</span></div>
-      <div class="pass-summary-row total"><span>결제 예정 금액</span><span>${total.toLocaleString()}원</span></div>
+      <div class="pass-summary-row"><span>${(t('passSummaryCount')||'식권 {n}장').replace('{n}', picked.count)}</span><span>${wonSuffix(total)}</span></div>
+      ${picked.bonus ? `<div class="pass-summary-row bonus"><span>${(t('passSummaryBonus')||'사장님 혜택 +{n}장').replace('{n}', picked.bonus)}</span><span>${wonSuffix(0)}</span></div>` : ''}
+      <div class="pass-summary-row total"><span>${t('passSummaryTotal') || '실제 받는 식권'}</span><span>${currentLang==='en' ? (picked.count+picked.bonus) : `${picked.count + picked.bonus}장`}</span></div>
+      <div class="pass-summary-row total"><span>${t('passSummaryAmount') || '결제 예정 금액'}</span><span>${wonSuffix(total)}</span></div>
     </div>
     <div class="game-action-row">
-      <button type="button" class="btn-ghost" style="flex:1;" onclick="closePass()">닫기</button>
-      <button type="button" class="survey-close-btn" style="flex:1;" id="passNext">다음</button>
+      <button type="button" class="btn-ghost" style="flex:1;" onclick="closePass()">${t('closeBtn') || '닫기'}</button>
+      <button type="button" class="survey-close-btn" style="flex:1;" id="passNext">${t('passNextBtn') || '다음'}</button>
     </div>
   `;
   passBody.querySelectorAll('.pass-bundle').forEach(btn => {
@@ -2016,24 +2181,25 @@ function renderPassConfirm(){
   const p = r.pass;
   const picked = p.bundles[passBundleIdx];
   const total = p.unit * picked.count;
+  const wonSuffix = (n) => currentLang==='en' ? `₩${n.toLocaleString()}` : `${n.toLocaleString()}원`;
   passBody.innerHTML = `
     <div class="auth-head">
       <div class="emoji">🎟️</div>
-      <h3>이렇게 예약할까요?</h3>
-      <p>아래 내용으로 사전 예약을 접수합니다.</p>
+      <h3>${t('passConfirmTitle') || '이렇게 예약할까요?'}</h3>
+      <p>${t('passConfirmSub') || '아래 내용으로 사전 예약을 접수합니다.'}</p>
     </div>
     <div class="pass-summary">
-      <div class="pass-summary-row"><span>가게</span><span>${r.emoji} ${escapeHtml(r.name)}</span></div>
-      <div class="pass-summary-row"><span>구매 식권</span><span>${picked.count}장</span></div>
-      ${picked.bonus ? `<div class="pass-summary-row bonus"><span>사장님 혜택</span><span>+${picked.bonus}장</span></div>` : ''}
-      <div class="pass-summary-row total"><span>실제 받는 식권</span><span>${picked.count + picked.bonus}장</span></div>
-      <div class="pass-summary-row total"><span>결제 예정 금액</span><span>${total.toLocaleString()}원</span></div>
-      <div class="pass-summary-row"><span>유효기간</span><span>사용 시작일부터 ${p.validDays}일</span></div>
+      <div class="pass-summary-row"><span>${t('passSummaryStore') || '가게'}</span><span>${r.emoji} ${escapeHtml(rName(r))}</span></div>
+      <div class="pass-summary-row"><span>${t('passSummaryBought') || '구매 식권'}</span><span>${currentLang==='en' ? picked.count : `${picked.count}장`}</span></div>
+      ${picked.bonus ? `<div class="pass-summary-row bonus"><span>${currentLang==='en' ? 'Owner bonus' : '사장님 혜택'}</span><span>+${picked.bonus}${currentLang==='en'?'':'장'}</span></div>` : ''}
+      <div class="pass-summary-row total"><span>${t('passSummaryTotal') || '실제 받는 식권'}</span><span>${currentLang==='en' ? (picked.count+picked.bonus) : `${picked.count + picked.bonus}장`}</span></div>
+      <div class="pass-summary-row total"><span>${t('passSummaryAmount') || '결제 예정 금액'}</span><span>${wonSuffix(total)}</span></div>
+      <div class="pass-summary-row"><span>${t('passSummaryValid') || '유효기간'}</span><span>${(t('passSummaryValidVal')||'사용 시작일부터 {n}일').replace('{n}', p.validDays)}</span></div>
     </div>
-    <div class="contact-note">지금은 <b>사전 예약</b>만 접수돼요. 실제 결제는 정식 오픈 때 연동될 예정이라, 지금 단계에서는 돈이 빠져나가지 않아요.</div>
+    <div class="contact-note">${t('passPrepayNote') || '지금은 <b>사전 예약</b>만 접수돼요. 실제 결제는 정식 오픈 때 연동될 예정이라, 지금 단계에서는 돈이 빠져나가지 않아요.'}</div>
     <div class="game-action-row">
-      <button type="button" class="btn-ghost" style="flex:1;" id="passBack">뒤로</button>
-      <button type="button" class="survey-close-btn" style="flex:1;" id="passSubmit">사전 예약 접수하기</button>
+      <button type="button" class="btn-ghost" style="flex:1;" id="passBack">${t('passBackBtn') || '뒤로'}</button>
+      <button type="button" class="survey-close-btn" style="flex:1;" id="passSubmit">${t('passSubmitBtn') || '사전 예약 접수하기'}</button>
     </div>
   `;
   document.getElementById('passBack').addEventListener('click', renderPassSelect);
@@ -2045,7 +2211,7 @@ function submitPassOrder(){
   const p = r.pass;
   const picked = p.bundles[passBundleIdx];
   store.passOrders.unshift({
-    place: r.name,
+    place: rName(r),
     emoji: r.emoji,
     count: picked.count,
     bonus: picked.bonus,
@@ -2054,16 +2220,17 @@ function submitPassOrder(){
     at: new Date().toISOString().slice(0, 10),
   });
   const stored = saveState();
+  const passCount = currentLang==='en' ? (picked.count + picked.bonus) : `${picked.count + picked.bonus}장`;
   passBody.innerHTML = `
     <div class="auth-welcome">
       <div class="emoji">🌾</div>
-      <h3>예약이 접수됐어요!</h3>
+      <h3>${t('passSuccessTitle') || '예약이 접수됐어요!'}</h3>
       <p>${stored
-        ? `${escapeHtml(r.name)} 식권 ${picked.count + picked.bonus}장을 담아뒀어요. 정식 오픈하면 결제 안내를 드릴게요.`
-        : `${escapeHtml(r.name)} 식권을 담아뒀어요. 다만 저장 공간이 가득 차서 기록은 남기지 못했어요 — 새로고침하면 사라질 수 있어요.`}</p>
+        ? (t('passSuccessBodyOk') || '{name} 식권 {n}장을 담아뒀어요. 정식 오픈하면 결제 안내를 드릴게요.').replace('{name}', escapeHtml(rName(r))).replace('{n}장', passCount).replace('{n}', passCount)
+        : (t('passSuccessBodyFail') || '{name} 식권을 담아뒀어요. 다만 저장 공간이 가득 차서 기록은 남기지 못했어요 — 새로고침하면 사라질 수 있어요.').replace('{name}', escapeHtml(rName(r)))}</p>
       <div class="game-action-row">
-        <button type="button" class="btn-ghost" style="flex:1;" onclick="closePass()">닫기</button>
-        <button type="button" class="survey-close-btn" style="flex:1;" onclick="closePass(); openMypage('pass');">내 식권 보기</button>
+        <button type="button" class="btn-ghost" style="flex:1;" onclick="closePass()">${t('closeBtn') || '닫기'}</button>
+        <button type="button" class="survey-close-btn" style="flex:1;" onclick="closePass(); openMypage('pass');">${t('passSeeMyPasses') || '내 식권 보기'}</button>
       </div>
     </div>
   `;
