@@ -19,41 +19,6 @@ const restaurants = [
   },
   // pass가 있는 가게만 손주 식권 섹션과 검색에 노출된다 (detail과 같은 방식 — 일부만 채워둔 예시)
   pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:180}},
-  {name:"골목 손칼국수", cat:"한식", emoji:"🍜", desc:"매일 반죽하는 쫄깃한 면발이 일품", rating:4.6, reviewCount:98, price:"₩", priceValue:8000, saved:true, visited:true,
-    pass:{unit:8000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:180},
-    detail:{
-      isExample:true,
-      address:"세종특별자치시 조치원읍 원리 45-2 (임의 주소 · 실제 주소 아님)",
-      hours:"매일 10:30 - 20:00 (재료 소진 시 조기 마감)",
-      closed:"매주 월요일 휴무",
-      phone:"044-123-4568",
-      reservation:"워크인 전용 (예약 불가)",
-      capacity:"최대 20명 (2인 테이블 4개, 4인 테이블 3개)",
-      parking:"가게 앞 노상 주차 2대",
-      mobilePay:"카카오페이 · 네이버페이 가능",
-      vouchers:"온누리상품권 가능 · 세종사랑카드(지역화폐) 가능",
-      menu:[
-        {name:"손칼국수", price:"8,000원", composition:"칼국수 1그릇 + 겉절이", origin:"밀가루 국내산, 바지락 국내산"},
-        {name:"손만두", price:"7,000원", composition:"찐만두 8개 + 간장종지", origin:"돼지고기·부추 국내산"},
-      ]
-    }},
-  {name:"조치원 화덕피자", cat:"양식", emoji:"🍕", desc:"동네 사장님이 직접 굽는 화덕 피자", rating:4.5, reviewCount:64, price:"₩₩", priceValue:16000, saved:false, visited:false,
-    detail:{
-      isExample:true,
-      address:"세종특별자치시 조치원읍 침산리 12-3 (임의 주소 · 실제 주소 아님)",
-      hours:"매일 11:30 - 21:00 (브레이크타임 15:00-17:00)",
-      closed:"매주 화요일 휴무",
-      phone:"044-234-5671",
-      reservation:"전화 예약 권장 (주말 저녁 대기 있을 수 있음)",
-      capacity:"최대 16명 (테이블 5개)",
-      parking:"건물 뒤편 3대 무료 주차",
-      mobilePay:"카카오페이 · 네이버페이 · 삼성페이 가능",
-      vouchers:"온누리상품권 미사용 · 세종사랑카드 가능",
-      menu:[
-        {name:"마르게리타", price:"16,000원", composition:"토마토소스+모짜렐라+바질, 화덕 직화", origin:"토마토 국내산, 치즈 수입산"},
-        {name:"고르곤졸라", price:"18,000원", composition:"고르곤졸라치즈+꿀, 반죽 매일 숙성", origin:"치즈 수입산, 밀가루 국내산"},
-      ]
-    }},
   {name:"역전 왕돈까스", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
     pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:90},
     detail:{
@@ -74,57 +39,18 @@ const restaurants = [
     }},
   {name:"안쉐프고기해물짬뽕", cat:"중식", emoji:"🥡", desc:"고기와 해물을 함께 낸 얼큰한 짬뽕집", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.61477503455844, lng:127.2857292835937, realAddress:"세종특별자치시 조치원읍 섭골길 51-21"},
-  {name:"조치원 마라탕", cat:"중식", emoji:"🌶️", desc:"학생들 사이 입소문난 얼큰한 마라탕", rating:4.3, reviewCount:176, price:"₩₩", priceValue:13000, saved:true, visited:false,
-    detail:{
-      isExample:true,
-      address:"세종특별자치시 조치원읍 신흥리 34-6 (임의 주소 · 실제 주소 아님)",
-      hours:"매일 11:00 - 21:30",
-      closed:"매주 첫째·셋째 월요일 휴무",
-      phone:"044-345-6781",
-      reservation:"워크인 전용",
-      capacity:"최대 18명",
-      parking:"인근 공영주차장 이용 (유료)",
-      mobilePay:"카카오페이 · 네이버페이 가능",
-      vouchers:"온누리상품권 가능 · 세종사랑카드 가능",
-      menu:[
-        {name:"마라탕 (매운맛 선택)", price:"13,000원", composition:"재료 무게 계량제 + 밥 1공기", origin:"향신료 수입산, 채소 국내산"},
-        {name:"마라샹궈", price:"15,000원", composition:"건식 볶음 + 땅콩가루", origin:"향신료 수입산, 고기 국내산"},
-      ]
-    }},
-  {name:"세종 스시하루", cat:"일식", emoji:"🍣", desc:"가성비 좋은 오마카세급 초밥 정식", rating:4.6, reviewCount:73, price:"₩₩", priceValue:15000, saved:false, visited:false,
-    detail:{
-      isExample:true,
-      address:"세종특별자치시 조치원읍 상리 9-1 (임의 주소 · 실제 주소 아님)",
-      hours:"화-일 11:30 - 20:00 (재료 소진 시 조기 마감)",
-      closed:"매주 월요일 휴무",
-      phone:"044-345-6782",
-      reservation:"전화 예약 권장 (점심 오마카세는 예약 필수)",
-      capacity:"최대 14명 (카운터석 6, 테이블석 8)",
-      parking:"가게 앞 1대 · 공영주차장 도보 5분",
-      mobilePay:"카카오페이 · 네이버페이 · 삼성페이 가능",
-      vouchers:"온누리상품권 미사용 · 세종사랑카드 가능",
-      menu:[
-        {name:"초밥 정식", price:"15,000원", composition:"초밥 10피스 + 미소시루 + 계란찜", origin:"광어·연어 국내 유통, 밥 국내산(세종)"},
-        {name:"모둠회덮밥", price:"14,000원", composition:"회덮밥 1그릇 + 미소시루", origin:"활어 국내 유통"},
-      ]
-    }},
-  {name:"조치원 라멘야", cat:"일식", emoji:"🍥", desc:"진한 돈코츠 육수, 사장님 손맛 그대로", rating:4.5, reviewCount:59, price:"₩", priceValue:9000, saved:false, visited:true,
-    detail:{
-      isExample:true,
-      address:"세종특별자치시 조치원읍 남리 22-4 (임의 주소 · 실제 주소 아님)",
-      hours:"매일 11:00 - 21:00 (브레이크타임 15:00-17:00)",
-      closed:"매주 목요일 휴무",
-      phone:"044-456-7891",
-      reservation:"워크인 전용",
-      capacity:"최대 12명 (카운터석 위주)",
-      parking:"주차 공간 없음 · 공영주차장 도보 4분",
-      mobilePay:"카카오페이 · 네이버페이 가능",
-      vouchers:"온누리상품권 가능 · 세종사랑카드 가능",
-      menu:[
-        {name:"돈코츠라멘", price:"9,000원", composition:"진한 돼지뼈 육수 + 차슈 2장 + 반숙란", origin:"돼지고기 국내산, 면 자가제면"},
-        {name:"차슈덮밥", price:"7,000원", composition:"차슈 덮밥 + 미니 된장국", origin:"돼지고기 국내산"},
-      ]
-    }},
+  {name:"자갈돈돈", cat:"한식", emoji:"🥩", desc:"조치원읍 골목의 고기구이집", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+    liveReview:true, lat:36.6080898465768, lng:127.29005819471818, realAddress:"세종특별자치시 조치원읍 내창2길 30"},
+  {name:"우리들식당", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+    liveReview:true, lat:36.6080899912077, lng:127.288885692635, realAddress:"세종특별자치시 조치원읍 내창3길 19"},
+  {name:"폴바나", cat:"양식", emoji:"🍝", desc:"조치원읍 골목의 양식당", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+    liveReview:true, lat:36.60819819730195, lng:127.28885703507063, realAddress:"세종특별자치시 조치원읍 내창3길 19"},
+  {name:"돈스", cat:"일식", emoji:"🍱", desc:"조치원읍 골목의 돈까스·우동집", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+    liveReview:true, lat:36.60735076086951, lng:127.29343318591735, realAddress:"세종특별자치시 조치원읍 돌마루7길 6"},
+  {name:"더라멘", cat:"일식", emoji:"🍜", desc:"조치원읍 골목의 라멘집", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+    liveReview:true, lat:36.607796147725, lng:127.289286979365, realAddress:"세종특별자치시 조치원읍 내창3길 16-1"},
+  {name:"초밥발전소12g", cat:"일식", emoji:"🍣", desc:"조치원읍 골목의 초밥·롤 전문점", rating:null, reviewCount:null, price:"₩₩", priceValue:13000, saved:false, visited:false,
+    liveReview:true, lat:36.60695328676086, lng:127.2894090160121, realAddress:"세종특별자치시 조치원읍 내창3길 8"},
   {name:"할머니 떡볶이", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
     pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", validDays:180},
     detail:{
@@ -147,23 +73,6 @@ const restaurants = [
     liveReview:true, lat:36.608516105696, lng:127.290049731247, realAddress:"세종특별자치시 조치원읍 내창1길 34-1"},
   {name:"숙이네밥상", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.608995511335, lng:127.291526952076, realAddress:"세종특별자치시 조치원읍 원마루길 16-1"},
-  {name:"조치원 파스타공방", cat:"양식", emoji:"🍝", desc:"직접 뽑는 생면 파스타 전문점", rating:4.4, reviewCount:52, price:"₩₩", priceValue:14000, saved:false, visited:false,
-    detail:{
-      isExample:true,
-      address:"세종특별자치시 조치원읍 고성리 17-9 (임의 주소 · 실제 주소 아님)",
-      hours:"매일 11:30 - 21:00 (브레이크타임 15:00-17:30)",
-      closed:"매주 화요일 휴무",
-      phone:"044-567-8901",
-      reservation:"전화 예약 권장 (주말 저녁)",
-      capacity:"최대 20명",
-      parking:"건물 옆 2대 무료 주차",
-      mobilePay:"카카오페이 · 네이버페이 · 삼성페이 가능",
-      vouchers:"온누리상품권 미사용 · 세종사랑카드 가능",
-      menu:[
-        {name:"명란크림파스타", price:"14,000원", composition:"생면 파스타 + 명란크림소스", origin:"면 매일 생면 압출, 명란 국내 유통"},
-        {name:"토마토해물파스타", price:"15,000원", composition:"생면 파스타 + 토마토소스 + 해산물", origin:"해산물 국내 유통"},
-      ]
-    }},
 ];
 
 // ================= 로컬 저장 (백엔드 전환 지점) =================
@@ -242,9 +151,9 @@ let currentQuery = "";
 let currentSort = "recommend";
 
 function getFilteredList(){
-  // liveReview(실제 확인된) 가게는 별도의 고정 섹션(renderRealCards)에서 보여주므로
-  // 예시 가게 그리드/필터 대상에서는 제외한다 — 섞이면 헷갈린다는 피드백 반영
-  let list = restaurants.filter(r => !r.liveReview && (currentCat === "전체" || r.cat === currentCat));
+  // 카테고리/검색/정렬 필터는 liveReview(실제 확인된) 가게에만 적용한다.
+  // 예시(목업) 가게는 renderExampleCards()가 고정 3장으로 따로 보여준다.
+  let list = restaurants.filter(r => r.liveReview && (currentCat === "전체" || r.cat === currentCat));
   const q = currentQuery.trim().toLowerCase();
   if(q){
     list = list.filter(r => r.name.toLowerCase().includes(q) || r.desc.toLowerCase().includes(q) || r.cat.includes(q));
@@ -311,7 +220,7 @@ function renderCards(){
 }
 
 // save-toggle/visit-flow-btn 클릭 바인딩 — 그리드(container) 범위로 한정해서
-// 여러 그리드(예시 가게 cardGrid, 실제 가게 realCardGrid)가 공존해도 중복 바인딩되지 않게 한다.
+// 여러 그리드(실제 가게 cardGrid, 예시 가게 exampleCardGrid)가 공존해도 중복 바인딩되지 않게 한다.
 function bindFoodCardButtons(container){
   container.querySelectorAll('.save-toggle').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -344,12 +253,12 @@ function bindFoodCardButtons(container){
   });
 }
 
-// "실제로 확인된 가게" — liveReview 항목만, 필터/정렬 없이 항상 고정 노출
-const realCardGrid = document.getElementById('realCardGrid');
-function renderRealCards(){
-  if(!realCardGrid) return;
-  realCardGrid.innerHTML = "";
-  const list = restaurants.filter(r => r.liveReview);
+// "예시 가게" — 아직 현장 조사 전인 목업 3곳, 필터/정렬 없이 항상 고정 노출
+const exampleCardGrid = document.getElementById('exampleCardGrid');
+function renderExampleCards(){
+  if(!exampleCardGrid) return;
+  exampleCardGrid.innerHTML = "";
+  const list = restaurants.filter(r => !r.liveReview);
   list.forEach((r) => {
     const idx = restaurants.indexOf(r);
     const saved = isLoggedIn && r.saved;
@@ -365,10 +274,10 @@ function renderRealCards(){
         <span>${r.emoji}</span>
         <button class="save-toggle ${saved ? 'saved':''}" data-idx="${idx}" title="가보고 싶은 곳">${saved ? '♥':'♡'}</button>
         <div class="visit-badge ${visited ? 'show':''}">✔ 가본 곳</div>
-        <div class="live-review-badge show">🌐 구글 실시간 리뷰</div>
       </div>
       <div class="food-body">
         <span class="food-cat">${r.cat}</span>
+        ${r.detail && r.detail.isExample ? '<span class="mock-tag">예시 데이터</span>' : ''}
         <div class="food-name">${r.name}</div>
         <div class="food-desc">${r.desc}</div>
         <div class="food-meta">
@@ -377,9 +286,9 @@ function renderRealCards(){
         <button class="visit-flow-btn" data-idx="${idx}">${visited ? '✔ 방문 기록 있음' : (saved ? '방문 완료로 표시하기' : '가보고 싶은 곳에 담기')}</button>
       </div>
     `;
-    realCardGrid.appendChild(card);
+    exampleCardGrid.appendChild(card);
   });
-  bindFoodCardButtons(realCardGrid);
+  bindFoodCardButtons(exampleCardGrid);
 }
 
 // 저장/방문 상태 변경은 전부 확인 모달을 거친다 (extra.md §2)
@@ -387,7 +296,7 @@ function confirmMark(r, emoji, question, apply){
   openConfirm({
     emoji, title:r.name, text:question,
     okLabel:'확인', cancelLabel:'아니요',
-    onOk: () => { apply(); saveState(); renderCards(); renderRealCards(); closeConfirm(); }
+    onOk: () => { apply(); saveState(); renderCards(); renderExampleCards(); closeConfirm(); }
   });
 }
 
@@ -425,14 +334,14 @@ priceMinInput.addEventListener('input', renderCards);
 priceMaxInput.addEventListener('input', renderCards);
 
 renderCards();
-renderRealCards();
+renderExampleCards();
 
 // ---- Dummy reviews ----
 const reviews = [
   {id:'seed0', name:"익명의 재학생", emoji:"🎓", stars:5, place:"할머니 떡볶이", text:"학교 끝나고 늘 여기 와요. 사장님이 항상 반겨주셔서 더 정겹습니다.", likes:14, at:'2026-08-18'},
-  {id:'seed1', name:"교환학생 Lee", emoji:"🌏", stars:5, place:"세종 스시하루", text:"가격 대비 퀄리티가 정말 좋아요. 한국 온 뒤 최고의 발견이었어요.", likes:9, at:'2026-08-15'},
+  {id:'seed1', name:"교환학생 Lee", emoji:"🌏", stars:5, place:"초밥발전소12g", text:"가격 대비 퀄리티가 정말 좋아요. 한국 온 뒤 최고의 발견이었어요.", likes:9, at:'2026-08-15'},
   {id:'seed2', name:"행정팀 직원", emoji:"💼", stars:4, place:"조치원 할매국밥", text:"점심시간에 자주 가는데 국물이 진짜 진해요. 강력 추천합니다.", likes:6, at:'2026-08-12'},
-  {id:'seed3', name:"기숙사생 K", emoji:"🏠", stars:5, place:"골목 손칼국수", text:"면이 쫄깃쫄깃하고 양도 많아서 자취생한테 딱이에요.", likes:3, at:'2026-08-10'},
+  {id:'seed3', name:"기숙사생 K", emoji:"🏠", stars:5, place:"더라멘", text:"면이 쫄깃쫄깃하고 양도 많아서 자취생한테 딱이에요.", likes:3, at:'2026-08-10'},
 ];
 const reviewList = document.getElementById('reviewList');
 const reviewSortSelect = document.getElementById('reviewSort');
