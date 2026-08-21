@@ -23,14 +23,17 @@ const restaurants = [
   {name:"조치원 화덕피자", cat:"양식", emoji:"🍕", desc:"동네 사장님이 직접 굽는 화덕 피자", rating:4.5, reviewCount:64, price:"₩₩", priceValue:16000, saved:false, visited:false},
   {name:"역전 왕돈까스", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
     pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", validDays:90}},
-  {name:"청춘 짜장면", cat:"중식", emoji:"🥡", desc:"30년째 한 자리, 정겨운 노포 중식당", rating:4.4, reviewCount:87, price:"₩", priceValue:7000, saved:false, visited:false},
+  {name:"맛나네차코", cat:"중식", emoji:"🥡", desc:"조치원읍 골목의 중식당", rating:null, reviewCount:null, price:"₩", priceValue:7000, saved:false, visited:false,
+    liveReview:true, lat:36.6080331477201, lng:127.289286746737},
   {name:"조치원 마라탕", cat:"중식", emoji:"🌶️", desc:"학생들 사이 입소문난 얼큰한 마라탕", rating:4.3, reviewCount:176, price:"₩₩", priceValue:13000, saved:true, visited:false},
   {name:"세종 스시하루", cat:"일식", emoji:"🍣", desc:"가성비 좋은 오마카세급 초밥 정식", rating:4.6, reviewCount:73, price:"₩₩", priceValue:15000, saved:false, visited:false},
   {name:"조치원 라멘야", cat:"일식", emoji:"🍥", desc:"진한 돈코츠 육수, 사장님 손맛 그대로", rating:4.5, reviewCount:59, price:"₩", priceValue:9000, saved:false, visited:true},
   {name:"할머니 떡볶이", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
     pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", validDays:180}},
-  {name:"조치원 김밥천국", cat:"분식", emoji:"🍙", desc:"든든한 한 끼, 다양한 종류의 김밥", rating:4.2, reviewCount:41, price:"₩", priceValue:5000, saved:false, visited:false},
-  {name:"등굣길 순대국", cat:"한식", emoji:"🍲", desc:"아침 일찍 여는 든든한 순대국집", rating:4.5, reviewCount:118, price:"₩", priceValue:8000, saved:false, visited:false},
+  {name:"파랑새분식", cat:"분식", emoji:"🍙", desc:"조치원읍 골목의 분식집", rating:null, reviewCount:null, price:"₩", priceValue:5000, saved:false, visited:false,
+    liveReview:true, lat:36.608516105696, lng:127.290049731247},
+  {name:"쌍둥이식당", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 한식 백반집", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+    liveReview:true, lat:36.60815246428958, lng:127.28539747580568},
   {name:"조치원 파스타공방", cat:"양식", emoji:"🍝", desc:"직접 뽑는 생면 파스타 전문점", rating:4.4, reviewCount:52, price:"₩₩", priceValue:14000, saved:false, visited:false},
 ];
 
@@ -39,7 +42,7 @@ const restaurants = [
 // marks는 배열 인덱스가 아니라 가게 이름을 키로 잡는다 — restaurants 순서가 바뀌거나
 // 항목이 추가돼도 저장된 값이 엉뚱한 가게에 붙지 않도록.
 const STORE_KEY = 'bmw:v1';
-let store = { auth:{isLoggedIn:false, name:''}, marks:{}, reviews:[], passOrders:[], accounts:[], reviewLikes:{}, myLikedReviews:[] };
+let store = { auth:{isLoggedIn:false, name:''}, marks:{}, reviews:[], passOrders:[], accounts:[], reviewLikes:{}, myLikedReviews:[], googleReviews:{} };
 
 function loadState(){
   try{
@@ -57,6 +60,7 @@ function loadState(){
       accounts: Array.isArray(parsed.accounts) ? parsed.accounts : [],
       reviewLikes: parsed.reviewLikes || {},
       myLikedReviews: Array.isArray(parsed.myLikedReviews) ? parsed.myLikedReviews : [],
+      googleReviews: parsed.googleReviews || {},
     };
   }catch(e){
     // 저장소가 막힌 환경(사생활 보호 모드 등) — 조용히 메모리 전용으로 동작한다
@@ -148,18 +152,22 @@ function renderCards(){
     const card = document.createElement('div');
     card.className = 'food-card';
     card.addEventListener('click', () => openDetail(idx));
+    const cardRatingHtml = r.rating != null
+      ? `★ ${r.rating} <span style="color:var(--ink-soft);font-weight:400;">(${r.reviewCount})</span>`
+      : `<span style="color:var(--ink-soft);font-weight:400;">🔎 실제 리뷰 준비중</span>`;
     card.innerHTML = `
       <div class="food-thumb" style="background:${thumbColor(i)}">
         <span>${r.emoji}</span>
         <button class="save-toggle ${saved ? 'saved':''}" data-idx="${idx}" title="가보고 싶은 곳">${saved ? '♥':'♡'}</button>
         <div class="visit-badge ${visited ? 'show':''}">✔ 가본 곳</div>
+        <div class="live-review-badge ${r.liveReview ? 'show':''}">🌐 구글 실시간 리뷰</div>
       </div>
       <div class="food-body">
         <span class="food-cat">${r.cat}</span>
         <div class="food-name">${r.name}</div>
         <div class="food-desc">${r.desc}</div>
         <div class="food-meta">
-          <span class="stars">★ ${r.rating} <span style="color:var(--ink-soft);font-weight:400;">(${r.reviewCount})</span></span>
+          <span class="stars">${cardRatingHtml}</span>
         </div>
         <button class="visit-flow-btn" data-idx="${idx}">${visited ? '✔ 방문 기록 있음' : (saved ? '방문 완료로 표시하기' : '가보고 싶은 곳에 담기')}</button>
       </div>
@@ -210,6 +218,12 @@ function confirmMark(r, emoji, question, apply){
 function thumbColor(i){
   const colors = ['#E3E9EF','#F3E7DE','#EAE3D9','#E9EDF2'];
   return colors[i % colors.length];
+}
+
+function ratingLabel(r){
+  return r.rating != null
+    ? `★ ${r.rating} (${r.reviewCount})`
+    : `🔎 실제 리뷰 준비중`;
 }
 
 document.querySelectorAll('.cat-chip').forEach(chip => {
@@ -530,6 +544,7 @@ function openDetail(idx){
   const r = restaurants[idx];
   detailBody.innerHTML = r.detail ? renderFullDetail(r) : renderStubDetail(r);
   detailOverlay.classList.add('show');
+  if(r.lat && r.lng) loadGoogleReviews(r);
 }
 function closeDetail(){ detailOverlay.classList.remove('show'); }
 function closeDetailOnOverlay(e){ if(e.target === detailOverlay) closeDetail(); }
@@ -541,13 +556,14 @@ function renderStubDetail(r){
       <div>
         <span class="food-cat">${r.cat}</span>
         <h3>${r.name}</h3>
-        <div class="detail-rating">★ ${r.rating} (${r.reviewCount}) · ${r.price}</div>
+        <div class="detail-rating">${ratingLabel(r)} · ${r.price}</div>
       </div>
     </div>
     <p class="detail-desc">${r.desc}</p>
     <div class="detail-stub-note">
       <strong>상세 정보 준비 중</strong> — 주소·영업시간·메뉴 구성·원산지 같은 상세 정보는 9월 현장 조사 후 채워질 예정이에요. 예시로 <b>조치원 할매국밥</b> 카드에서 어떤 정보가 담길지 미리 확인해보세요.
     </div>
+    ${r.lat && r.lng ? renderGoogleReviewShell() : ''}
     <button type="button" class="survey-close-btn" onclick="closeDetail()">닫기</button>
   `;
 }
@@ -571,7 +587,7 @@ function renderFullDetail(r){
       <div>
         <span class="food-cat">${r.cat}</span>
         <h3>${r.name}</h3>
-        <div class="detail-rating">★ ${r.rating} (${r.reviewCount}) · ${r.price}</div>
+        <div class="detail-rating">${ratingLabel(r)} · ${r.price}</div>
       </div>
     </div>
     <p class="detail-desc">${r.desc}</p>
@@ -599,8 +615,123 @@ function renderFullDetail(r){
       `).join('')}
     </div>
     <p class="detail-example-note">* 예시로 채워둔 상세 정보이며, 실제 데이터는 현장 조사 후 반영됩니다.</p>
+    ${r.lat && r.lng ? renderGoogleReviewShell() : ''}
     <button type="button" class="survey-close-btn" onclick="closeDetail()">닫기</button>
   `;
+}
+
+// ---- 구글 리뷰 (Places API New, /api/google-reviews 경유) ----
+function renderGoogleReviewShell(){
+  return `
+    <div class="detail-google-section">
+      <h4 class="detail-menu-title">구글 리뷰</h4>
+      <div id="googleReviewBody" class="google-review-body">
+        <div class="google-review-loading">리뷰를 불러오는 중...</div>
+      </div>
+    </div>`;
+}
+
+async function loadGoogleReviews(r){
+  const box = document.getElementById('googleReviewBody');
+  if(!box) return;
+  const cached = store.googleReviews[r.name];
+  if(cached){ box.innerHTML = renderGoogleReviewContent(cached.data); return; }
+  try{
+    const url = `/api/google-reviews?name=${encodeURIComponent(r.name)}&lat=${r.lat}&lng=${r.lng}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    // 모달을 닫았다 다른 가게를 열었으면 detailBody가 이미 교체돼 이 컨테이너는 더 이상 문서에 없다
+    if(document.getElementById('googleReviewBody') !== box) return;
+    box.innerHTML = renderGoogleReviewContent(data);
+    store.googleReviews[r.name] = { data, fetchedAt: Date.now() };
+    saveState();
+  }catch(e){
+    if(document.getElementById('googleReviewBody') === box){
+      box.innerHTML = `<div class="google-review-error">리뷰를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</div>`;
+    }
+  }
+}
+
+function renderGoogleReviewContent(data){
+  if(!data || !data.found){
+    return `<div class="google-review-empty">😢 구글 지도에서 이 가게를 찾지 못했습니다.</div>`;
+  }
+  const reviewsHtml = (data.reviews || []).map(rv => `
+    <div class="review-item">
+      <div class="review-avatar">👤</div>
+      <div class="review-body">
+        <div class="review-top">
+          <span class="review-name">${escapeHtml(rv.author || '익명')}</span>
+          <span class="review-stars">${'★'.repeat(rv.rating||0)}${'☆'.repeat(5-(rv.rating||0))}</span>
+        </div>
+        <div class="review-text">${escapeHtml(rv.text || '')}</div>
+        <div class="review-meta-row"><span class="review-date">${escapeHtml(rv.relativeTime || '')}</span></div>
+      </div>
+    </div>`).join('') || `<p class="google-review-none">아직 등록된 리뷰가 없어요.</p>`;
+
+  return `
+    <div class="google-review-summary detail-rating">★ ${data.rating ?? '-'} (${data.reviewCount ?? 0})</div>
+    <div class="review-list">${reviewsHtml}</div>
+    ${data.mapsUri ? `<a class="google-review-link" href="${escapeHtml(data.mapsUri)}" target="_blank" rel="noopener">구글 맵에서 전체 리뷰 보기 →</a>` : ''}
+  `;
+}
+
+// ================= 실시간 가게 검색 (카카오 로컬 API 경유) =================
+const liveSearchInput = document.getElementById('liveSearchInput');
+const liveSearchResults = document.getElementById('liveSearchResults');
+let liveSearchList = [];
+
+async function runLiveSearch(){
+  const q = liveSearchInput.value.trim();
+  if(!q) return;
+  liveSearchResults.innerHTML = `<div class="google-review-loading">검색 중...</div>`;
+  try{
+    const res = await fetch(`/api/kakao-search?query=${encodeURIComponent(q)}`);
+    const data = await res.json();
+    liveSearchList = (data && data.results) || [];
+    renderLiveSearchResults();
+  }catch(e){
+    liveSearchResults.innerHTML = `<div class="google-review-error">검색에 실패했습니다. 잠시 후 다시 시도해주세요.</div>`;
+  }
+}
+
+liveSearchInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') runLiveSearch(); });
+
+function renderLiveSearchResults(){
+  if(liveSearchList.length === 0){
+    liveSearchResults.innerHTML = `<div class="google-review-empty">검색 결과가 없어요.</div>`;
+    return;
+  }
+  liveSearchResults.innerHTML = liveSearchList.map((place, i) => `
+    <div class="live-search-item">
+      <button type="button" class="live-search-item-head" data-i="${i}">
+        <span class="live-search-item-name">${escapeHtml(place.name)}</span>
+        <span class="live-search-item-addr">${escapeHtml(place.address || '')}</span>
+      </button>
+      <div class="live-search-item-google" id="liveSearchGoogle-${i}"></div>
+    </div>
+  `).join('');
+  document.querySelectorAll('.live-search-item-head').forEach(btn => {
+    btn.addEventListener('click', () => loadLiveSearchGoogleReviews(Number(btn.dataset.i)));
+  });
+}
+
+async function loadLiveSearchGoogleReviews(i){
+  const place = liveSearchList[i];
+  const box = document.getElementById(`liveSearchGoogle-${i}`);
+  if(!place || !box) return;
+  if(box.dataset.loaded){ box.classList.toggle('show'); return; }
+  box.dataset.loaded = '1';
+  box.classList.add('show');
+  box.innerHTML = `<div class="google-review-loading">리뷰를 불러오는 중...</div>`;
+  try{
+    const url = `/api/google-reviews?name=${encodeURIComponent(place.name)}&lat=${place.lat}&lng=${place.lng}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    box.innerHTML = renderGoogleReviewContent(data);
+  }catch(e){
+    box.innerHTML = `<div class="google-review-error">리뷰를 불러오지 못했습니다.</div>`;
+  }
 }
 
 // ================= 3초 컷 빠르게 고르기 =================

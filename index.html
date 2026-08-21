@@ -48,7 +48,7 @@
     <div>
       <span class="eyebrow">KU구조대! 사장님을 부탁해</span>
       <h1>네이버에 없거나, 있어도 부실한 맛집이 있다는 거, <span>아세요?</span></h1>
-      <p>고려대 세종캠퍼스 학생 팀 <b>맛집 KU조대</b>가 조치원읍 골목골목을 직접 돌아다녀요. 지도 등록이 아예 안 됐거나, 등록은 했지만 정보가 부실한 터줏대감 사장님들의 진짜 맛집까지 — 고려대·홍익대 세종캠퍼스 학생과 우리 동네 사람들이 함께 즐길 수 있는 가성비 좋은 로컬 맛집을 만나보세요.</p>
+      <p>고려대 세종캠퍼스 학생 팀 <b>맛집 KU조대</b>가 조치원읍 골목골목을 직접 걸어다니며 발굴해요. 네이버·카카오맵에 등록이 아예 안 됐거나, 등록은 했어도 사진 한 장 없이 부실한 터줏대감 사장님들의 진짜 맛집을 찾아 소개하는 일부터 시작합니다. 고려대·홍익대 세종캠퍼스 학생과 인근 주민이 함께 즐길 수 있는, 가성비 좋은 로컬 맛집을 만나보세요.</p>
       <div class="hero-ctas">
         <a href="#restaurants" class="btn-primary">맛집 둘러보기</a>
         <a href="#signup" class="btn-ghost">오픈 알림 받기</a>
@@ -97,15 +97,30 @@
   </div>
 </section>
 
+<!-- ===== 로컬 발굴 로드맵 ===== -->
+<section class="discover-roadmap section-pad" id="discover">
+  <div class="container">
+    <span class="eyebrow">COMING SOON</span>
+    <h2 class="section-title">개강 후, 터줏대감 사장님을 직접 찾아갑니다</h2>
+    <p class="section-sub">지도에 아예 등록이 안 됐거나, 등록은 했어도 정보가 부실한 진짜 로컬 맛집 — 학생 팀이 9월 개강 후 조치원읍 골목을 직접 돌며 사장님을 만나고, 정보를 채워 이 자리에 하나씩 소개할 예정이에요. 아래 맛집 목록에서 🌐 배지가 붙은 곳은 구글 리뷰 연동이 어떻게 보이는지 미리 보여드리는 예시이고, 우리가 직접 찾아가 도운 진짜 로컬 가게 목록은 이 자리에 곧 채워집니다.</p>
+    <div class="discover-roadmap-box">
+      <div class="discover-roadmap-item"><span class="discover-roadmap-num">1</span>조치원읍 골목 현장 조사 (9월 개강 후)</div>
+      <div class="discover-roadmap-item"><span class="discover-roadmap-num">2</span>등록이 부실한 터줏대감 사장님 발굴 · 정보 채우기</div>
+      <div class="discover-roadmap-item"><span class="discover-roadmap-num">3</span>이 자리에 실제 로컬 가게로 하나씩 공개</div>
+    </div>
+    <button type="button" class="btn-primary" onclick="openContact('expand')">우리 동네 로컬 맛집 제보하기</button>
+  </div>
+</section>
+
 <!-- ===== Map ===== -->
 <section class="map-section section-pad" id="map">
   <div class="container">
     <span class="eyebrow">MAP</span>
     <h2 class="section-title">조치원 미니 지도</h2>
-    <p class="section-sub">지도에 잘 나오지 않는 로컬 맛집 위치를 한눈에. 실제 서비스에서는 네이버맵 API로 연동됩니다.</p>
+    <p class="section-sub">지도에 잘 나오지 않는 로컬 맛집 위치를 한눈에. 실제 서비스에서는 구글맵 API로 연동돼 실제 위치와 리뷰까지 확인할 수 있어요.</p>
     <div class="map-wrap">
       <div class="map-placeholder">
-        <div class="map-note">📍 네이버맵 API 연동 예정 자리입니다 — Client ID 발급 후 실제 지도로 교체됩니다.</div>
+        <div class="map-note">📍 구글맵 연동 예정 자리입니다 — 카드에서 🌐 배지가 붙은 가게는 지금도 구글 실제 리뷰를 볼 수 있어요.</div>
         <div class="map-pin p1"><span>🍜</span></div>
         <div class="map-pin p2"><span>🥘</span></div>
         <div class="map-pin p3"><span>🍢</span></div>
@@ -128,7 +143,7 @@
   <div class="container">
     <span class="eyebrow">EAT LOCAL</span>
     <h2 class="section-title">오늘 뭐 먹지?</h2>
-    <p class="section-sub">카테고리를 골라보세요. 마음에 드는 곳은 하트를 눌러 "가보고 싶은 곳"에 저장할 수 있어요.</p>
+    <p class="section-sub">카테고리를 골라보세요. 마음에 드는 곳은 하트를 눌러 "가보고 싶은 곳"에 저장할 수 있어요. 🌐 배지가 붙은 곳은 클릭하면 구글 실제 평점·리뷰를 실시간으로 볼 수 있어요.</p>
     <div class="cat-bar" id="catBar">
       <button class="cat-chip active" data-cat="전체">전체</button>
       <button class="cat-chip" data-cat="한식">한식</button>
@@ -162,6 +177,20 @@
     <div class="load-more-wrap">
       <button class="btn-ghost" onclick="openToast('more')">맛집 더 보기</button>
     </div>
+  </div>
+</section>
+
+<!-- ===== 실시간 가게 검색 ===== -->
+<section class="live-search-section section-pad" id="liveSearch">
+  <div class="container">
+    <span class="eyebrow">SEARCH</span>
+    <h2 class="section-title">동네 가게, 아무거나 찾아보기</h2>
+    <p class="section-sub">위 목록에 없는 가게도 괜찮아요. 이름을 입력하면 학교 주변에서 실시간으로 찾아드리고, 클릭하면 구글 실제 평점·리뷰까지 바로 보여드려요.</p>
+    <div class="live-search-box">
+      <input id="liveSearchInput" type="text" placeholder="가게 이름을 입력하세요 (예: 김밥천국)">
+      <button type="button" class="btn-primary" onclick="runLiveSearch()">찾아보기</button>
+    </div>
+    <div id="liveSearchResults" class="live-search-results"></div>
   </div>
 </section>
 

@@ -265,6 +265,24 @@ header{
 .problem-card h3{font-size:1.15rem;color:var(--slate-dark);margin-bottom:8px;}
 .problem-card p{color:var(--ink-soft);font-size:0.95rem;}
 
+/* ===== 로컬 발굴 로드맵 ===== */
+.discover-roadmap-box{
+  display:flex;flex-direction:column;gap:12px;
+  margin:32px 0 28px;
+}
+.discover-roadmap-item{
+  display:flex;align-items:center;gap:14px;
+  background:var(--paper);border-radius:var(--radius);padding:16px 20px;
+  border:1px solid rgba(72,96,122,0.10);
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.94rem;color:var(--slate-dark);
+}
+.discover-roadmap-num{
+  flex:0 0 28px;height:28px;border-radius:50%;
+  background:var(--red);color:#fff;font-weight:800;font-size:0.85rem;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
+}
+
 /* ===== Map section ===== */
 .map-section{background:var(--base-bg);}
 .map-wrap{
@@ -427,6 +445,14 @@ header{
   transition:all .2s ease;
 }
 .food-thumb .visit-badge.show{opacity:1;transform:translateY(0);}
+.food-thumb .live-review-badge{
+  position:absolute;top:10px;left:10px;
+  background:var(--red);color:#fff;
+  font-size:0.7rem;font-weight:700;padding:4px 10px;border-radius:99px;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;opacity:0;transform:translateY(-6px);
+  transition:all .2s ease;
+}
+.food-thumb .live-review-badge.show{opacity:1;transform:translateY(0);}
 .food-body{padding:18px;flex:1;display:flex;flex-direction:column;gap:8px;}
 .food-cat{
   font-size:0.72rem;font-weight:800;color:var(--red);letter-spacing:0.04em;
@@ -543,6 +569,28 @@ header{
 }
 .signup-form input:focus{border-color:var(--slate-light);}
 .signup-msg{margin-top:16px;font-size:0.88rem;color:var(--slate-dark);font-weight:700;display:none;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;}
+
+/* ===== 실시간 가게 검색 ===== */
+.live-search-box{
+  display:flex;gap:10px;margin-top:28px;flex-wrap:wrap;
+}
+.live-search-box input{
+  flex:1;min-width:220px;padding:14px 20px;border-radius:99px;
+  border:1.5px solid var(--slate-tint);outline:none;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.92rem;
+}
+.live-search-box input:focus{border-color:var(--slate-light);}
+.live-search-results{margin-top:22px;display:flex;flex-direction:column;gap:12px;}
+.live-search-item{
+  background:var(--paper);border-radius:var(--radius);border:1px solid rgba(72,96,122,0.10);overflow:hidden;
+}
+.live-search-item-head{
+  width:100%;display:flex;flex-direction:column;gap:4px;text-align:left;
+  padding:16px 20px;background:none;border:none;cursor:pointer;
+}
+.live-search-item-name{font-family:'Gaegu',cursive;font-size:1.1rem;color:var(--slate-dark);}
+.live-search-item-addr{font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.82rem;color:var(--ink-soft);}
+.live-search-item-google{display:none;padding:0 20px 18px;}
+.live-search-item-google.show{display:block;}
 
 /* ===== Footer ===== */
 footer{background:var(--slate-dark);color:rgba(255,255,255,0.82);padding:56px 0 28px;}
@@ -691,6 +739,20 @@ footer ul a:hover{color:#fff;}
   padding:16px;font-size:0.84rem;color:var(--ink-soft);margin-bottom:22px;
   font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
 }
+
+.detail-google-section{ margin-top:6px;margin-bottom:22px; }
+.google-review-body{ margin-top:2px; }
+.google-review-loading, .google-review-empty, .google-review-error, .google-review-none{
+  font-size:0.84rem;color:var(--ink-soft);font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
+  background:var(--base-bg);border:1.5px dashed var(--slate-light);border-radius:14px;padding:16px;
+}
+.google-review-error{ color:var(--red);border-color:var(--red); }
+.google-review-summary{ margin-bottom:12px; }
+.google-review-link{
+  display:inline-block;margin-top:12px;font-weight:700;color:var(--slate-dark);
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.86rem;
+}
+.google-review-link:hover{ color:var(--red); }
 
 /* ===== 메뉴 추천 게임 모달 ===== */
 .game-box{ max-width:440px;text-align:center; }
