@@ -365,6 +365,13 @@ const i18n = { en: {
   passPartnerBody:"Korea University Sejong Campus already has partner restaurants like the KU Membership program. We believe local restaurants that aren't on the map can join that same space once they're discovered.",
   passPartnerStoreBtn:"Owner partnership application", passPartnerOrgBtn:"Student council / club partnership inquiry",
   passNotice:"<strong>Payment isn't open yet.</strong> This is currently a non-profit preparation stage, so meal passes only accept <b>pre-orders</b> — real payment integration will launch officially later. Benefits and validity periods are set by the owner.",
+  // 커뮤니티
+  join4Title:"Join our community", join4Body:"Real-time chat happens over on our external SNS group.",
+  communityTitle:"Join our community",
+  communityBody:"Real-time chat happens in an external SNS group like KakaoTalk or Instagram. This site only provides the join link and QR code.",
+  communityJoinBtn:"Join the group",
+  communityQrReady:"Scan the QR code below or tap the button to join.",
+  communityQrSoon:"The group hasn't been created yet. Once it's open, a QR code will appear here.",
 } };
 
 let currentLang = 'ko';
@@ -1794,6 +1801,39 @@ function renderLang(){
       }
     });
   });
+}
+
+// ================= 커뮤니티 (실시간 소통은 외부 SNS 그룹에서 진행) =================
+// 그룹이 만들어지면 이 상수 하나만 채우면 된다 — 링크가 바뀌어도 여기 한 곳만 고치면 됨.
+const COMMUNITY_LINK = '';
+const communityOverlay = document.getElementById('communityOverlay');
+const communityBody = document.getElementById('communityBody');
+
+function openCommunity(){
+  renderCommunity();
+  communityOverlay.classList.add('show');
+}
+function closeCommunity(){ communityOverlay.classList.remove('show'); }
+function closeCommunityOnOverlay(e){ if(e.target === communityOverlay) closeCommunity(); }
+
+function renderCommunity(){
+  const joinBtn = COMMUNITY_LINK
+    ? `<a class="btn-primary" style="flex:1;text-align:center;" href="${escapeHtml(COMMUNITY_LINK)}" target="_blank" rel="noopener">${t('communityJoinBtn') || '그룹 참여하기'}</a>`
+    : `<button type="button" class="btn-primary" style="flex:1;" onclick="closeCommunity(); openToast('info');">${t('communityJoinBtn') || '그룹 참여하기'}</button>`;
+  communityBody.innerHTML = `
+    <div class="auth-head">
+      <div class="emoji">🗨️</div>
+      <h3>${t('communityTitle') || '커뮤니티에 놀러오세요'}</h3>
+      <p>${t('communityBody') || '실시간 소통은 카카오톡·인스타그램 같은 외부 SNS 그룹에서 진행돼요. 이 사이트는 참여 링크와 QR코드만 안내해드려요.'}</p>
+    </div>
+    <div class="detail-stub-note">
+      ${COMMUNITY_LINK ? (t('communityQrReady') || '아래 QR코드를 스캔하거나 버튼을 눌러 참여해보세요.') : (t('communityQrSoon') || '아직 그룹이 만들어지기 전이에요. 그룹이 열리면 여기에 QR코드가 표시될 예정이에요.')}
+    </div>
+    <div class="game-action-row">
+      <button type="button" class="btn-ghost" style="flex:1;" onclick="closeCommunity()">${t('closeBtn') || '닫기'}</button>
+      ${joinBtn}
+    </div>
+  `;
 }
 
 // ================= 서비스 소개 (extra.md §4-1) =================

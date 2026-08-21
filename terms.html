@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>이용약관 — 밥 먹으러 와</title>
+<title data-i18n="metaTitle">이용약관 — 밥 먹으러 와</title>
 <meta name="description" content="밥 먹으러 와 서비스 이용약관.">
 <meta name="theme-color" content="#F7F4EE">
 <meta name="robots" content="noindex">
@@ -20,29 +20,33 @@
   <div class="nav-wrap">
     <a href="index.html" class="logo">밥 먹으러 와<span class="dot">.</span></a>
     <div class="nav-actions">
-      <a href="index.html" class="btn-ghost">홈으로</a>
+      <button type="button" class="btn-ghost" id="legalLangToggle" onclick="toggleLegalLang()">English</button>
+      <a href="index.html" class="btn-ghost" data-i18n="navHome">홈으로</a>
     </div>
   </div>
 </header>
 
 <main class="legal-page">
   <div class="container">
-    <a href="index.html" class="legal-back">← 밥 먹으러 와 홈으로</a>
+    <a href="index.html" class="legal-back" data-i18n="backHome">← 밥 먹으러 와 홈으로</a>
     <span class="eyebrow">TERMS</span>
-    <h1 class="section-title">이용약관</h1>
-    <div class="legal-meta">
+    <h1 class="section-title" data-i18n="h1">이용약관</h1>
+    <div class="legal-meta" data-i18n="legalMeta">
       전자상거래법·정보통신망법의 취지를 반영한 필수 골자 초안입니다.
       밥 먹으러 와는 현재 비영리 사회공헌 프로젝트로 운영 중이며,
       유료화·광고 수익 등 상업적 운영으로 전환할 경우 관련 법령에 따라 약관과
       사업자 정보를 보완합니다.
     </div>
+    <div class="legal-meta" data-i18n="translationNote" style="font-size:0.78rem;">
+      본 페이지의 영어 번역은 참고용이며, 한국어 원문이 우선합니다.
+    </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art1">
       <h3>제1조 (목적)</h3>
       <p>본 약관은 밥 먹으러 와(이하 "서비스")가 제공하는 모든 서비스의 이용조건 및 절차, 이용자와 서비스 운영자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.</p>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art2">
       <h3>제2조 (용어의 정의)</h3>
       <ol>
         <li>"회원"이란 본 약관에 동의하고 서비스에 가입한 자를 말합니다.</li>
@@ -50,32 +54,32 @@
       </ol>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art3">
       <h3>제3조 (약관의 효력 및 변경)</h3>
       <p>본 약관은 서비스 화면에 게시하거나 기타의 방법으로 회원에게 공지함으로써 효력이 발생하며, 관련 법령을 위배하지 않는 범위에서 개정될 수 있습니다.</p>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art4">
       <h3>제4조 (서비스의 제공 및 변경)</h3>
       <p>서비스는 로컬 맛집 정보 제공, 저장·리뷰 기능 등을 포함하며, 운영상·기술상 필요에 따라 제공 내용을 변경할 수 있습니다.</p>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art5">
       <h3>제5조 (회원의 의무)</h3>
       <p>회원은 허위 정보 등록, 타인의 정보 도용, 서비스 운영을 방해하는 행위를 해서는 안 되며, 리뷰 작성 시 사실에 기반한 내용을 작성해야 합니다.</p>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art6">
       <h3>제6조 (게시물의 관리)</h3>
       <p>서비스는 회원이 게시한 콘텐츠가 타인의 권리를 침해하거나 공서양속에 반하는 경우 사전 통지 없이 삭제할 수 있습니다.</p>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art7">
       <h3>제7조 (면책조항)</h3>
       <p>서비스는 회원이 등록한 정보(맛집 정보, 리뷰 등)의 정확성에 대해 보증하지 않으며, 이로 인해 발생한 손해에 대해 책임을 지지 않습니다.</p>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art8">
       <h3>부칙 — 사업자 정보 표기</h3>
       <p>향후 사업자 등록을 통한 정식 운영(유료화, 광고 수익 등)으로 전환할 경우, 「전자상거래 등에서의 소비자보호에 관한 법률」에 따라 상호, 대표자명, 사업자등록번호, 통신판매업 신고번호, 주소, 전화번호를 페이지 하단에 추가 표기합니다.</p>
     </div>
@@ -86,20 +90,81 @@
 <footer>
   <div class="container">
     <div class="footer-legal">
-      <span><b>운영기관</b> 고려대학교 세종캠퍼스 학생 팀 맛집 KU조대</span>
-      <span><b>프로젝트명</b> KU구조대! 사장님을 부탁해</span>
-      <span><b>서비스명</b> 밥 먹으러 와</span>
-      <span><b>문의 이메일</b> (기재 예정)</span>
-      <span><b>개인정보 보호책임자</b> (기재 예정)</span>
+      <span data-i18n="footerOperator"><b>운영기관</b> 고려대학교 세종캠퍼스 학생 팀 맛집 KU조대</span>
+      <span data-i18n="footerProject"><b>프로젝트명</b> KU구조대! 사장님을 부탁해</span>
+      <span data-i18n="footerServiceName"><b>서비스명</b> 밥 먹으러 와</span>
+      <span data-i18n="footerEmail"><b>문의 이메일</b> (기재 예정)</span>
+      <span data-i18n="footerOfficer"><b>개인정보 보호책임자</b> (기재 예정)</span>
     </div>
     <ul style="display:flex;flex-direction:row;gap:18px;justify-content:center;margin-bottom:16px;list-style:none;">
-      <li><a href="index.html">홈</a></li>
-      <li><a href="privacy.html">개인정보처리방침</a></li>
-      <li><a href="terms.html">이용약관</a></li>
+      <li><a href="index.html" data-i18n="footerNavHome">홈</a></li>
+      <li><a href="privacy.html" data-i18n="footerNavPrivacy">개인정보처리방침</a></li>
+      <li><a href="terms.html" data-i18n="footerNavTerms">이용약관</a></li>
     </ul>
-    <div class="footer-bottom">© 2026 밥 먹으러 와 · KU구조대! 사장님을 부탁해. 맛집 KU조대 (고려대학교 세종캠퍼스).</div>
+    <div class="footer-bottom" data-i18n="footerBottom">© 2026 밥 먹으러 와 · KU구조대! 사장님을 부탁해. 맛집 KU조대 (고려대학교 세종캠퍼스).</div>
   </div>
 </footer>
 
+<script>
+(function(){
+  var EN = {
+    metaTitle:"Terms of Service — Bap Meokeoreo Wa",
+    navHome:"Home",
+    backHome:"← Back to Bap Meokeoreo Wa",
+    h1:"Terms of Service",
+    legalMeta:"This is a draft outline reflecting the intent of the Act on Consumer Protection in Electronic Commerce and the Act on Promotion of Information and Communications Network Utilization. Bap Meokeoreo Wa currently operates as a non-profit community-service project. If it transitions to paid or ad-supported commercial operation, these terms and the operator's business information will be updated in accordance with relevant law.",
+    translationNote:"This English translation is for reference only; the Korean original governs.",
+    art1:'<h3>Article 1 (Purpose)</h3><p>These Terms govern the conditions and procedures for using all services provided by Bap Meokeoreo Wa (the "Service"), as well as the rights, obligations, and responsibilities of users and the Service operator.</p>',
+    art2:'<h3>Article 2 (Definitions)</h3><ol><li>"Member" means a person who has agreed to these Terms and registered for the Service.</li><li>"Content" means reviews, photos, and other postings that a user publishes within the Service.</li></ol>',
+    art3:'<h3>Article 3 (Effect and Amendment of Terms)</h3><p>These Terms take effect when posted on the Service screen or otherwise notified to members, and may be amended to the extent they do not violate applicable law.</p>',
+    art4:'<h3>Article 4 (Provision and Modification of the Service)</h3><p>The Service includes local restaurant information, save, and review features, and its content may be changed as operational or technical needs require.</p>',
+    art5:'<h3>Article 5 (Member Obligations)</h3><p>Members must not register false information, misuse another person\'s information, or interfere with the operation of the Service, and must write reviews based on factual content.</p>',
+    art6:'<h3>Article 6 (Management of Postings)</h3><p>The Service may remove content posted by a member without prior notice if it infringes another\'s rights or violates public order and morals.</p>',
+    art7:'<h3>Article 7 (Disclaimer)</h3><p>The Service does not guarantee the accuracy of information registered by members (restaurant information, reviews, etc.) and is not liable for any resulting damages.</p>',
+    art8:'<h3>Addendum — Business Information Disclosure</h3><p>If the Service transitions to formal commercial operation through business registration (paid features, advertising revenue, etc.), the business name, representative\'s name, business registration number, mail-order sales registration number, address, and phone number will be additionally disclosed at the bottom of the page in accordance with the Act on Consumer Protection in Electronic Commerce.</p>',
+    footerOperator:"<b>Operator</b> Matjip KU-jodae, a Korea University Sejong Campus student team",
+    footerProject:"<b>Project name</b> KU Rescue Squad! Help the Local Owners",
+    footerServiceName:"<b>Service name</b> Bap Meokeoreo Wa",
+    footerEmail:"<b>Contact email</b> (to be announced)",
+    footerOfficer:"<b>Privacy officer</b> (to be announced)",
+    footerNavHome:"Home", footerNavPrivacy:"Privacy Policy", footerNavTerms:"Terms of Service",
+    footerBottom:"© 2026 Bap Meokeoreo Wa · KU Rescue Squad! Help the Local Owners. Matjip KU-jodae (Korea University Sejong Campus).",
+  };
+  var STORE_KEY = 'bmw:v1';
+  function getStoredLang(){
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if(!raw) return 'ko';
+      var parsed = JSON.parse(raw);
+      return parsed.lang === 'en' ? 'en' : 'ko';
+    } catch(e){ return 'ko'; }
+  }
+  function setStoredLang(lang){
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      var parsed = raw ? JSON.parse(raw) : {};
+      parsed.lang = lang;
+      localStorage.setItem(STORE_KEY, JSON.stringify(parsed));
+    } catch(e){}
+  }
+  var currentLang = getStoredLang();
+  function apply(){
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(el.dataset.koCache === undefined) el.dataset.koCache = el.innerHTML;
+      el.innerHTML = (currentLang === 'en' && EN[key]) ? EN[key] : el.dataset.koCache;
+    });
+    document.documentElement.lang = currentLang;
+    var btn = document.getElementById('legalLangToggle');
+    if(btn) btn.textContent = currentLang === 'en' ? '한국어' : 'English';
+  }
+  window.toggleLegalLang = function(){
+    currentLang = currentLang === 'en' ? 'ko' : 'en';
+    setStoredLang(currentLang);
+    apply();
+  };
+  apply();
+})();
+</script>
 </body>
 </html>

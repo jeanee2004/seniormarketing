@@ -250,6 +250,11 @@
         <strong data-i18n="join3Title">우리 동네 로컬 맛집도 찾아주세요</strong>
         <span class="join-desc" data-i18n="join3Body">조치원이 아니어도, 이 취지에 공감한다면 언제든 이야기 나눠요.</span>
       </button>
+      <button type="button" class="join-card" onclick="openCommunity()">
+        <span class="join-emoji">🗨️</span>
+        <strong data-i18n="join4Title">커뮤니티에 놀러오세요</strong>
+        <span class="join-desc" data-i18n="join4Body">실시간 소통은 외부 SNS 그룹에서 편하게 나눠요.</span>
+      </button>
     </div>
   </div>
 </section>
@@ -471,6 +476,13 @@
 <div class="survey-overlay" id="mypageOverlay" onclick="closeMypageOnOverlay(event)">
   <div class="survey-box mypage-box" onclick="event.stopPropagation()">
     <div id="mypageBody"></div>
+  </div>
+</div>
+
+<!-- ===== 커뮤니티 (외부 SNS 그룹 참여 안내) ===== -->
+<div class="survey-overlay" id="communityOverlay" onclick="closeCommunityOnOverlay(event)">
+  <div class="survey-box" onclick="event.stopPropagation()">
+    <div id="communityBody"></div>
   </div>
 </div>
 

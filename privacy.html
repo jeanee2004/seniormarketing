@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>개인정보처리방침 — 밥 먹으러 와</title>
+<title data-i18n="metaTitle">개인정보처리방침 — 밥 먹으러 와</title>
 <meta name="description" content="밥 먹으러 와 개인정보처리방침 (개인정보 보호법 제30조 기준).">
 <meta name="theme-color" content="#F7F4EE">
 <meta name="robots" content="noindex">
@@ -20,23 +20,27 @@
   <div class="nav-wrap">
     <a href="index.html" class="logo">밥 먹으러 와<span class="dot">.</span></a>
     <div class="nav-actions">
-      <a href="index.html" class="btn-ghost">홈으로</a>
+      <button type="button" class="btn-ghost" id="legalLangToggle" onclick="toggleLegalLang()">English</button>
+      <a href="index.html" class="btn-ghost" data-i18n="navHome">홈으로</a>
     </div>
   </div>
 </header>
 
 <main class="legal-page">
   <div class="container">
-    <a href="index.html" class="legal-back">← 밥 먹으러 와 홈으로</a>
+    <a href="index.html" class="legal-back" data-i18n="backHome">← 밥 먹으러 와 홈으로</a>
     <span class="eyebrow">PRIVACY</span>
-    <h1 class="section-title">개인정보처리방침</h1>
-    <div class="legal-meta">
+    <h1 class="section-title" data-i18n="h1">개인정보처리방침</h1>
+    <div class="legal-meta" data-i18n="legalMeta">
       본 방침은 「개인정보 보호법」 제30조에 따른 필수 항목 구조를 갖춘 초안입니다.
       현재 밥 먹으러 와는 정식 오픈 전 준비 단계로, 사업자 정보·개인정보 보호책임자 등
       괄호로 표시된 항목은 정식 운영 전환 시 실제 값으로 채워집니다.
     </div>
+    <div class="legal-meta" data-i18n="translationNote" style="font-size:0.78rem;">
+      본 페이지의 영어 번역은 참고용이며, 한국어 원문이 우선합니다.
+    </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art1">
       <h3>1. 개인정보의 처리 목적</h3>
       <p>밥 먹으러 와는 다음의 목적을 위하여 개인정보를 처리합니다. 처리한 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며, 이용 목적이 변경되는 경우에는 「개인정보 보호법」 제18조에 따라 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.</p>
       <ul>
@@ -47,7 +51,7 @@
       </ul>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art2">
       <h3>2. 개인정보의 처리 및 보유 기간</h3>
       <p>① 밥 먹으러 와는 법령에 따른 개인정보 보유·이용기간 또는 정보주체로부터 개인정보를 수집 시에 동의받은 개인정보 보유·이용기간 내에서 개인정보를 처리·보유합니다.</p>
       <p>② 각각의 개인정보 처리 및 보유 기간은 다음과 같습니다.</p>
@@ -57,7 +61,7 @@
       </ul>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art3">
       <h3>3. 처리하는 개인정보 항목</h3>
       <ul>
         <li>필수항목: 이메일 주소, 비밀번호(암호화 저장), 닉네임</li>
@@ -66,12 +70,12 @@
       </ul>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art4">
       <h3>4. 개인정보의 제3자 제공</h3>
       <p>밥 먹으러 와는 정보주체의 동의, 법률의 특별한 규정 등 「개인정보 보호법」 제17조 및 제18조에 해당하는 경우에만 개인정보를 제3자에게 제공하며, 별도의 동의 없이는 제공하지 않습니다.</p>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art5">
       <h3>5. 개인정보처리의 위탁</h3>
       <p>밥 먹으러 와는 원활한 서비스 제공을 위하여 아래와 같이 개인정보 처리업무를 위탁하고 있습니다.</p>
       <ul>
@@ -81,7 +85,7 @@
       <p>※ 위탁계약 체결 시 「개인정보 보호법」 제26조에 따라 안전성 확보를 위한 관리·감독 조치를 문서에 명시합니다.</p>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art6">
       <h3>6. 정보주체의 권리·의무 및 행사방법</h3>
       <p>① 정보주체는 밥 먹으러 와에 대해 언제든지 다음 각 호의 개인정보 보호 관련 권리를 행사할 수 있습니다.</p>
       <ol>
@@ -93,13 +97,13 @@
       <p>② 제1항에 따른 권리 행사는 이메일 등을 통하여 서면으로 할 수 있으며, 밥 먹으러 와는 이에 대해 지체 없이 조치합니다.</p>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art7">
       <h3>7. 개인정보의 파기</h3>
       <p>① 밥 먹으러 와는 개인정보 보유기간의 경과, 처리목적 달성 등 개인정보가 불필요하게 되었을 때에는 지체 없이 해당 개인정보를 파기합니다.</p>
       <p>② 전자적 파일 형태의 정보는 기록을 재생할 수 없는 기술적 방법을 사용하여 삭제합니다.</p>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art8">
       <h3>8. 개인정보의 안전성 확보조치</h3>
       <p>밥 먹으러 와는 개인정보의 안전성 확보를 위해 다음과 같은 조치를 취하고 있습니다.</p>
       <ul>
@@ -108,12 +112,12 @@
       </ul>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art9">
       <h3>9. 쿠키(Cookie)의 설치·운영 및 거부</h3>
       <p>밥 먹으러 와는 이용자에게 맞춤형 서비스를 제공하기 위해 쿠키를 사용할 수 있습니다. 이용자는 웹브라우저 설정을 통해 쿠키 저장을 거부할 수 있으며, 이 경우 일부 서비스 이용에 어려움이 발생할 수 있습니다.</p>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art10">
       <h3>10. 개인정보 보호책임자</h3>
       <ul>
         <li>성명: (담당자명 기재)</li>
@@ -122,7 +126,7 @@
       <p>※ 정보주체는 서비스를 이용하며 발생한 모든 개인정보 보호 관련 문의를 개인정보 보호책임자에게 문의할 수 있습니다.</p>
     </div>
 
-    <div class="legal-art">
+    <div class="legal-art" data-i18n="art11">
       <h3>11. 개인정보처리방침의 변경</h3>
       <p>이 개인정보처리방침은 시행일로부터 적용되며, 법령 및 방침에 따른 변경내용의 추가, 삭제 및 정정이 있는 경우에는 변경사항의 시행 7일 전부터 공지사항을 통하여 고지합니다.</p>
       <p>공고일자: (작성일 기재)<br>시행일자: (시행일 기재)</p>
@@ -134,20 +138,84 @@
 <footer>
   <div class="container">
     <div class="footer-legal">
-      <span><b>운영기관</b> 고려대학교 세종캠퍼스 학생 팀 맛집 KU조대</span>
-      <span><b>프로젝트명</b> KU구조대! 사장님을 부탁해</span>
-      <span><b>서비스명</b> 밥 먹으러 와</span>
-      <span><b>문의 이메일</b> (기재 예정)</span>
-      <span><b>개인정보 보호책임자</b> (기재 예정)</span>
+      <span data-i18n="footerOperator"><b>운영기관</b> 고려대학교 세종캠퍼스 학생 팀 맛집 KU조대</span>
+      <span data-i18n="footerProject"><b>프로젝트명</b> KU구조대! 사장님을 부탁해</span>
+      <span data-i18n="footerServiceName"><b>서비스명</b> 밥 먹으러 와</span>
+      <span data-i18n="footerEmail"><b>문의 이메일</b> (기재 예정)</span>
+      <span data-i18n="footerOfficer"><b>개인정보 보호책임자</b> (기재 예정)</span>
     </div>
     <ul style="display:flex;flex-direction:row;gap:18px;justify-content:center;margin-bottom:16px;list-style:none;">
-      <li><a href="index.html">홈</a></li>
-      <li><a href="privacy.html">개인정보처리방침</a></li>
-      <li><a href="terms.html">이용약관</a></li>
+      <li><a href="index.html" data-i18n="footerNavHome">홈</a></li>
+      <li><a href="privacy.html" data-i18n="footerNavPrivacy">개인정보처리방침</a></li>
+      <li><a href="terms.html" data-i18n="footerNavTerms">이용약관</a></li>
     </ul>
-    <div class="footer-bottom">© 2026 밥 먹으러 와 · KU구조대! 사장님을 부탁해. 맛집 KU조대 (고려대학교 세종캠퍼스).</div>
+    <div class="footer-bottom" data-i18n="footerBottom">© 2026 밥 먹으러 와 · KU구조대! 사장님을 부탁해. 맛집 KU조대 (고려대학교 세종캠퍼스).</div>
   </div>
 </footer>
 
+<script>
+(function(){
+  var EN = {
+    metaTitle:"Privacy Policy — Bap Meokeoreo Wa",
+    navHome:"Home",
+    backHome:"← Back to Bap Meokeoreo Wa",
+    h1:"Privacy Policy",
+    legalMeta:"This policy is a draft structured to include the mandatory items required under Article 30 of Korea's Personal Information Protection Act. Bap Meokeoreo Wa is currently in a pre-launch preparation stage, so items shown in parentheses — such as business registration details and the privacy officer's information — will be filled in with real values before official operation begins.",
+    translationNote:"This English translation is for reference only; the Korean original governs.",
+    art1:'<h3>1. Purposes of Processing Personal Information</h3><p>Bap Meokeoreo Wa processes personal information for the following purposes. Personal information processed will not be used for any purpose other than those listed below, and if the purpose of use changes, we will take necessary measures such as obtaining separate consent in accordance with Article 18 of the Personal Information Protection Act.</p><ul><li>Confirming intent to register, identifying and authenticating members</li><li>Providing restaurant save (favorites) and visit-record features</li><li>Writing and managing reviews</li><li>Notifying early sign-ups about the launch</li></ul>',
+    art2:'<h3>2. Period of Processing and Retention of Personal Information</h3><p>① Bap Meokeoreo Wa processes and retains personal information within the retention and use period required by law, or the period consented to by the data subject at the time of collection.</p><p>② The specific processing and retention periods are as follows.</p><ul><li>Member registration and management: until membership withdrawal (however, if an investigation related to a violation of relevant law is underway, until that investigation concludes)</li><li>Early sign-up (email collection): until 3 months after official launch, or 1 year from the date of collection, whichever comes first</li></ul>',
+    art3:'<h3>3. Items of Personal Information Processed</h3><ul><li>Required: email address, password (stored encrypted), nickname</li><li>Optional: profile photo</li><li>Automatically collected: service usage records, access logs, cookies, IP address</li></ul>',
+    art4:'<h3>4. Provision of Personal Information to Third Parties</h3><p>Bap Meokeoreo Wa provides personal information to third parties only in cases falling under Articles 17 and 18 of the Personal Information Protection Act, such as with the data subject\'s consent or under special legal provisions, and does not provide it without separate consent.</p>',
+    art5:'<h3>5. Outsourcing of Personal Information Processing</h3><p>Bap Meokeoreo Wa outsources personal information processing as follows to provide the service smoothly.</p><ul><li>Contractor: (e.g. Supabase Inc. — storing and managing member data)</li><li>Outsourced task: database hosting and storage</li></ul><p>※ When entering into an outsourcing contract, management and oversight measures to ensure security will be specified in writing, in accordance with Article 26 of the Personal Information Protection Act.</p>',
+    art6:'<h3>6. Rights and Obligations of Data Subjects and How to Exercise Them</h3><p>① Data subjects may exercise the following personal information rights with respect to Bap Meokeoreo Wa at any time.</p><ol><li>Request to access personal information</li><li>Request correction in case of errors</li><li>Request deletion</li><li>Request suspension of processing</li></ol><p>② The rights under paragraph 1 may be exercised in writing, including by email, and Bap Meokeoreo Wa will act on such requests without delay.</p>',
+    art7:'<h3>7. Destruction of Personal Information</h3><p>① Bap Meokeoreo Wa destroys personal information without delay once it becomes unnecessary, such as when the retention period has elapsed or the processing purpose has been achieved.</p><p>② Information in electronic file form is deleted using technical methods that prevent the record from being recovered.</p>',
+    art8:'<h3>8. Measures to Ensure the Security of Personal Information</h3><p>Bap Meokeoreo Wa takes the following measures to ensure the security of personal information.</p><ul><li>Administrative measures: establishing and implementing an internal management plan, minimizing and training staff with access</li><li>Technical measures: managing access rights to the personal information processing system, access control, password encryption, installing security software</li></ul>',
+    art9:'<h3>9. Installation, Operation, and Refusal of Cookies</h3><p>Bap Meokeoreo Wa may use cookies to provide a personalized service. Users can refuse to store cookies through their web browser settings, in which case some features of the service may be difficult to use.</p>',
+    art10:'<h3>10. Privacy Officer</h3><ul><li>Name: (to be announced)</li><li>Contact: (email or phone to be announced)</li></ul><p>※ Data subjects may direct any personal-information-related inquiries arising from use of the service to the Privacy Officer.</p>',
+    art11:'<h3>11. Changes to this Privacy Policy</h3><p>This Privacy Policy applies from its effective date. If there are additions, deletions, or corrections due to changes in law or policy, notice will be given through an announcement starting 7 days before the change takes effect.</p><p>Announcement date: (to be announced)<br>Effective date: (to be announced)</p>',
+    footerOperator:"<b>Operator</b> Matjip KU-jodae, a Korea University Sejong Campus student team",
+    footerProject:"<b>Project name</b> KU Rescue Squad! Help the Local Owners",
+    footerServiceName:"<b>Service name</b> Bap Meokeoreo Wa",
+    footerEmail:"<b>Contact email</b> (to be announced)",
+    footerOfficer:"<b>Privacy officer</b> (to be announced)",
+    footerNavHome:"Home", footerNavPrivacy:"Privacy Policy", footerNavTerms:"Terms of Service",
+    footerBottom:"© 2026 Bap Meokeoreo Wa · KU Rescue Squad! Help the Local Owners. Matjip KU-jodae (Korea University Sejong Campus).",
+  };
+  var STORE_KEY = 'bmw:v1';
+  function getStoredLang(){
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if(!raw) return 'ko';
+      var parsed = JSON.parse(raw);
+      return parsed.lang === 'en' ? 'en' : 'ko';
+    } catch(e){ return 'ko'; }
+  }
+  function setStoredLang(lang){
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      var parsed = raw ? JSON.parse(raw) : {};
+      parsed.lang = lang;
+      localStorage.setItem(STORE_KEY, JSON.stringify(parsed));
+    } catch(e){}
+  }
+  var currentLang = getStoredLang();
+  function apply(){
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(el.dataset.koCache === undefined) el.dataset.koCache = el.innerHTML;
+      el.innerHTML = (currentLang === 'en' && EN[key]) ? EN[key] : el.dataset.koCache;
+    });
+    document.documentElement.lang = currentLang;
+    var btn = document.getElementById('legalLangToggle');
+    if(btn) btn.textContent = currentLang === 'en' ? '한국어' : 'English';
+  }
+  window.toggleLegalLang = function(){
+    currentLang = currentLang === 'en' ? 'ko' : 'en';
+    setStoredLang(currentLang);
+    apply();
+  };
+  apply();
+})();
+</script>
 </body>
 </html>
