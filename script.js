@@ -142,22 +142,17 @@ let currentUserName = store.auth.name;
 const cardGrid = document.getElementById('cardGrid');
 const filterCount = document.getElementById('filterCount');
 const filterEmpty = document.getElementById('filterEmpty');
-const cardSearch = document.getElementById('cardSearch');
 const sortSelect = document.getElementById('sortSelect');
 const priceMinInput = document.getElementById('priceMin');
 const priceMaxInput = document.getElementById('priceMax');
 let currentCat = "전체";
-let currentQuery = "";
 let currentSort = "recommend";
 
 function getFilteredList(){
-  // 카테고리/검색/정렬 필터는 liveReview(실제 확인된) 가게에만 적용한다.
-  // 예시(목업) 가게는 renderExampleCards()가 고정 3장으로 따로 보여준다.
+  // 카테고리/정렬 필터는 liveReview(실제 확인된) 가게에만 적용한다. 텍스트 검색은
+  // "동네 가게 찾아보기"(runLiveSearch) 하나로 통일했다 — 예시(목업) 가게는
+  // renderExampleCards()가 고정 3장으로 따로 보여준다.
   let list = restaurants.filter(r => r.liveReview && (currentCat === "전체" || r.cat === currentCat));
-  const q = currentQuery.trim().toLowerCase();
-  if(q){
-    list = list.filter(r => r.name.toLowerCase().includes(q) || r.desc.toLowerCase().includes(q) || r.cat.includes(q));
-  }
   const minP = priceMinInput.value ? Number(priceMinInput.value) : null;
   const maxP = priceMaxInput.value ? Number(priceMaxInput.value) : null;
   if(minP !== null) list = list.filter(r => r.priceValue >= minP);
@@ -320,11 +315,6 @@ document.querySelectorAll('.cat-chip').forEach(chip => {
   });
 });
 
-cardSearch.addEventListener('input', () => {
-  currentQuery = cardSearch.value;
-  renderCards();
-});
-
 sortSelect.addEventListener('change', () => {
   currentSort = sortSelect.value;
   renderCards();
@@ -444,8 +434,6 @@ function openToast(key){
 }
 function closeToast(){ overlay.classList.remove('show'); }
 function closeToastOnOverlay(e){ if(e.target === overlay) closeToast(); }
-
-function toastZoom(){ openToast('info'); }
 
 // ================= 확인 모달 (로그인 유도 + 액션 확인 공용) =================
 // extra.md §1의 로그인 유도 팝업과 §2의 액션 확인 모달은 형태가 같아서 하나로 합쳐 쓴다.
@@ -2081,11 +2069,10 @@ function paintSearchActive(container){
   });
 }
 
-// Enter로 검색어를 맛집 목록 필터에 넘긴다 (기존 헤더 검색은 스크롤만 하고 검색어를 버렸다)
+// Enter로 검색어를 동네 가게 검색에 넘긴다 (기존 헤더 검색은 스크롤만 하고 검색어를 버렸다)
 function applyHeaderQuery(q){
-  currentQuery = q;
-  cardSearch.value = q;
-  renderCards();
+  liveSearchInput.value = q;
+  runLiveSearch();
   closeAllSearch();
   document.getElementById('restaurants').scrollIntoView({behavior:'smooth'});
 }
