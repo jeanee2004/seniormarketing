@@ -53,6 +53,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;}
   color:var(--slate-dark);
   margin-bottom:14px;
 }
+.subsection-title{
+  font-size:1.2rem;
+  color:var(--slate-dark);
+  margin:26px 0 6px;
+}
 .section-sub{
   color:var(--ink-soft);
   font-size:1.02rem;
@@ -290,6 +295,7 @@ header{
   border:1px solid rgba(72,96,122,0.14);box-shadow:var(--shadow);
   position:relative;
 }
+.google-map{ height:420px;width:100%; }
 .map-placeholder{
   height:420px;position:relative;
   background:

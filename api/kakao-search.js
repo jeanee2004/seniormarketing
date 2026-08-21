@@ -1,12 +1,13 @@
 // 가게 이름으로 카카오 로컬 API에서 학교 주변 실시간 검색 결과를 반환한다.
-// KAKAO_REST_KEY는 서버(Vercel 환경변수)에만 존재하며 클라이언트로 절대 내려가지 않는다.
+// 카카오 REST 키는 서버(Vercel 환경변수)에만 존재하며 클라이언트로 절대 내려가지 않는다.
 
 const CAMPUS_CENTER = { lat: 36.6109529892437, lng: 127.286987211083 }; // 고려대학교 세종캠퍼스
 const SEARCH_RADIUS_METERS = 5000;
 const MAX_RESULTS = 5;
 
 module.exports = async function handler(req, res) {
-  const restKey = process.env.KAKAO_REST_KEY;
+  // Vercel에 등록한 변수 이름이 KAKAO_REST_KEY / KAKAO_REST_API_KEY 둘 중 무엇이든 인식
+  const restKey = process.env.KAKAO_REST_KEY || process.env.KAKAO_REST_API_KEY;
   if (!restKey) {
     res.status(500).json({ error: 'server_missing_api_key' });
     return;

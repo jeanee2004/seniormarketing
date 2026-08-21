@@ -73,7 +73,7 @@ const restaurants = [
       ]
     }},
   {name:"안쉐프고기해물짬뽕", cat:"중식", emoji:"🥡", desc:"고기와 해물을 함께 낸 얼큰한 짬뽕집", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
-    liveReview:true, lat:36.61477503455844, lng:127.2857292835937},
+    liveReview:true, lat:36.61477503455844, lng:127.2857292835937, realAddress:"세종특별자치시 조치원읍 섭골길 51-21"},
   {name:"조치원 마라탕", cat:"중식", emoji:"🌶️", desc:"학생들 사이 입소문난 얼큰한 마라탕", rating:4.3, reviewCount:176, price:"₩₩", priceValue:13000, saved:true, visited:false,
     detail:{
       isExample:true,
@@ -144,9 +144,9 @@ const restaurants = [
       ]
     }},
   {name:"파랑새분식", cat:"분식", emoji:"🍙", desc:"조치원읍 골목의 분식집", rating:null, reviewCount:null, price:"₩", priceValue:5000, saved:false, visited:false,
-    liveReview:true, lat:36.608516105696, lng:127.290049731247},
+    liveReview:true, lat:36.608516105696, lng:127.290049731247, realAddress:"세종특별자치시 조치원읍 내창1길 34-1"},
   {name:"숙이네밥상", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
-    liveReview:true, lat:36.608995511335, lng:127.291526952076},
+    liveReview:true, lat:36.608995511335, lng:127.291526952076, realAddress:"세종특별자치시 조치원읍 원마루길 16-1"},
   {name:"조치원 파스타공방", cat:"양식", emoji:"🍝", desc:"직접 뽑는 생면 파스타 전문점", rating:4.4, reviewCount:52, price:"₩₩", priceValue:14000, saved:false, visited:false,
     detail:{
       isExample:true,
@@ -242,7 +242,9 @@ let currentQuery = "";
 let currentSort = "recommend";
 
 function getFilteredList(){
-  let list = restaurants.filter(r => currentCat === "전체" || r.cat === currentCat);
+  // liveReview(실제 확인된) 가게는 별도의 고정 섹션(renderRealCards)에서 보여주므로
+  // 예시 가게 그리드/필터 대상에서는 제외한다 — 섞이면 헷갈린다는 피드백 반영
+  let list = restaurants.filter(r => !r.liveReview && (currentCat === "전체" || r.cat === currentCat));
   const q = currentQuery.trim().toLowerCase();
   if(q){
     list = list.filter(r => r.name.toLowerCase().includes(q) || r.desc.toLowerCase().includes(q) || r.cat.includes(q));
@@ -305,7 +307,13 @@ function renderCards(){
     cardGrid.appendChild(card);
   });
 
-  document.querySelectorAll('.save-toggle').forEach(btn => {
+  bindFoodCardButtons(cardGrid);
+}
+
+// save-toggle/visit-flow-btn 클릭 바인딩 — 그리드(container) 범위로 한정해서
+// 여러 그리드(예시 가게 cardGrid, 실제 가게 realCardGrid)가 공존해도 중복 바인딩되지 않게 한다.
+function bindFoodCardButtons(container){
+  container.querySelectorAll('.save-toggle').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       if(!requireLogin('save')) return;
@@ -317,7 +325,7 @@ function renderCards(){
       }
     });
   });
-  document.querySelectorAll('.visit-flow-btn').forEach(btn => {
+  container.querySelectorAll('.visit-flow-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const r = restaurants[e.currentTarget.dataset.idx];
@@ -336,12 +344,50 @@ function renderCards(){
   });
 }
 
+// "실제로 확인된 가게" — liveReview 항목만, 필터/정렬 없이 항상 고정 노출
+const realCardGrid = document.getElementById('realCardGrid');
+function renderRealCards(){
+  if(!realCardGrid) return;
+  realCardGrid.innerHTML = "";
+  const list = restaurants.filter(r => r.liveReview);
+  list.forEach((r) => {
+    const idx = restaurants.indexOf(r);
+    const saved = isLoggedIn && r.saved;
+    const visited = isLoggedIn && r.visited;
+    const card = document.createElement('div');
+    card.className = 'food-card';
+    card.addEventListener('click', () => openDetail(idx));
+    const cardRatingHtml = r.rating != null
+      ? `★ ${r.rating} <span style="color:var(--ink-soft);font-weight:400;">(${r.reviewCount})</span>`
+      : `<span style="color:var(--ink-soft);font-weight:400;">🔎 실제 리뷰 준비중</span>`;
+    card.innerHTML = `
+      <div class="food-thumb" style="background:${thumbColor(idx)}">
+        <span>${r.emoji}</span>
+        <button class="save-toggle ${saved ? 'saved':''}" data-idx="${idx}" title="가보고 싶은 곳">${saved ? '♥':'♡'}</button>
+        <div class="visit-badge ${visited ? 'show':''}">✔ 가본 곳</div>
+        <div class="live-review-badge show">🌐 구글 실시간 리뷰</div>
+      </div>
+      <div class="food-body">
+        <span class="food-cat">${r.cat}</span>
+        <div class="food-name">${r.name}</div>
+        <div class="food-desc">${r.desc}</div>
+        <div class="food-meta">
+          <span class="stars">${cardRatingHtml}</span>
+        </div>
+        <button class="visit-flow-btn" data-idx="${idx}">${visited ? '✔ 방문 기록 있음' : (saved ? '방문 완료로 표시하기' : '가보고 싶은 곳에 담기')}</button>
+      </div>
+    `;
+    realCardGrid.appendChild(card);
+  });
+  bindFoodCardButtons(realCardGrid);
+}
+
 // 저장/방문 상태 변경은 전부 확인 모달을 거친다 (extra.md §2)
 function confirmMark(r, emoji, question, apply){
   openConfirm({
     emoji, title:r.name, text:question,
     okLabel:'확인', cancelLabel:'아니요',
-    onOk: () => { apply(); saveState(); renderCards(); closeConfirm(); }
+    onOk: () => { apply(); saveState(); renderCards(); renderRealCards(); closeConfirm(); }
   });
 }
 
@@ -379,6 +425,7 @@ priceMinInput.addEventListener('input', renderCards);
 priceMaxInput.addEventListener('input', renderCards);
 
 renderCards();
+renderRealCards();
 
 // ---- Dummy reviews ----
 const reviews = [
@@ -690,8 +737,15 @@ function renderStubDetail(r){
       </div>
     </div>
     <p class="detail-desc">${r.desc}</p>
+    ${r.realAddress ? `
+    <div class="detail-info-grid">
+      <div class="detail-info-row">
+        <span class="detail-info-label">📍 주소</span>
+        <span class="detail-info-val">${escapeHtml(r.realAddress)}</span>
+      </div>
+    </div>` : ''}
     <div class="detail-stub-note">
-      <strong>상세 정보 준비 중</strong> — 주소·영업시간·메뉴 구성·원산지 같은 상세 정보는 9월 현장 조사 후 채워질 예정이에요. 예시로 <b>조치원 할매국밥</b> 카드에서 어떤 정보가 담길지 미리 확인해보세요.
+      <strong>상세 정보 준비 중</strong> — ${r.realAddress ? '영업시간·메뉴 구성·원산지' : '주소·영업시간·메뉴 구성·원산지'} 같은 상세 정보는 9월 현장 조사 후 채워질 예정이에요. 예시로 <b>조치원 할매국밥</b> 카드에서 어떤 정보가 담길지 미리 확인해보세요.
     </div>
     ${r.lat && r.lng ? renderGoogleReviewShell() : ''}
     <button type="button" class="survey-close-btn" onclick="closeDetail()">닫기</button>
@@ -805,6 +859,43 @@ function renderGoogleReviewContent(data){
     ${data.mapsUri ? `<a class="google-review-link" href="${escapeHtml(data.mapsUri)}" target="_blank" rel="noopener">구글 맵에서 전체 리뷰 보기 →</a>` : ''}
   `;
 }
+
+// ================= 구글 지도 위젯 (실제로 확인된 가게만 마커 표시) =================
+const CAMPUS_CENTER = { lat: 36.6109529892437, lng: 127.286987211083 }; // 고려대학교 세종캠퍼스
+
+function initGoogleMap(){
+  fetch('/api/maps-key')
+    .then(res => res.json())
+    .then(data => {
+      if(!data.key) throw new Error('no key');
+      window.renderMapMarkers = renderMapMarkers;
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(data.key)}&callback=renderMapMarkers`;
+      script.async = true;
+      script.onerror = showMapFallback;
+      document.head.appendChild(script);
+    })
+    .catch(showMapFallback);
+}
+
+function showMapFallback(){
+  const fallback = document.getElementById('mapFallback');
+  if(fallback) fallback.style.display = 'flex';
+}
+
+// 구글 지도 스크립트의 callback으로 호출됨(전역 함수여야 함)
+function renderMapMarkers(){
+  const mapEl = document.getElementById('googleMap');
+  if(!mapEl || typeof google === 'undefined'){ showMapFallback(); return; }
+  const map = new google.maps.Map(mapEl, { center: CAMPUS_CENTER, zoom: 16 });
+  restaurants.filter(r => r.liveReview).forEach(r => {
+    const idx = restaurants.indexOf(r);
+    const marker = new google.maps.Marker({ position: { lat: r.lat, lng: r.lng }, map, title: r.name });
+    marker.addListener('click', () => openDetail(idx));
+  });
+}
+
+initGoogleMap();
 
 // ================= 실시간 가게 검색 (카카오 로컬 API 경유) =================
 const liveSearchInput = document.getElementById('liveSearchInput');

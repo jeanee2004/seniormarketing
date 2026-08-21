@@ -117,22 +117,11 @@
   <div class="container">
     <span class="eyebrow">MAP</span>
     <h2 class="section-title">조치원 미니 지도</h2>
-    <p class="section-sub">지도에 잘 나오지 않는 로컬 맛집 위치를 한눈에. 실제 서비스에서는 구글맵 API로 연동돼 실제 위치와 리뷰까지 확인할 수 있어요.</p>
+    <p class="section-sub">실제로 확인된 가게 위치를 구글맵으로 바로 볼 수 있어요. 나머지 가게는 9월 현장 조사 후 하나씩 추가될 예정이에요.</p>
     <div class="map-wrap">
-      <div class="map-placeholder">
-        <div class="map-note">📍 구글맵 연동 예정 자리입니다 — 카드에서 🌐 배지가 붙은 가게는 지금도 구글 실제 리뷰를 볼 수 있어요.</div>
-        <div class="map-pin p1"><span>🍜</span></div>
-        <div class="map-pin p2"><span>🥘</span></div>
-        <div class="map-pin p3"><span>🍢</span></div>
-        <div class="map-pin p4"><span>🍚</span></div>
-        <div class="map-center-badge">
-          <strong>조치원읍 일대</strong>
-          <span>세종특별자치시 · 로컬 맛집 12곳 표시 중</span>
-        </div>
-        <div class="map-zoom">
-          <button onclick="toastZoom()">+</button>
-          <button onclick="toastZoom()">−</button>
-        </div>
+      <div id="googleMap" class="google-map"></div>
+      <div id="mapFallback" class="map-placeholder" style="display:none;">
+        <div class="map-note">📍 지도를 불러오지 못했습니다 — 카드에서 🌐 배지가 붙은 가게는 상세보기에서 구글 실제 리뷰를 볼 수 있어요.</div>
       </div>
     </div>
   </div>
@@ -143,7 +132,13 @@
   <div class="container">
     <span class="eyebrow">EAT LOCAL</span>
     <h2 class="section-title">오늘 뭐 먹지?</h2>
-    <p class="section-sub">카테고리를 골라보세요. 마음에 드는 곳은 하트를 눌러 "가보고 싶은 곳"에 저장할 수 있어요. 🌐 배지가 붙은 곳은 클릭하면 구글 실제 평점·리뷰를 실시간으로 볼 수 있어요.</p>
+
+    <h3 class="subsection-title">📍 실제로 확인된 가게 · 구글 실시간 리뷰</h3>
+    <p class="section-sub">카카오·구글에 실제로 등록된 가게예요. 클릭하면 진짜 평점·리뷰를 바로 볼 수 있어요.</p>
+    <div class="card-grid" id="realCardGrid"></div>
+
+    <h3 class="subsection-title">🔎 예시 가게 (현장 조사 예정)</h3>
+    <p class="section-sub">카테고리를 골라보세요. 마음에 드는 곳은 하트를 눌러 "가보고 싶은 곳"에 저장할 수 있어요. 여기 있는 가게들은 아직 현장 조사 전이라 예시로 채운 정보예요.</p>
     <div class="cat-bar" id="catBar">
       <button class="cat-chip active" data-cat="전체">전체</button>
       <button class="cat-chip" data-cat="한식">한식</button>
