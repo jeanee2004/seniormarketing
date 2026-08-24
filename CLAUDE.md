@@ -10,8 +10,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 There is no build tooling, package manager, or test framework in this repo — it's a static site (one main page + two standalone legal pages, plus one CSS and one JS file).
 
-- **Run locally**: open `index.html` directly in a browser (e.g. `Start-Process index.html` on Windows), or serve the directory with any static file server.
-- **Syntax-check JS**: `node --check script.js`
+- **Run locally**: `node dev-server.js` → `http://localhost:3000`. Use this, not a plain file open.
+  - Opening `index.html` directly (`file://`) or serving it with a plain static server **silently breaks the Kakao search and Google reviews**. `script.js` calls `/api/kakao-search` and `/api/google-reviews` by absolute path (`script.js:1291`, `1367`, `1414`), and those handlers are Vercel serverless functions — under `file://` the path resolves to `file:///api/...`, and under a static server it 404s. Nothing in the UI says "no local API"; the features just come back empty, which reads like a dead/invalid API key. It isn't.
+  - `dev-server.js` (Node built-ins only, no install) serves the static files *and* runs `api/*.js` with a thin Vercel-handler shim (`req.query`, chainable `res.status().json()`), reading the keys from `.env.local`. It also clears the require cache per request, so edits to `api/*.js` take effect without a restart.
+  - Plain file-open is still fine when you're only touching markup/CSS or JS that doesn't hit `/api`.
+- **Syntax-check JS**: `node --check script.js` (and `node --check dev-server.js`)
 - **No linter/formatter/test suite is configured.** There's no `npm test` — verification for this project means actually loading the page and exercising it.
 
 ### Verifying changes (no test framework exists — use a real browser)

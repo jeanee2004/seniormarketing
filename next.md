@@ -12,6 +12,18 @@
 - **커뮤니티 섹션 신설** (CLAUDE.md 로드맵 항목) — "함께 만들어요" 섹션에 4번째 카드 "커뮤니티에 놀러오세요" 추가, 클릭 시 모달에서 실시간 소통은 외부 SNS 그룹(카카오톡/인스타그램 등)에서 진행된다는 안내 + 참여 버튼 + QR 자리 표시. 참여 링크는 `script.js`의 `COMMUNITY_LINK` 상수 한 곳에만 있어서, 실제 그룹이 만들어지면 그 한 줄만 채우면 됨(지금은 빈 값 → 버튼 클릭 시 "준비중" 토스트). 처음부터 `data-i18n`으로 한/영 이중언어 지원.
 - **중국어 번역 완료 (전체 사이트)** — `i18n` 구조를 `currentLang` 기반 범용 사전 조회로 일반화(`t()`/`applyStaticTranslations()`가 더 이상 'en'에 하드코딩되지 않음), `i18n.zh` 사전을 신설해 처음엔 핵심 경로(헤더·히어로·문제·로드맵·지도·맛집 카드/필터/정렬·상세 모달·구글 리뷰·실시간 검색)만 넣었다가, 같은 세션에서 이어서 나머지 전체(리뷰/공유/함께하기/이메일신청/푸터/접근성 + 설문/게임/로그인/마이페이지/리뷰작성/소개/FAQ/문의/식권)까지 확장해 영어와 완전히 동등한 커버리지 확보. 레스토랑 12곳에 `nameZh`/`descZh`, 식권 3곳에 `benefitZh` 추가. 설문 문항(`surveyQuestions`)에도 `titleZh`/`subZh`/`optionsZh` 추가. 손주 식권 흐름 전용 `wonSuffix()`/`passUnit()` 헬퍼를 새로 만들어 통화·수량 단위(원/₩/韩元, 장/张/무단위)의 언어별 어순 차이를 한 곳에서 관리하도록 정리. `currentLang==='en'`에만 하드코딩돼 있던 분기(FAQ, 문의 폼 등)는 `currentLang!=='ko'`로 일반화해 중국어도 자동으로 타도록 수정. 약관/개인정보처리방침 페이지의 언어 토글도 한/영 2단에서 한국어→English→中文 3단 순환으로 확장. 언어 선택 모달에는 원래부터 中文 버튼 UI가 있었지만 `SUPPORTED_LANGS`에 없어 "준비중"으로만 떴었는데, 이번에 `zh` 추가해서 실제로 동작하게 연결.
 
+## 2026-08-24 세션에서 한 것
+
+- **Supabase MCP OAuth 인증 완료** — `claude mcp list`에서 `✔ Connected`. 처음에 authorize URL이 터미널 줄바꿈으로 잘려 열려서 `redirect_uri: Invalid input: expected string, received undefined`가 났었다. **긴 OAuth URL은 채팅에 출력해서 사람이 클릭하게 하지 말고 `Start-Process '<url>'`로 브라우저에 직접 넘길 것**(PowerShell에서는 `&`가 연산자라 반드시 작은따옴표로 감싼다).
+- **`public.memos` 테이블 생성** (MCP 마이그레이션 `create_memos_table`) — `id/content/created_at/updated_at`, RLS 활성, 정책 4개(select·insert·update·delete 전부 `true` = 누구나 읽고 쓰기), `created_at desc` 인덱스.
+- **`supabase-demo.html`** — Supabase 연동 연습용 메모장 단일 파일. supabase-js CDN 없이 순수 `fetch`로 PostgREST 직접 호출(`/rest/v1/memos`). 추가/최신순 조회/인라인 수정/삭제. 노션 스타일, 한국어 UI. 디자인 규칙은 `디자인.md`.
+  - 헤드리스 크롬 CDP로 실제 UI를 조작해 검증 완료: 메모 3개 추가 → 새로고침 후 최신순 유지 → 수정 → 삭제까지 전부 정상, 콘솔 에러 0. MCP `execute_sql`로 DB 실제 행과 화면 내용이 일치하는 것까지 대조함. `file://`에서도 Supabase CORS는 문제없었다.
+  - **`.gitignore`에 `supabase-demo.html`과 `디자인.md`를 넣었다.** 이 저장소가 GitHub public인데 파일 안에 publishable 키가 박혀 있고 RLS가 "누구나 읽고 쓰기"로 열려 있어서, 그 조합을 공개하지 않기 위한 조치. RLS를 읽기 전용으로 좁히는 선택지도 있었지만 그러면 CRUD 연습이라는 파일의 목적 자체가 사라져서 택하지 않았다. 실제 백엔드로 갈 때 Auth + `user_id`로 정책을 제대로 세우면 된다.
+- **카카오/구글 "연동 안 됨" 해결 — 키 문제가 아니었다.** `.env.local`의 키로 직접 호출해보니 둘 다 HTTP 200에 실제 데이터가 왔다(카카오 실제 가게 목록, 구글 평점·리뷰). 진짜 원인은 **로컬에 `/api/*`를 서빙할 주체가 없던 것**: `script.js`는 `/api/kakao-search`·`/api/google-reviews`를 절대경로로 부르는데 이건 Vercel 서버리스 함수라, `index.html`을 직접 열면(`file://`) 실행될 수가 없다. CLAUDE.md가 로컬 실행법을 "index.html 직접 열기"로 안내하고 있던 게 혼란의 직접 원인이라 그 항목을 고쳤다.
+  - **`dev-server.js` 추가** — Node 내장 모듈만으로 정적 파일 + `api/*.js`를 함께 서빙(Vercel 핸들러 shim, `.env.local` 자동 로드, 요청마다 require 캐시 비움). `node dev-server.js` → `http://localhost:3000`. 기존 코드는 한 줄도 안 바꿨고 배포 동작에도 영향 없다.
+  - 브라우저 검증: 카카오 실시간 검색 5건 렌더, 구글 리뷰 실제 평점·리뷰 5개 렌더, 콘솔 에러 0.
+  - **디버깅 교훈**: Git Bash에서 `curl`에 한글을 인자로 넘기면 인코딩이 깨져(`����`) 빈 결과가 온다. 이것 때문에 처음에 API가 죽은 것처럼 보였다. **한글이 들어가는 API 테스트는 `node -e`로 `fetch`를 쓸 것.**
+
 ## 미해결/참고 사항
 - **지도**: Places API 키로는 구글 Maps JS/Static API가 둘 다 "API not activated" — Cloud Console에서 별도 활성화 없이는 코드로 우회 불가(확인 완료). 지금은 OpenStreetMap(Leaflet) 실제 지도로 대체, 잘 작동하지만 한국어 라벨이 다소 부자연스러움. 구글 지도로 바꾸려면 Cloud Console에서 "Maps JavaScript API" 활성화 필요. 그 다음 과제는 건물별 위경도 데이터 수집(코드 작업 아님) — 지금 Naver/Kakao 지도는 캠퍼스 건물들이 전부 같은 도로명 주소로 잡혀서 건물 단위 길찾기가 안 됨.
 - **커뮤니티**: `COMMUNITY_LINK`가 아직 빈 값 — 실제 SNS 그룹(카카오톡 오픈채팅/인스타그램 등)이 만들어지면 `script.js` 상단 근처의 이 상수만 채우면 카드/모달/QR 안내 문구가 자동으로 "준비중"에서 "참여하기"로 전환됨. QR 이미지 자체는 아직 생성 안 함(링크 없이 만드는 건 의미 없는 이미지라 의도적으로 보류) — 링크 확정 후 QR 생성 필요.
@@ -20,7 +32,7 @@
 
 ## 다음에 진행할 것 (우선순위 미정 — 다음 세션에서 정하기)
 1. **AI 리뷰 분석 기능 구체화** — 아직 요구사항 미정
-2. **Supabase MCP 연결 → 메모장 연결** — 메모장 쪽 요구사항은 아직 미정. Supabase 프로젝트는 **이미 생성됨**(프로젝트 URL·publishable 키는 `.env.local`에 보관 — 커밋 안 됨). MCP 서버는 `.mcp.json`에 프로젝트 스코프로 등록해둠(`https://mcp.supabase.com/mcp?project_ref=...`, URL만 들어있고 비밀값 없음 / 인증은 OAuth라 각 PC에서 `/mcp`로 한 번씩 승인 필요). **테이블도 RLS 정책도 아직 없는 빈 프로젝트.** publishable 키의 실제 보안 경계는 키를 숨기는 게 아니라 RLS라서, 키를 클라이언트 코드로 옮기는 건 정책을 세운 뒤에 판단한다 — 이 저장소가 GitHub public이고 빌드 스텝이 없어 `script.js`에서 `process.env`를 못 읽는다는 점이 그 판단의 전제.
+2. ~~**Supabase MCP 연결 → 메모장 연결**~~ — **2026-08-24 완료** (위 세션 기록 참고). 아래는 당시 배경 메모: Supabase 프로젝트는 **이미 생성됨**(프로젝트 URL·publishable 키는 `.env.local`에 보관 — 커밋 안 됨). MCP 서버는 `.mcp.json`에 프로젝트 스코프로 등록해둠(`https://mcp.supabase.com/mcp?project_ref=...`, URL만 들어있고 비밀값 없음 / 인증은 OAuth라 각 PC에서 `/mcp`로 한 번씩 승인 필요). **테이블도 RLS 정책도 아직 없는 빈 프로젝트.** publishable 키의 실제 보안 경계는 키를 숨기는 게 아니라 RLS라서, 키를 클라이언트 코드로 옮기는 건 정책을 세운 뒤에 판단한다 — 이 저장소가 GitHub public이고 빌드 스텝이 없어 `script.js`에서 `process.env`를 못 읽는다는 점이 그 판단의 전제.
 3. **로그인 기능 구체화** — 현재 "손주 로그인"은 UI 목업(실제 인증 없음). Supabase auth 연계 가능성 있음, 1·2번과 함께 검토. 참고: 현재 Supabase Auth는 **이메일 방식만 활성화**돼 있고 외부 OAuth(카카오·구글 등)는 전부 꺼져 있음
 4. **지도 고도화** — 건물별 위경도 데이터 수집(코드 작업 아님, 답사/수작업 필요) 후 Naver Maps API 키 발급 시 building-level 길찾기로 전환
 5. **커뮤니티 SNS 그룹 개설** — 그룹 만들고 `COMMUNITY_LINK` 채우기 + QR코드 생성 (코드 작업 아님)

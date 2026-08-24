@@ -3,3 +3,9 @@
 .env*.local
 .vercel
 node_modules
+
+# Supabase 연동 연습용 데모 — publishable 키 + "누구나 읽고 쓰기" RLS 정책이
+# 파일 안에 박혀 있어 GitHub public 저장소에 올리지 않는다.
+# 로컬 실행에는 아무 영향 없음. 공개해도 될 상태가 되면 이 두 줄만 지우면 된다.
+supabase-demo.html
+디자인.md
