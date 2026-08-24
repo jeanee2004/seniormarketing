@@ -20,7 +20,7 @@
 
 ## 다음에 진행할 것 (우선순위 미정 — 다음 세션에서 정하기)
 1. **AI 리뷰 분석 기능 구체화** — 아직 요구사항 미정
-2. **Supabase MCP 연결 → 메모장 연결** — 아직 요구사항 미정
-3. **로그인 기능 구체화** — 현재 "손주 로그인"은 UI 목업(실제 인증 없음). Supabase auth 연계 가능성 있음, 1·2번과 함께 검토
+2. **Supabase MCP 연결 → 메모장 연결** — 메모장 쪽 요구사항은 아직 미정. Supabase 프로젝트는 **이미 생성됨**(프로젝트 URL·publishable 키는 `.env.local`에 보관 — 커밋 안 됨). MCP 서버는 `.mcp.json`에 프로젝트 스코프로 등록해둠(`https://mcp.supabase.com/mcp?project_ref=...`, URL만 들어있고 비밀값 없음 / 인증은 OAuth라 각 PC에서 `/mcp`로 한 번씩 승인 필요). **테이블도 RLS 정책도 아직 없는 빈 프로젝트.** publishable 키의 실제 보안 경계는 키를 숨기는 게 아니라 RLS라서, 키를 클라이언트 코드로 옮기는 건 정책을 세운 뒤에 판단한다 — 이 저장소가 GitHub public이고 빌드 스텝이 없어 `script.js`에서 `process.env`를 못 읽는다는 점이 그 판단의 전제.
+3. **로그인 기능 구체화** — 현재 "손주 로그인"은 UI 목업(실제 인증 없음). Supabase auth 연계 가능성 있음, 1·2번과 함께 검토. 참고: 현재 Supabase Auth는 **이메일 방식만 활성화**돼 있고 외부 OAuth(카카오·구글 등)는 전부 꺼져 있음
 4. **지도 고도화** — 건물별 위경도 데이터 수집(코드 작업 아님, 답사/수작업 필요) 후 Naver Maps API 키 발급 시 building-level 길찾기로 전환
 5. **커뮤니티 SNS 그룹 개설** — 그룹 만들고 `COMMUNITY_LINK` 채우기 + QR코드 생성 (코드 작업 아님)
