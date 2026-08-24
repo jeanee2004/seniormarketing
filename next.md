@@ -45,6 +45,13 @@
 - 켜져 있으면 `signUp()`이 세션 없이 확인 메일만 보내서 **"가입하면 바로 로그인"이 성립하지 않는다.**
 - 게다가 가입 시도마다 메일을 보내려 해서 무료 플랜의 `email rate limit exceeded`(HTTP 429)에 금방 걸린다. **현재 이 상태라 가입 경로를 테스트하지 못했다.** (`auth.users` 0명)
 - MCP에는 auth 설정 도구가 없어서 대시보드에서만 가능하다.
+- **설정이 실제로 꺼졌는지 확인하는 법 (추측 금지)**: GoTrue의 공개 설정 엔드포인트를 읽으면 즉시 알 수 있다.
+  ```bash
+  curl -s -H "apikey: <publishable키>" https://oqsydupzmgfgrkuibbqm.supabase.co/auth/v1/settings
+  ```
+  `mailer_autoconfirm: true`면 Confirm email이 꺼진 것(= 가입 즉시 로그인 가능), `false`면 아직 켜진 것이다.
+  가입 API를 찔러보며 429/200으로 추론하면 안 된다 — 무료 플랜 메일 한도만 소진되고, 도메인이 유효하지 않으면 400이 섞여 나와 판정이 흐려진다. (실제로 `bmw-qa.io`·`example.com` 같은 도메인은 Supabase가 400 invalid로 거부한다.)
+- 2026-08-24 시점 확인값: `mailer_autoconfirm: false` → **아직 켜져 있어 가입 경로 검증 불가.** 토글 후 Save까지 눌렸는지 확인 필요.
 - 설정을 끈 뒤 검증할 것: 가입 즉시 로그인 / 헤더에 이름 / 새로고침 유지 / 중복 가입 한국어 안내 / 로그인 후 담기 → 새로고침 유지 / `select id, email, raw_user_meta_data from auth.users`로 서버 대조.
 
 ### 2단계 (다음 세션): 저장목록 서버 이전
