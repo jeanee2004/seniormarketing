@@ -301,6 +301,10 @@ const i18n = { en: {
   authErrDupe:'This account already exists. Please sign in from the "Sign in" tab.',
   authErrNotFound:'No account found. Please register first from the "Register" tab.',
   authErrPwShort:"Password must be at least 6 characters.",
+  mypageResetSaved:"Clear want-to-go list", mypageResetVisited:"Clear visited list", mypageResetPass:"Clear voucher bookings",
+  resetSavedTitle:"Clear want-to-go list", resetSavedBody:"This clears every place you saved. Your visited list and voucher bookings stay.",
+  resetVisitedTitle:"Clear visited list", resetVisitedBody:"This clears every visited mark. Your saved list and your reviews stay.",
+  resetPassTitle:"Clear voucher bookings", resetPassBody:"This clears every voucher booking. Your saved and visited lists stay.",
   authErrPwEmpty:"Please enter your password.",
   authErrNameEmpty:"Please tell us what to call you.",
   authErrNotConfirmed:"Your email isn't verified yet. Please check your inbox.",
@@ -550,6 +554,10 @@ const i18n = { en: {
   authErrDupe:'该账户已存在，请通过"登录"标签页登录。',
   authErrNotFound:'找不到该账户，请先通过"注册"标签页注册。',
   authErrPwShort:"密码至少需要6个字符。",
+  mypageResetSaved:"清空想去的店", mypageResetVisited:"清空去过的店", mypageResetPass:"清空餐券预约",
+  resetSavedTitle:"清空想去的店", resetSavedBody:"将清空所有收藏的店铺。去过的记录和餐券预约会保留。",
+  resetVisitedTitle:"清空去过的店", resetVisitedBody:"将清除所有去过标记。收藏列表和您写的评论会保留。",
+  resetPassTitle:"清空餐券预约", resetPassBody:"将清除所有餐券预约记录。收藏列表和去过的记录会保留。",
   authErrPwEmpty:"请输入密码。",
   authErrNameEmpty:"请填写您的称呼。",
   authErrNotConfirmed:"邮箱尚未验证，请查收邮件。",
@@ -1657,27 +1665,22 @@ let authMode = 'signup';
 // isLoggedIn / currentUserName은 renderCards()보다 먼저 필요해서 파일 상단(로컬 저장 바로 아래)에 선언돼 있다.
 
 // 헤더의 로그인 상태 표시는 오직 이 함수만 건드린다.
-// 로그인 시: "○○ 손주님"(누르면 마이페이지) + 로그아웃 버튼.
+// 로그인 시 "○○ 손주님"이 되고 누르면 마이페이지가 열린다.
+// 로그아웃은 그 마이페이지 안에만 둔다 — 헤더에도 두면 같은 동작이 두 군데가 된다.
 function updateHeaderAuthUI(){
   const authBtn = document.getElementById('authHeaderBtn');
   const authIcon = document.getElementById('authHeaderIcon');
   const authLabel = document.getElementById('authHeaderLabel');
-  const logoutBtn = document.getElementById('authLogoutBtn');
   if(isLoggedIn){
     authIcon.textContent = '🌱';
     authLabel.textContent = displayUserName();
     authBtn.title = (t('headerAuthMypageTitle') || '{name}님의 마이페이지').replace('{name}', currentUserName || (currentLang==='ko' ? '손주' : (t('grandchildDefaultName')||'Grandchild')));
     authBtn.onclick = () => openMypage('saved');
-    if(logoutBtn){
-      logoutBtn.hidden = false;
-      logoutBtn.title = t('navLogout') || '로그아웃';
-    }
   } else {
     authIcon.textContent = '👤';
     authLabel.textContent = t('navLogin') || '손주 로그인';
     authBtn.title = t('navLogin') || '손주 로그인';
     authBtn.onclick = () => openAuth('login');
-    if(logoutBtn) logoutBtn.hidden = true;
   }
 }
 
@@ -1945,7 +1948,10 @@ function renderMypage(){
       <button type="button" class="mypage-tab ${mypageTab==='pass'?'active':''}" id="tabPass">${t('mypageTabPass') || '식권'}</button>
     </div>
     <div class="mypage-list">${body}</div>
-    <button type="button" class="mypage-reset-link" onclick="resetMyData()">${t('mypageResetLink') || '내 활동 기록 전체 초기화'}</button>
+    <div class="mypage-reset-row">
+      <button type="button" class="mypage-reset-link" onclick="resetSection('${mypageTab}')">${sectionResetLabel(mypageTab)}</button>
+      <button type="button" class="mypage-reset-link" onclick="resetMyData()">${t('mypageResetLink') || '내 활동 기록 전체 초기화'}</button>
+    </div>
     <div class="game-action-row" style="margin-top:10px;">
       <button type="button" class="btn-ghost" style="flex:1;" onclick="logout()">${t('mypageLogoutBtn') || '로그아웃'}</button>
       <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeMypage()">${t('closeBtn') || '닫기'}</button>
@@ -2008,6 +2014,57 @@ function renderMypagePassList(){
       <button type="button" class="mypage-remove-btn mypage-cancel-pass-btn" data-i="${i}" title="${t('mypageCancelPassTitle')||'예약 취소'}">✕</button>
     </div>
   `).join('');
+}
+
+// ---- 섹션별 초기화 ----
+// 전체 초기화만 있으면 "식권만 비우고 싶은데 저장목록까지 날아가는" 상황이 생긴다.
+// 지금 보고 있는 탭 하나만 비우는 길을 따로 둔다. 탭별로 건드리는 데이터는 여기 한 곳에만 적는다.
+const SECTION_RESET = {
+  saved:{
+    emoji:'💌',
+    labelKey:'mypageResetSaved',  labelKo:'가보고 싶은 곳 비우기',
+    titleKey:'resetSavedTitle',   titleKo:'가보고 싶은 곳 비우기',
+    bodyKey:'resetSavedBody',     bodyKo:'저장해둔 곳을 모두 비워요. 가본 곳 기록과 식권 예약은 그대로 남아요.',
+    apply: () => { restaurants.forEach(r => { r.saved = false; }); },
+  },
+  visited:{
+    emoji:'🍚',
+    labelKey:'mypageResetVisited', labelKo:'가본 곳 기록 비우기',
+    titleKey:'resetVisitedTitle',  titleKo:'가본 곳 기록 비우기',
+    bodyKey:'resetVisitedBody',    bodyKo:'가본 곳 표시를 모두 지워요. 저장 목록과 내가 쓴 리뷰는 그대로 남아요.',
+    apply: () => { restaurants.forEach(r => { r.visited = false; }); },
+  },
+  pass:{
+    emoji:'🎟️',
+    labelKey:'mypageResetPass',   labelKo:'식권 예약 내역 비우기',
+    titleKey:'resetPassTitle',    titleKo:'식권 예약 내역 비우기',
+    bodyKey:'resetPassBody',      bodyKo:'식권 예약 내역을 모두 지워요. 저장 목록과 가본 곳 기록은 그대로 남아요.',
+    apply: () => { store.passOrders = []; },
+  },
+};
+
+function sectionResetLabel(tab){
+  const s = SECTION_RESET[tab];
+  return s ? (t(s.labelKey) || s.labelKo) : '';
+}
+
+function resetSection(tab){
+  const s = SECTION_RESET[tab];
+  if(!s) return;
+  openConfirm({
+    emoji:s.emoji,
+    title:t(s.titleKey) || s.titleKo,
+    text:t(s.bodyKey) || s.bodyKo,
+    okLabel:t('resetOk') || '초기화',
+    cancelLabel:t('resetCancel') || '취소',
+    onOk: () => {
+      s.apply();
+      saveState();
+      renderCards();
+      renderMypage();
+      closeConfirm();
+    }
+  });
 }
 
 // 손주 계정에 쌓인 활동(담기·방문·내 리뷰·식권 예약)을 한 번에 되돌리는 초기화 버튼

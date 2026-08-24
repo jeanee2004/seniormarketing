@@ -582,6 +582,12 @@ footer ul a:hover{color:#fff;}
 }
 
 /* ===== Survey modal ===== */
+/* 확인창(#confirmOverlay)은 다른 모달 "위에서" 물어보는 창이라 항상 맨 앞이어야 한다.
+   모든 오버레이가 .survey-overlay의 z-index를 공유하는데, #mypageOverlay가 HTML상
+   #confirmOverlay보다 뒤에 있어서 동점이면 마이페이지가 확인창을 덮어버렸다.
+   (마이페이지에서 취소를 눌러도 확인창이 안 보이던 버그) */
+#confirmOverlay{z-index:1100;}
+
 .survey-overlay{
   position:fixed;inset:0;background:rgba(43,42,38,0.5);
   display:flex;align-items:center;justify-content:center;z-index:1001;
@@ -633,8 +639,14 @@ footer ul a:hover{color:#fff;}
   transition:background .15s ease,color .15s ease;
 }
 .mypage-remove-btn:hover{background:rgba(214,67,46,0.12);color:var(--red-dark);}
+/* 지금 보고 있는 탭만 비우기 + 전체 초기화, 두 개를 나란히 둔다.
+   좁은 화면에서는 줄바꿈되도록 wrap. */
+.mypage-reset-row{
+  display:flex;flex-wrap:wrap;gap:6px 16px;
+  align-items:center;justify-content:center;margin-top:12px;
+}
 .mypage-reset-link{
-  display:block;margin:12px auto 0;font-size:0.78rem;color:var(--ink-soft);
+  display:block;margin:0;font-size:0.78rem;color:var(--ink-soft);
   text-decoration:underline;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
 }
 .mypage-reset-link:hover{color:var(--red-dark);}

@@ -38,9 +38,9 @@
       <button class="icon-btn" data-i18n-title="navGame" title="메뉴 추천 게임" onclick="openGame()">🎲</button>
       <button class="icon-btn" data-i18n-title="navSurvey" title="취향 설문" onclick="openSurvey()">📝</button>
       <button class="icon-btn" data-i18n-title="navLang" title="언어 전환" onclick="openLang()">🌐</button>
+      <!-- 로그아웃 버튼은 여기 두지 않는다. 마이페이지 안에 이미 있어서 중복이고,
+           헤더 버튼을 누르면 어차피 그 마이페이지가 열린다. -->
       <button class="btn-save" id="authHeaderBtn" data-i18n-title="navLogin" title="손주 로그인" onclick="openAuth('login')"><span id="authHeaderIcon">👤</span><span class="nav-label" id="authHeaderLabel" data-i18n="navLogin">손주 로그인</span></button>
-      <!-- 로그인 상태에서만 보인다. 표시 여부는 updateHeaderAuthUI()가 혼자 관리한다. -->
-      <button class="icon-btn" id="authLogoutBtn" data-i18n-title="navLogout" title="로그아웃" onclick="logout()" hidden>🚪</button>
     </div>
   </div>
 </header>
