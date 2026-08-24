@@ -1698,6 +1698,12 @@ function syncAuthFromSession(session){
   currentUserId = user ? user.id : '';
   currentUserName = user ? ((user.user_metadata && user.user_metadata.name) || '') : '';
 
+  // store.auth를 여기서 먼저 맞춰둔다. currentMarks()가 store.auth.userId를 읽기 때문에
+  // (초기 applyState()가 currentUserId 선언보다 먼저 실행돼 TDZ를 피하려고 그렇게 돼 있다),
+  // 이걸 갱신하지 않으면 아래 applyState()가 이전 사용자 기준으로 조회해 빈 결과를 받고,
+  // 뒤이은 saveState()가 그 빈 상태를 새 사용자 칸에 덮어써 저장목록을 지워버린다.
+  store.auth = { isLoggedIn, name: currentUserName, userId: currentUserId };
+
   // 옛 버전에서 쓰던 전역 marks가 남아 있으면 처음 로그인한 사람에게 한 번만 넘겨준다.
   if(user && store.marks[LEGACY_MARKS_KEY]){
     store.marks[currentUserId] = Object.assign({}, store.marks[LEGACY_MARKS_KEY], store.marks[currentUserId] || {});
