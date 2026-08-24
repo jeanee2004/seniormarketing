@@ -39,6 +39,8 @@
       <button class="icon-btn" data-i18n-title="navSurvey" title="취향 설문" onclick="openSurvey()">📝</button>
       <button class="icon-btn" data-i18n-title="navLang" title="언어 전환" onclick="openLang()">🌐</button>
       <button class="btn-save" id="authHeaderBtn" data-i18n-title="navLogin" title="손주 로그인" onclick="openAuth('login')"><span id="authHeaderIcon">👤</span><span class="nav-label" id="authHeaderLabel" data-i18n="navLogin">손주 로그인</span></button>
+      <!-- 로그인 상태에서만 보인다. 표시 여부는 updateHeaderAuthUI()가 혼자 관리한다. -->
+      <button class="icon-btn" id="authLogoutBtn" data-i18n-title="navLogout" title="로그아웃" onclick="logout()" hidden>🚪</button>
     </div>
   </div>
 </header>
@@ -494,6 +496,9 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<!-- 손주 로그인에 쓰는 Supabase Auth. UMD 빌드라 window.supabase로 노출되며, script.js보다 먼저 와야 한다.
+     버전을 고정하고 SRI를 붙였다 — @2 같은 범위 지정을 쓰면 새 배포 때 해시가 어긋나 스크립트가 통째로 차단된다. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3/dist/umd/supabase.js" integrity="sha384-qafw21c/iciq0VXsi9FzkfoQv5I/V0iqE4lSNcKXPnW9/UTJLnv5CcN4FHxVLnKg" crossorigin="anonymous"></script>
 <script src="script.js"></script>
 </body>
 </html>

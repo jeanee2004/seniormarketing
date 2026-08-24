@@ -24,6 +24,47 @@
   - 브라우저 검증: 카카오 실시간 검색 5건 렌더, 구글 리뷰 실제 평점·리뷰 5개 렌더, 콘솔 에러 0.
   - **디버깅 교훈**: Git Bash에서 `curl`에 한글을 인자로 넘기면 인코딩이 깨져(`����`) 빈 결과가 온다. 이것 때문에 처음에 API가 죽은 것처럼 보였다. **한글이 들어가는 API 테스트는 `node -e`로 `fetch`를 쓸 것.**
 
+## 손주 로그인 Supabase 연동 (2026-08-24, 1단계 완료 / 확인 대기)
+
+- 가짜 인증(`store.accounts`에 **평문 비밀번호** 저장 후 문자열 비교)을 **Supabase Auth 이메일 로그인으로 교체**했다. 비밀번호는 이제 코드 어디에도 남지 않는다.
+- 요구사항 대부분은 **이미 구현돼 있었다** — 헤더 버튼, 로그인/가입 탭 폼, 한국어 오류 문구, 새로고침 유지, 그리고 "누가 로그인했는지 다른 기능이 쓰기 좋게"에 해당하는 `requireLogin(intent)`까지. 실제로 바꾼 건 **인증의 공급원 하나**였고 저장·리뷰·마이페이지·식권은 손대지 않아도 그대로 따라왔다.
+- `syncAuthFromSession()`을 만들어 `isLoggedIn`/`currentUserName`/`currentUserId`를 쓰는 곳을 **한 군데로 통일**했다. `getSession()`(최초) + `onAuthStateChange()`(이후)가 이 함수를 부른다. 로그인/가입/로그아웃 핸들러는 상태를 직접 건드리지 않는다.
+- **`store.marks`를 사용자 id로 감쌌다** (`{userId: {가게이름: {...}}}`). 전역으로 두면 한 브라우저에서 A가 로그아웃하고 B가 로그인했을 때 B가 A의 저장목록을 본다 — 인증이 진짜가 된 순간 생기는 버그라 지금 같이 처리했다. 이 모양이 곧 2단계 테이블 모양이다.
+- 헤더: 로그인 시 `"○○ 손주님"`(누르면 마이페이지) + 로그아웃 버튼(`#authLogoutBtn`). 요구사항의 "이름님 로그아웃"만 쓰면 이미 만들어둔 마이페이지 진입구가 사라져서 절충했다.
+- 전화번호 로그인은 뺐다(유료 SMS 연동 필요). 입력칸을 이메일 전용으로 바꾸고 한·영·중 문구를 모두 수정. `isEmailOrPhone()`은 **문의 폼 전용으로 남겨뒀다** — 지우면 문의 폼이 깨진다.
+- 폼에 `novalidate`를 넣었다. 브라우저 기본 검증 문구는 사이트 언어가 아니라 브라우저 언어를 따르기 때문에, 3개 국어를 직접 관리하는 이 사이트에서는 검증도 우리가 해야 한다.
+- supabase-js는 **버전 고정 + SRI**로 CDN 로드(`@2.112.3`). `@2` 같은 범위 지정을 쓰면 새 배포 때 해시가 어긋나 스크립트가 통째로 차단된다. CDN이 막히면 `sb`가 null이 되고, 사이트의 나머지 기능은 그대로 동작한다.
+- 검증: 헤드리스 크롬으로 **12/12 통과** — 로그인 게이트(담기 → 로그인 안내), 비로그인 상태의 기존 기능, 이메일 전용 입력, 형식 오류 한국어 안내, 한/영/중 문구, 콘솔 에러 0. 틀린 비밀번호 경로에서 실제 Supabase 응답이 `"이메일 또는 비밀번호가 올바르지 않아요."`로 번역돼 나오는 것까지 확인했다.
+
+### ⚠️ 남은 차단 요소 — 대시보드 설정 (코드 문제 아님)
+
+**Authentication → Providers → Email → "Confirm email" 을 꺼야 한다.**
+
+- 켜져 있으면 `signUp()`이 세션 없이 확인 메일만 보내서 **"가입하면 바로 로그인"이 성립하지 않는다.**
+- 게다가 가입 시도마다 메일을 보내려 해서 무료 플랜의 `email rate limit exceeded`(HTTP 429)에 금방 걸린다. **현재 이 상태라 가입 경로를 테스트하지 못했다.** (`auth.users` 0명)
+- MCP에는 auth 설정 도구가 없어서 대시보드에서만 가능하다.
+- 설정을 끈 뒤 검증할 것: 가입 즉시 로그인 / 헤더에 이름 / 새로고침 유지 / 중복 가입 한국어 안내 / 로그인 후 담기 → 새로고침 유지 / `select id, email, raw_user_meta_data from auth.users`로 서버 대조.
+
+### 2단계 (다음 세션): 저장목록 서버 이전
+
+```sql
+create table public.saved_restaurants (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  restaurant_name text not null,
+  saved boolean not null default false,
+  visited boolean not null default false,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, restaurant_name)
+);
+alter table public.saved_restaurants enable row level security;
+create policy "own rows" on public.saved_restaurants
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+```
+
+`loadState()`/`saveState()`/`applyState()`의 marks 부분만 서버 읽기·쓰기로 교체하고, localStorage는 오프라인 캐시로 남긴다. 첫 로그인 때 로컬 marks를 1회 업로드. 리뷰·식권은 그 다음 순서.
+
+**주의**: `applyState()`가 이제 마크가 없으면 `saved/visited`를 `false`로 되돌린다. 그래서 더미 데이터에 박혀 있던 `saved:true`/`visited:true` 시드는 로그인해도 더 이상 보이지 않는다 — 진짜 계정마다 빈 상태로 시작하는 게 맞는 동작이라 의도한 변경이다.
+
 ## 미해결/참고 사항
 - **지도**: Places API 키로는 구글 Maps JS/Static API가 둘 다 "API not activated" — Cloud Console에서 별도 활성화 없이는 코드로 우회 불가(확인 완료). 지금은 OpenStreetMap(Leaflet) 실제 지도로 대체, 잘 작동하지만 한국어 라벨이 다소 부자연스러움. 구글 지도로 바꾸려면 Cloud Console에서 "Maps JavaScript API" 활성화 필요. 그 다음 과제는 건물별 위경도 데이터 수집(코드 작업 아님) — 지금 Naver/Kakao 지도는 캠퍼스 건물들이 전부 같은 도로명 주소로 잡혀서 건물 단위 길찾기가 안 됨.
 - **커뮤니티**: `COMMUNITY_LINK`가 아직 빈 값 — 실제 SNS 그룹(카카오톡 오픈채팅/인스타그램 등)이 만들어지면 `script.js` 상단 근처의 이 상수만 채우면 카드/모달/QR 안내 문구가 자동으로 "준비중"에서 "참여하기"로 전환됨. QR 이미지 자체는 아직 생성 안 함(링크 없이 만드는 건 의미 없는 이미지라 의도적으로 보류) — 링크 확정 후 QR 생성 필요.

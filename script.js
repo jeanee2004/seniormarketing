@@ -75,12 +75,30 @@ const restaurants = [
     liveReview:true, lat:36.608995511335, lng:127.291526952076, realAddress:"세종특별자치시 조치원읍 원마루길 16-1"},
 ];
 
+// ================= Supabase (손주 로그인) =================
+// publishable 키는 원래 브라우저로 내려가는 공개 값이다. 숨기는 것이 보안 경계가 아니라,
+// 테이블의 RLS 정책이 경계다. 계정 자체는 Supabase Auth(auth.users)가 관리하므로
+// 비밀번호는 이 코드 어디에도 저장되지 않는다.
+const SUPABASE_URL = 'https://oqsydupzmgfgrkuibbqm.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_mLipCnG1P2J2iJckvbaVZg_daYRe2VR';
+
+// index.html에서 UMD 빌드를 먼저 불러온다. CDN이 막힌 환경에서도 사이트의 나머지 기능은
+// 그대로 돌아가야 하므로, 없으면 null로 두고 로그인 시도할 때만 안내한다.
+const sb = (typeof supabase !== 'undefined' && supabase.createClient)
+  ? supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+  : null;
+
 // ================= 로컬 저장 (백엔드 전환 지점) =================
 // 나중에 Supabase 같은 백엔드를 붙일 때는 loadState / saveState 두 함수만 갈아끼우면 된다.
 // marks는 배열 인덱스가 아니라 가게 이름을 키로 잡는다 — restaurants 순서가 바뀌거나
 // 항목이 추가돼도 저장된 값이 엉뚱한 가게에 붙지 않도록.
+//
+// marks는 다시 사용자 id로 한 겹 감싼다: { [userId]: { [가게이름]: {saved, visited} } }.
+// 인증이 진짜가 된 이상 전역으로 두면 한 브라우저에서 A가 로그아웃하고 B가 로그인했을 때
+// B가 A의 저장목록을 보게 된다. 이 모양은 나중에 옮겨갈 서버 테이블
+// saved_restaurants(user_id, restaurant_name, …)와 같아서 이전도 쉬워진다.
 const STORE_KEY = 'bmw:v1';
-let store = { auth:{isLoggedIn:false, name:''}, marks:{}, reviews:[], passOrders:[], accounts:[], reviewLikes:{}, myLikedReviews:[], googleReviews:{}, lang:'ko' };
+let store = { auth:{isLoggedIn:false, name:'', userId:''}, marks:{}, reviews:[], passOrders:[], reviewLikes:{}, myLikedReviews:[], googleReviews:{}, lang:'ko' };
 
 function loadState(){
   try{
@@ -89,30 +107,58 @@ function loadState(){
     const parsed = JSON.parse(raw);
     store = {
       auth:{
+        // 로그인 여부의 진짜 출처는 이제 Supabase 세션이다. 여기 값은 세션이 확인되기 전까지
+        // 헤더가 깜빡이지 않게 해주는 힌트일 뿐이고, syncAuthFromSession()이 곧 덮어쓴다.
         isLoggedIn: !!(parsed.auth && parsed.auth.isLoggedIn),
         name: (parsed.auth && parsed.auth.name) || '',
+        userId: (parsed.auth && parsed.auth.userId) || '',
       },
-      marks: parsed.marks || {},
+      marks: normalizeMarks(parsed.marks),
       reviews: Array.isArray(parsed.reviews) ? parsed.reviews : [],
       passOrders: Array.isArray(parsed.passOrders) ? parsed.passOrders : [],
-      accounts: Array.isArray(parsed.accounts) ? parsed.accounts : [],
       reviewLikes: parsed.reviewLikes || {},
       myLikedReviews: Array.isArray(parsed.myLikedReviews) ? parsed.myLikedReviews : [],
       googleReviews: parsed.googleReviews || {},
       lang: parsed.lang || 'ko',
     };
+    // 옛 버전의 parsed.accounts(평문 비밀번호가 들어있던 배열)는 일부러 읽지 않는다.
+    // 다음 saveState()에서 저장소에서도 사라진다.
   }catch(e){
     // 저장소가 막힌 환경(사생활 보호 모드 등) — 조용히 메모리 전용으로 동작한다
   }
 }
 
+// 옛 저장본은 marks가 { 가게이름: {...} } 였고, 지금은 { userId: { 가게이름: {...} } } 다.
+// 값의 모양을 보고 옛 형식이면 LEGACY_MARKS_KEY 아래로 옮겨둔다 —
+// 처음 로그인하는 사람에게 한 번 승계시켜서(adoptLegacyMarks) 기존 저장목록을 잃지 않게 한다.
+const LEGACY_MARKS_KEY = '__legacy__';
+function normalizeMarks(raw){
+  if(!raw || typeof raw !== 'object') return {};
+  const values = Object.values(raw);
+  const isOldShape = values.length > 0 && values.every(v =>
+    v && typeof v === 'object' && ('saved' in v || 'visited' in v));
+  return isOldShape ? { [LEGACY_MARKS_KEY]: raw } : raw;
+}
+
+// 지금 마크를 읽고 쓸 대상. 로그아웃 상태에서는 어차피 화면에 마크가 보이지 않으므로
+// 빈 통을 돌려주고, 어떤 사용자의 데이터에도 섞이지 않게 한다.
+function currentMarks(){
+  const uid = store.auth.userId;
+  if(!uid) return {};
+  if(!store.marks[uid]) store.marks[uid] = {};
+  return store.marks[uid];
+}
+
 // 저장 성공 여부를 돌려준다 (사진 첨부로 용량을 넘길 수 있어서 호출부에서 안내가 필요함)
 function saveState(){
-  store.auth = { isLoggedIn, name: currentUserName };
-  store.marks = {};
-  restaurants.forEach(r => {
-    if(r.saved || r.visited) store.marks[r.name] = { saved:!!r.saved, visited:!!r.visited };
-  });
+  store.auth = { isLoggedIn, name: currentUserName, userId: currentUserId };
+  if(currentUserId){
+    const mine = {};
+    restaurants.forEach(r => {
+      if(r.saved || r.visited) mine[r.name] = { saved:!!r.saved, visited:!!r.visited };
+    });
+    store.marks[currentUserId] = mine;
+  }
   try{
     localStorage.setItem(STORE_KEY, JSON.stringify(store));
     return true;
@@ -122,9 +168,11 @@ function saveState(){
 }
 
 function applyState(){
+  const marks = currentMarks();
   restaurants.forEach(r => {
-    const m = store.marks[r.name];
-    if(m){ r.saved = !!m.saved; r.visited = !!m.visited; }
+    const m = marks[r.name];
+    r.saved = !!(m && m.saved);
+    r.visited = !!(m && m.visited);
   });
 }
 
@@ -140,7 +188,7 @@ function escapeHtml(s){
 // 설문·마이페이지·게임·로그인·문의·식권·소개·FAQ 모달과 약관 페이지는 다음 단계에서 번역 예정.
 const i18n = { en: {
   pageTitle:"Bap Meokeoreo Wa — Discover Jochiwon's Local Restaurants",
-  navSearch:"Search", navGame:"Menu Roulette Game", navSurvey:"Taste Survey", navLang:"Language", navLogin:"Sign in",
+  navSearch:"Search", navGame:"Menu Roulette Game", navSurvey:"Taste Survey", navLang:"Language", navLogin:"Sign in", navLogout:"Sign out",
   headerSearchPh:"Search restaurants, meal passes, partners, pages",
   heroEyebrow:"KU Rescue Squad! Help the Local Owners",
   heroTitle:'Did you know there are great restaurants missing or barely listed on Naver? <span>Now you do.</span>',
@@ -244,14 +292,23 @@ const i18n = { en: {
   authIntentLogin:"Welcome back! Please sign in to your account.",
   authTitle:"Become one of our grandchildren", authTabSignup:"Register", authTabLogin:"Sign in",
   authNameLabel:"Name", authNamePh:"What should we call you?",
-  authIdLabel:"Email or phone number", authIdPh:"example@mail.com or 010-1234-5678",
+  authIdLabel:"Email", authIdPh:"example@mail.com",
   authPwLabel:"Password", authPwPh:"Password",
   authPw2Label:"Confirm password", authPw2Ph:"Enter your password again",
   authSubmitSignup:"Register and get started", authSubmitLogin:"Sign in",
-  authErrFormat:"Please enter a valid email address or phone number.",
+  authErrFormat:"Please enter a valid email address.",
   authErrPwMismatch:"Passwords don't match. Please check again.",
   authErrDupe:'This account already exists. Please sign in from the "Sign in" tab.',
   authErrNotFound:'No account found. Please register first from the "Register" tab.',
+  authErrPwShort:"Password must be at least 6 characters.",
+  authErrPwEmpty:"Please enter your password.",
+  authErrNameEmpty:"Please tell us what to call you.",
+  authErrNotConfirmed:"Your email isn't verified yet. Please check your inbox.",
+  authErrNeedConfirm:"We sent you a confirmation email. Please verify it, then sign in.",
+  authErrRate:"Too many requests. Please try again in a moment.",
+  authErrNetwork:"Connection failed. Please try again in a moment.",
+  authErrOffline:"Can't reach the sign-in server right now. Please try again in a moment.",
+  authErrGeneric:"Something went wrong. Please try again in a moment.",
   authErrWrongPw:"Incorrect password.",
   authWelcomeTitle:"Welcome, {name}!", authWelcomeBody:"Registration complete. We'll let you know first when we officially launch.",
   authWelcomeMypageBtn:"Go to My Page",
@@ -380,7 +437,7 @@ const i18n = { en: {
   // 중국어는 핵심 경로(헤더·히어로·문제·로드맵·지도·맛집 카드/상세·구글 리뷰·실시간 검색)만 지원 —
   // 그 외 키가 없으면 t()가 null을 반환해 한국어 원문으로 자동 대체된다.
   pageTitle:"Bap Meokeoreo Wa — 发现调治院本地美食",
-  navSearch:"搜索", navGame:"菜单推荐游戏", navSurvey:"口味问卷", navLang:"语言", navLogin:"登录",
+  navSearch:"搜索", navGame:"菜单推荐游戏", navSurvey:"口味问卷", navLang:"语言", navLogin:"登录", navLogout:"退出登录",
   headerSearchPh:"搜索餐厅、餐券、合作、页面",
   heroEyebrow:"KU救援队！拜托了老板",
   heroTitle:'你知道吗，有些好吃的餐厅在Naver地图上找不到，或者信息很少？<span>现在你知道了。</span>',
@@ -484,14 +541,23 @@ const i18n = { en: {
   authIntentLogin:"欢迎回来！请登录你的账户。",
   authTitle:"成为我们的孙辈", authTabSignup:"注册", authTabLogin:"登录",
   authNameLabel:"姓名", authNamePh:"该怎么称呼你？",
-  authIdLabel:"邮箱或手机号", authIdPh:"example@mail.com 或 010-1234-5678",
+  authIdLabel:"邮箱", authIdPh:"example@mail.com",
   authPwLabel:"密码", authPwPh:"密码",
   authPw2Label:"确认密码", authPw2Ph:"请再次输入密码",
   authSubmitSignup:"注册并开始使用", authSubmitLogin:"登录",
-  authErrFormat:"请输入有效的邮箱地址或手机号。",
+  authErrFormat:"请输入有效的邮箱地址。",
   authErrPwMismatch:"两次输入的密码不一致，请重新确认。",
   authErrDupe:'该账户已存在，请通过"登录"标签页登录。',
   authErrNotFound:'找不到该账户，请先通过"注册"标签页注册。',
+  authErrPwShort:"密码至少需要6个字符。",
+  authErrPwEmpty:"请输入密码。",
+  authErrNameEmpty:"请填写您的称呼。",
+  authErrNotConfirmed:"邮箱尚未验证，请查收邮件。",
+  authErrNeedConfirm:"我们已发送验证邮件，请验证后再登录。",
+  authErrRate:"请求过于频繁，请稍后再试。",
+  authErrNetwork:"连接失败，请稍后再试。",
+  authErrOffline:"暂时无法连接登录服务器，请稍后再试。",
+  authErrGeneric:"处理失败，请稍后再试。",
   authErrWrongPw:"密码错误。",
   authWelcomeTitle:"欢迎，{name}！", authWelcomeBody:"注册完成。正式上线时我们会第一时间通知你。",
   authWelcomeMypageBtn:"前往我的页面",
@@ -664,8 +730,11 @@ applyState();
 
 // 로그인 상태는 renderCards()가 첫 렌더 때부터 참조하므로 여기서 선언한다
 // (손주 로그인 섹션에서 선언하면 초기 renderCards() 호출 시점에 TDZ 에러가 난다).
+// 여기 값은 지난 방문의 흔적일 뿐이고, 진짜 출처는 Supabase 세션이다 —
+// syncAuthFromSession()이 세션을 확인한 뒤 덮어쓴다.
 let isLoggedIn = store.auth.isLoggedIn;
 let currentUserName = store.auth.name;
+let currentUserId = store.auth.userId || '';
 
 const cardGrid = document.getElementById('cardGrid');
 const filterCount = document.getElementById('filterCount');
@@ -1587,23 +1656,70 @@ const authBody = document.getElementById('authBody');
 let authMode = 'signup';
 // isLoggedIn / currentUserName은 renderCards()보다 먼저 필요해서 파일 상단(로컬 저장 바로 아래)에 선언돼 있다.
 
+// 헤더의 로그인 상태 표시는 오직 이 함수만 건드린다.
+// 로그인 시: "○○ 손주님"(누르면 마이페이지) + 로그아웃 버튼.
 function updateHeaderAuthUI(){
   const authBtn = document.getElementById('authHeaderBtn');
   const authIcon = document.getElementById('authHeaderIcon');
   const authLabel = document.getElementById('authHeaderLabel');
+  const logoutBtn = document.getElementById('authLogoutBtn');
   if(isLoggedIn){
     authIcon.textContent = '🌱';
-    authLabel.textContent = t('headerAuthSavedLabel') || '저장 목록 보기';
+    authLabel.textContent = displayUserName();
     authBtn.title = (t('headerAuthMypageTitle') || '{name}님의 마이페이지').replace('{name}', currentUserName || (currentLang==='ko' ? '손주' : (t('grandchildDefaultName')||'Grandchild')));
     authBtn.onclick = () => openMypage('saved');
+    if(logoutBtn){
+      logoutBtn.hidden = false;
+      logoutBtn.title = t('navLogout') || '로그아웃';
+    }
   } else {
     authIcon.textContent = '👤';
     authLabel.textContent = t('navLogin') || '손주 로그인';
     authBtn.title = t('navLogin') || '손주 로그인';
     authBtn.onclick = () => openAuth('login');
+    if(logoutBtn) logoutBtn.hidden = true;
   }
 }
+
+// 한국어에서는 "○○ 손주님", 다른 언어에서는 이름만 (어순이 달라서 한 곳에서 처리한다)
+function displayUserName(){
+  const fallback = currentLang === 'ko' ? '손주' : (t('grandchildDefaultName') || 'Grandchild');
+  const name = currentUserName || fallback;
+  return currentLang === 'ko' ? `${name} 손주님` : name;
+}
 updateHeaderAuthUI();
+
+// ---- Supabase 세션 ↔ 화면 상태 동기화 ----
+// 로그인 여부의 진짜 출처는 세션 하나뿐이다. 여기서만 isLoggedIn을 채운다.
+function syncAuthFromSession(session){
+  const user = session && session.user;
+  const wasUserId = currentUserId;
+  isLoggedIn = !!user;
+  currentUserId = user ? user.id : '';
+  currentUserName = user ? ((user.user_metadata && user.user_metadata.name) || '') : '';
+
+  // 옛 버전에서 쓰던 전역 marks가 남아 있으면 처음 로그인한 사람에게 한 번만 넘겨준다.
+  if(user && store.marks[LEGACY_MARKS_KEY]){
+    store.marks[currentUserId] = Object.assign({}, store.marks[LEGACY_MARKS_KEY], store.marks[currentUserId] || {});
+    delete store.marks[LEGACY_MARKS_KEY];
+  }
+
+  if(wasUserId !== currentUserId) applyState();  // 사용자가 바뀌면 마크를 다시 깐다
+  saveState();
+  updateHeaderAuthUI();
+  renderCards();
+  renderReviews();
+}
+
+// 첫 렌더는 이미 로그아웃 상태로 그려진 뒤다. 세션 확인은 비동기라
+// 확인이 끝나면 위 함수가 화면을 다시 그린다.
+if(sb){
+  sb.auth.getSession().then(({ data }) => syncAuthFromSession(data.session));
+  sb.auth.onAuthStateChange((_event, session) => syncAuthFromSession(session));
+} else if(isLoggedIn){
+  // CDN이 막혀 supabase-js가 없는 경우: 지난 로그인 흔적을 믿지 않고 로그아웃으로 되돌린다.
+  syncAuthFromSession(null);
+}
 
 function logout(){
   openConfirm({
@@ -1612,15 +1728,13 @@ function logout(){
     text:t('logoutBody') || '로그아웃하면 저장 목록·리뷰 작성 등은 다시 로그인한 뒤에 이용할 수 있어요.',
     okLabel:t('logoutOk') || '로그아웃',
     cancelLabel:t('logoutCancel') || '취소',
-    onOk: () => {
-      isLoggedIn = false;
-      currentUserName = '';
-      saveState();
-      updateHeaderAuthUI();
+    onOk: async () => {
       closeConfirm();
       closeMypage();
-      renderCards();
-      renderReviews();
+      // signOut()이 onAuthStateChange를 깨우고, 거기서 syncAuthFromSession(null)이
+      // 상태 초기화와 재렌더를 전부 처리한다.
+      if(sb) await sb.auth.signOut();
+      else syncAuthFromSession(null);
     }
   });
 }
@@ -1653,7 +1767,10 @@ function renderAuth(intent){
       <button type="button" class="auth-tab ${authMode==='signup'?'active':''}" id="tabSignup">${t('authTabSignup') || '손주 등록'}</button>
       <button type="button" class="auth-tab ${authMode==='login'?'active':''}" id="tabLogin">${t('authTabLogin') || '손주 로그인'}</button>
     </div>
-    <form id="authForm">
+    <!-- novalidate: 브라우저 기본 검증 문구는 사이트 언어가 아니라 브라우저 언어를 따른다.
+         한/영/중을 직접 관리하는 사이트라 검증과 안내를 우리가 맡는다.
+         type="email"은 모바일 키보드 때문에 그대로 둔다. -->
+    <form id="authForm" novalidate>
       ${authMode==='signup' ? `
         <div class="auth-field">
           <label>${t('authNameLabel') || '손주 이름'}</label>
@@ -1661,8 +1778,8 @@ function renderAuth(intent){
         </div>
       ` : ''}
       <div class="auth-field">
-        <label>${t('authIdLabel') || '이메일 또는 전화번호'}</label>
-        <input type="text" id="authId" placeholder="${t('authIdPh') || 'example@mail.com 또는 010-1234-5678'}" required>
+        <label>${t('authIdLabel') || '이메일'}</label>
+        <input type="email" id="authId" placeholder="${t('authIdPh') || 'example@mail.com'}" required>
       </div>
       <div class="auth-field">
         <label>${t('authPwLabel') || '비밀번호'}</label>
@@ -1680,61 +1797,106 @@ function renderAuth(intent){
   `;
   document.getElementById('tabSignup').addEventListener('click', () => { authMode='signup'; renderAuth(intent); });
   document.getElementById('tabLogin').addEventListener('click', () => { authMode='login'; renderAuth(intent); });
-  document.getElementById('authForm').addEventListener('submit', (e) => {
+  document.getElementById('authForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const errEl = document.getElementById('authError');
+    const submitBtn = e.target.querySelector('.auth-submit-btn');
     const idVal = document.getElementById('authId').value.trim();
     errEl.textContent = '';
 
-    if(!isEmailOrPhone(idVal)){
-      errEl.textContent = t('authErrFormat') || '이메일 주소 또는 전화번호 형식으로 입력해주세요.';
+    if(!isEmail(idVal)){
+      errEl.textContent = t('authErrFormat') || '이메일 주소 형식으로 입력해주세요.';
       return;
     }
     const pwVal = document.getElementById('authPw').value;
-    // 백엔드가 없어 실제 인증 서버는 없지만, 아무 값이나 통과되지 않도록
-    // store.accounts(로컬 저장)에 등록된 계정과만 매칭시킨다.
-    if(authMode === 'signup'){
-      const pw2 = document.getElementById('authPw2').value;
-      if(pwVal !== pw2){
-        errEl.textContent = t('authErrPwMismatch') || '비밀번호가 서로 달라요. 다시 확인해주세요.';
-        return;
-      }
-      if(store.accounts.some(a => a.id === idVal)){
-        errEl.textContent = t('authErrDupe') || '이미 등록된 계정이에요. "손주 로그인" 탭에서 로그인해주세요.';
-        return;
-      }
-      const name = document.getElementById('authName').value.trim();
-      store.accounts.push({ id: idVal, pw: pwVal, name });
-      renderAuthWelcome(name);
-    } else {
-      const account = store.accounts.find(a => a.id === idVal);
-      if(!account){
-        errEl.textContent = t('authErrNotFound') || '등록되지 않은 계정이에요. "손주 등록" 탭에서 먼저 등록해주세요.';
-        return;
-      }
-      if(account.pw !== pwVal){
-        errEl.textContent = t('authErrWrongPw') || '비밀번호가 일치하지 않아요.';
-        return;
-      }
-      renderAuthWelcome(account.name);
+    // novalidate로 브라우저 기본 검증을 껐으므로 빈 값도 여기서 직접 막는다
+    if(!pwVal){
+      errEl.textContent = t('authErrPwEmpty') || '비밀번호를 입력해주세요.';
+      return;
     }
+    if(authMode === 'signup' && !document.getElementById('authName').value.trim()){
+      errEl.textContent = t('authErrNameEmpty') || '어떻게 불러드릴지 이름을 입력해주세요.';
+      return;
+    }
+
+    if(!sb){
+      errEl.textContent = t('authErrOffline') || '지금은 로그인 서버에 연결할 수 없어요. 잠시 후 다시 시도해주세요.';
+      return;
+    }
+
+    // 비밀번호는 Supabase로 바로 넘긴다 — 이 코드에 저장하거나 비교하는 곳은 없다.
+    let name = currentUserName;
+    submitBtn.disabled = true;
+    try{
+      if(authMode === 'signup'){
+        const pw2 = document.getElementById('authPw2').value;
+        if(pwVal !== pw2){
+          errEl.textContent = t('authErrPwMismatch') || '비밀번호가 서로 달라요. 다시 확인해주세요.';
+          return;
+        }
+        name = document.getElementById('authName').value.trim();
+        const { data, error } = await sb.auth.signUp({
+          email: idVal,
+          password: pwVal,
+          options:{ data:{ name } },
+        });
+        if(error){ errEl.textContent = authErrorMessage(error); return; }
+        // 이메일 확인이 켜져 있으면 세션 없이 사용자만 돌아온다 → 요구사항(즉시 로그인)이 깨진 상태
+        if(!data.session){
+          errEl.textContent = t('authErrNeedConfirm') || '가입 확인 메일을 보냈어요. 메일함에서 인증한 뒤 로그인해주세요.';
+          return;
+        }
+      } else {
+        const { data, error } = await sb.auth.signInWithPassword({ email: idVal, password: pwVal });
+        if(error){ errEl.textContent = authErrorMessage(error); return; }
+        name = (data.user && data.user.user_metadata && data.user.user_metadata.name) || '';
+      }
+    }catch(err){
+      errEl.textContent = t('authErrNetwork') || '연결에 실패했어요. 잠시 후 다시 시도해주세요.';
+      return;
+    }finally{
+      submitBtn.disabled = false;
+    }
+    // 여기 도달했으면 세션이 생겼다. onAuthStateChange가 상태·재렌더를 처리하므로
+    // 이 함수는 환영 화면만 띄운다.
+    renderAuthWelcome(name);
   });
 }
 
+// Supabase의 영문 오류를 그대로 보여주지 않고 안내 문구로 바꾼다.
+function authErrorMessage(error){
+  const raw = (error && error.message) || '';
+  const m = raw.toLowerCase();
+  if(m.includes('invalid login credentials'))
+    return t('authErrWrongPw') || '이메일 또는 비밀번호가 올바르지 않아요.';
+  if(m.includes('already registered') || m.includes('already been registered') || m.includes('user already'))
+    return t('authErrDupe') || '이미 가입된 이메일이에요. "손주 로그인" 탭에서 로그인해주세요.';
+  if(m.includes('password should be at least') || m.includes('password is too short'))
+    return t('authErrPwShort') || '비밀번호는 6자 이상으로 만들어주세요.';
+  if(m.includes('email not confirmed'))
+    return t('authErrNotConfirmed') || '아직 메일 인증이 끝나지 않았어요. 메일함을 확인해주세요.';
+  if(m.includes('is invalid') || m.includes('invalid format'))
+    return t('authErrFormat') || '이메일 주소 형식으로 입력해주세요.';
+  if(m.includes('rate limit') || m.includes('too many'))
+    return t('authErrRate') || '요청이 많아요. 잠시 후 다시 시도해주세요.';
+  return t('authErrGeneric') || '처리에 실패했어요. 잠시 후 다시 시도해주세요.';
+}
+
+// 로그인은 Supabase 이메일 방식만 쓰므로 전화번호를 받지 않는다
+// (전화번호 로그인은 유료 SMS 연동이 따로 필요하다).
+function isEmail(v){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+}
+
+// 문의 폼은 로그인과 무관하게 "연락 받을 수단"을 받는 곳이라 전화번호도 그대로 허용한다.
 function isEmailOrPhone(v){
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
   const phoneOk = /^0\d{1,2}-?\d{3,4}-?\d{4}$/.test(v.replace(/\s/g, ''));
-  return emailOk || phoneOk;
+  return isEmail(v) || phoneOk;
 }
 
 function renderAuthWelcome(name){
-  isLoggedIn = true;
-  // 로그인 모드에는 이름 입력칸이 없으므로, 저장돼 있던 이름을 지우지 않는다
-  currentUserName = name || currentUserName || '';
-  updateHeaderAuthUI();
-  saveState();
-  renderCards();
-  renderReviews();
+  // 로그인 상태 반영과 재렌더는 syncAuthFromSession()이 onAuthStateChange를 통해 처리한다.
+  // 여기서는 환영 화면만 그린다.
   const label = currentLang === 'ko' ? (name ? `${name} 손주님` : '손주님') : (name || t('grandchildDefaultName') || 'Grandchild');
   authBody.innerHTML = `
     <div class="auth-welcome">
