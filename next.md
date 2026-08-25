@@ -275,10 +275,58 @@ node dev-server.js                 # → http://localhost:3000
 `file://`: `.map-fallback` 안내 표시 + 콘솔에 원인 안내, 예외 0건.
 `config.js` 제거 시: 예외 없이 지도만 비고 카드·필터·모달 정상.
 
+## 2026-08-25 (4) 세션: AI 리뷰 분석 신설 + 접근성(포커스 표시) 보완
+
+next.md 항목 1을 실제로 구현했다. **다만 next.md의 "다음에 진행할 것" 중 Esc 키·리뷰/문의 폼
+이탈 확인·검색 ★null 세 항목은 이번 세션에 확인해보니 이미 `81251c3`("빠른 수정 4건") 커밋에서
+전부 끝나 있었다** — next.md가 그 커밋 이후 갱신이 안 돼 완료된 항목이 계속 할 일로 남아 있었을
+뿐이니, 다음에 또 "할 일"로 나오면 무시할 것.
+
+- **`api/review-analysis.js` 신규** — 사용자가 예전에 만든 리뷰 분석 크롬 확장(`reviewzip`,
+  쿠팡·네이버 리뷰를 Gemini로 감성·요약·키워드 분석)에서 Gemini 호출 패턴만 뽑아 썼다. 그 확장은
+  리뷰 수백 건을 map-reduce로 배치 분석하는 구조인데, 이 사이트는 가게당 리뷰가 최대 5건(구글)뿐이라
+  배치·키워드 그래프(엣지)·모델 자동탐색은 다 버리고 **단일 `generateContent` 호출**로 줄였다.
+  `google-reviews.js`와 같은 관례(서버 env 없으면 500, try/catch로 502) 그대로 따름.
+  응답 스키마: `{summary: string, keywords: [{label, sentiment}]}` (최대 6개).
+- **`script.js`** — `loadGoogleReviews(r)`가 성공하면(`data.found`) 그 리뷰 텍스트로
+  `loadReviewAnalysis(r, data)`를 호출해 `/api/review-analysis`에 POST. 결과는
+  `store.reviewAnalysis[가게이름]`에 `store.googleReviews`와 같은 캐시 모양으로 저장.
+  실패/키없음(`!data.found`)이면 `#aiSummaryBody`를 그냥 비워둔다 — 지도(config.js 없음)·구글
+  리뷰(CDN 막힘)와 같은 "조용히 디그레이드" 관례. 렌더는 `renderStubDetail`/`renderFullDetail`
+  둘 다 이미 부르는 `renderGoogleReviewShell()` 안에 `#aiSummaryBody`를 심어서 자동으로 같이 뜬다.
+- **`dev-server.js`** — 기존 API는 전부 GET+`req.query`였는데 이 엔드포인트는 리뷰 텍스트를
+  담느라 POST+JSON body가 필요했다. Vercel은 `req.body`를 자동 파싱해주지만 로컬 shim엔 없어서
+  `readJsonBody()`를 추가했다(Vercel 실제 동작 재현, 기존 두 핸들러엔 영향 없음).
+  실제 Vercel 배포에서는 그대로 붙여넣기만 하면 되므로 배포 코드는 안 건드렸다.
+  i18n: `aiSummaryTitle` en/zh 사전에 추가(한국어는 기존 관례대로 `t() || '기본값'` 폴백).
+- **막힌 지점 — `GEMINI_API_KEY`가 아직 없다.** https://aistudio.google.com 에서 무료 발급
+  가능. 받은 뒤 `.env.local`에 한 줄 추가 + Vercel 프로젝트 환경변수에도 등록해야 배포본에서 동작.
+  **키 없이도 사이트는 안 깨진다** — 로컬 헤드리스 크롬으로 확인(아래).
+- **(발견, 이번 범위 밖) `GOOGLE_PLACES_API_KEY`가 지금 리퍼러 제한에 막혀 있다** —
+  직접 호출해보니 `403 API_KEY_HTTP_REFERRER_BLOCKED`(`referer <empty>`). 이 키는 서버(Vercel
+  서버리스 함수)에서만 쓰는데 서버 요청엔 Referer 헤더가 아예 없어서, 리퍼러 제한이 걸리면 무조건
+  막힌다 — Maps JS 키와 반대로 **이 키는 리퍼러 제한을 걸면 안 된다**(대신 API 제한만 걸 것).
+  로컬에서 `google-reviews`가 502만 뜨는 것도 원인이 이거였다(내 변경과 무관, 기존 문제).
+  Cloud Console에서 이 키의 애플리케이션 제한을 "없음" 또는 IP 기반으로 바꿔야 복구된다.
+- **디자인 휴리스틱 보완** — `design.md` 5장(호버 마이크로인터랙션)은 잘 지켜지고 있었는데
+  `:focus-visible`은 최근에 추가한 `.overlay-close` 하나뿐이었고, 나머지 버튼·입력창은
+  `outline:none`으로 기본 포커스 링까지 꺼져 있어 키보드 탭 이동 시 위치를 전혀 알 수 없었다.
+  `style.css` 상단에 `a/button/input/textarea/select/[tabindex]`용 `:focus-visible` 규칙
+  하나를 전역 추가(슬레이트 아웃라인, 마우스 클릭엔 안 뜸) — 기존 관례를 일반화한 최소 변경.
+  색상 쪽은 `style.css` 전체를 훑어봤지만 웜톤(주황/갈색/노랑) 위반은 없었다.
+- **검증** — `node dev-server.js` + 헤드리스 Chrome CDP: 리뷰 없는 가게(AI 섹션 조용히 빔),
+  좌표 있는 실제 가게 클릭(구글 리뷰 API가 위 403 문제로 `found:false` → AI 섹션도 정상적으로 빔),
+  `renderReviewAnalysisContent()`를 가짜 데이터로 직접 호출해 카드·칩 렌더링과 스타일 확인(스크린샷),
+  콘솔 예외 0건. **Gemini 실제 응답 품질은 키가 생긴 뒤 별도 확인 필요.**
+
 ## 다음에 진행할 것
 
 ### 코드 작업
-1. **AI 리뷰 분석 기능 구체화** — 아직 요구사항 미정. 담기 작업과 독립적이다.
+1. ~~**AI 리뷰 분석 기능 구체화**~~ — 2026-08-25 (4)에서 1차 구현 완료(위 참고). 남은 건
+   `GEMINI_API_KEY` 발급/등록과, 키가 생긴 뒤 실제 요약 품질 확인뿐.
+   자체 작성 리뷰(`store.reviews`)까지 분석 대상에 합칠지는 아직 미정 — 지금은 구글 리뷰만 쓴다.
+1b. **`GOOGLE_PLACES_API_KEY` 리퍼러 제한 해제** — 위 발견 사항. Cloud Console에서 이 키의
+   애플리케이션 제한을 없음/IP 기반으로 바꿔야 구글 리뷰·AI 요약이 실제로 동작한다.
 2. **리뷰 · 손주 식권 예약도 서버로** — 저장목록과 완전히 같은 패턴을 반복하면 된다
    (`reviews(user_id, restaurant_id, …)`, `pass_orders(user_id, …)` + RLS `auth.uid() = user_id`).
    `store.reviews` / `store.passOrders`가 그 자리다.
@@ -291,16 +339,13 @@ node dev-server.js                 # → http://localhost:3000
    지금은 `google.maps.Marker`라 hover는 `mouseover`/`mouseout`에서 `setIcon()`으로 `scale`을
    키웠다 되돌리면 된다(`renderMarkers()` 안, 몇 줄). 지도 안 안내 배지는 `.map-wrap`이
    이미 `position:relative`라 쉽다.
-5. **팝업 닫기 후속 (작아서 언제든 가능)**
-   - **Esc 키로 닫기** — 지금은 검색 오버레이만 된다(`handleSearchKey`). 나머지 15개는 키보드로 못 닫는다.
-     `document`에 keydown 하나를 걸어 "가장 위에 떠 있는 팝업 하나만" 닫으면 된다(10줄 남짓).
-     설문·게임은 `requestCloseX()`를 타야 확인창 규칙이 유지된다.
-   - **리뷰 작성 폼·문의 폼에도 이탈 확인** — 입력하던 글이 날아가는 건 설문과 같은 성격인데,
-     이번엔 지시받은 설문·게임에만 적용했다. `confirmDiscard()`를 그대로 쓰면 각각 한 줄이다.
-6. **알려진 잔여 버그 2건**
-   - 헤더 통합검색 드롭다운이 `★ ${r.rating}`을 조건 없이 출력해 실제 가게 9곳이 **"★ null"** 로 보인다.
-     마이페이지·설문 결과는 이번에 `ratingLabel(r)`로 고쳤지만, **검색은 "건드리지 말 것" 범위라 남겨뒀다.**
-     고칠 거면 `searchSources`의 `sub:` 한 줄만 같은 방식으로 바꾸면 된다(동작 변화 없음).
+5. ~~**팝업 닫기 후속**~~ — **이미 완료돼 있었다** (`81251c3` "빠른 수정 4건", 2026-08-25 (4)
+   세션에서 next.md 갱신 누락 확인). Esc 키(`document` keydown + `ESC_CLOSERS`, `script.js:3301`)와
+   리뷰 작성 폼·문의 폼 이탈 확인(`reviewFormDirty()`/`contactFormDirty()` → `confirmDiscard()`)
+   둘 다 코드에 있다. 다음에 또 "할 일"로 보이면 무시할 것.
+6. **알려진 잔여 버그**
+   - ~~헤더 통합검색 드롭다운의 "★ null"~~ — **이미 해결돼 있었다**(`searchSources`가
+     `ratingLabel(r)`을 씀, `script.js:3129`). 위와 같은 next.md 갱신 누락 케이스.
    - ~~`applyLanguage()`가 지도를 다시 그리지 않아 핀 라벨이 처음 언어로 남는 문제~~ — **해결됨.**
      `applyLanguage()`가 `renderMarkers()`를 부르고, 마커 툴팁이 `rName(r)`이라 언어를 따라간다.
 

@@ -79,6 +79,19 @@ function decorate(req, res, url) {
   };
 }
 
+// Vercel은 POST의 JSON 본문을 자동으로 req.body에 파싱해서 넘겨준다.
+// Node 기본 http에는 그게 없으므로, review-analysis.js 같은 POST 핸들러를 위해 여기서 흉내낸다.
+function readJsonBody(req) {
+  return new Promise((resolve) => {
+    if (req.method !== 'POST') { resolve(undefined); return; }
+    let raw = '';
+    req.on('data', (chunk) => { raw += chunk; });
+    req.on('end', () => {
+      try { resolve(JSON.parse(raw)); } catch (e) { resolve({}); }
+    });
+  });
+}
+
 async function handleApi(req, res, url) {
   const name = url.pathname.replace(/^\/api\//, '');
 
@@ -97,6 +110,7 @@ async function handleApi(req, res, url) {
   }
 
   decorate(req, res, url);
+  req.body = await readJsonBody(req);
 
   try {
     // 매 요청마다 캐시를 비워서 핸들러를 고치면 서버 재시작 없이 반영되게 한다.

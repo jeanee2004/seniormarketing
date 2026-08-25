@@ -108,7 +108,7 @@ const sb = (typeof supabase !== 'undefined' && supabase.createClient)
 // B가 A의 저장목록을 보게 된다. 이 모양은 나중에 옮겨갈 서버 테이블
 // saved_restaurants(user_id, restaurant_name, …)와 같아서 이전도 쉬워진다.
 const STORE_KEY = 'bmw:v1';
-let store = { auth:{isLoggedIn:false, name:'', userId:''}, marks:{}, reviews:[], passOrders:[], reviewLikes:{}, myLikedReviews:[], googleReviews:{}, lang:'ko' };
+let store = { auth:{isLoggedIn:false, name:'', userId:''}, marks:{}, reviews:[], passOrders:[], reviewLikes:{}, myLikedReviews:[], googleReviews:{}, reviewAnalysis:{}, lang:'ko' };
 
 function loadState(){
   try{
@@ -129,6 +129,7 @@ function loadState(){
       reviewLikes: parsed.reviewLikes || {},
       myLikedReviews: Array.isArray(parsed.myLikedReviews) ? parsed.myLikedReviews : [],
       googleReviews: parsed.googleReviews || {},
+      reviewAnalysis: parsed.reviewAnalysis || {},
       lang: parsed.lang || 'ko',
     };
     // 옛 버전의 parsed.accounts(평문 비밀번호가 들어있던 배열)는 일부러 읽지 않는다.
@@ -380,6 +381,7 @@ const i18n = { en: {
   detailStubBodyPartial:"Hours, menu, and ingredient origin",
   closeBtn:"Close",
   googleReviewTitle:"Google Reviews", googleReviewLoading:"Loading reviews...", googleReviewError:"Couldn't load reviews. Please try again shortly.",
+  aiSummaryTitle:"AI Review Summary",
   googleReviewNotFound:"😢 We couldn't find this restaurant on Google Maps.", googleReviewNone:"No reviews yet.",
   googleReviewLink:"See all reviews on Google Maps →", googleReviewAnon:"Anonymous",
   liveSearchLoading:"Searching...", liveSearchEmpty:"No results found.", liveSearchError:"Search failed. Please try again shortly.",
@@ -609,6 +611,7 @@ const i18n = { en: {
   detailStubBodyPartial:"营业时间、菜单构成和食材产地",
   closeBtn:"关闭",
   googleReviewTitle:"谷歌评论", googleReviewLoading:"正在加载评论...", googleReviewError:"无法加载评论，请稍后再试。",
+  aiSummaryTitle:"AI评论摘要",
   googleReviewNotFound:"😢 在谷歌地图上找不到这家店。", googleReviewNone:"暂无评论。",
   googleReviewLink:"在谷歌地图查看全部评论 →", googleReviewAnon:"匿名",
   liveSearchLoading:"搜索中...", liveSearchEmpty:"没有找到结果。", liveSearchError:"搜索失败，请稍后再试。",
@@ -1562,6 +1565,7 @@ function renderFullDetail(r){
 function renderGoogleReviewShell(){
   return `
     <div class="detail-google-section">
+      <div id="aiSummaryBody" class="ai-summary-body"></div>
       <h4 class="detail-menu-title">${t('googleReviewTitle') || '구글 리뷰'}</h4>
       <div id="googleReviewBody" class="google-review-body">
         <div class="google-review-loading">${t('googleReviewLoading') || '리뷰를 불러오는 중...'}</div>
@@ -1573,7 +1577,7 @@ async function loadGoogleReviews(r){
   const box = document.getElementById('googleReviewBody');
   if(!box) return;
   const cached = store.googleReviews[r.name];
-  if(cached){ box.innerHTML = renderGoogleReviewContent(cached.data); return; }
+  if(cached){ box.innerHTML = renderGoogleReviewContent(cached.data); loadReviewAnalysis(r, cached.data); return; }
   try{
     const url = `/api/google-reviews?name=${encodeURIComponent(r.name)}&lat=${r.lat}&lng=${r.lng}`;
     const res = await fetch(url);
@@ -1583,11 +1587,53 @@ async function loadGoogleReviews(r){
     box.innerHTML = renderGoogleReviewContent(data);
     store.googleReviews[r.name] = { data, fetchedAt: Date.now() };
     saveState();
+    loadReviewAnalysis(r, data);
   }catch(e){
     if(document.getElementById('googleReviewBody') === box){
       box.innerHTML = `<div class="google-review-error">${t('googleReviewError') || '리뷰를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.'}</div>`;
     }
   }
+}
+
+// ---- AI 리뷰 요약 (/api/review-analysis 경유, 구글 리뷰가 있을 때만 시도) ----
+// GEMINI_API_KEY가 서버에 없으면 500이 오는데, 그 경우 아무것도 그리지 않고 조용히 건너뛴다 —
+// 지도(config.js 없음)·구글 리뷰(CDN 막힘)와 같은 관례를 따른다.
+async function loadReviewAnalysis(r, googleData){
+  const reviews = (googleData && googleData.found && googleData.reviews) || [];
+  if(reviews.length === 0) return;
+  const box = document.getElementById('aiSummaryBody');
+  if(!box) return;
+
+  const cached = store.reviewAnalysis[r.name];
+  if(cached){ box.innerHTML = renderReviewAnalysisContent(cached.data); return; }
+
+  try{
+    const res = await fetch('/api/review-analysis', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: r.name, reviews: reviews.map(rv => ({ text: rv.text, rating: rv.rating })) }),
+    });
+    const data = await res.json();
+    if(document.getElementById('aiSummaryBody') !== box) return;
+    if(!data.found) return; // 키 없음/실패 — 섹션을 그냥 비워둔다
+    box.innerHTML = renderReviewAnalysisContent(data);
+    store.reviewAnalysis[r.name] = { data, fetchedAt: Date.now() };
+    saveState();
+  }catch(e){
+    // 조용히 건너뛴다 — AI 요약은 부가 기능이라 실패해도 상세 모달의 나머지는 그대로 동작해야 한다
+  }
+}
+
+function renderReviewAnalysisContent(data){
+  const chips = (data.keywords || []).map(k => `
+    <span class="ai-summary-chip ${k.sentiment === 'NEGATIVE' ? 'is-negative' : 'is-positive'}">${escapeHtml(k.label)}</span>
+  `).join('');
+  return `
+    <div class="ai-summary-card">
+      <div class="ai-summary-head">🤖 ${t('aiSummaryTitle') || 'AI 리뷰 요약'}</div>
+      <p class="ai-summary-text">${escapeHtml(data.summary)}</p>
+      ${chips ? `<div class="ai-summary-chips">${chips}</div>` : ''}
+    </div>`;
 }
 
 function renderGoogleReviewContent(data){
