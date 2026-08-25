@@ -323,6 +323,7 @@ const i18n = { en: {
   mapEyebrow:"MAP", mapTitle:"Jochiwon Mini Map",
   mapBody:"Locations of restaurants we've actually confirmed. Tap a pin to see details. The rest will be added one by one after the September field survey.",
   mapCampusLabel:"🏫 Korea University Sejong Campus",
+  mapAuthFail:"Couldn't load the map.",
   eatLocalEyebrow:"EAT LOCAL", eatLocalTitle:"What to eat today?",
   realGridTitle:"📍 Confirmed real restaurants · Live Google reviews",
   realGridSub:"Restaurants actually registered on Kakao/Google. Click one to see real ratings and reviews instantly.",
@@ -581,6 +582,7 @@ const i18n = { en: {
   mapEyebrow:"地图", mapTitle:"调治院迷你地图",
   mapBody:"这里是已确认的实际店铺位置。点击图钉可跳转到详情页。其余店铺将在9月实地调查后陆续添加。",
   mapCampusLabel:"🏫 高丽大学世宗校区",
+  mapAuthFail:"无法加载地图。",
   eatLocalEyebrow:"本地美食", eatLocalTitle:"今天吃什么？",
   realGridTitle:"📍 已确认的实际店铺 · 谷歌实时评论",
   realGridSub:"在Kakao/谷歌上真实登记的店铺。点击即可立即查看真实评分和评论。",
@@ -1648,6 +1650,24 @@ async function initMap(){
   renderMarkers();
 }
 window.initMap = initMap;
+
+// 구글이 키를 거부하면(리퍼러 불일치 등) 콘솔 에러만 남기고 지도 자리를 빈 채로 둔다.
+// 화면만 봐서는 원인을 알 수 없어 "지도가 왜 안 뜨지"로 시간을 버리게 되므로,
+// 방문자에게는 담백한 안내를, 개발자에게는 원인과 해결책을 콘솔에 남긴다.
+// file://로 열면 Referer 헤더 자체가 없어서 여기로 들어온다 — 반드시 dev-server를 거쳐야 한다.
+window.gm_authFailure = function(){
+  // 인자를 여러 개 넘겨 줄을 나눈다 — 문자열 안에 이스케이프를 넣지 않는 편이 안전하다.
+  console.error('[지도] 구글이 API 키를 거부했습니다 (RefererNotAllowedMapError).');
+  console.error('  · file://로 열면 Referer가 없어 항상 거부됩니다. node dev-server.js 를 띄우고 http://localhost:3000 으로 여세요.');
+  console.error('  · 다른 주소에서 띄운다면 Cloud Console의 HTTP 리퍼러 허용 목록에 그 주소를 추가하세요.');
+  const mapEl = document.getElementById('miniMap');
+  if(!mapEl) return;
+  mapEl.innerHTML = '';
+  const box = document.createElement('div');
+  box.className = 'map-fallback';
+  box.textContent = t('mapAuthFail') || '지도를 불러오지 못했어요.';
+  mapEl.appendChild(box);
+};
 
 // 마커는 항상 getFilteredList()의 결과를 따른다 — 카드 그리드와 같은 필터를 공유한다.
 // 지도가 아직 준비되지 않았거나(키 없음/로딩 중) 좌표가 없는 가게는 조용히 건너뛴다.

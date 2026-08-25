@@ -216,6 +216,65 @@ curl -s -H "apikey: <publishable키>" https://oqsydupzmgfgrkuibbqm.supabase.co/a
 index.html 4곳 · privacy.html 6곳 · terms.html 6곳 · script.js 14곳 = **30곳**.
 한/영/중 화면 텍스트에 잘못된 표기가 남아 있지 않은 것까지 브라우저로 확인했다.
 
+## 2026-08-25 (3) 세션: 지도를 Google Maps JS API로 + API 키를 config.js로 분리
+
+### ⚠️ 다른 PC에서 이어받을 때 제일 먼저 할 일
+
+`config.js`는 **`.gitignore` 대상이라 clone해도 없다.** 없으면 지도만 조용히 빈다(나머지 기능은 정상).
+
+```bash
+cp config.example.js config.js     # 그리고 Google_Javascript_API_key 값을 채운다
+node dev-server.js                 # → http://localhost:3000
+```
+
+**`index.html`을 직접 열면(`file://`) 지도는 절대 안 뜬다.** 키에 HTTP 리퍼러 제한이 걸려 있는데
+`file://`은 Referer 헤더 자체가 없어 구글이 `RefererNotAllowedMapError`로 거부한다.
+이건 버그가 아니라 제한이 정상 작동하는 것이다. 반드시 `dev-server`를 거쳐 `localhost:3000`으로 열 것.
+(허용 목록에 `http://localhost:3000/*`가 들어 있어서 어느 PC든 이 경로면 그대로 된다.)
+
+### 한 것
+
+- **Leaflet/OpenStreetMap → Google Maps JavaScript API로 교체.** 마커 클릭 → 상세 모달, 이모지 핀 유지.
+- **마커는 `google.maps.Marker`를 쓴다 (`AdvancedMarkerElement` 아님).** AdvancedMarker는 **Map ID를
+  필수로 요구**해서 API 키 외에 리소스를 하나 더 발급해야 한다. 레거시 Marker는 키 하나로 끝난다.
+  - 트레이드오프: `google.maps.Marker`는 2024-02부로 deprecated. 다만 콘솔 메시지 자체가
+    *"not scheduled to be discontinued"*라고 명시한다. 실제 중단 공지가 뜨면
+    **`google.maps.OverlayView`로 HTML 마커를 직접 그리면 되고, 그때도 Map ID는 필요 없다.**
+    그 경우 이번에 지운 `.map-pin` CSS(커밋 `ac4aed3` 이전)를 되살려 쓰면 된다.
+  - 핀 색은 하드코딩하지 않고 `:root`의 `--base-bg` / `--slate` 토큰을 런타임에 읽는다.
+- **마커는 `getFilteredList()` 결과를 그대로 쓴다.** `renderCards()` 끝에서 `renderMarkers()`를 부르므로
+  카테고리·검색·가격 필터가 카드 그리드와 자동으로 함께 움직인다. 별도 필터 함수를 만들지 말 것.
+- **키 분리** — 값을 담는 파일은 `config.js` **하나뿐**이다.
+  - `config.example.js`(자리표시자)만 커밋된다. `config.js`는 `.gitignore`.
+  - `script.js`는 최상단에서 `MAPS_KEY` 변수로 **한 번만** 받고, 이후 코드는 변수만 참조한다.
+  - `index.html`에는 키도, 키를 읽는 코드도 없다. `<script src="config.js">` 한 줄뿐.
+  - **Maps 로더는 `index.html`이 아니라 `script.js`에 있다.** HTML에 두면 `async` 로딩이
+    `script.js`보다 빨라 `callback=initMap`이 아직 없는 순간에 불려 죽는다.
+  - **`gmap`/`gMarkers`는 파일 최상단에 선언한다.** `renderCards()`가 지도 블록보다 먼저 실행되므로
+    아래에서 `let`으로 선언하면 첫 렌더가 TDZ ReferenceError로 죽는다.
+- **`gm_authFailure` 훅 추가** — 구글이 키를 거부하면 예전엔 지도 자리가 아무 설명 없이 비어서
+  "지도가 왜 안 뜨지"로 시간을 버렸다. 이제 방문자에게는 "지도를 불러오지 못했어요"(`.map-fallback`,
+  ko/en/zh), 개발자에게는 원인과 해결책(`file://` 문제 / 리퍼러 허용 목록)을 콘솔에 남긴다.
+
+### 키 보안 — 실측으로 확인한 것
+
+- **리퍼러 제한은 실제로 작동한다.** 가짜 외부 도메인(`--host-resolver-rules`로 생성)에서 부르면
+  `gm_authFailure` 발동 + 타일 요청 0건 + `RefererNotAllowedMapError`. **노출돼도 남이 못 쓴다.**
+- **Maps JS API 키는 원리상 숨길 수 없다.** 브라우저가 `maps.googleapis.com/...?key=...`를 직접
+  호출해야 하므로 DevTools에 그대로 보인다. 서버 환경변수로 옮겨도 똑같다.
+  `config.js` 분리가 막는 것은 **저장소 유출**이고, 노출 자체의 방어선은 **리퍼러 제한**이다.
+- 남은 것: **API 제한이 키 레벨이 아니라 프로젝트 레벨**이다. 지금 다른 구글 API가 막히는 건
+  프로젝트에 그 API들이 안 켜져 있어서일 뿐이라, 나중에 Places 등을 켜면 이 키도 쓸 수 있게 된다.
+  Cloud Console에서 `키 제한 → Maps JavaScript API`만 체크해두면 완전해진다. (지금 뚫린 건 아님)
+- 구글 리뷰 기능은 `.env.local`의 **별도 키**(`GOOGLE_PLACES_API_KEY`)를 쓰므로 위 제한과 무관하다.
+
+### 검증 (헤드리스 Chrome + CDP)
+
+`localhost:3000`: 타일 렌더, 마커 9개, 이모지 핀 정상, 필터 한식→3/전체→9, 핀 클릭→상세 모달,
+언어 전환 시 툴팁 영문 전환, 예외 0건, Map ID 관련 경고 0건.
+`file://`: `.map-fallback` 안내 표시 + 콘솔에 원인 안내, 예외 0건.
+`config.js` 제거 시: 예외 없이 지도만 비고 카드·필터·모달 정상.
+
 ## 다음에 진행할 것
 
 ### 코드 작업
@@ -228,9 +287,10 @@ index.html 4곳 · privacy.html 6곳 · terms.html 6곳 · script.js 14곳 = **3
    `style.css`의 `.hamburger{display:none}`은 대응 HTML이 없는 빈 껍데기다.
    860px 이하에서는 검색창이 숨고 아이콘이 이미 빽빽해서 **헤더 레이아웃을 다시 짜야 한다**.
    앵커 대상 id는 이번에 다 붙여뒀으므로 그 부분은 준비 완료.
-4. **지도 핀 hover 반응** (P2) — 안내 문구는 이미 있다. 남은 건 hover뿐인데 기본 Leaflet 마커라
-   `L.divIcon`으로 교체해야 하고 앵커·팝업 위치를 다시 잡아야 한다.
-   지도 안 안내 배지는 `.map-wrap`이 이미 `position:relative`라 쉽다.
+4. **지도 핀 hover 반응** (P2) — Leaflet은 걷어냈으므로 `L.divIcon` 이야기는 무효다.
+   지금은 `google.maps.Marker`라 hover는 `mouseover`/`mouseout`에서 `setIcon()`으로 `scale`을
+   키웠다 되돌리면 된다(`renderMarkers()` 안, 몇 줄). 지도 안 안내 배지는 `.map-wrap`이
+   이미 `position:relative`라 쉽다.
 5. **팝업 닫기 후속 (작아서 언제든 가능)**
    - **Esc 키로 닫기** — 지금은 검색 오버레이만 된다(`handleSearchKey`). 나머지 15개는 키보드로 못 닫는다.
      `document`에 keydown 하나를 걸어 "가장 위에 떠 있는 팝업 하나만" 닫으면 된다(10줄 남짓).
@@ -241,8 +301,8 @@ index.html 4곳 · privacy.html 6곳 · terms.html 6곳 · script.js 14곳 = **3
    - 헤더 통합검색 드롭다운이 `★ ${r.rating}`을 조건 없이 출력해 실제 가게 9곳이 **"★ null"** 로 보인다.
      마이페이지·설문 결과는 이번에 `ratingLabel(r)`로 고쳤지만, **검색은 "건드리지 말 것" 범위라 남겨뒀다.**
      고칠 거면 `searchSources`의 `sub:` 한 줄만 같은 방식으로 바꾸면 된다(동작 변화 없음).
-   - `applyLanguage()`가 `renderMiniMap()`을 다시 부르지 않아서, 언어를 바꿔도 지도 핀 팝업 라벨은
-     처음 언어 그대로 남는다.
+   - ~~`applyLanguage()`가 지도를 다시 그리지 않아 핀 라벨이 처음 언어로 남는 문제~~ — **해결됨.**
+     `applyLanguage()`가 `renderMarkers()`를 부르고, 마커 툴팁이 `rName(r)`이라 언어를 따라간다.
 
 ### 코드 작업 아님
 7. **지도 고도화** — 건물별 위경도 데이터 수집(답사/수작업) 후 Naver Maps API 키 발급 시

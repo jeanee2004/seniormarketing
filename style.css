@@ -299,6 +299,11 @@ header{
 @media(max-width:720px){
   .map-canvas{height:320px;}
 }
+/* 구글이 키를 거부했을 때(gm_authFailure) 빈 지도 자리에 들어가는 안내. */
+.map-fallback{
+  height:100%;display:flex;align-items:center;justify-content:center;
+  padding:24px;text-align:center;color:var(--slate);opacity:.75;
+}
 
 /* ===== Category + cards ===== */
 .cat-bar{
