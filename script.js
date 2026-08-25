@@ -1,8 +1,7 @@
 // ---- 지도 설정 (실제 키는 .gitignore된 config.js에만 있다) ----
 // config.js가 없거나 값이 비어 있으면 빈 문자열이 되고, 지도만 조용히 비활성화된다.
 // 이 두 변수 밖에서는 키를 직접 참조하지 않는다.
-const MAPS_KEY    = (window.APP_CONFIG && window.APP_CONFIG.Google_Javascript_API_key) || '';
-const MAPS_MAP_ID = (window.APP_CONFIG && window.APP_CONFIG.GOOGLE_MAP_ID) || '';
+const MAPS_KEY = (window.APP_CONFIG && window.APP_CONFIG.Google_Javascript_API_key) || '';
 
 // 지도 인스턴스와 마커 목록. renderCards()가 파일 아래쪽 지도 블록보다 먼저 돌기 때문에
 // 여기서 선언해야 한다 — 아래에서 선언하면 첫 렌더가 TDZ ReferenceError로 죽는다.
@@ -1613,8 +1612,10 @@ function renderGoogleReviewContent(data){
   `;
 }
 
-// ================= 미니 지도 (Google Maps JavaScript API + AdvancedMarker) =================
-// 키와 Map ID는 config.js(.gitignore)에서만 오고, 여기서는 MAPS_KEY / MAPS_MAP_ID 변수로만 쓴다.
+// ================= 미니 지도 (Google Maps JavaScript API) =================
+// 키는 config.js(.gitignore)에서만 오고, 여기서는 MAPS_KEY 변수로만 쓴다.
+// 마커는 AdvancedMarkerElement가 아니라 google.maps.Marker를 쓴다 — AdvancedMarker는 Map ID를
+// 필수로 요구해서 키 외에 리소스를 하나 더 발급해야 하기 때문이다. 이쪽은 키 하나로 끝난다.
 const CAMPUS_CENTER = { lat: 36.6109529892437, lng: 127.286987211083 }; // 고려대학교 세종캠퍼스
 
 // Maps 스크립트를 여기서 주입한다. index.html에 두면 async 로딩이 script.js보다 빨라
@@ -1628,7 +1629,7 @@ function loadGoogleMaps(){
   }
   const s = document.createElement('script');
   s.src = `https://maps.googleapis.com/maps/api/js?key=${MAPS_KEY}`
-        + `&callback=initMap&v=weekly&loading=async&libraries=marker&language=ko&region=KR`;
+        + `&callback=initMap&v=weekly&loading=async&language=ko&region=KR`;
   s.async = true;
   document.head.appendChild(s);
 }
@@ -1641,9 +1642,6 @@ async function initMap(){
   gmap = new Map(mapEl, {
     center: CAMPUS_CENTER,
     zoom: 16,
-    // AdvancedMarkerElement는 Map ID를 요구한다. 아직 발급 전이라 개발용 DEMO_MAP_ID로 대체한다
-    // (콘솔 경고가 뜨고 운영에는 쓸 수 없다 — config.js의 GOOGLE_MAP_ID를 채우면 사라진다).
-    mapId: MAPS_MAP_ID || 'DEMO_MAP_ID',
     mapTypeControl: false,
     streetViewControl: false,
   });
@@ -1653,28 +1651,33 @@ window.initMap = initMap;
 
 // 마커는 항상 getFilteredList()의 결과를 따른다 — 카드 그리드와 같은 필터를 공유한다.
 // 지도가 아직 준비되지 않았거나(키 없음/로딩 중) 좌표가 없는 가게는 조용히 건너뛴다.
-async function renderMarkers(){
+function renderMarkers(){
   if(!gmap) return;
-  const { AdvancedMarkerElement } = await google.maps.importLibrary('marker');
 
-  gMarkers.forEach(m => { m.map = null; });
+  // 핀 색은 하드코딩하지 않고 :root의 디자인 토큰을 그대로 읽어 쓴다.
+  const css  = getComputedStyle(document.documentElement);
+  const fill = css.getPropertyValue('--base-bg').trim() || '#F7F4EE';
+  const line = css.getPropertyValue('--slate').trim()   || '#48607A';
+
+  gMarkers.forEach(m => m.setMap(null));
   gMarkers = [];
 
   getFilteredList().filter(r => r.lat && r.lng).forEach(r => {
     const idx = restaurants.indexOf(r);
-    const pin = document.createElement('div');
-    pin.className = 'map-pin';
-    pin.textContent = r.emoji;
-
-    const marker = new AdvancedMarkerElement({
+    const marker = new google.maps.Marker({
       map: gmap,
       position: { lat: r.lat, lng: r.lng },
       title: rName(r),
-      content: pin,
-      gmpClickable: true,
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 15,
+        fillColor: fill, fillOpacity: 1,
+        strokeColor: line, strokeWeight: 2,
+      },
+      label: { text: r.emoji, fontSize: '15px' },
+      optimized: false,   // 이모지 라벨이 캔버스 합성에서 깨지지 않게 마커마다 개별 DOM으로 그린다
     });
-    // AdvancedMarkerElement는 일반 'click'이 아니라 'gmp-click'을 쓴다('click'은 deprecated).
-    marker.addListener('gmp-click', () => openDetail(idx));
+    marker.addListener('click', () => openDetail(idx));
     gMarkers.push(marker);
   });
 }
