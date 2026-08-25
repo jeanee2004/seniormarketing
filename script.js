@@ -1,3 +1,14 @@
+// ---- 지도 설정 (실제 키는 .gitignore된 config.js에만 있다) ----
+// config.js가 없거나 값이 비어 있으면 빈 문자열이 되고, 지도만 조용히 비활성화된다.
+// 이 두 변수 밖에서는 키를 직접 참조하지 않는다.
+const MAPS_KEY    = (window.APP_CONFIG && window.APP_CONFIG.Google_Javascript_API_key) || '';
+const MAPS_MAP_ID = (window.APP_CONFIG && window.APP_CONFIG.GOOGLE_MAP_ID) || '';
+
+// 지도 인스턴스와 마커 목록. renderCards()가 파일 아래쪽 지도 블록보다 먼저 돌기 때문에
+// 여기서 선언해야 한다 — 아래에서 선언하면 첫 렌더가 TDZ ReferenceError로 죽는다.
+let gmap = null;
+let gMarkers = [];
+
 // ---- Dummy restaurant data ----
 const restaurants = [
   {id:"jochiwon-halmae-gukbap", name:"조치원 할매국밥", nameEn:"Jochiwon Grandma's Gukbap (조치원 할매국밥)", nameZh:"调治院奶奶汤饭 (조치원 할매국밥)", cat:"한식", emoji:"🍚", desc:"40년 전통, 진한 국물의 소문난 국밥집", descEn:"A well-known gukbap house with 40 years of tradition and rich broth", descZh:"有着40年传统、汤底浓郁的知名汤饭店", rating:4.8, reviewCount:212, price:"₩", priceValue:9000, saved:false, visited:false, detail:{
@@ -843,8 +854,8 @@ function applyLanguage(lang){
   if(typeof renderExampleCards === 'function') renderExampleCards();
   if(typeof updateHeaderAuthUI === 'function') updateHeaderAuthUI();
   if(typeof renderPassCards === 'function') renderPassCards();
-  // 지도 핀 팝업도 가게 이름을 담고 있어서 같이 다시 그려야 한다
-  if(typeof renderMiniMap === 'function') renderMiniMap();
+  // 지도 마커 툴팁도 가게 이름을 담고 있어서 같이 다시 그려야 한다
+  if(typeof renderMarkers === 'function') renderMarkers();
   store.lang = currentLang;
   saveState();
 }
@@ -991,6 +1002,9 @@ function renderCards(){
   });
 
   bindFoodCardButtons(cardGrid);
+
+  // 지도 마커도 같은 getFilteredList() 결과를 쓴다 — 카테고리·검색·가격 필터가 그대로 따라온다.
+  renderMarkers();
 }
 
 // save-toggle/visit-flow-btn 클릭 바인딩 — 그리드(container) 범위로 한정해서
@@ -1599,40 +1613,73 @@ function renderGoogleReviewContent(data){
   `;
 }
 
-// ================= 미니 지도 (OpenStreetMap 타일 + Leaflet — 구글 지도 상품 활성화 불필요) =================
-// 구글 Maps JS/Static API는 Places API와 별도로 Cloud Console에서 켜야 해서 계속 막혔다.
-// OpenStreetMap 타일은 키/사용 설정 없이 바로 쓸 수 있어 실제 지도(도로·건물)를 그대로 보여줄 수 있다.
+// ================= 미니 지도 (Google Maps JavaScript API + AdvancedMarker) =================
+// 키와 Map ID는 config.js(.gitignore)에서만 오고, 여기서는 MAPS_KEY / MAPS_MAP_ID 변수로만 쓴다.
 const CAMPUS_CENTER = { lat: 36.6109529892437, lng: 127.286987211083 }; // 고려대학교 세종캠퍼스
 
-// 언어를 바꾸면 핀 팝업 문구를 다시 만들어야 해서 이 함수를 또 부른다.
-// 그런데 같은 div에 L.map()을 두 번 부르면 "Map container is already initialized"로 죽는다.
-// 그래서 만든 인스턴스를 들고 있다가 다시 그리기 전에 걷어낸다.
-let miniMap = null;
+// Maps 스크립트를 여기서 주입한다. index.html에 두면 async 로딩이 script.js보다 빨라
+// callback=initMap이 아직 없는 순간에 불려 "initMap is not a function"으로 죽을 수 있다.
+// 키가 비어 있으면(config.js 없음/미기입) 그냥 건너뛴다 — sb === null 일 때와 같은 degrade 방식이라
+// 지도만 비고 페이지의 나머지 기능은 그대로 동작한다.
+function loadGoogleMaps(){
+  if(!MAPS_KEY){
+    console.warn('[지도] config.js에 Google_Javascript_API_key가 없어 지도를 건너뜁니다.');
+    return;
+  }
+  const s = document.createElement('script');
+  s.src = `https://maps.googleapis.com/maps/api/js?key=${MAPS_KEY}`
+        + `&callback=initMap&v=weekly&loading=async&libraries=marker&language=ko&region=KR`;
+  s.async = true;
+  document.head.appendChild(s);
+}
 
-function renderMiniMap(){
+// Maps 로더의 callback=initMap이 전역에서 찾는 이름이라 window에 그대로 노출한다.
+async function initMap(){
   const mapEl = document.getElementById('miniMap');
-  if(!mapEl || typeof L === 'undefined') return;
+  if(!mapEl) return;
+  const { Map } = await google.maps.importLibrary('maps');
+  gmap = new Map(mapEl, {
+    center: CAMPUS_CENTER,
+    zoom: 16,
+    // AdvancedMarkerElement는 Map ID를 요구한다. 아직 발급 전이라 개발용 DEMO_MAP_ID로 대체한다
+    // (콘솔 경고가 뜨고 운영에는 쓸 수 없다 — config.js의 GOOGLE_MAP_ID를 채우면 사라진다).
+    mapId: MAPS_MAP_ID || 'DEMO_MAP_ID',
+    mapTypeControl: false,
+    streetViewControl: false,
+  });
+  renderMarkers();
+}
+window.initMap = initMap;
 
-  if(miniMap){ miniMap.remove(); miniMap = null; }
+// 마커는 항상 getFilteredList()의 결과를 따른다 — 카드 그리드와 같은 필터를 공유한다.
+// 지도가 아직 준비되지 않았거나(키 없음/로딩 중) 좌표가 없는 가게는 조용히 건너뛴다.
+async function renderMarkers(){
+  if(!gmap) return;
+  const { AdvancedMarkerElement } = await google.maps.importLibrary('marker');
 
-  const map = L.map(mapEl).setView([CAMPUS_CENTER.lat, CAMPUS_CENTER.lng], 16);
-  miniMap = map;
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    maxZoom: 19,
-  }).addTo(map);
+  gMarkers.forEach(m => { m.map = null; });
+  gMarkers = [];
 
-  L.marker([CAMPUS_CENTER.lat, CAMPUS_CENTER.lng]).addTo(map).bindPopup(t('mapCampusLabel') || '🏫 고려대학교 세종캠퍼스');
-
-  restaurants.filter(r => r.liveReview).forEach(r => {
+  getFilteredList().filter(r => r.lat && r.lng).forEach(r => {
     const idx = restaurants.indexOf(r);
-    L.marker([r.lat, r.lng]).addTo(map)
-      .bindPopup(`${r.emoji} ${escapeHtml(rName(r))}`)
-      .on('click', () => openDetail(idx));
+    const pin = document.createElement('div');
+    pin.className = 'map-pin';
+    pin.textContent = r.emoji;
+
+    const marker = new AdvancedMarkerElement({
+      map: gmap,
+      position: { lat: r.lat, lng: r.lng },
+      title: rName(r),
+      content: pin,
+      gmpClickable: true,
+    });
+    // AdvancedMarkerElement는 일반 'click'이 아니라 'gmp-click'을 쓴다('click'은 deprecated).
+    marker.addListener('gmp-click', () => openDetail(idx));
+    gMarkers.push(marker);
   });
 }
 
-renderMiniMap();
+loadGoogleMaps();
 
 // ================= 실시간 가게 검색 (카카오 로컬 API 경유) =================
 const liveSearchInput = document.getElementById('liveSearchInput');

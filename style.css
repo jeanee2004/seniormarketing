@@ -295,10 +295,21 @@ header{
   border:1px solid rgba(72,96,122,0.14);box-shadow:var(--shadow);
   position:relative;
 }
-.leaflet-map{ height:420px;width:100%; }
+.map-canvas{ height:420px;width:100%; }
 @media(max-width:720px){
-  .leaflet-map{height:320px;}
+  .map-canvas{height:320px;}
 }
+/* 구글 지도 마커(AdvancedMarkerElement)의 content로 들어가는 이모지 핀.
+   기본 빨간 압정 대신 카드 그리드와 같은 가게 이모지를 쓴다. */
+.map-pin{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:19px;line-height:1;
+  background:var(--base-bg);border:2px solid var(--slate);
+  box-shadow:var(--shadow);cursor:pointer;
+  transition:transform .12s ease;
+}
+.map-pin:hover{ transform:scale(1.15); }
 
 /* ===== Category + cards ===== */
 .cat-bar{

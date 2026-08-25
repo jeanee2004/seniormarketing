@@ -9,3 +9,7 @@ node_modules
 # 로컬 실행에는 아무 영향 없음. 공개해도 될 상태가 되면 이 두 줄만 지우면 된다.
 supabase-demo.html
 디자인.md
+
+# 지도용 실제 API 키가 든 로컬 설정 파일.
+# config.example.js를 복사해서 만든다 (cp config.example.js config.js).
+config.js
