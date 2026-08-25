@@ -843,6 +843,8 @@ function applyLanguage(lang){
   if(typeof renderExampleCards === 'function') renderExampleCards();
   if(typeof updateHeaderAuthUI === 'function') updateHeaderAuthUI();
   if(typeof renderPassCards === 'function') renderPassCards();
+  // 지도 핀 팝업도 가게 이름을 담고 있어서 같이 다시 그려야 한다
+  if(typeof renderMiniMap === 'function') renderMiniMap();
   store.lang = currentLang;
   saveState();
 }
@@ -1602,11 +1604,19 @@ function renderGoogleReviewContent(data){
 // OpenStreetMap 타일은 키/사용 설정 없이 바로 쓸 수 있어 실제 지도(도로·건물)를 그대로 보여줄 수 있다.
 const CAMPUS_CENTER = { lat: 36.6109529892437, lng: 127.286987211083 }; // 고려대학교 세종캠퍼스
 
+// 언어를 바꾸면 핀 팝업 문구를 다시 만들어야 해서 이 함수를 또 부른다.
+// 그런데 같은 div에 L.map()을 두 번 부르면 "Map container is already initialized"로 죽는다.
+// 그래서 만든 인스턴스를 들고 있다가 다시 그리기 전에 걷어낸다.
+let miniMap = null;
+
 function renderMiniMap(){
   const mapEl = document.getElementById('miniMap');
   if(!mapEl || typeof L === 'undefined') return;
 
+  if(miniMap){ miniMap.remove(); miniMap = null; }
+
   const map = L.map(mapEl).setView([CAMPUS_CENTER.lat, CAMPUS_CENTER.lng], 16);
+  miniMap = map;
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     maxZoom: 19,
@@ -2318,7 +2328,19 @@ function openReviewForm(){
   reviewFormOverlay.classList.add('show');
 }
 function closeReviewForm(){ reviewFormOverlay.classList.remove('show'); }
-function closeReviewFormOnOverlay(e){ if(e.target === reviewFormOverlay) closeReviewForm(); }
+
+// 써놓은 리뷰가 날아가는 건 설문 중간에 나가는 것과 같은 성격이라 같은 확인창을 쓴다.
+// 아직 아무것도 안 썼으면 묻지 않는다(별점은 기본값 5라 "쓴 것"으로 치지 않는다).
+// 제출이 끝난 완료 화면에는 #reviewText가 없으므로 자동으로 그냥 닫힌다.
+function reviewFormDirty(){
+  const ta = document.getElementById('reviewText');
+  return !!((ta && ta.value.trim()) || reviewPhoto);
+}
+function requestCloseReviewForm(){
+  if(reviewFormDirty()) confirmDiscard(closeReviewForm);
+  else closeReviewForm();
+}
+function closeReviewFormOnOverlay(e){ if(e.target === reviewFormOverlay) requestCloseReviewForm(); }
 
 function renderReviewForm(){
   const visitedList = restaurants.filter(r => r.visited);
@@ -2715,7 +2737,19 @@ function openContact(type, showBack){
   contactOverlay.classList.add('show');
 }
 function closeContact(){ contactOverlay.classList.remove('show'); }
-function closeContactOnOverlay(e){ if(e.target === contactOverlay) closeContact(); }
+
+// 문의 폼도 마찬가지. 이름칸은 로그인하면 미리 채워져 있어서 "쓴 것"으로 치지 않는다.
+// 선택 화면(renderSupportChoice)과 접수 완료 화면에는 이 입력칸들이 없어 그냥 닫힌다.
+function contactFormDirty(){
+  const msg = document.getElementById('contactMessage');
+  const reach = document.getElementById('contactReach');
+  return !!((msg && msg.value.trim()) || (reach && reach.value.trim()));
+}
+function requestCloseContact(){
+  if(contactFormDirty()) confirmDiscard(closeContact);
+  else closeContact();
+}
+function closeContactOnOverlay(e){ if(e.target === contactOverlay) requestCloseContact(); }
 
 function renderSupportChoice(){
   contactBody.innerHTML = `
@@ -3022,7 +3056,7 @@ const searchSources = [
     items: () => restaurants.map((r, i) => ({
       icon: r.emoji,
       label: r.name,
-      sub: `${r.cat} · ★ ${r.rating} · ${r.priceValue.toLocaleString()}원`,
+      sub: `${rCat(r)} · ${ratingLabel(r)} · ${r.priceValue.toLocaleString()}원`,
       keywords: `${r.name} ${r.desc} ${r.cat}`,
       run: () => { closeAllSearch(); openDetail(i); },
     })),
@@ -3168,4 +3202,43 @@ overlaySearchInput.addEventListener('keydown', e => handleSearchKey(e, overlaySe
 // 드롭다운 바깥을 누르면 닫는다 (모달 오버레이는 자기 배경 클릭으로 따로 닫힌다)
 document.addEventListener('click', e => {
   if(!e.target.closest('.nav-search-wrap')) closeSearchDropdown();
+});
+
+// ================= Esc 키로 팝업 닫기 =================
+// 지금까지는 통합검색 오버레이만 Esc가 먹었고 나머지 15개는 키보드로 못 닫았다.
+// 떠 있는 것 중 "가장 위" 하나만 닫는다:
+//   확인창(#confirmOverlay)은 z-index:1100으로 항상 맨 앞이라 먼저 보고,
+//   나머지는 z-index가 같아서 문서에 늦게 나온 쪽이 위에 그려지므로 뒤에서부터 고른다.
+// 닫는 길은 X 버튼과 똑같다 — 설문·게임·리뷰·문의는 "그만두시겠어요?"를 거친다.
+const ESC_CLOSERS = {
+  toastOverlay:      () => closeToast(),
+  surveyOverlay:     () => requestCloseSurvey(),
+  gameOverlay:       () => requestCloseGame(),
+  reviewFormOverlay: () => requestCloseReviewForm(),
+  contactOverlay:    () => requestCloseContact(),
+  searchOverlay:     () => closeSearch(),
+  passOverlay:       () => closePass(),
+  passInfoOverlay:   () => closePassInfo(),
+  introOverlay:      () => closeIntro(),
+  faqOverlay:        () => closeFaq(),
+  detailOverlay:     () => closeDetail(),
+  authOverlay:       () => closeAuth(),
+  mypageOverlay:     () => closeMypage(),
+  communityOverlay:  () => closeCommunity(),
+  langOverlay:       () => closeLang(),
+};
+
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape') return;
+  // 검색 입력칸에는 자체 Esc 처리(handleSearchKey)가 있다. 여기서 또 닫으면
+  // 검색을 닫는 김에 그 아래 열려 있던 팝업까지 같이 닫힌다.
+  if(e.target && e.target.closest && e.target.closest('.nav-search-wrap, #searchOverlay')) return;
+
+  if(confirmOverlay.classList.contains('show')){ closeConfirm(); return; }
+
+  const open = document.querySelectorAll('.survey-overlay.show, .toast-overlay.show');
+  const top = open[open.length - 1];
+  if(!top) return;
+  const close = ESC_CLOSERS[top.id];
+  if(close) close();
 });

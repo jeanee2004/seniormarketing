@@ -364,7 +364,7 @@
 <!-- ===== 리뷰 작성 ===== -->
 <div class="survey-overlay" id="reviewFormOverlay" onclick="closeReviewFormOnOverlay(event)">
   <div class="survey-box review-form-box" onclick="event.stopPropagation()">
-    <button type="button" class="overlay-close" onclick="closeReviewForm()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <button type="button" class="overlay-close" onclick="requestCloseReviewForm()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
     <div class="survey-scroll">
       <div id="reviewFormBody"></div>
     </div>
@@ -476,7 +476,7 @@
 <!-- ===== 참여 / 후원 / 확장 문의 폼 ===== -->
 <div class="survey-overlay" id="contactOverlay" onclick="closeContactOnOverlay(event)">
   <div class="survey-box contact-box" onclick="event.stopPropagation()">
-    <button type="button" class="overlay-close" onclick="closeContact()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <button type="button" class="overlay-close" onclick="requestCloseContact()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
     <div class="survey-scroll">
       <div id="contactBody"></div>
     </div>
