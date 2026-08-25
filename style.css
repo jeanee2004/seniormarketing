@@ -765,7 +765,10 @@ footer ul a:hover{color:#fff;}
 
 /* ===== 메뉴 추천 게임 모달 ===== */
 .game-box{ max-width:440px;text-align:center; }
-.game-title{color:var(--slate-dark);font-size:1.3rem;margin-bottom:6px;}
+/* 이 제목은 박스 맨 위에 오는데, 오른쪽 위는 닫기 X가 차지한다.
+   좌우에 같은 여백을 줘서 가운데 정렬을 유지한 채 X 밑으로 파고들지 않게 한다
+   (영어 제목이 가장 길어서 여백 없이는 3px밖에 안 남는다). */
+.game-title{color:var(--slate-dark);font-size:1.3rem;margin-bottom:6px;padding:0 44px;}
 .game-sub{color:var(--ink-soft);font-size:0.86rem;margin-bottom:22px;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;}
 .game-choice-grid{display:flex;flex-direction:column;gap:12px;}
 .game-choice-btn{

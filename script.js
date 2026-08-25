@@ -291,7 +291,7 @@ const i18n = { en: {
   pageTitle:"Bap Meokeoreo Wa — Discover Jochiwon's Local Restaurants",
   navSearch:"Search", navGame:"Menu Roulette Game", navSurvey:"Taste Survey", navLang:"Language", navLogin:"Sign in", navLogout:"Sign out",
   headerSearchPh:"Search restaurants, meal passes, partners, pages",
-  heroEyebrow:"KU Rescue Squad! Help the Local Owners",
+  heroEyebrow:"KU-jodae! Help the Local Owners",
   heroTitle:'Did you know there are great restaurants missing or barely listed on Naver? <span>Now you do.</span>',
   heroBody:'A student team from Korea University Sejong Campus, <b>Matjip KU-jodae</b>, walks the backstreets of Jochiwon-eup to find them. We\'re starting by tracking down real local restaurants that are either completely missing from Naver/Kakao Map, or listed with barely any information. Discover great-value local restaurants that Korea University and Hongik University Sejong students and nearby residents can enjoy together.',
   heroBrowse:"Browse restaurants", heroNotify:"Get notified at launch",
@@ -345,16 +345,16 @@ const i18n = { en: {
   signupEmailPh:"Enter your email address", signupBtn:"Sign up early",
   signupErrEmail:"That email address looks a little off! 💌",
   signupMsg:"You're signed up! We'll let you know first when we launch 🌾",
-  footerAbout:'"KU Rescue Squad! Help the Local Owners" — a social contribution project by Matjip KU-jodae, a Korea University Sejong Campus student team, built to grow together with the local business community.',
+  footerAbout:'"KU-jodae! Help the Local Owners" — a social contribution project by Matjip KU-jodae, a Korea University Sejong Campus student team, built to grow together with the local business community.',
   footerServiceHead:"Service", footerMapLink:"View map", footerPassLink:'Grandchild meal pass<span class="badge-live">Reservations open</span>', footerSponsorLink:"Support us",
   footerInfoHead:"Info", footerIntroLink:"About this service", footerFaqLink:"Contact us", footerSignupLink:"Sign up for launch alerts",
   footerLegalHead:"Legal", footerPrivacyLink:"Privacy Policy", footerTermsLink:"Terms of Service",
   footerOperator:"<b>Operator</b> Matjip KU-jodae, a Korea University Sejong Campus student team",
-  footerProject:"<b>Project name</b> KU Rescue Squad! Help the Local Owners",
+  footerProject:"<b>Project name</b> KU-jodae! Help the Local Owners",
   footerServiceName:"<b>Service name</b> Bap Meokeoreo Wa",
   footerEmail:"<b>Contact email</b> (to be announced)",
   footerOfficer:"<b>Privacy officer</b> (to be announced)",
-  footerBottom:"© 2026 Bap Meokeoreo Wa · KU Rescue Squad! Help the Local Owners. Matjip KU-jodae (Korea University Sejong Campus).",
+  footerBottom:"© 2026 Bap Meokeoreo Wa · KU-jodae! Help the Local Owners. Matjip KU-jodae (Korea University Sejong Campus).",
   a11yToggle:"🔍 Large text mode",
   confirmOk:"OK", confirmNo:"No",
   // 카드/상세/구글 리뷰/실시간 검색 (동적 렌더)
@@ -453,7 +453,7 @@ const i18n = { en: {
   introSub:"Local restaurant discovery for Jochiwon-eup",
   introVision:"Finding real neighborhood restaurants that are missing or poorly listed on maps, and building a local business ecosystem where customers and owners thrive together",
   introOverviewHead:"Project overview",
-  introOverviewBody:'"KU Rescue Squad! Help the Local Owners" — a student-led service that began as a Korea University Sejong Campus social contribution project. Students and residents personally find and introduce local Jochiwon-eup restaurants that are missing from Naver/Kakao Map, or listed with barely any information.',
+  introOverviewBody:'"KU-jodae! Help the Local Owners" — a student-led service that began as a Korea University Sejong Campus social contribution project. Students and residents personally find and introduce local Jochiwon-eup restaurants that are missing from Naver/Kakao Map, or listed with barely any information.',
   introMakerHead:"Who made this",
   introMakerBody:"A social contribution project planned and built by Matjip KU-jodae, an Economic Policy student team at Korea University Sejong Campus.",
   introProgressHead:"Progress",
@@ -462,7 +462,7 @@ const i18n = { en: {
   // FAQ
   faqTitle:"Contact us", faqSub:"Check the FAQ first for a quick answer.",
   faqQ1:"What is Bap Meokeoreo Wa?",
-  faqA1:'It\'s a service created by the "KU Rescue Squad! Help the Local Owners" project. Students and residents personally find and introduce local Jochiwon-eup restaurants that are missing from online maps like Naver/Kakao Map, or listed with barely any information.',
+  faqA1:'It\'s a service created by the "KU-jodae! Help the Local Owners" project. Students and residents personally find and introduce local Jochiwon-eup restaurants that are missing from online maps like Naver/Kakao Map, or listed with barely any information.',
   faqQ2:"Is this before the official launch?",
   faqA2:"Yes, we're currently taking early sign-ups in a preparation stage, and plan to launch the full service with real restaurant data after the September semester starts.",
   faqQ3:"Can my restaurant be listed too?",
@@ -549,7 +549,7 @@ const i18n = { en: {
   pageTitle:"Bap Meokeoreo Wa — 发现调治院本地美食",
   navSearch:"搜索", navGame:"菜单推荐游戏", navSurvey:"口味问卷", navLang:"语言", navLogin:"登录", navLogout:"退出登录",
   headerSearchPh:"搜索餐厅、餐券、合作、页面",
-  heroEyebrow:"KU救援队！拜托了老板",
+  heroEyebrow:"KU助队！拜托了老板",
   heroTitle:'你知道吗，有些好吃的餐厅在Naver地图上找不到，或者信息很少？<span>现在你知道了。</span>',
   heroBody:'高丽大学世宗校区学生团队<b>味集KU助队</b>亲自走遍调治院邑的大街小巷去发掘。我们从寻找那些完全没有在Naver/Kakao地图上登记，或者登记了但几乎没有信息的本地老字号餐厅开始。快来发现高丽大学、弘益大学世宗校区学生和附近居民都能享受的高性价比本地美食吧。',
   heroBrowse:"浏览餐厅", heroNotify:"获取开放通知",
@@ -623,16 +623,16 @@ const i18n = { en: {
   signupEmailPh:"请输入邮箱地址", signupBtn:"提前注册",
   signupErrEmail:"邮箱地址的格式好像有点不对哦！💌",
   signupMsg:"注册成功！上线时我们会第一时间通知你 🌾",
-  footerAbout:'"KU救援队！拜托了老板"——高丽大学世宗校区学生团队味集KU助队发起的社会公益项目，致力于与本地商圈一起成长。',
+  footerAbout:'"KU助队！拜托了老板"——高丽大学世宗校区学生团队味集KU助队发起的社会公益项目，致力于与本地商圈一起成长。',
   footerServiceHead:"服务", footerMapLink:"查看地图", footerPassLink:'孙辈餐券<span class="badge-live">可预约</span>', footerSponsorLink:"支持我们",
   footerInfoHead:"信息", footerIntroLink:"关于本服务", footerFaqLink:"联系我们", footerSignupLink:"订阅上线通知",
   footerLegalHead:"法律", footerPrivacyLink:"隐私政策", footerTermsLink:"服务条款",
   footerOperator:"<b>运营机构</b> 高丽大学世宗校区学生团队 味集KU助队",
-  footerProject:"<b>项目名称</b> KU救援队！拜托了老板",
+  footerProject:"<b>项目名称</b> KU助队！拜托了老板",
   footerServiceName:"<b>服务名称</b> Bap Meokeoreo Wa",
   footerEmail:"<b>咨询邮箱</b>（待公布）",
   footerOfficer:"<b>隐私保护负责人</b>（待公布）",
-  footerBottom:"© 2026 Bap Meokeoreo Wa · KU救援队！拜托了老板。味集KU助队（高丽大学世宗校区）。",
+  footerBottom:"© 2026 Bap Meokeoreo Wa · KU助队！拜托了老板。味集KU助队（高丽大学世宗校区）。",
   a11yToggle:"🔍 大字模式",
   // 취향 설문
   surveyPrev:"上一步", surveyNext:"下一步", surveyResult:"查看结果",
@@ -711,7 +711,7 @@ const i18n = { en: {
   introSub:"调治院邑本地美食发现平台",
   introVision:"寻找那些在地图上缺失或信息不全的真正社区餐厅，打造顾客与店主共同繁荣的本地商圈生态",
   introOverviewHead:"项目概述",
-  introOverviewBody:'"KU救援队！拜托了老板"——始于高丽大学世宗校区社会公益项目的学生主导服务。学生和居民亲自寻找并介绍那些在Naver/Kakao地图上缺失或信息不全的调治院邑本地餐厅。',
+  introOverviewBody:'"KU助队！拜托了老板"——始于高丽大学世宗校区社会公益项目的学生主导服务。学生和居民亲自寻找并介绍那些在Naver/Kakao地图上缺失或信息不全的调治院邑本地餐厅。',
   introMakerHead:"关于我们",
   introMakerBody:"由高丽大学世宗校区经济政策学专业学生团队味集KU助队企划并打造的社会公益项目。",
   introProgressHead:"进展情况",
@@ -720,7 +720,7 @@ const i18n = { en: {
   // FAQ
   faqTitle:"联系我们", faqSub:"请先查看常见问题，可能会有快速答案。",
   faqQ1:"什么是「来吃饭吧」？",
-  faqA1:'这是「KU救援队！拜托了老板」项目打造的服务。学生和居民亲自寻找并介绍那些在Naver/Kakao地图等在线地图上缺失或信息不全的调治院邑本地餐厅。',
+  faqA1:'这是「KU助队！拜托了老板」项目打造的服务。学生和居民亲自寻找并介绍那些在Naver/Kakao地图等在线地图上缺失或信息不全的调治院邑本地餐厅。',
   faqQ2:"现在是正式上线前吗？",
   faqA2:"是的，目前正处于准备阶段，接受提前注册，计划在9月开学后携带真实餐厅数据启动完整服务。",
   faqQ3:"我的餐厅也能被收录吗？",
@@ -2559,7 +2559,7 @@ function renderIntro(){
     <div class="intro-vision">${t('introVision') || '지도에 없거나 부실하게 등록된 우리 동네 진짜 맛집을 발굴하고, 소비자와 상인이 함께 상생하는 로컬 상권 생태계를 만든다'}</div>
     <div class="intro-block">
       <h4>${t('introOverviewHead') || '프로젝트 개요'}</h4>
-      <p>${t('introOverviewBody') || '"KU구조대! 사장님을 부탁해" — 고려대학교 세종캠퍼스 사회공헌 프로젝트로 시작된 학생 주도 서비스예요. 네이버·카카오맵에 등록이 안 됐거나, 등록은 했어도 정보가 부실한 조치원읍 로컬 맛집을 학생과 주민이 직접 발굴해 소개합니다.'}</p>
+      <p>${t('introOverviewBody') || '"KU조대! 사장님을 부탁해" — 고려대학교 세종캠퍼스 사회공헌 프로젝트로 시작된 학생 주도 서비스예요. 네이버·카카오맵에 등록이 안 됐거나, 등록은 했어도 정보가 부실한 조치원읍 로컬 맛집을 학생과 주민이 직접 발굴해 소개합니다.'}</p>
     </div>
     <div class="intro-block">
       <h4>${t('introMakerHead') || '만든 사람'}</h4>
@@ -2579,7 +2579,7 @@ function renderIntro(){
 // ================= 문의하기 — FAQ (extra.md §4-2) =================
 const faqs = [
   {q:'밥 먹으러 와는 어떤 서비스인가요?',
-   a:'"KU구조대! 사장님을 부탁해" 프로젝트에서 만든 서비스예요. 네이버·카카오맵 등 온라인 지도에 등록이 안 됐거나, 등록은 했어도 정보가 부실한 조치원읍 로컬 맛집을 학생과 주민이 직접 발굴하고 소개해요.'},
+   a:'"KU조대! 사장님을 부탁해" 프로젝트에서 만든 서비스예요. 네이버·카카오맵 등 온라인 지도에 등록이 안 됐거나, 등록은 했어도 정보가 부실한 조치원읍 로컬 맛집을 학생과 주민이 직접 발굴하고 소개해요.'},
   {q:'아직 정식 오픈 전인가요?',
    a:'네, 현재는 사전 신청을 받고 있는 준비 단계이며, 9월 개강 이후 실제 맛집 데이터를 채워 정식 서비스를 시작할 예정이에요.'},
   {q:'저희 가게도 등록할 수 있나요?',
