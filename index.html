@@ -75,7 +75,7 @@
 </section>
 
 <!-- ===== Problem ===== -->
-<section class="problem section-pad">
+<section class="problem section-pad" id="problem">
   <div class="container">
     <span class="eyebrow" data-i18n="problemEyebrow">WHY 밥 먹으러 와</span>
     <h2 class="section-title" data-i18n="problemTitle">지도 앱만 믿으면, 놓치는 맛집이 있어요</h2>
@@ -167,20 +167,30 @@
     </div>
     <p class="filter-count" id="filterCount"></p>
     <div class="card-grid" id="cardGrid"></div>
-    <p class="filter-empty" id="filterEmpty" style="display:none;" data-i18n="filterEmpty">검색 결과가 없어요. 다른 키워드로 찾아보세요.</p>
+    <div class="filter-empty" id="filterEmpty" style="display:none;">
+      <div class="filter-empty-art"><img src="assets/grandma-calm-square.png" alt=""></div>
+      <p class="filter-empty-title" data-i18n="filterEmpty">이 조건에 맞는 맛집이 아직 없어요.</p>
+      <p class="filter-empty-sub" data-i18n="filterEmptySub">이런 맛집은 어때요?</p>
+      <div class="filter-empty-chips">
+        <button type="button" onclick="jumpCategory('한식')" data-i18n="filterEmptyKorean">🍚 한식</button>
+        <button type="button" onclick="jumpCategory('일식')" data-i18n="filterEmptyJapanese">🍜 일식</button>
+        <button type="button" onclick="jumpCategory('양식')" data-i18n="filterEmptyWestern">🍝 양식</button>
+      </div>
+      <button type="button" class="btn-ghost filter-empty-reset" onclick="resetFilters()" data-i18n="filterReset">필터 초기화하고 전체 보기</button>
+    </div>
 
     <h3 class="subsection-title" data-i18n="exampleGridTitle">🔎 예시 가게 (현장 조사 예정)</h3>
     <p class="section-sub" data-i18n="exampleGridSub">아직 현장 조사 전이라 예시로 채운 정보예요. 하트를 눌러 "가보고 싶은 곳"에 저장할 수 있어요.</p>
     <div class="card-grid" id="exampleCardGrid"></div>
 
     <div class="load-more-wrap">
-      <button class="btn-ghost" data-i18n="loadMore" onclick="openToast('more')">맛집 더 보기</button>
+      <button class="btn-ghost is-soon" aria-disabled="true" data-i18n="loadMore" onclick="openToast('more')">맛집 더 보기 <span class="badge-soon">9월 오픈 예정</span></button>
     </div>
   </div>
 </section>
 
 <!-- ===== Reviews ===== -->
-<section class="reviews section-pad">
+<section class="reviews section-pad" id="reviews">
   <div class="container">
     <span class="eyebrow" data-i18n="reviewEyebrow">REVIEW</span>
     <h2 class="section-title" data-i18n="reviewTitle">먼저 다녀온 사람들의 이야기</h2>
@@ -205,7 +215,7 @@
 </section>
 
 <!-- ===== Survey CTA ===== -->
-<section class="survey section-pad">
+<section class="survey section-pad" id="survey">
   <div class="container">
     <div class="survey-photo"><img src="assets/grandma-calm-square.png" alt="정겹게 웃는 할머니 캐릭터"></div>
     <span class="eyebrow" style="background:rgba(255,255,255,0.14);color:#fff;">TASTE MATCH</span>
@@ -216,16 +226,16 @@
 </section>
 
 <!-- ===== Share CTA ===== -->
-<section class="share section-pad">
+<section class="share section-pad" id="share">
   <div class="container">
     <span class="eyebrow" data-i18n="shareEyebrow">SHARE</span>
     <h2 class="section-title" data-i18n="shareTitle">우리 학교 친구에게도 알려주세요</h2>
     <p class="section-sub" style="margin:0 auto;" data-i18n="shareBody">숨은 맛집은 나눌수록 더 좋아져요. 친구에게 "밥 먹으러 와"를 추천해보세요.</p>
     <div class="share-icons">
-      <button data-i18n-title="shareKakao" title="카카오톡 공유" onclick="openToast('share')">💬</button>
+      <button class="is-soon" aria-disabled="true" data-i18n-title="shareKakao" title="카카오톡 공유 (9월 오픈 예정)" onclick="openToast('share')">💬</button>
       <button data-i18n-title="shareCopy" title="링크 복사" onclick="copyLink()">🔗</button>
-      <button data-i18n-title="shareText" title="문자 공유" onclick="openToast('share')">✉️</button>
-      <button data-i18n-title="shareInsta" title="인스타그램 공유" onclick="openToast('share')">📷</button>
+      <button class="is-soon" aria-disabled="true" data-i18n-title="shareText" title="문자 공유 (9월 오픈 예정)" onclick="openToast('share')">✉️</button>
+      <button class="is-soon" aria-disabled="true" data-i18n-title="shareInsta" title="인스타그램 공유 (9월 오픈 예정)" onclick="openToast('share')">📷</button>
     </div>
   </div>
 </section>
@@ -237,9 +247,9 @@
     <h2 class="section-title" data-i18n="joinTitle">함께 만들어요</h2>
     <p class="section-sub" style="margin-bottom:34px;" data-i18n="joinBody">사장님도, 손주도, 다른 동네 이웃도 — 이 프로젝트에 함께할 수 있는 자리를 열어두었어요.</p>
     <div class="join-grid">
-      <button type="button" class="join-card" onclick="openToast('vendor')">
+      <button type="button" class="join-card is-soon" aria-disabled="true" onclick="openToast('vendor')">
         <span class="join-emoji">🧑‍🍳</span>
-        <strong data-i18n="join1Title">사장님이신가요?<span class="badge-soon">준비중</span></strong>
+        <strong data-i18n="join1Title">사장님이신가요?<span class="badge-soon">9월 오픈 예정</span></strong>
         <span class="join-desc" data-i18n="join1Body">우리 가게를 소개하고 싶은 조치원 로컬 식당 사장님을 위한 입점 신청 자리예요.</span>
       </button>
       <button type="button" class="join-card" onclick="openContact('team', false)">
@@ -268,10 +278,14 @@
       <div class="emoji">🌾</div>
       <h2 class="section-title" style="font-size:1.5rem;" data-i18n="signupTitle">가장 먼저 소식 받기</h2>
       <p class="section-sub" style="margin:0 auto;" data-i18n="signupBody">베타테스트 오픈 소식과 새로운 맛집 업데이트를 이메일로 가장 먼저 알려드릴게요.</p>
-      <form class="signup-form" id="signupForm">
+      <!-- novalidate: 로그인 폼과 같은 이유다. 브라우저 기본 검증 문구는 사이트 언어가 아니라
+           브라우저 언어를 따르기 때문에, 한/영/중을 직접 관리하는 이 사이트에서는 검증도 우리가 한다.
+           type="email"은 모바일 키보드 때문에 그대로 둔다. -->
+      <form class="signup-form" id="signupForm" novalidate>
         <input type="email" id="signupEmail" data-i18n-placeholder="signupEmailPh" placeholder="이메일 주소를 입력하세요" required>
         <button type="submit" class="btn-primary" data-i18n="signupBtn">사전 신청</button>
       </form>
+      <p class="auth-error" id="signupError"></p>
       <div class="signup-msg" id="signupMsg" data-i18n="signupMsg">신청 완료! 오픈 소식을 가장 먼저 전해드릴게요 🌾</div>
     </div>
   </div>
@@ -290,8 +304,8 @@
         <ul>
           <li><a href="#restaurants" data-i18n="heroBrowse">맛집 둘러보기</a></li>
           <li><a href="#map" data-i18n="footerMapLink">지도로 보기</a></li>
-          <li><a href="javascript:void(0)" data-i18n="join1Title" onclick="openToast('vendor')">사장님이신가요?<span class="badge-soon">준비중</span></a></li>
-          <li><a href="javascript:void(0)" data-i18n="footerPassLink" onclick="openPassInfo()">손주 식권<span class="badge-soon">준비중</span></a></li>
+          <li><a href="javascript:void(0)" class="is-soon" aria-disabled="true" data-i18n="join1Title" onclick="openToast('vendor')">사장님이신가요?<span class="badge-soon">9월 오픈 예정</span></a></li>
+          <li><a href="javascript:void(0)" data-i18n="footerPassLink" onclick="openPassInfo()">손주 식권<span class="badge-live">사전 예약</span></a></li>
           <li><a href="#join" data-i18n="join2Title">손주 힘 보태기</a></li>
           <li><a href="javascript:void(0)" data-i18n="footerSponsorLink" onclick="openContact('sponsor')">후원하기</a></li>
         </ul>
@@ -329,6 +343,7 @@
 <!-- ===== Toast overlay (준비중 안내) ===== -->
 <div class="toast-overlay" id="toastOverlay" onclick="closeToastOnOverlay(event)">
   <div class="toast-box">
+    <button type="button" class="overlay-close" onclick="closeToast()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
     <div class="farmer" id="toastEmoji">🌾</div>
     <h3 id="toastTitle">출시 예정이에요</h3>
     <p id="toastText">지금 열심히 준비하고 있어요. 조금만 기다려주세요!</p>
@@ -339,87 +354,101 @@
 <!-- ===== 확인 모달 (로그인 유도 + 액션 확인 공용) ===== -->
 <div class="survey-overlay" id="confirmOverlay" onclick="closeConfirmOnOverlay(event)">
   <div class="survey-box confirm-box" onclick="event.stopPropagation()">
-    <div id="confirmBody"></div>
+    <button type="button" class="overlay-close" onclick="closeConfirm()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div id="confirmBody"></div>
+    </div>
   </div>
 </div>
 
 <!-- ===== 리뷰 작성 ===== -->
 <div class="survey-overlay" id="reviewFormOverlay" onclick="closeReviewFormOnOverlay(event)">
   <div class="survey-box review-form-box" onclick="event.stopPropagation()">
-    <div id="reviewFormBody"></div>
+    <button type="button" class="overlay-close" onclick="closeReviewForm()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div id="reviewFormBody"></div>
+    </div>
   </div>
 </div>
 
 <!-- ===== 통합 검색 (모바일) ===== -->
 <div class="survey-overlay search-overlay" id="searchOverlay" onclick="closeSearchOnOverlay(event)">
   <div class="survey-box search-box" onclick="event.stopPropagation()">
-    <div class="search-overlay-bar">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input id="overlaySearch" type="text" data-i18n-placeholder="headerSearchPh" placeholder="가게, 식권, 제휴, 페이지 검색" autocomplete="off">
-      <button type="button" onclick="closeSearch()" aria-label="검색 닫기">✕</button>
+    <div class="survey-scroll">
+      <div class="search-overlay-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="overlaySearch" type="text" data-i18n-placeholder="headerSearchPh" placeholder="가게, 식권, 제휴, 페이지 검색" autocomplete="off">
+        <button type="button" onclick="closeSearch()" aria-label="검색 닫기">✕</button>
+      </div>
+      <div class="search-results search-results-overlay" id="overlaySearchResults"></div>
     </div>
-    <div class="search-results search-results-overlay" id="overlaySearchResults"></div>
   </div>
 </div>
 
 <!-- ===== 손주 식권 예약 ===== -->
 <div class="survey-overlay" id="passOverlay" onclick="closePassOnOverlay(event)">
   <div class="survey-box pass-box" onclick="event.stopPropagation()">
-    <div id="passBody"></div>
+    <button type="button" class="overlay-close" onclick="closePass()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div id="passBody"></div>
+    </div>
   </div>
 </div>
 
 <!-- ===== 손주 식권 · 제휴 안내 (푸터 링크로만 진입) ===== -->
 <div class="survey-overlay" id="passInfoOverlay" onclick="closePassInfoOnOverlay(event)">
   <div class="survey-box pass-info-box" onclick="event.stopPropagation()">
-    <div class="auth-head">
-      <div class="emoji">🎟️</div>
-      <h3 data-i18n="passInfoTitle">손주 식권<span class="badge-soon">준비중</span></h3>
-      <p data-i18n="passInfoBody">마음에 드는 가게의 식권을 미리 담아두세요. 사장님이 정한 혜택만큼 더 받고, 갈 때마다 한 장씩 쓰면 돼요.</p>
-    </div>
-
-    <div class="pass-benefit-grid">
-      <div class="pass-benefit">
-        <span class="emoji">🎟️</span>
-        <h3 data-i18n="passBenefit1Title">10장 사면 1장 더</h3>
-        <p data-i18n="passBenefit1Body">묶음으로 담으면 사장님이 정한 만큼 식권을 더 드려요. 혜택은 가게마다 달라요.</p>
+    <button type="button" class="overlay-close" onclick="closePassInfo()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div class="auth-head">
+        <div class="emoji">🎟️</div>
+        <h3 data-i18n="passInfoTitle">손주 식권<span class="badge-live">사전 예약</span></h3>
+        <p data-i18n="passInfoBody">마음에 드는 가게의 식권을 미리 담아두세요. 사장님이 정한 혜택만큼 더 받고, 갈 때마다 한 장씩 쓰면 돼요.</p>
       </div>
-      <div class="pass-benefit">
-        <span class="emoji">💰</span>
-        <h3 data-i18n="passBenefit2Title">미리 담아두는 밥값</h3>
-        <p data-i18n="passBenefit2Body">한 끼씩 계산하는 대신 미리 담아두면, 그만큼 밥값 부담이 줄어들어요.</p>
-      </div>
-      <div class="pass-benefit">
-        <span class="emoji">🤝</span>
-        <h3 data-i18n="passBenefit3Title">사장님은 단골을</h3>
-        <p data-i18n="passBenefit3Body">가게는 미리 매출을 만들고 단골을 얻어요. 손님과 사장님이 함께 이득인 구조예요.</p>
-      </div>
-    </div>
 
-    <h3 class="pass-list-title" data-i18n="passListTitle">식권을 준비 중인 가게</h3>
-    <div class="pass-grid" id="passGrid"></div>
-    <p class="pass-more-note" data-i18n="passMoreNote">나머지 가게는 9월 현장 조사에서 사장님과 협의한 뒤 순차적으로 열릴 예정이에요.</p>
-
-    <div class="pass-partner">
-      <div class="pass-partner-head">
-        <span class="emoji">🎓</span>
-        <div>
-          <h3 data-i18n="passPartnerTitle">제휴도 함께 준비하고 있어요</h3>
-          <p data-i18n="passPartnerBody">고려대학교 세종캠퍼스에는 이미 KU 멤버십처럼 제휴를 맺은 식당들이 있어요. 지도에 없던 로컬 식당도 알려지면 그 자리에 함께 설 수 있다고 생각해요.</p>
+      <div class="pass-benefit-grid">
+        <div class="pass-benefit">
+          <span class="emoji">🎟️</span>
+          <h3 data-i18n="passBenefit1Title">10장 사면 1장 더</h3>
+          <p data-i18n="passBenefit1Body">묶음으로 담으면 사장님이 정한 만큼 식권을 더 드려요. 혜택은 가게마다 달라요.</p>
+        </div>
+        <div class="pass-benefit">
+          <span class="emoji">💰</span>
+          <h3 data-i18n="passBenefit2Title">미리 담아두는 밥값</h3>
+          <p data-i18n="passBenefit2Body">한 끼씩 계산하는 대신 미리 담아두면, 그만큼 밥값 부담이 줄어들어요.</p>
+        </div>
+        <div class="pass-benefit">
+          <span class="emoji">🤝</span>
+          <h3 data-i18n="passBenefit3Title">사장님은 단골을</h3>
+          <p data-i18n="passBenefit3Body">가게는 미리 매출을 만들고 단골을 얻어요. 손님과 사장님이 함께 이득인 구조예요.</p>
         </div>
       </div>
-      <div class="pass-partner-btns">
-        <button type="button" class="btn-primary" data-i18n="passPartnerStoreBtn" onclick="closePassInfo(); openContact('partnerStore');">사장님 제휴 신청</button>
-        <button type="button" class="btn-ghost" data-i18n="passPartnerOrgBtn" onclick="closePassInfo(); openContact('partnerOrg');">학생회 · 동아리 제휴 문의</button>
+
+      <h3 class="pass-list-title" data-i18n="passListTitle">식권을 준비 중인 가게</h3>
+      <div class="pass-grid" id="passGrid"></div>
+      <p class="pass-more-note" data-i18n="passMoreNote">나머지 가게는 9월 현장 조사에서 사장님과 협의한 뒤 순차적으로 열릴 예정이에요.</p>
+
+      <div class="pass-partner">
+        <div class="pass-partner-head">
+          <span class="emoji">🎓</span>
+          <div>
+            <h3 data-i18n="passPartnerTitle">제휴도 함께 준비하고 있어요</h3>
+            <p data-i18n="passPartnerBody">고려대학교 세종캠퍼스에는 이미 KU 멤버십처럼 제휴를 맺은 식당들이 있어요. 지도에 없던 로컬 식당도 알려지면 그 자리에 함께 설 수 있다고 생각해요.</p>
+          </div>
+        </div>
+        <div class="pass-partner-btns">
+          <button type="button" class="btn-primary" data-i18n="passPartnerStoreBtn" onclick="closePassInfo(); openContact('partnerStore');">사장님 제휴 신청</button>
+          <button type="button" class="btn-ghost" data-i18n="passPartnerOrgBtn" onclick="closePassInfo(); openContact('partnerOrg');">학생회 · 동아리 제휴 문의</button>
+        </div>
       </div>
-    </div>
 
-    <div class="pass-notice" data-i18n="passNotice">
-      <strong>결제는 아직 열지 않았어요.</strong> 지금은 비영리 취지의 준비 단계라, 식권은 <b>사전 예약 접수</b>까지만 받고 실제 결제 연동은 정식 오픈 때 진행할 예정이에요. 식권 혜택과 유효기간은 사장님이 정합니다.
-    </div>
+      <div class="pass-notice" data-i18n="passNotice">
+        <strong>결제는 아직 열지 않았어요.</strong> 지금은 비영리 취지의 준비 단계라, 식권은 <b>사전 예약 접수</b>까지만 받고 실제 결제 연동은 정식 오픈 때 진행할 예정이에요. 식권 혜택과 유효기간은 사장님이 정합니다.
+      </div>
 
-    <div class="game-action-row">
-      <button type="button" class="survey-close-btn" style="flex:1;" data-i18n="closeBtn" onclick="closePassInfo()">닫기</button>
+      <div class="game-action-row">
+        <button type="button" class="survey-close-btn" style="flex:1;" data-i18n="closeBtn" onclick="closePassInfo()">닫기</button>
+      </div>
     </div>
   </div>
 </div>
@@ -427,71 +456,101 @@
 <!-- ===== 서비스 소개 ===== -->
 <div class="survey-overlay" id="introOverlay" onclick="closeIntroOnOverlay(event)">
   <div class="survey-box intro-box" onclick="event.stopPropagation()">
-    <div id="introBody"></div>
+    <button type="button" class="overlay-close" onclick="closeIntro()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div id="introBody"></div>
+    </div>
   </div>
 </div>
 
 <!-- ===== 문의하기 (FAQ) ===== -->
 <div class="survey-overlay" id="faqOverlay" onclick="closeFaqOnOverlay(event)">
   <div class="survey-box faq-box" onclick="event.stopPropagation()">
-    <div id="faqBody"></div>
+    <button type="button" class="overlay-close" onclick="closeFaq()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div id="faqBody"></div>
+    </div>
   </div>
 </div>
 
 <!-- ===== 참여 / 후원 / 확장 문의 폼 ===== -->
 <div class="survey-overlay" id="contactOverlay" onclick="closeContactOnOverlay(event)">
   <div class="survey-box contact-box" onclick="event.stopPropagation()">
-    <div id="contactBody"></div>
+    <button type="button" class="overlay-close" onclick="closeContact()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div id="contactBody"></div>
+    </div>
   </div>
 </div>
 
 <!-- ===== Survey overlay (실제 동작) ===== -->
 <div class="survey-overlay" id="surveyOverlay" onclick="closeSurveyOnOverlay(event)">
   <div class="survey-box" onclick="event.stopPropagation()">
-    <div class="survey-progress" id="surveyProgress"></div>
-    <div id="surveyBody"></div>
+    <button type="button" class="overlay-close" onclick="requestCloseSurvey()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div class="survey-progress" id="surveyProgress"></div>
+      <div id="surveyBody"></div>
+    </div>
   </div>
 </div>
 
 <!-- ===== Restaurant detail overlay ===== -->
 <div class="survey-overlay detail-overlay" id="detailOverlay" onclick="closeDetailOnOverlay(event)">
   <div class="survey-box detail-box" onclick="event.stopPropagation()">
-    <div id="detailBody"></div>
+    <button type="button" class="overlay-close" onclick="closeDetail()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div id="detailBody"></div>
+    </div>
   </div>
 </div>
 
 <!-- ===== 메뉴 추천 게임 ===== -->
 <div class="survey-overlay" id="gameOverlay" onclick="closeGameOnOverlay(event)">
   <div class="survey-box game-box" onclick="event.stopPropagation()">
-    <div id="gameBody"></div>
+    <button type="button" class="overlay-close" onclick="requestCloseGame()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div id="gameBody"></div>
+    </div>
   </div>
 </div>
 
 <!-- ===== 손주 로그인/가입 ===== -->
 <div class="survey-overlay" id="authOverlay" onclick="closeAuthOnOverlay(event)">
   <div class="survey-box auth-box" onclick="event.stopPropagation()">
-    <div id="authBody"></div>
+    <button type="button" class="overlay-close" onclick="closeAuth()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div id="authBody"></div>
+    </div>
   </div>
 </div>
 
 <!-- ===== 마이페이지 (로그인 후 하위 섹션) ===== -->
 <div class="survey-overlay" id="mypageOverlay" onclick="closeMypageOnOverlay(event)">
   <div class="survey-box mypage-box" onclick="event.stopPropagation()">
-    <div id="mypageBody"></div>
+    <button type="button" class="overlay-close" onclick="closeMypage()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div id="mypageBody"></div>
+    </div>
   </div>
 </div>
 
 <!-- ===== 커뮤니티 (외부 SNS 그룹 참여 안내) ===== -->
 <div class="survey-overlay" id="communityOverlay" onclick="closeCommunityOnOverlay(event)">
   <div class="survey-box" onclick="event.stopPropagation()">
-    <div id="communityBody"></div>
+    <button type="button" class="overlay-close" onclick="closeCommunity()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div id="communityBody"></div>
+    </div>
   </div>
 </div>
 
 <!-- ===== 언어 선택 ===== -->
 <div class="survey-overlay" id="langOverlay" onclick="closeLangOnOverlay(event)">
   <div class="survey-box lang-box" onclick="event.stopPropagation()">
-    <div id="langBody"></div>
+    <button type="button" class="overlay-close" onclick="closeLang()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div id="langBody"></div>
+    </div>
   </div>
 </div>
 

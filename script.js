@@ -1,6 +1,6 @@
 // ---- Dummy restaurant data ----
 const restaurants = [
-  {name:"조치원 할매국밥", nameEn:"Jochiwon Grandma's Gukbap (조치원 할매국밥)", nameZh:"调治院奶奶汤饭 (조치원 할매국밥)", cat:"한식", emoji:"🍚", desc:"40년 전통, 진한 국물의 소문난 국밥집", descEn:"A well-known gukbap house with 40 years of tradition and rich broth", descZh:"有着40年传统、汤底浓郁的知名汤饭店", rating:4.8, reviewCount:212, price:"₩", priceValue:9000, saved:false, visited:false, detail:{
+  {id:"jochiwon-halmae-gukbap", name:"조치원 할매국밥", nameEn:"Jochiwon Grandma's Gukbap (조치원 할매국밥)", nameZh:"调治院奶奶汤饭 (조치원 할매국밥)", cat:"한식", emoji:"🍚", desc:"40년 전통, 진한 국물의 소문난 국밥집", descEn:"A well-known gukbap house with 40 years of tradition and rich broth", descZh:"有着40年传统、汤底浓郁的知名汤饭店", rating:4.8, reviewCount:212, price:"₩", priceValue:9000, saved:false, visited:false, detail:{
     isExample:true,
     address:"세종특별자치시 조치원읍 죽림리 123-4 (임의 주소 · 실제 주소 아님)",
     hours:"매일 07:00 - 20:00 (재료 소진 시 조기 마감)",
@@ -19,7 +19,7 @@ const restaurants = [
   },
   // pass가 있는 가게만 손주 식권 섹션과 검색에 노출된다 (detail과 같은 방식 — 일부만 채워둔 예시)
   pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", benefitZh:"买10送1", validDays:180}},
-  {name:"역전 왕돈까스", nameEn:"Yeokjeon King Donkatsu (역전 왕돈까스)", nameZh:"驿前炸猪排大王 (역전 왕돈까스)", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", descEn:"Thick handmade donkatsu with generous portions", descZh:"厚实的手工炸猪排，分量十足", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
+  {id:"yeokjeon-wang-donkatsu", name:"역전 왕돈까스", nameEn:"Yeokjeon King Donkatsu (역전 왕돈까스)", nameZh:"驿前炸猪排大王 (역전 왕돈까스)", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", descEn:"Thick handmade donkatsu with generous portions", descZh:"厚实的手工炸猪排，分量十足", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
     pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", benefitZh:"买10送1", validDays:90},
     detail:{
       isExample:true,
@@ -37,21 +37,21 @@ const restaurants = [
         {name:"치즈돈까스", price:"10,500원", composition:"돈까스+모짜렐라 + 밥 + 수프", origin:"돼지고기 국내산, 치즈 수입산"},
       ]
     }},
-  {name:"안쉐프고기해물짬뽕", nameEn:"An-Chef Meat & Seafood Jjambbong (안쉐프고기해물짬뽕)", nameZh:"安主厨肉类海鲜炒码面 (안쉐프고기해물짬뽕)", cat:"중식", emoji:"🥡", desc:"고기와 해물을 함께 낸 얼큰한 짬뽕집", descEn:"A spicy jjambbong spot serving both meat and seafood", descZh:"肉类与海鲜同煮的辣味炒码面店", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+  {id:"an-chef-jjambbong", name:"안쉐프고기해물짬뽕", nameEn:"An-Chef Meat & Seafood Jjambbong (안쉐프고기해물짬뽕)", nameZh:"安主厨肉类海鲜炒码面 (안쉐프고기해물짬뽕)", cat:"중식", emoji:"🥡", desc:"고기와 해물을 함께 낸 얼큰한 짬뽕집", descEn:"A spicy jjambbong spot serving both meat and seafood", descZh:"肉类与海鲜同煮的辣味炒码面店", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.61477503455844, lng:127.2857292835937, realAddress:"세종특별자치시 조치원읍 섭골길 51-21"},
-  {name:"자갈돈돈", nameEn:"Jagal Dondon (자갈돈돈)", nameZh:"紫葛顿顿 (자갈돈돈)", cat:"한식", emoji:"🥩", desc:"조치원읍 골목의 고기구이집", descEn:"A grilled-meat restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的烤肉店", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+  {id:"jagal-dondon", name:"자갈돈돈", nameEn:"Jagal Dondon (자갈돈돈)", nameZh:"紫葛顿顿 (자갈돈돈)", cat:"한식", emoji:"🥩", desc:"조치원읍 골목의 고기구이집", descEn:"A grilled-meat restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的烤肉店", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
     liveReview:true, lat:36.6080898465768, lng:127.29005819471818, realAddress:"세종특별자치시 조치원읍 내창2길 30"},
-  {name:"우리들식당", nameEn:"Wooridul Sikdang (우리들식당)", nameZh:"我们食堂 (우리들식당)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的家常韩式套餐店", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {id:"wooridul-sikdang", name:"우리들식당", nameEn:"Wooridul Sikdang (우리들식당)", nameZh:"我们食堂 (우리들식당)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的家常韩式套餐店", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.6080899912077, lng:127.288885692635, realAddress:"세종특별자치시 조치원읍 내창3길 19"},
-  {name:"폴바나", nameEn:"Paul, Barna (폴바나)", nameZh:"波尔巴纳 (폴바나)", cat:"양식", emoji:"🍝", desc:"조치원읍 골목의 양식당", descEn:"A Western-style restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的西餐厅", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+  {id:"paul-barna", name:"폴바나", nameEn:"Paul, Barna (폴바나)", nameZh:"波尔巴纳 (폴바나)", cat:"양식", emoji:"🍝", desc:"조치원읍 골목의 양식당", descEn:"A Western-style restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的西餐厅", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
     liveReview:true, lat:36.60819819730195, lng:127.28885703507063, realAddress:"세종특별자치시 조치원읍 내창3길 19"},
-  {name:"돈스", nameEn:"Donseu (돈스)", nameZh:"顿思 (돈스)", cat:"일식", emoji:"🍱", desc:"조치원읍 골목의 돈까스·우동집", descEn:"A donkatsu and udon spot in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的炸猪排、乌冬面店", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+  {id:"donseu", name:"돈스", nameEn:"Donseu (돈스)", nameZh:"顿思 (돈스)", cat:"일식", emoji:"🍱", desc:"조치원읍 골목의 돈까스·우동집", descEn:"A donkatsu and udon spot in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的炸猪排、乌冬面店", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.60735076086951, lng:127.29343318591735, realAddress:"세종특별자치시 조치원읍 돌마루7길 6"},
-  {name:"더라멘", nameEn:"The Ramen (더라멘)", nameZh:"拉面屋 (더라멘)", cat:"일식", emoji:"🍜", desc:"조치원읍 골목의 라멘집", descEn:"A ramen shop in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的拉面店", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+  {id:"the-ramen", name:"더라멘", nameEn:"The Ramen (더라멘)", nameZh:"拉面屋 (더라멘)", cat:"일식", emoji:"🍜", desc:"조치원읍 골목의 라멘집", descEn:"A ramen shop in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的拉面店", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.607796147725, lng:127.289286979365, realAddress:"세종특별자치시 조치원읍 내창3길 16-1"},
-  {name:"초밥발전소12g", nameEn:"Sushi Power Plant 12g (초밥발전소12g)", nameZh:"寿司发电站12g (초밥발전소12g)", cat:"일식", emoji:"🍣", desc:"조치원읍 골목의 초밥·롤 전문점", descEn:"A sushi and roll specialist in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的寿司卷专门店", rating:null, reviewCount:null, price:"₩₩", priceValue:13000, saved:false, visited:false,
+  {id:"sushi-power-plant-12g", name:"초밥발전소12g", nameEn:"Sushi Power Plant 12g (초밥발전소12g)", nameZh:"寿司发电站12g (초밥발전소12g)", cat:"일식", emoji:"🍣", desc:"조치원읍 골목의 초밥·롤 전문점", descEn:"A sushi and roll specialist in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的寿司卷专门店", rating:null, reviewCount:null, price:"₩₩", priceValue:13000, saved:false, visited:false,
     liveReview:true, lat:36.60695328676086, lng:127.2894090160121, realAddress:"세종특별자치시 조치원읍 내창3길 8"},
-  {name:"할머니 떡볶이", nameEn:"Grandma's Tteokbokki (할머니 떡볶이)", nameZh:"奶奶炒年糕 (할머니 떡볶이)", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", descEn:"Sweet and spicy old-school tteokbokki, a student favorite snack", descZh:"香辣香甜的怀旧炒年糕，学生们的最爱零食", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
+  {id:"halmoni-tteokbokki", name:"할머니 떡볶이", nameEn:"Grandma's Tteokbokki (할머니 떡볶이)", nameZh:"奶奶炒年糕 (할머니 떡볶이)", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", descEn:"Sweet and spicy old-school tteokbokki, a student favorite snack", descZh:"香辣香甜的怀旧炒年糕，学生们的最爱零食", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
     pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", benefitEn:"Buy 20, get 3 free", benefitZh:"买20送3", validDays:180},
     detail:{
       isExample:true,
@@ -69,9 +69,9 @@ const restaurants = [
         {name:"모둠튀김", price:"5,000원", composition:"튀김 5종 모둠", origin:"식용유 국내산"},
       ]
     }},
-  {name:"파랑새분식", nameEn:"Blue Bird Bunsik (파랑새분식)", nameZh:"青鸟小吃 (파랑새분식)", cat:"분식", emoji:"🍙", desc:"조치원읍 골목의 분식집", descEn:"A Korean snack (bunsik) shop in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩式小吃店", rating:null, reviewCount:null, price:"₩", priceValue:5000, saved:false, visited:false,
+  {id:"parangsae-bunsik", name:"파랑새분식", nameEn:"Blue Bird Bunsik (파랑새분식)", nameZh:"青鸟小吃 (파랑새분식)", cat:"분식", emoji:"🍙", desc:"조치원읍 골목의 분식집", descEn:"A Korean snack (bunsik) shop in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩式小吃店", rating:null, reviewCount:null, price:"₩", priceValue:5000, saved:false, visited:false,
     liveReview:true, lat:36.608516105696, lng:127.290049731247, realAddress:"세종특별자치시 조치원읍 내창1길 34-1"},
-  {name:"숙이네밥상", nameEn:"Sooki's Table (숙이네밥상)", nameZh:"淑姬家饭桌 (숙이네밥상)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的家常韩式套餐店", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {id:"sookine-bapsang", name:"숙이네밥상", nameEn:"Sooki's Table (숙이네밥상)", nameZh:"淑姬家饭桌 (숙이네밥상)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的家常韩式套餐店", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.608995511335, lng:127.291526952076, realAddress:"세종특별자치시 조치원읍 원마루길 16-1"},
 ];
 
@@ -176,6 +176,107 @@ function applyState(){
   });
 }
 
+// ================= 저장목록 서버 저장 (Supabase saved_restaurants) =================
+// 담기(♡)는 이제 브라우저뿐 아니라 서버에도 한 줄로 남는다 — 기기를 바꿔도 저장목록이 따라온다.
+// 표 만드는 SQL은 supabase/saved_restaurants.sql 한 파일에 들어 있다.
+//
+//   행(row) 하나 = 담은 가게 하나.
+//   담기 → upsert 한 줄 / 담기 해제 → 그 줄 delete / 가본 곳 → 같은 줄의 visited_at.
+//
+// (user_id, restaurant_id)에 unique 제약이 있어 같은 사람이 같은 가게를 두 번 담을 수 없고,
+// RLS 정책 때문에 남의 줄은 읽지도 쓰지도 못한다. 키를 가게 이름이 아니라 id 슬러그로 잡은 것은
+// 이름에 오타를 고치거나 배열 순서를 바꿔도 저장목록이 끊기지 않게 하기 위해서다.
+//
+// localStorage(store.marks)는 그대로 남긴다 — 세션이 확인되기 전 첫 프레임을 그리는 캐시이자,
+// CDN이 막혀 sb가 null인 환경의 대비책이다. 로그인이 확정되는 순간 pullSaved()가
+// 로컬을 서버 기준으로 덮어쓴다.
+const SAVED_TABLE = 'saved_restaurants';
+
+// 주소는 실제 가게(realAddress)와 예시 가게(detail.address)가 서로 다른 자리에 들어 있다
+function rAddress(r){
+  return r.realAddress || (r.detail && r.detail.address) || null;
+}
+
+function savedRow(r){
+  return {
+    user_id: currentUserId,
+    restaurant_id: r.id,
+    restaurant_name: r.name,
+    category: r.cat || null,
+    address: rAddress(r),
+    lat: (typeof r.lat === 'number') ? r.lat : null,
+    lng: (typeof r.lng === 'number') ? r.lng : null,
+    visited_at: r.visited ? new Date().toISOString() : null,
+  };
+}
+
+// 서버 반영은 전부 fire-and-forget이다. 호출 시점에 saveState()가 로컬 저장을 이미 끝냈으므로,
+// 여기서 기다리거나 예외를 던지면 네트워크가 느린 것만으로 "담기가 안 된다"고 느끼게 된다.
+const ignore = () => {};
+
+function pushMark(r){
+  if(!sb || !currentUserId || !r || !r.id) return;
+  if(r.saved){
+    sb.from(SAVED_TABLE)
+      .upsert(savedRow(r), { onConflict:'user_id,restaurant_id' })
+      .then(ignore, ignore);
+  } else {
+    sb.from(SAVED_TABLE).delete()
+      .eq('user_id', currentUserId).eq('restaurant_id', r.id)
+      .then(ignore, ignore);
+  }
+}
+
+// 여러 가게가 한꺼번에 바뀌는 경우(마이페이지 초기화, 첫 로그인 시 로컬 기록 업로드)용.
+// 지금 담긴 것은 전부 올리고, 담기지 않은 것은 전부 지워서 화면과 표를 통째로 맞춘다.
+function pushAllMarks(){
+  if(!sb || !currentUserId) return;
+  const rows = restaurants.filter(r => r.saved && r.id).map(savedRow);
+  const dropIds = restaurants.filter(r => !r.saved && r.id).map(r => r.id);
+  if(rows.length){
+    sb.from(SAVED_TABLE).upsert(rows, { onConflict:'user_id,restaurant_id' }).then(ignore, ignore);
+  }
+  if(dropIds.length){
+    sb.from(SAVED_TABLE).delete()
+      .eq('user_id', currentUserId).in('restaurant_id', dropIds)
+      .then(ignore, ignore);
+  }
+}
+
+// 로그인이 확정된 직후 서버 저장목록을 내려받아 화면과 로컬 캐시를 맞춘다.
+function pullSaved(){
+  if(!sb || !currentUserId) return;
+  const uid = currentUserId;
+  sb.from(SAVED_TABLE)
+    .select('restaurant_id,visited_at')
+    .eq('user_id', uid)
+    .then(({ data, error }) => {
+      // 네트워크·정책 문제로 못 읽었으면 로컬 캐시를 그대로 둔다. 지우면 오프라인에서
+      // 저장목록이 사라진 것처럼 보인다.
+      if(error || !data) return;
+      // 응답을 기다리는 사이에 계정이 바뀌었으면 남의 화면에 덮어쓰지 않는다
+      if(uid !== currentUserId) return;
+
+      const localCount = Object.keys(store.marks[uid] || {}).length;
+      // 서버가 비어 있는데 이 브라우저에 담아둔 게 있으면 이 계정의 첫 동기화다 — 한 번 올려준다
+      if(data.length === 0 && localCount > 0){ pushAllMarks(); return; }
+
+      const byId = {};
+      restaurants.forEach(r => { if(r.id) byId[r.id] = r; });
+      const mine = {};
+      data.forEach(row => {
+        const r = byId[row.restaurant_id];
+        if(!r) return; // 목록에서 빠진 가게가 서버에만 남아 있는 경우 — 조용히 무시
+        mine[r.name] = { saved:true, visited: !!row.visited_at };
+      });
+      store.marks[uid] = mine;
+      applyState();
+      saveState();
+      renderCards();
+      renderExampleCards();
+    }, ignore);
+}
+
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
@@ -220,10 +321,12 @@ const i18n = { en: {
   catAll:"All", catKorean:"Korean", catWestern:"Western", catChinese:"Chinese", catJapanese:"Japanese", catSnack:"Snacks",
   sortRecommend:"Recommended", sortName:"Name (A-Z)", sortRating:"Highest rated", sortReviews:"Most reviewed", sortLatest:"Latest",
   priceMin:"Min", priceMax:"Max", priceWon:"KRW",
-  filterEmpty:"No results found. Try a different keyword.",
+  filterEmpty:"No restaurants match these filters yet.",
+  filterEmptySub:"How about these?", filterReset:"Clear filters and show everything",
+  filterEmptyKorean:"🍚 Korean", filterEmptyJapanese:"🍜 Japanese", filterEmptyWestern:"🍝 Western",
   exampleGridTitle:"🔎 Example restaurants (pending field survey)",
   exampleGridSub:'Placeholder info until the field survey is done. Tap the heart to save a spot to "Want to visit."',
-  loadMore:"Show more restaurants",
+  loadMore:'Show more restaurants <span class="badge-soon">Opening in September</span>',
   reviewEyebrow:"REVIEW", reviewTitle:"Stories from people who've been there",
   reviewSearchPh:"Search reviews (restaurant name, keyword)",
   reviewWriteBtn:"Write a review too",
@@ -234,15 +337,16 @@ const i18n = { en: {
   shareKakao:"Share on KakaoTalk", shareCopy:"Copy link", shareText:"Share by text", shareInsta:"Share on Instagram",
   joinEyebrow:"TOGETHER", joinTitle:"Let's build this together",
   joinBody:"For owners, for us, for neighbors — we've made room for anyone who wants to join this project.",
-  join1Title:'Are you an owner?<span class="badge-soon">Coming soon</span>',
+  join1Title:'Are you an owner?<span class="badge-soon">Opening in September</span>',
   join1Body:"A signup spot for Jochiwon local restaurant owners who want their restaurant featured.",
   join2Title:"Lend us a hand", join2Body:"We're looking for people to join as teammates for planning, development, design, and field research.",
   join3Title:"Tell us about local spots in your area too", join3Body:"Even outside Jochiwon, if you connect with what we're doing, let's talk anytime.",
   signupTitle:"Be the first to know", signupBody:"We'll email you first when the beta launches and when new restaurants are added.",
   signupEmailPh:"Enter your email address", signupBtn:"Sign up early",
+  signupErrEmail:"That email address looks a little off! 💌",
   signupMsg:"You're signed up! We'll let you know first when we launch 🌾",
   footerAbout:'"KU Rescue Squad! Help the Local Owners" — a social contribution project by Matjip KU-jodae, a Korea University Sejong Campus student team, built to grow together with the local business community.',
-  footerServiceHead:"Service", footerMapLink:"View map", footerPassLink:'Grandchild meal pass<span class="badge-soon">Coming soon</span>', footerSponsorLink:"Support us",
+  footerServiceHead:"Service", footerMapLink:"View map", footerPassLink:'Grandchild meal pass<span class="badge-live">Reservations open</span>', footerSponsorLink:"Support us",
   footerInfoHead:"Info", footerIntroLink:"About this service", footerFaqLink:"Contact us", footerSignupLink:"Sign up for launch alerts",
   footerLegalHead:"Legal", footerPrivacyLink:"Privacy Policy", footerTermsLink:"Terms of Service",
   footerOperator:"<b>Operator</b> Matjip KU-jodae, a Korea University Sejong Campus student team",
@@ -269,7 +373,9 @@ const i18n = { en: {
   googleReviewLink:"See all reviews on Google Maps →", googleReviewAnon:"Anonymous",
   liveSearchLoading:"Searching...", liveSearchEmpty:"No results found.", liveSearchError:"Search failed. Please try again shortly.",
   confirmLoginTitle:"Sign-in required", confirmLoginBody:"This feature requires signing in. Sign in and build your own restaurant list!", confirmLoginOk:"Sign in", confirmLoginCancel:"Close",
-  confirmUnsave:"Remove from your want-to-visit list?", confirmSave:"Add this restaurant to your want-to-visit list?", confirmVisited:"Mark this restaurant as visited?",
+  discardTitle:"Leave without finishing?", discardBody:"What you've picked so far won't be saved.",
+  discardOk:"Leave", discardCancel:"Keep going",
+  confirmUnsave:"Remove from your want-to-visit list?", confirmUnsaveVisited:"Remove from your want-to-visit list? Your visit record for this place will be deleted too.", confirmSave:"Add this restaurant to your want-to-visit list?", confirmVisited:"Mark this restaurant as visited?",
   // 취향 설문
   surveyPrev:"Previous", surveyNext:"Next", surveyResult:"See results",
   surveyResultTitle:"How about these?", surveyResultSub:"Local restaurants picked to match your taste",
@@ -416,7 +522,7 @@ const i18n = { en: {
   passSuccessBodyFail:"We've saved your {name} pass, but storage was full so we couldn't record it — it may disappear on reload.",
   passSeeMyPasses:"See my meal passes",
   // 손주 식권 안내 (정적 페이지)
-  passInfoTitle:'Grandchild Meal Pass<span class="badge-soon">Coming soon</span>',
+  passInfoTitle:'Grandchild Meal Pass<span class="badge-live">Reservations open</span>',
   passInfoBody:"Pre-load a meal pass for a restaurant you like. Get extra passes based on what the owner offers, then use one each visit.",
   passBenefit1Title:"Buy 10, get 1 free", passBenefit1Body:"Buy in bulk and get extra passes set by the owner. Benefits vary by restaurant.",
   passBenefit2Title:"Prepay for meals", passBenefit2Body:"Prepay instead of paying meal by meal, and lighten the burden on your wallet.",
@@ -473,10 +579,12 @@ const i18n = { en: {
   catAll:"全部", catKorean:"韩餐", catWestern:"西餐", catChinese:"中餐", catJapanese:"日料", catSnack:"小吃",
   sortRecommend:"推荐排序", sortName:"名称排序（拼音）", sortRating:"评分最高", sortReviews:"评论最多", sortLatest:"最新",
   priceMin:"最低", priceMax:"最高", priceWon:"韩元",
-  filterEmpty:"没有找到结果。请尝试其他关键词。",
+  filterEmpty:"目前没有符合这些筛选条件的餐厅。",
+  filterEmptySub:"这些餐厅怎么样？", filterReset:"清除筛选，查看全部",
+  filterEmptyKorean:"🍚 韩餐", filterEmptyJapanese:"🍜 日料", filterEmptyWestern:"🍝 西餐",
   exampleGridTitle:"🔎 示例店铺（待实地调查）",
   exampleGridSub:'这是实地调查完成前的示例信息。点击爱心可保存到"想去的地方"。',
-  loadMore:"查看更多餐厅",
+  loadMore:'查看更多餐厅 <span class="badge-soon">9月开放</span>',
   confirmOk:"确认", confirmNo:"否",
   cardReviewPending:"🔎 真实评论准备中", cardVisitBadge:"✔ 去过", cardLiveBadge:"🌐 谷歌实时评论", cardMockTag:"示例数据",
   cardVisitedLabel:"✔ 已记录到访", cardMarkVisited:"标记为已到访", cardWantToVisit:"添加到想去的地方",
@@ -493,7 +601,9 @@ const i18n = { en: {
   googleReviewLink:"在谷歌地图查看全部评论 →", googleReviewAnon:"匿名",
   liveSearchLoading:"搜索中...", liveSearchEmpty:"没有找到结果。", liveSearchError:"搜索失败，请稍后再试。",
   confirmLoginTitle:"需要登录", confirmLoginBody:"此功能需要登录。登录后即可创建你自己的餐厅列表！", confirmLoginOk:"登录", confirmLoginCancel:"关闭",
-  confirmUnsave:"要从想去的地方中移除吗？", confirmSave:"要把这家餐厅添加到想去的地方吗？", confirmVisited:"要将这家餐厅标记为已到访吗？",
+  discardTitle:"要中途退出吗？", discardBody:"目前选择的内容不会被保存。",
+  discardOk:"退出", discardCancel:"继续",
+  confirmUnsave:"要从想去的地方中移除吗？", confirmUnsaveVisited:"要从想去的地方中移除吗？这家店的到访记录也会一并删除。", confirmSave:"要把这家餐厅添加到想去的地方吗？", confirmVisited:"要将这家餐厅标记为已到访吗？",
   // 리뷰(랜딩) / 설문 CTA / 공유 / 함께하기 / 이메일 신청 / 푸터 / 접근성
   reviewEyebrow:"评价", reviewTitle:"亲身体验过的人的故事",
   reviewSearchPh:"搜索评论（餐厅名、关键词）",
@@ -505,15 +615,16 @@ const i18n = { en: {
   shareKakao:"分享到KakaoTalk", shareCopy:"复制链接", shareText:"短信分享", shareInsta:"分享到Instagram",
   joinEyebrow:"一起", joinTitle:"让我们一起打造这个项目",
   joinBody:"为老板，为我们，为邻居——我们为想要加入这个项目的所有人留出了空间。",
-  join1Title:'你是店主吗？<span class="badge-soon">即将推出</span>',
+  join1Title:'你是店主吗？<span class="badge-soon">9月开放</span>',
   join1Body:"为希望自己的店铺被介绍的调治院本地店主准备的登记入口。",
   join2Title:"帮我们一把", join2Body:"我们正在寻找愿意加入企划、开发、设计、实地调查等岗位的队友。",
   join3Title:"也告诉我们你所在地区的本地美食", join3Body:"即使不在调治院，只要和我们做的事情有共鸣，随时欢迎联系。",
   signupTitle:"第一时间获知消息", signupBody:"测试版上线和新增餐厅时，我们会第一时间发邮件通知你。",
   signupEmailPh:"请输入邮箱地址", signupBtn:"提前注册",
+  signupErrEmail:"邮箱地址的格式好像有点不对哦！💌",
   signupMsg:"注册成功！上线时我们会第一时间通知你 🌾",
   footerAbout:'"KU救援队！拜托了老板"——高丽大学世宗校区学生团队味集KU助队发起的社会公益项目，致力于与本地商圈一起成长。',
-  footerServiceHead:"服务", footerMapLink:"查看地图", footerPassLink:'孙辈餐券<span class="badge-soon">即将推出</span>', footerSponsorLink:"支持我们",
+  footerServiceHead:"服务", footerMapLink:"查看地图", footerPassLink:'孙辈餐券<span class="badge-live">可预约</span>', footerSponsorLink:"支持我们",
   footerInfoHead:"信息", footerIntroLink:"关于本服务", footerFaqLink:"联系我们", footerSignupLink:"订阅上线通知",
   footerLegalHead:"法律", footerPrivacyLink:"隐私政策", footerTermsLink:"服务条款",
   footerOperator:"<b>运营机构</b> 高丽大学世宗校区学生团队 味集KU助队",
@@ -669,7 +780,7 @@ const i18n = { en: {
   passSuccessBodyFail:"已保存你的{name}餐券，但存储空间已满未能记录——刷新页面后可能会消失。",
   passSeeMyPasses:"查看我的餐券",
   // 손주 식권 안내 (정적 페이지)
-  passInfoTitle:'孙辈餐券<span class="badge-soon">即将推出</span>',
+  passInfoTitle:'孙辈餐券<span class="badge-live">可预约</span>',
   passInfoBody:"为你喜欢的餐厅预先充值餐券。根据店主提供的福利获得额外餐券，每次到访使用一张。",
   passBenefit1Title:"买10送1", passBenefit1Body:"批量购买可获得店主设定的额外餐券。福利因店而异。",
   passBenefit2Title:"预付餐费", passBenefit2Body:"无需每次单独付款，提前预付，减轻你的钱包负担。",
@@ -710,6 +821,11 @@ function applyStaticTranslations(){
     const key = el.dataset.i18nPlaceholder;
     if(el.dataset.i18nKoPhCache === undefined) el.dataset.i18nKoPhCache = el.placeholder;
     el.placeholder = (dict && dict[key] !== undefined) ? dict[key] : el.dataset.i18nKoPhCache;
+  });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    const key = el.dataset.i18nAria;
+    if(el.dataset.i18nKoAriaCache === undefined) el.dataset.i18nKoAriaCache = el.getAttribute('aria-label') || '';
+    el.setAttribute('aria-label', (dict && dict[key] !== undefined) ? dict[key] : el.dataset.i18nKoAriaCache);
   });
   document.querySelectorAll('[data-i18n-title]').forEach(el => {
     const key = el.dataset.i18nTitle;
@@ -808,6 +924,32 @@ function passUnit(n){
   return `${n}장`;
 }
 
+// 결과가 0곳일 때 길을 잃지 않게 해주는 두 갈래.
+// 카테고리/가격/정렬은 전부 getFilteredList()가 읽는 값이므로, 여기서는 그 값만 되돌리고
+// renderCards()를 다시 부르면 된다 (필터 규칙을 여기에 복사하지 않는다).
+function setCatChip(cat){
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.toggle('active', c.dataset.cat === cat));
+}
+
+function resetFilters(){
+  currentCat = '전체';
+  setCatChip('전체');
+  priceMinInput.value = '';
+  priceMaxInput.value = '';
+  currentSort = 'recommend';
+  sortSelect.value = 'recommend';
+  renderCards();
+}
+
+// "이런 맛집은 어때요?" 추천 칩 — 기존 카테고리 필터를 그대로 쓴다
+function jumpCategory(cat){
+  currentCat = cat;
+  setCatChip(cat);
+  priceMinInput.value = '';
+  priceMaxInput.value = '';
+  renderCards();
+}
+
 function renderCards(){
   cardGrid.innerHTML = "";
   const list = getFilteredList();
@@ -858,7 +1000,7 @@ function bindFoodCardButtons(container){
       if(!requireLogin('save')) return;
       const r = restaurants[e.currentTarget.dataset.idx];
       if(r.saved){
-        confirmMark(r, '💔', t('confirmUnsave') || '가보고 싶은 곳에서 해제하시겠습니까?', () => { r.saved = false; });
+        confirmMark(r, '💔', unsaveQuestion(r), () => { r.saved = false; r.visited = false; });
       } else {
         confirmMark(r, '💌', t('confirmSave') || '이 맛집을 가보고 싶은 곳에 담으시겠습니까?', () => { r.saved = true; });
       }
@@ -921,12 +1063,19 @@ function renderExampleCards(){
   bindFoodCardButtons(exampleCardGrid);
 }
 
+// 담기를 해제하면 서버에서 그 가게의 줄이 통째로 지워진다(= 방문 기록도 함께).
+// 가본 곳으로 표시해둔 가게라면 그 사실을 물어보기 전에 알려준다.
+function unsaveQuestion(r){
+  if(r.visited) return t('confirmUnsaveVisited') || '가보고 싶은 곳에서 해제하시겠습니까? 이 가게의 방문 기록도 함께 지워져요.';
+  return t('confirmUnsave') || '가보고 싶은 곳에서 해제하시겠습니까?';
+}
+
 // 저장/방문 상태 변경은 전부 확인 모달을 거친다 (extra.md §2)
 function confirmMark(r, emoji, question, apply){
   openConfirm({
     emoji, title:rName(r), text:question,
     okLabel:t('confirmOk') || '확인', cancelLabel:t('confirmNo') || '아니요',
-    onOk: () => { apply(); saveState(); renderCards(); renderExampleCards(); closeConfirm(); }
+    onOk: () => { apply(); saveState(); pushMark(r); renderCards(); renderExampleCards(); closeConfirm(); }
   });
 }
 
@@ -1096,6 +1245,19 @@ function openConfirm({emoji, title, text, okLabel, cancelLabel, onOk}){
   confirmOverlay.classList.add('show');
 }
 function closeConfirm(){ confirmOverlay.classList.remove('show'); }
+
+// 설문·게임처럼 여러 단계를 거치는 팝업은 닫는 순간 하던 게 사라진다. 한 번 물어본다.
+// 확인창은 z-index:1100이라 다른 모달 위에 정상적으로 뜬다 (style.css).
+function confirmDiscard(closeFn){
+  openConfirm({
+    emoji:'🤔',
+    title: t('discardTitle') || '그만두시겠어요?',
+    text:  t('discardBody')  || '지금까지 고른 내용은 저장되지 않아요.',
+    okLabel: t('discardOk') || '그만두기',
+    cancelLabel: t('discardCancel') || '계속하기',
+    onOk: () => { closeConfirm(); closeFn(); }
+  });
+}
 function closeConfirmOnOverlay(e){ if(e.target === confirmOverlay) closeConfirm(); }
 
 // 로그인 필요한 동작 앞에 세우는 게이트. 통과하면 true, 아니면 유도 팝업을 띄우고 false.
@@ -1122,11 +1284,34 @@ function copyLink(){
 }
 
 // ---- Email signup ----
+const signupEmailInput = document.getElementById('signupEmail');
+const signupErrorEl = document.getElementById('signupError');
+
 document.getElementById('signupForm').addEventListener('submit', function(e){
   e.preventDefault();
   const msg = document.getElementById('signupMsg');
+  const value = signupEmailInput.value.trim();
+
+  // 형식이 틀렸으면 성공 메시지를 띄우지 않는다. 이전에는 무엇을 넣든 "신청 완료!"가 떴다.
+  if(!isEmail(value)){
+    msg.style.display = 'none';
+    signupErrorEl.textContent = t('signupErrEmail') || '이메일 주소 형식이 조금 이상한 것 같아요! 💌';
+    signupEmailInput.classList.add('is-invalid');
+    signupEmailInput.focus();
+    return;
+  }
+
+  signupErrorEl.textContent = '';
+  signupEmailInput.classList.remove('is-invalid');
   msg.style.display = 'block';
   this.reset();
+});
+
+// 다시 입력하기 시작하면 빨간 테두리와 안내를 걷어준다
+signupEmailInput.addEventListener('input', () => {
+  signupEmailInput.classList.remove('is-invalid');
+  signupErrorEl.textContent = '';
+  document.getElementById('signupMsg').style.display = 'none';
 });
 
 // ---- Big text mode ----
@@ -1180,7 +1365,15 @@ function openSurvey(){
   surveyOverlay.classList.add('show');
 }
 function closeSurvey(){ surveyOverlay.classList.remove('show'); }
-function closeSurveyOnOverlay(e){ if(e.target === surveyOverlay) closeSurvey(); }
+
+// X와 배경 클릭은 같은 길로 나가야 한다 — 한쪽만 물어보면 규칙이 둘로 갈라진다.
+// 아무것도 안 골랐거나 이미 결과 화면이면 그냥 닫는다.
+function requestCloseSurvey(){
+  const inProgress = Object.keys(surveyAnswers).length > 0 && surveyStep < surveyQuestions.length;
+  if(inProgress) confirmDiscard(closeSurvey);
+  else closeSurvey();
+}
+function closeSurveyOnOverlay(e){ if(e.target === surveyOverlay) requestCloseSurvey(); }
 
 function renderSurvey(){
   const totalDots = surveyQuestions.length + 1;
@@ -1230,7 +1423,7 @@ function renderSurvey(){
               <span class="emoji">${r.emoji}</span>
               <div class="info">
                 <strong>${rName(r)}</strong>
-                <span>${rCat(r)} · ★ ${r.rating} · ${rDesc(r)}</span>
+                <span>${rCat(r)} · ${ratingLabel(r)} · ${rDesc(r)}</span>
               </div>
             </div>
           `).join('')}
@@ -1515,7 +1708,12 @@ function openGame(){
   gameOverlay.classList.add('show');
 }
 function closeGame(){ gameOverlay.classList.remove('show'); }
-function closeGameOnOverlay(e){ if(e.target === gameOverlay) closeGame(); }
+
+function requestCloseGame(){
+  if(rouletteItems.length > 0) confirmDiscard(closeGame);
+  else closeGame();
+}
+function closeGameOnOverlay(e){ if(e.target === gameOverlay) requestCloseGame(); }
 
 function renderGameChoice(){
   gameBody.innerHTML = `
@@ -1718,6 +1916,7 @@ function syncAuthFromSession(session){
   updateHeaderAuthUI();
   renderCards();
   renderReviews();
+  pullSaved();
 }
 
 // 첫 렌더는 이미 로그아웃 상태로 그려진 뒤다. 세션 확인은 비동기라
@@ -1966,10 +2165,10 @@ function renderMypage(){
     btn.addEventListener('click', () => {
       const r = restaurants.find(x => x.name === btn.dataset.name);
       const field = mypageTab === 'saved' ? 'saved' : 'visited';
-      const question = mypageTab === 'saved' ? (t('confirmUnsave')||'가보고 싶은 곳에서 해제하시겠습니까?') : (t('mypageConfirmUnvisit')||'방문 기록을 취소하시겠습니까?');
+      const question = mypageTab === 'saved' ? unsaveQuestion(r) : (t('mypageConfirmUnvisit')||'방문 기록을 취소하시겠습니까?');
       openConfirm({
         emoji:'↩️', title: rName(r), text: question, okLabel:t('confirmOk')||'확인', cancelLabel:t('confirmNo')||'아니요',
-        onOk: () => { r[field] = false; saveState(); renderCards(); renderMypage(); closeConfirm(); }
+        onOk: () => { r[field] = false; if(field === 'saved') r.visited = false; saveState(); pushMark(r); renderCards(); renderMypage(); closeConfirm(); }
       });
     });
   });
@@ -1993,7 +2192,7 @@ function renderMypagePlaceList(){
       <span class="emoji">${r.emoji}</span>
       <div class="info">
         <strong>${rName(r)}</strong>
-        <span>${rCat(r)} · ★ ${r.rating} · ${rDesc(r)}</span>
+        <span>${rCat(r)} · ${ratingLabel(r)} · ${rDesc(r)}</span>
       </div>
       <button type="button" class="mypage-remove-btn" data-name="${escapeHtml(r.name)}" title="${mypageTab==='saved' ? (t('mypageRemoveSavedTitle')||'가보고 싶은 곳에서 해제') : (t('mypageRemoveVisitedTitle')||'방문 기록 취소')}">✕</button>
     </div>
@@ -2060,6 +2259,7 @@ function resetSection(tab){
     onOk: () => {
       s.apply();
       saveState();
+      pushAllMarks();
       renderCards();
       renderMypage();
       closeConfirm();
@@ -2082,6 +2282,7 @@ function resetMyData(){
       store.reviewLikes = {};
       store.myLikedReviews = [];
       saveState();
+      pushAllMarks();
       renderCards();
       renderReviews();
       renderMypage();

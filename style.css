@@ -355,6 +355,26 @@ header{
   margin-top:32px;text-align:center;color:var(--ink-soft);font-size:0.92rem;
   font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
 }
+/* 원형 크롭은 .survey-photo와 같은 방식이다 — 캐릭터 PNG의 체커보드 여백을 잘라낸다 */
+.filter-empty-art{
+  width:110px;aspect-ratio:1/1;border-radius:50%;overflow:hidden;margin:0 auto 16px;
+  border:4px solid var(--paper);box-shadow:var(--shadow);
+}
+.filter-empty-art img{width:100%;height:100%;object-fit:cover;object-position:center center;}
+.filter-empty-title{
+  font-family:'Gaegu','Gowun Dodum',sans-serif;font-size:1.25rem;font-weight:700;
+  color:var(--slate-dark);margin-bottom:6px;
+}
+.filter-empty-sub{margin-bottom:14px;}
+.filter-empty-chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:18px;}
+.filter-empty-chips button{
+  padding:8px 16px;border-radius:99px;font-size:0.88rem;font-weight:700;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
+  background:var(--paper);border:1.5px solid var(--slate-tint);color:var(--slate-dark);
+  transition:all .15s ease;
+}
+.filter-empty-chips button:hover{background:var(--slate-tint);transform:translateY(-2px);}
+.filter-empty-reset{font-size:0.88rem;}
 .card-grid{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
   gap:22px;margin-top:28px;
@@ -568,6 +588,7 @@ footer ul a:hover{color:#fff;}
 }
 .toast-overlay.show{opacity:1;pointer-events:auto;}
 .toast-box{
+  position:relative;
   background:var(--paper);border-radius:22px;padding:36px 30px;max-width:340px;
   text-align:center;box-shadow:var(--shadow-hover);
   transform:translateY(14px) scale(0.96);transition:transform .2s ease;
@@ -594,12 +615,39 @@ footer ul a:hover{color:#fff;}
   opacity:0;pointer-events:none;transition:opacity .2s ease;padding:20px;
 }
 .survey-overlay.show{opacity:1;pointer-events:auto;}
+/* 이 박스는 더 이상 스크롤하지 않는다. 스크롤은 안쪽 .survey-scroll이 맡는다.
+   박스가 직접 스크롤하면 안에 absolute로 붙인 닫기 X가 내용과 함께 위로 밀려 사라진다 —
+   식권 안내·FAQ·소개·상세처럼 긴 모달에서 실제로 그렇게 된다.
+   새 모달을 만들 때도 .survey-box > .overlay-close + .survey-scroll 구조를 지킬 것. */
 .survey-box{
-  background:var(--paper);border-radius:26px;padding:38px 32px;max-width:440px;width:100%;
+  background:var(--paper);border-radius:26px;max-width:440px;width:100%;
   box-shadow:var(--shadow-hover);
   transform:translateY(14px) scale(0.97);transition:transform .2s ease;
-  max-height:88vh;overflow-y:auto;
+  max-height:88vh;
+  position:relative;                 /* .overlay-close의 기준점 */
+  display:flex;flex-direction:column;
+  overflow:hidden;                   /* 둥근 모서리 밖으로 내용이 삐져나오지 않게 */
 }
+.survey-scroll{
+  padding:38px 32px;
+  overflow-y:auto;
+  min-height:0;                      /* flex 안에서 max-height에 맞춰 줄어들 수 있게 */
+}
+
+/* 팝업 오른쪽 위 닫기 버튼.
+   색은 마이페이지 ✕(.mypage-remove-btn)와 같은 규칙을 따른다 — design.md의 60:30:10에서
+   비비드 레드는 CTA·로고 몫이라, 닫기는 평상시 슬레이트고 hover에서만 붉은 기가 돈다.
+   38px은 헤더 .icon-btn과 같은 크기로, 시니어 사용자 기준의 터치 영역이다. */
+.overlay-close{
+  position:absolute;top:14px;right:14px;z-index:5;
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--slate-tint);color:var(--ink-soft);
+  font-size:1rem;line-height:1;
+  transition:background .15s ease,color .15s ease,transform .15s ease;
+}
+.overlay-close:hover{background:rgba(214,67,46,0.12);color:var(--red-dark);transform:translateY(-2px);}
+.overlay-close:focus-visible{outline:2px solid var(--slate-dark);outline-offset:2px;}
 .survey-overlay.show .survey-box{transform:translateY(0) scale(1);}
 .survey-progress{display:flex;gap:6px;margin-bottom:22px;}
 .survey-progress span{flex:1;height:5px;border-radius:99px;background:var(--slate-tint);}
@@ -929,11 +977,27 @@ footer ul a:hover{color:#fff;}
 }
 .a11y-toggle:hover{transform:translateY(-3px);}
 
+section[id]{scroll-margin-top:88px;}
+
+/* 아직 못 쓰는 기능과 지금 쓸 수 있는 기능을 눈으로 구분한다.
+   클릭은 그대로 살려둔다 — 눌러보면 언제 열리는지 토스트가 알려준다. */
+.is-soon{opacity:0.62;cursor:not-allowed;}
+.is-soon:hover{transform:none;}
+
 .badge-soon{
   display:inline-block;font-size:0.68rem;font-weight:800;color:var(--red);
   background:rgba(214,67,46,0.1);padding:3px 9px;border-radius:99px;margin-left:8px;
   font-family:'Gowun Dodum','Noto Sans KR',sans-serif;vertical-align:middle;
 }
+
+.badge-live{
+  display:inline-block;font-size:0.68rem;font-weight:800;color:var(--slate-dark);
+  background:rgba(72,96,122,0.12);padding:3px 9px;border-radius:99px;margin-left:8px;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;vertical-align:middle;
+}
+
+/* 입력값이 형식에 안 맞을 때 (브라우저 기본 검증 대신 우리가 표시한다) */
+.is-invalid{border-color:var(--red) !important;background:rgba(214,67,46,0.04) !important;}
 
 /* ===== 함께 만들어요 CTA (extra.md §7) ===== */
 .join{background:var(--base-bg-2);}
@@ -1099,7 +1163,8 @@ footer ul a:hover{color:#fff;}
   .icon-btn-search{display:flex;}
 }
 .search-overlay{align-items:flex-start;padding-top:70px;}
-.search-box{max-width:520px;padding:20px;}
+.search-box{max-width:520px;}
+.search-box .survey-scroll{padding:20px;}
 .search-overlay-bar{
   display:flex;align-items:center;gap:10px;
   background:var(--base-bg);border:1.5px solid var(--slate-tint);border-radius:99px;padding:10px 16px;

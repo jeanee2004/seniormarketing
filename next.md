@@ -76,25 +76,87 @@ curl -s -H "apikey: <publishable키>" https://oqsydupzmgfgrkuibbqm.supabase.co/a
 
 검증: 헤드리스 크롬 **14/14 통과** — 확인창이 실제로 화면 맨 앞에서 잡히는지 `elementFromPoint`로 확인, 저장/식권 각각 초기화 시 다른 섹션이 보존되는지, 헤더에 로그아웃 버튼이 없는지, 콘솔 에러 0.
 
-### 2단계 (다음 세션): 저장목록 서버 이전
+### ✅ 2단계 완료: 저장목록 서버 이전 (2026-08-25)
 
-```sql
-create table public.saved_restaurants (
-  user_id uuid not null references auth.users(id) on delete cascade,
-  restaurant_name text not null,
-  saved boolean not null default false,
-  visited boolean not null default false,
-  updated_at timestamptz not null default now(),
-  primary key (user_id, restaurant_name)
-);
-alter table public.saved_restaurants enable row level security;
-create policy "own rows" on public.saved_restaurants
-  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-```
+담기(♡)가 이제 브라우저가 아니라 **Supabase 테이블에 한 줄로** 남는다. 기기를 바꿔도 따라온다.
 
-`loadState()`/`saveState()`/`applyState()`의 marks 부분만 서버 읽기·쓰기로 교체하고, localStorage는 오프라인 캐시로 남긴다. 첫 로그인 때 로컬 marks를 1회 업로드. 리뷰·식권은 그 다음 순서.
+**`public.saved_restaurants`** — 생성 SQL은 `supabase/saved_restaurants.sql` 한 파일에 있고,
+**여러 번 실행해도 오류가 안 난다**(`if not exists` / `drop policy if exists`). MCP로 적용해뒀지만
+대시보드 SQL Editor에 그대로 붙여넣어도 똑같이 동작한다.
 
-**주의**: `applyState()`가 이제 마크가 없으면 `saved/visited`를 `false`로 되돌린다. 그래서 더미 데이터에 박혀 있던 `saved:true`/`visited:true` 시드는 로그인해도 더 이상 보이지 않는다 — 진짜 계정마다 빈 상태로 시작하는 게 맞는 동작이라 의도한 변경이다.
+| 컬럼 | 뜻 |
+|---|---|
+| `user_id` | 누가 담았는지 (`auth.users` 참조, 계정 삭제 시 cascade) |
+| `restaurant_id` | 가게 고유번호 — `restaurants[]`에 새로 넣은 슬러그 (`the-ramen` 등) |
+| `restaurant_name` / `category` / `address` / `lat` / `lng` | 가게 정보 스냅샷 |
+| `visited_at` | 가본 곳 표시 시각 (안 갔으면 null) |
+| `created_at` | 담은 시간, `default now()`로 자동 |
+
+- **행 하나 = 담은 가게 하나.** 담기 → upsert, 해제 → delete, 가본 곳 → 같은 행의 `visited_at`.
+  "가본 곳"을 별도 테이블이나 별도 행으로 만들지 않은 것이 이번의 절충안이다 —
+  스펙의 "다시 누르면 표에서 삭제"를 지키면서 사이트의 기존 ✔ 기능도 같이 서버로 옮겼다.
+  대신 **담기를 해제하면 방문 기록도 함께 사라진다.** 그래서 `unsaveQuestion(r)`이 방문 기록이 있는
+  가게를 해제할 때만 문구를 바꿔 미리 알려준다.
+- **중복 방지**: `unique (user_id, restaurant_id)`. 클라이언트는 `upsert(onConflict)`로 흡수한다.
+- **RLS**: select/insert/update/delete 4개 정책 전부 `auth.uid() = user_id`.
+  `for all` 한 줄로 안 쓴 이유는 대시보드 Policies 화면에서 뭐가 허용됐는지 한눈에 보이게 하려고.
+- **왜 이름이 아니라 슬러그인가**: 배열 인덱스는 순서가 바뀌면 엉뚱한 가게에 붙고,
+  가게 이름은 오타 하나 고치는 순간 저장목록이 끊긴다. **새 가게를 추가하면 `id`를 꼭 넣어야 한다** —
+  없으면 `pushMark()`가 조용히 건너뛴다.
+
+**클라이언트에서 건드린 곳은 세 군데뿐**이다. 검색·리뷰·카카오/구글 API 경로는 한 줄도 안 바꿨다.
+1. `restaurants[]` 12곳에 `id` 슬러그 추가 (+ 주소를 한 곳에서 꺼내는 `rAddress()`)
+2. `confirmMark()`에 `pushMark(r)` 한 줄 — 담기/해제/방문의 유일한 관문이라 여기 하나면 된다
+3. `syncAuthFromSession()`에 `pullSaved()` 한 줄 — 세션이 확정되는 순간 서버 기준으로 맞춘다
+
+**서버 쓰기는 전부 fire-and-forget이고 실패 콜백까지 무시한다.** 호출 시점엔 `saveState()`가
+로컬 저장을 이미 끝냈기 때문에, 여기서 기다리거나 던지면 네트워크가 느린 것만으로
+"담기가 안 된다"고 느끼게 된다. CDN이 막혀 `sb`가 null이면 예전처럼 localStorage로만 동작한다.
+`pullSaved()`도 실패 시 로컬 캐시를 지우지 않는다 — 지우면 오프라인에서 저장목록이 사라져 보인다.
+
+**검증** (헤드리스 크롬 CDP + MCP `execute_sql` + REST 직접 호출)
+- 담기 흐름 **21/22** (실패 1건은 테스트가 카카오 API 파라미터를 `q`로 잘못 쓴 것 — `query`가 맞다.
+  고쳐서 재확인함): 비로그인 게이트, 가입 즉시 로그인, 2곳 담기, 예시 가게(좌표 없음)도 담김,
+  방문 표시, 새로고침 유지, **localStorage를 통째로 지우고 새로고침해도 서버에서 복구**, 해제 시 행 삭제,
+  카카오·구글·카테고리 필터·리뷰 회귀, 콘솔 에러 0
+- DB 대조: 최종 화면 상태와 표의 행이 정확히 일치. `created_at`은 upsert로 방문 표시를 해도 안 바뀜
+- **RLS 7/7**: B 계정에 A의 목록 안 보임 / B가 A의 `user_id`로 insert 시도 → **403** /
+  B가 A의 행 삭제 시도 → 0건 매칭 / 같은 가게 두 번 담기 → **409**
+- 검증용 계정은 삭제했다. `on delete cascade`로 그 행들도 같이 사라지는 것까지 확인했다.
+
+### 같은 세션에서 한 UX 손질
+
+교수님 피드백 목록을 실제 코드와 대조해보니 **절반은 이미 되어 있었다** — sticky 헤더(`style.css:69`),
+클릭 시 토스트(`openToast()`), 지도 안내 문구(`index.html`의 `mapBody`), 그리고 "정적 placeholder"라던
+지도는 Leaflet 실제 지도였다. `about:invalid` 링크도 없었다(전부 `javascript:void(0)` + `onclick`).
+안 되어 있던 것 중 사용량 작은 것부터 넷을 처리했다.
+
+- **이메일 알림 폼 검증** — 이전에는 무엇을 넣든 "신청 완료!"가 떴고 검증은 브라우저 기본에 맡겨져 있었다.
+  이 사이트는 한·영·중을 직접 관리하는데 **브라우저 기본 검증 문구는 브라우저 언어를 따르므로**
+  로그인 폼과 같은 이유로 `novalidate`를 붙이고 `isEmail()` + `.auth-error`를 재사용했다.
+  틀리면 `.is-invalid`로 빨간 테두리 + "이메일 주소 형식이 조금 이상한 것 같아요! 💌",
+  다시 입력하면 걷힌다.
+- **앵커 이동 보정** — `scroll-behavior:smooth`는 있었지만 `scroll-margin-top`이 없어서 푸터의
+  "지도로 보기"를 누르면 섹션 제목이 sticky 헤더 밑에 가려졌다. `section[id]{scroll-margin-top:88px}`
+  한 줄로 해결. id가 없던 섹션 4곳(`problem`/`reviews`/`survey`/`share`)에도 id를 줬다 —
+  나중에 헤더 내비게이션을 붙일 때의 전제 조건이기도 하다.
+- **결과 0곳 화면(zero-state)** — `<p>` 한 줄뿐이던 자리에 할머니 일러스트(`grandma-calm-square.png`,
+  `.survey-photo`와 같은 원형 크롭 방식 재사용) + 추천 카테고리 칩 3개 + "필터 초기화하고 전체 보기"를 넣었다.
+  `resetFilters()`/`jumpCategory()`는 필터 규칙을 복사하지 않고 `getFilteredList()`가 읽는 값만
+  되돌린 뒤 `renderCards()`를 부른다.
+  ※ 참고: 맛집 그리드에는 이제 **텍스트 검색이 없다**(카카오 실시간 검색으로 통합됨). 그래서 빈 화면 문구도
+  "다른 키워드로 찾아보세요" → "이 조건에 맞는 맛집이 아직 없어요"로 바꿨다.
+- **준비중 / 동작하는 기능의 시각적 구분** — `.is-soon`(opacity 0.62 + `cursor:not-allowed` +
+  `aria-disabled`)을 진짜 준비중인 6곳(사장님 등록 2, 맛집 더 보기, 공유 💬✉️📷)에 붙이고,
+  배지 문구를 "준비중" → **"9월 오픈 예정"** 으로 구체화했다. 클릭은 살려뒀다 — 눌러보면 토스트가 시점을 알려준다.
+  **반대 방향의 문제도 하나 고쳤다**: 푸터의 "손주 식권"에 "준비중" 배지가 붙어 있었는데 그 기능은
+  실제로 동작한다(사전 예약 모달). 잘 되는 기능을 고장난 것처럼 보이게 하고 있어서
+  `.badge-live` "사전 예약"으로 바꿨다. 빨강은 CTA·강조 10% 몫이라 이 배지는 슬레이트를 쓴다.
+- 검증 **38/38** — 위 항목 전부 + 한/영/중 3개 국어 반영 + 실제 가게 9곳·예시 3곳·리뷰·지도 핀 10개·
+  카카오 검색·헤더 통합검색 회귀 + 콘솔 에러 0.
+
+**같이 고친 자잘한 버그**: 마이페이지 저장목록과 취향 설문 결과가 `★ ${r.rating}`을 조건 없이 출력해,
+평점이 `null`인 실제 가게 9곳이 **"★ null"** 로 보이고 있었다. 카드가 쓰던 `ratingLabel(r)`로 통일했다.
 
 ## 미해결/참고 사항
 - **지도**: Places API 키로는 구글 Maps JS/Static API가 둘 다 "API not activated" — Cloud Console에서 별도 활성화 없이는 코드로 우회 불가(확인 완료). 지금은 OpenStreetMap(Leaflet) 실제 지도로 대체, 잘 작동하지만 한국어 라벨이 다소 부자연스러움. 구글 지도로 바꾸려면 Cloud Console에서 "Maps JavaScript API" 활성화 필요. 그 다음 과제는 건물별 위경도 데이터 수집(코드 작업 아님) — 지금 Naver/Kakao 지도는 캠퍼스 건물들이 전부 같은 도로명 주소로 잡혀서 건물 단위 길찾기가 안 됨.
@@ -102,9 +164,43 @@ create policy "own rows" on public.saved_restaurants
 - 영어 버전은 이제 사이트 전체(메인 페이지 전 모달 + 약관/개인정보처리방침 페이지)에서 완료. 남은 미번역 영역은 사용자가 직접 쓴 리뷰 본문(의도적으로 원문 유지)뿐.
 - **중국어도 이제 영어와 동일하게 사이트 전체(메인 페이지 전 모달 + 약관/개인정보처리방침 페이지)에서 지원됨** — 처음엔 1구간(핵심 경로)만 넣었다가, 같은 세션에서 바로 이어서 2구간(설문/게임/로그인/마이페이지/리뷰작성/소개/FAQ/문의/식권)과 약관 페이지까지 확장 완료. 손주 식권 흐름의 통화·수량 단위(원/₩/韩元, 장/张/무단위)는 `wonSuffix()`/`passUnit()` 공용 헬퍼로 정리해서 언어별 어순 차이를 한 곳에서 관리. 약관 페이지 언어 토글은 한/영 2단에서 한국어→English→中文 3단 순환으로 확장.
 
-## 다음에 진행할 것 (우선순위 미정 — 다음 세션에서 정하기)
-1. **AI 리뷰 분석 기능 구체화** — 아직 요구사항 미정
-2. ~~**Supabase MCP 연결 → 메모장 연결**~~ — **2026-08-24 완료** (위 세션 기록 참고). 아래는 당시 배경 메모: Supabase 프로젝트는 **이미 생성됨**(프로젝트 URL·publishable 키는 `.env.local`에 보관 — 커밋 안 됨). MCP 서버는 `.mcp.json`에 프로젝트 스코프로 등록해둠(`https://mcp.supabase.com/mcp?project_ref=...`, URL만 들어있고 비밀값 없음 / 인증은 OAuth라 각 PC에서 `/mcp`로 한 번씩 승인 필요). **테이블도 RLS 정책도 아직 없는 빈 프로젝트.** publishable 키의 실제 보안 경계는 키를 숨기는 게 아니라 RLS라서, 키를 클라이언트 코드로 옮기는 건 정책을 세운 뒤에 판단한다 — 이 저장소가 GitHub public이고 빌드 스텝이 없어 `script.js`에서 `process.env`를 못 읽는다는 점이 그 판단의 전제.
-3. **로그인 기능 구체화** — 현재 "손주 로그인"은 UI 목업(실제 인증 없음). Supabase auth 연계 가능성 있음, 1·2번과 함께 검토. 참고: 현재 Supabase Auth는 **이메일 방식만 활성화**돼 있고 외부 OAuth(카카오·구글 등)는 전부 꺼져 있음
-4. **지도 고도화** — 건물별 위경도 데이터 수집(코드 작업 아님, 답사/수작업 필요) 후 Naver Maps API 키 발급 시 building-level 길찾기로 전환
-5. **커뮤니티 SNS 그룹 개설** — 그룹 만들고 `COMMUNITY_LINK` 채우기 + QR코드 생성 (코드 작업 아님)
+## 다음에 진행할 것
+
+### 코드 작업
+1. **AI 리뷰 분석 기능 구체화** — 아직 요구사항 미정. 담기 작업과 독립적이다.
+2. **리뷰 · 손주 식권 예약도 서버로** — 저장목록과 완전히 같은 패턴을 반복하면 된다
+   (`reviews(user_id, restaurant_id, …)`, `pass_orders(user_id, …)` + RLS `auth.uid() = user_id`).
+   `store.reviews` / `store.passOrders`가 그 자리다.
+3. **글로벌 내비게이션 + 모바일 햄버거** (교수님 피드백 P1) — 남은 UX 항목 중 가장 비싸다.
+   헤더에 섹션 링크가 **하나도 없고**(`index.html`의 헤더는 로고+검색+아이콘 4개),
+   `style.css`의 `.hamburger{display:none}`은 대응 HTML이 없는 빈 껍데기다.
+   860px 이하에서는 검색창이 숨고 아이콘이 이미 빽빽해서 **헤더 레이아웃을 다시 짜야 한다**.
+   앵커 대상 id는 이번에 다 붙여뒀으므로 그 부분은 준비 완료.
+4. **지도 핀 hover 반응** (P2) — 안내 문구는 이미 있다. 남은 건 hover뿐인데 기본 Leaflet 마커라
+   `L.divIcon`으로 교체해야 하고 앵커·팝업 위치를 다시 잡아야 한다.
+   지도 안 안내 배지는 `.map-wrap`이 이미 `position:relative`라 쉽다.
+5. **알려진 잔여 버그 2건**
+   - 헤더 통합검색 드롭다운이 `★ ${r.rating}`을 조건 없이 출력해 실제 가게 9곳이 **"★ null"** 로 보인다.
+     마이페이지·설문 결과는 이번에 `ratingLabel(r)`로 고쳤지만, **검색은 "건드리지 말 것" 범위라 남겨뒀다.**
+     고칠 거면 `searchSources`의 `sub:` 한 줄만 같은 방식으로 바꾸면 된다(동작 변화 없음).
+   - `applyLanguage()`가 `renderMiniMap()`을 다시 부르지 않아서, 언어를 바꿔도 지도 핀 팝업 라벨은
+     처음 언어 그대로 남는다.
+
+### 코드 작업 아님
+6. **지도 고도화** — 건물별 위경도 데이터 수집(답사/수작업) 후 Naver Maps API 키 발급 시
+   building-level 길찾기로 전환
+7. **커뮤니티 SNS 그룹 개설** — 그룹 만들고 `COMMUNITY_LINK` 채우기 + QR코드 생성
+8. **운영 전환 시** — 커스텀 SMTP(Resend/SendGrid 등) 붙이고 이메일 인증 되살리기,
+   법적 고지의 `(기재 예정)` 자리 채우기.
+   Supabase 보안 점검에서 **Leaked Password Protection이 꺼져 있다**는 경고가 하나 뜬다
+   (테이블 문제가 아니라 Auth 설정. 대시보드에서 켤 수 있다).
+
+### 지난 배경 메모 (완료된 항목)
+- ~~**Supabase MCP 연결 → 메모장 연결**~~ — 2026-08-24 완료. 당시 배경: 프로젝트 URL·publishable 키는
+  `.env.local`에 보관(커밋 안 됨), MCP는 `.mcp.json`에 프로젝트 스코프로 등록(URL만, 비밀값 없음 /
+  OAuth라 각 PC에서 `/mcp`로 한 번씩 승인 필요). publishable 키의 보안 경계는 키를 숨기는 게 아니라
+  RLS이고, 이 저장소가 GitHub public이며 빌드 스텝이 없어 `script.js`에서 `process.env`를 못 읽는다는 점이
+  키를 클라이언트에 두기로 한 판단의 전제였다.
+- ~~**로그인 기능 구체화**~~ — 2026-08-24 완료(Supabase Auth 이메일 로그인).
+  외부 OAuth(카카오·구글 등)는 전부 꺼져 있고 이메일 방식만 활성화돼 있다.
+- ~~**저장목록 서버 이전**~~ — 2026-08-25 완료 (위 2단계 기록).

@@ -73,7 +73,7 @@ Login/mypage is **real auth backed by Supabase** (email + password) and intentio
 - Passwords never touch this codebase — they go straight to `sb.auth.signUp()` / `signInWithPassword()`. There is no account list in `localStorage` any more (an older version kept plaintext passwords in `store.accounts`; `loadState()` deliberately ignores that field so it disappears on next save).
 - Supabase's English error strings are never shown. `authErrorMessage(error)` maps them to i18n keys — add new cases there, and add the string to **all three** dictionaries (ko/en/zh).
 - The auth form is `novalidate` on purpose: native HTML validation messages follow the *browser's* language, not the site's language toggle, so validation and messaging are done in JS.
-- **`store.marks` is namespaced by user id** — `{ [userId]: { [restaurantName]: {saved, visited} } }` — via `currentMarks()`. A flat `marks` object would leak one account's saved list to the next account that logs in on the same browser. This shape deliberately mirrors the planned `saved_restaurants(user_id, restaurant_name, …)` table. Marks from before this change are parked under `LEGACY_MARKS_KEY` by `normalizeMarks()` and adopted once, by the first user to log in.
+- **`store.marks` is namespaced by user id** — `{ [userId]: { [restaurantName]: {saved, visited} } }` — via `currentMarks()`. A flat `marks` object would leak one account's saved list to the next account that logs in on the same browser. It is now an offline cache in front of the real `saved_restaurants` table (see Persistence below). Marks from before this change are parked under `LEGACY_MARKS_KEY` by `normalizeMarks()` and adopted once, by the first user to log in.
 - Email-only: `isEmail()` gates login. Phone-number login would need a paid SMS provider, so it isn't offered. `isEmailOrPhone()` still exists but is only for the 문의 form, which takes any contact method.
 - **Signup requires "Confirm email" to be OFF** in Supabase (Authentication → Providers → Email). With it on, `signUp()` returns no session (breaking "signup logs you straight in") *and* every attempt tries to send mail, which quickly trips the free tier's `email rate limit exceeded` and blocks testing entirely.
 
@@ -86,6 +86,25 @@ Auth state, save/visit marks, user-written reviews, and 식권 예약 내역 (`s
 - `applyState()` — projects saved marks onto `restaurants[]`. Must run before the initial `renderCards()`.
 
 `store.marks` is keyed by **restaurant name, not array index**, so reordering or inserting entries in `restaurants` can't attach saved data to the wrong listing.
+
+#### 담기(save/visit) marks live in Supabase, not just localStorage
+
+Save/visit marks are the one slice that has already moved to the server: table `public.saved_restaurants`, created by `supabase/saved_restaurants.sql` (idempotent — safe to paste into the SQL Editor again). **One row = one saved restaurant.**
+
+- Columns: `user_id` / `restaurant_id` / `restaurant_name` / `category` / `address` / `lat` / `lng` / `visited_at` / `created_at`.
+- `unique (user_id, restaurant_id)` stops the same person saving the same shop twice; the client uses `upsert(..., {onConflict:'user_id,restaurant_id'})` so a repeat is absorbed instead of erroring.
+- RLS is four per-action policies, all `auth.uid() = user_id`. Verified: a second account sees none of the first account's rows, cannot insert under someone else's `user_id` (403), and its delete matches nothing.
+- **가본 곳 is not a second table and not a second row** — it is `visited_at` on the same row. Unsaving therefore deletes the visit record too, which `unsaveQuestion(r)` warns about before the confirm modal.
+
+Three functions own the server side, and they are the only place that talks to the table:
+
+- `pushMark(r)` — one restaurant's save/unsave/visit. Called from `confirmMark()` and the mypage remove handler.
+- `pushAllMarks()` — bulk reconcile (mypage section resets, full reset, first upload of pre-existing local marks).
+- `pullSaved()` — called from `syncAuthFromSession()` once a session is confirmed; rebuilds `store.marks[uid]` from the server, then `applyState()` + re-render.
+
+**All writes are fire-and-forget with both callbacks ignored.** `saveState()` has already written localStorage by the time they run, so a slow or failed network must never block the UI or throw — with the CDN blocked (`sb === null`) or offline, 담기 silently falls back to localStorage-only and the rest of the site is unaffected. `pullSaved()` likewise leaves the local cache alone on error rather than blanking the list, and drops its response if the account changed while it was in flight.
+
+Each entry in `restaurants` carries a stable `id` slug (`"the-ramen"`, `"jochiwon-halmae-gukbap"`, …) — that, not the Korean name and not the array index, is what the table keys on. **A new listing needs an `id`**; without one `pushMark()` silently skips it.
 
 ### Gated actions and the shared confirm modal
 
@@ -111,7 +130,7 @@ The Gemini-generated character PNGs in `assets/` have a *baked-in* checkerboard 
 
 - The map section is a static placeholder (no Naver Maps Client ID configured yet); swap in real Naver Maps API once a key exists. The planned strategy once that key exists is building-level lat/lng navigation, not just embedding a generic map — Naver Maps currently resolves every campus building to the same road address, so per-building coordinates (a data-collection task, not a code change) are the actual differentiator to build toward.
 - 커뮤니티(community) is intentionally not an in-site chat/board — real-time discussion is meant to live in an existing external SNS group (WhatsApp/Instagram 등). The site's job is only a join link + QR code once a group exists. Keep that link in one place (a single constant, not scattered inline) since invite links expire or get replaced.
-- Login is real (Supabase Auth), but **saved/visited marks, reviews, and 식권 예약 are still `localStorage` only** — so they don't follow a user across devices. Moving marks to a `saved_restaurants` table (RLS: `auth.uid() = user_id`) is the next planned step; see `next.md`.
+- Login and **saved/visited marks** are real and server-backed (Supabase Auth + `saved_restaurants`, see Persistence above) — the saved list now follows a user across devices. **Reviews and 식권 예약 are still `localStorage` only**; moving them is the next step, and the marks work is the pattern to copy. See `next.md`.
 - Language switching and AI review summarization are still UI-only stubs — see the PRD's "로드맵으로 분리" section for what's explicitly out of scope for this landing page.
 - The 손주 힘 보태기 / 지역 확장 문의 forms (`extra.md` §7) validate input and then show a confirmation screen without sending anything anywhere. `submitContact()` is the single swap point when a real inbox or Supabase table exists.
 - The legal pages carry deliberate `(기재 예정)` / `(담당자명 기재)` placeholders for operator and privacy-officer details — `extra.md` §5 requires them to be filled with real values before actual operation, so don't invent names or emails there.
