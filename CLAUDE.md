@@ -63,6 +63,25 @@ Every overlay (survey, restaurant detail, mini-game, auth, mypage) reuses the sa
 - `openX()` / `closeX()` / `closeXOnOverlay(e)` (the latter closes only when the click target is the backdrop itself, via `event.stopPropagation()` on the inner box).
 - Content is rendered by a `renderX()` function that rewrites an empty `<div id="xBody">` via `innerHTML`, then re-binds event listeners on the fresh nodes (there's no diffing — every re-render is a full replace-and-rebind).
 
+**Required inner structure** — every overlay's box is exactly this, and a new one must match:
+
+```html
+<div class="survey-box faq-box" onclick="event.stopPropagation()">
+  <button type="button" class="overlay-close" onclick="closeFaq()"
+          data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+  <div class="survey-scroll">
+    <div id="faqBody"></div>
+  </div>
+</div>
+```
+
+- **`.survey-box` must not scroll.** It is `position:relative` + `overflow:hidden`, and `.survey-scroll` inside it owns `padding` + `overflow-y:auto`. If you put `overflow-y` back on the box, the absolutely-positioned `.overlay-close` scrolls out of view on long modals (식권 안내 · FAQ · 소개 · 상세 are all long enough to hit it). That is the whole reason the wrapper exists.
+- **The X sits outside `#xBody`**, so `renderX()` can rewrite the body as often as it likes without wiping the close button. No render function touches it.
+- Box padding overrides go on `.search-box .survey-scroll`, **not** on `.survey-box` — that variant is the only padding exception.
+- If the box's first element is a full-width centered heading, give it **symmetric** horizontal padding (see `.game-title`) so it stays centered while clearing the X. Don't add `padding-right` alone; it un-centers the text.
+- Multi-step overlays (설문, 게임) route both the X and the backdrop through `requestCloseX()` → `confirmDiscard()`, so leaving mid-flow asks first. Both paths must use the same guard, or the rule splits in two.
+- `applyStaticTranslations()` handles `data-i18n` / `-placeholder` / `-title` / `-aria`. Screen-reader labels follow the site language, not the browser's.
+
 State is plain top-level `let` variables in `script.js` (`currentCat`, `currentQuery`, `currentSort`, `isLoggedIn`, `currentUserName`, `rouletteItems`, `surveyAnswers`, etc.) — no store/framework. The subset that survives a reload is mirrored into `store` and written by `saveState()` (see Persistence below). `updateHeaderAuthUI()` is the one place that reconciles header button state with `isLoggedIn`; call it after any auth state change instead of hand-editing header DOM elsewhere.
 
 Login/mypage is **real auth backed by Supabase** (email + password) and intentionally uses "손주" (grandchild) framing instead of generic "회원" — see the "손주 로그인/가입" comment block in `script.js`.
