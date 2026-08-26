@@ -25,6 +25,12 @@
 <header>
   <div class="nav-wrap">
     <div class="logo">밥 먹으러 와<span class="dot">.</span></div>
+    <nav class="site-nav" aria-label="주요 섹션" data-i18n-aria="navMenuAria">
+      <a href="#restaurants" class="site-nav-link" data-i18n="navMenuEat">맛집</a>
+      <a href="#map" class="site-nav-link" data-i18n="navMenuMap">지도</a>
+      <a href="#problem" class="site-nav-link" data-i18n="navMenuAbout">소개</a>
+      <a href="#join" class="site-nav-link" data-i18n="navMenuJoin">함께하기</a>
+    </nav>
     <div class="nav-search-wrap">
       <div class="nav-search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -33,6 +39,7 @@
       <div class="search-results" id="searchResults"></div>
     </div>
     <div class="nav-actions">
+      <button class="icon-btn hamburger" id="navToggle" type="button" aria-expanded="false" aria-controls="navPanel" data-i18n-title="navMenuAria" data-i18n-aria="navMenuAria" title="메뉴" aria-label="메뉴">☰</button>
       <button class="icon-btn icon-btn-search" data-i18n-title="navSearch" title="통합 검색" onclick="openSearch()">🔍</button>
       <button class="icon-btn" data-i18n-title="navGame" title="메뉴 추천 게임" onclick="openGame()">🎲</button>
       <button class="icon-btn" data-i18n-title="navSurvey" title="취향 설문" onclick="openSurvey()">📝</button>
@@ -42,6 +49,14 @@
            헤더 버튼을 누르면 어차피 그 마이페이지가 열린다. -->
       <button class="btn-save" id="authHeaderBtn" data-i18n-title="navLogin" title="손주 로그인" onclick="openAuth('login')"><span id="authHeaderIcon">👤</span><span class="nav-label" id="authHeaderLabel" data-i18n="navLogin">손주 로그인</span></button>
     </div>
+  </div>
+  <div class="nav-panel" id="navPanel" hidden>
+    <nav aria-label="주요 섹션" data-i18n-aria="navMenuAria">
+      <a href="#restaurants" class="nav-panel-link" data-i18n="navMenuEat">맛집</a>
+      <a href="#map" class="nav-panel-link" data-i18n="navMenuMap">지도</a>
+      <a href="#problem" class="nav-panel-link" data-i18n="navMenuAbout">소개</a>
+      <a href="#join" class="nav-panel-link" data-i18n="navMenuJoin">함께하기</a>
+    </nav>
   </div>
 </header>
 

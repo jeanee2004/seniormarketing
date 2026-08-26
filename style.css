@@ -1482,3 +1482,35 @@ html.dark .hero-media video{filter:brightness(0.68) saturate(0.9);}
 }
 .allergy-chip:hover{background:var(--hover-tint);}
 .allergy-chip.on{background:var(--red);border-color:var(--red);color:#fff;font-weight:700;}
+
+/* ===== 글로벌 내비 =====
+   헤더에 섹션 링크가 하나도 없어서 히어로 아래로 내려가면 길을 잃었다(교수님 피드백 P1).
+   넓은 화면은 헤더에 링크를 펴고, 좁은 화면은 검색창이 이미 숨는 자리라 햄버거로 접는다. */
+.site-nav{display:none;gap:14px;flex-shrink:0;}
+.site-nav-link{
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.88rem;font-weight:700;
+  color:var(--ink-soft);padding:6px 2px;border-bottom:2px solid transparent;
+  transition:color .15s ease,border-color .15s ease;
+}
+.site-nav-link:hover{color:var(--slate-dark);border-bottom-color:var(--red);}
+.hamburger{display:flex;font-size:1.05rem;}
+/* 링크를 펼 자리가 나오는 폭에서만 편다. 그 아래는 햄버거가 대신한다. */
+@media(min-width:1024px){
+  .site-nav{display:flex;}
+  .hamburger{display:none;}
+}
+.nav-panel{
+  border-top:1px solid var(--line);
+  background:var(--base-bg-blur);backdrop-filter:blur(8px);
+}
+.nav-panel[hidden]{display:none;}
+.nav-panel nav{
+  display:flex;flex-direction:column;
+  max-width:1120px;margin:0 auto;padding:6px 24px 12px;
+}
+.nav-panel-link{
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.95rem;font-weight:700;
+  color:var(--ink);padding:13px 4px;border-bottom:1px solid var(--line);
+}
+.nav-panel nav .nav-panel-link:last-child{border-bottom:none;}
+.nav-panel-link:hover{color:var(--red);}

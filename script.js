@@ -379,7 +379,9 @@ function escapeHtml(s){
 // 설문·마이페이지·게임·로그인·문의·식권·소개·FAQ 모달과 약관 페이지는 다음 단계에서 번역 예정.
 const i18n = { en: {
   pageTitle:"Bap Meokeoreo Wa — Discover Jochiwon's Local Restaurants",
-  navSearch:"Search", navGame:"Menu Roulette Game", navSurvey:"Taste Survey", navLang:"Language", navTheme:"Switch light/dark", navLogin:"Sign in", navLogout:"Sign out",
+  navSearch:"Search", navGame:"Menu Roulette Game", navSurvey:"Taste Survey", navLang:"Language", navTheme:"Switch light/dark", navLogin:"Sign in",
+  navMenuAria:"Main sections", navMenuEat:"Restaurants", navMenuMap:"Map", navMenuAbout:"About", navMenuJoin:"Get involved",
+  navLogout:"Sign out",
   headerSearchPh:"Search restaurants, meal passes, partners, pages",
   heroEyebrow:"KU-jodae! Help the Local Owners",
   heroTitle:'Did you know there are great restaurants missing or barely listed on Naver? <span>Now you do.</span>',
@@ -678,7 +680,9 @@ const i18n = { en: {
   // 중국어는 핵심 경로(헤더·히어로·문제·로드맵·지도·맛집 카드/상세·구글 리뷰·실시간 검색)만 지원 —
   // 그 외 키가 없으면 t()가 null을 반환해 한국어 원문으로 자동 대체된다.
   pageTitle:"Bap Meokeoreo Wa — 发现调治院本地美食",
-  navSearch:"搜索", navGame:"菜单推荐游戏", navSurvey:"口味问卷", navLang:"语言", navTheme:"切换深浅色", navLogin:"登录", navLogout:"退出登录",
+  navSearch:"搜索", navGame:"菜单推荐游戏", navSurvey:"口味问卷", navLang:"语言", navTheme:"切换深浅色", navLogin:"登录",
+  navMenuAria:"主要栏目", navMenuEat:"餐厅", navMenuMap:"地图", navMenuAbout:"介绍", navMenuJoin:"一起参与",
+  navLogout:"退出登录",
   headerSearchPh:"搜索餐厅、餐券、合作、页面",
   heroEyebrow:"KU助队！拜托了老板",
   heroTitle:'你知道吗，有些好吃的餐厅在Naver地图上找不到，或者信息很少？<span>现在你知道了。</span>',
@@ -1823,6 +1827,32 @@ function allergyHits(r){
   if(mine.length === 0) return [];
   return riskOf(r).filter(k => mine.includes(k));
 }
+
+// ---- 글로벌 내비 (모바일 햄버거) ----
+// 모달이 아니라 헤더에 붙는 패널이라 .survey-overlay 구조를 쓰지 않는다.
+// 링크를 누르면 바로 닫는다 — 같은 페이지 앵커라 패널이 남아 있으면 도착지를 가린다.
+function setNavPanel(open){
+  const panel = document.getElementById('navPanel');
+  const btn = document.getElementById('navToggle');
+  if(!panel || !btn) return;
+  panel.hidden = !open;
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+function toggleNavPanel(){
+  const panel = document.getElementById('navPanel');
+  if(panel) setNavPanel(panel.hidden);
+}
+(function bindNav(){
+  const btn = document.getElementById('navToggle');
+  const panel = document.getElementById('navPanel');
+  if(!btn || !panel) return;
+  btn.addEventListener('click', e => { e.stopPropagation(); toggleNavPanel(); });
+  panel.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setNavPanel(false)));
+  document.addEventListener('click', e => {
+    if(!panel.hidden && !panel.contains(e.target) && e.target !== btn) setNavPanel(false);
+  });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape' && !panel.hidden) setNavPanel(false); });
+})();
 
 // ---- 다크모드 ----
 // 색은 style.css의 html.dark 한 블록에서 토큰만 갈아끼운다. 여기서 하는 일은
