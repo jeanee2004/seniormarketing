@@ -981,8 +981,9 @@ function renderCards(){
     const card = document.createElement('div');
     card.className = 'food-card';
     card.addEventListener('click', () => openDetail(idx));
-    const cardRatingHtml = r.rating != null
-      ? `★ ${r.rating} <span style="color:var(--ink-soft);font-weight:400;">(${r.reviewCount})</span>`
+    const lr = liveRating(r);
+    const cardRatingHtml = lr
+      ? `★ ${lr.rating} <span style="color:var(--ink-soft);font-weight:400;">(${lr.reviewCount})</span>`
       : `<span style="color:var(--ink-soft);font-weight:400;">${t('cardReviewPending') || '🔎 실제 리뷰 준비중'}</span>`;
     card.innerHTML = `
       <div class="food-thumb" style="background:${thumbColor(i)}">
@@ -1104,10 +1105,29 @@ function thumbColor(i){
   return colors[i % colors.length];
 }
 
+// 실제 가게는 rating이 하드코딩돼 있지 않고(null) 평점이 구글에서 실시간으로 온다.
+// 한 번이라도 불러왔으면 그 캐시(store.googleReviews)를 카드·상세 라벨에도 그대로 쓴다.
+// 이게 없으면 진짜 리뷰가 붙은 가게가 계속 "실제 리뷰 준비중"으로 보인다.
+function liveRating(r){
+  if(r.rating != null) return { rating: r.rating, reviewCount: r.reviewCount };
+  const c = store.googleReviews[r.name];
+  const d = c && c.data;
+  if(d && d.found && d.rating != null) return { rating: d.rating, reviewCount: d.reviewCount || 0 };
+  return null;
+}
+
 function ratingLabel(r){
-  return r.rating != null
-    ? `★ ${r.rating} (${r.reviewCount})`
+  const lr = liveRating(r);
+  return lr
+    ? `★ ${lr.rating} (${lr.reviewCount})`
     : (t('cardReviewPending') || '🔎 실제 리뷰 준비중');
+}
+
+// 구글 리뷰를 막 불러왔을 때 이미 그려져 있는 라벨들을 갱신한다.
+function refreshRatingLabels(r){
+  const el = document.getElementById('detailRatingLabel');
+  if(el) el.textContent = `${ratingLabel(r)} · ${r.price}`;
+  renderCards();
 }
 
 document.querySelectorAll('.cat-chip').forEach(chip => {
@@ -1488,10 +1508,11 @@ function renderStubDetail(r){
       <div>
         <span class="food-cat">${rCat(r)}</span>
         <h3>${rName(r)}</h3>
-        <div class="detail-rating">${ratingLabel(r)} · ${r.price}</div>
+        <div class="detail-rating" id="detailRatingLabel">${ratingLabel(r)} · ${r.price}</div>
       </div>
     </div>
     <p class="detail-desc">${rDesc(r)}</p>
+    <div id="aiSummaryBody" class="ai-summary-body"></div>
     ${r.realAddress ? `
     <div class="detail-info-grid">
       <div class="detail-info-row">
@@ -1528,10 +1549,11 @@ function renderFullDetail(r){
       <div>
         <span class="food-cat">${rCat(r)}</span>
         <h3>${rName(r)}</h3>
-        <div class="detail-rating">${ratingLabel(r)} · ${r.price}</div>
+        <div class="detail-rating" id="detailRatingLabel">${ratingLabel(r)} · ${r.price}</div>
       </div>
     </div>
     <p class="detail-desc">${rDesc(r)}</p>
+    <div id="aiSummaryBody" class="ai-summary-body"></div>
 
     <div class="detail-info-grid">
       ${infoRows.map(([label,val]) => `
@@ -1562,10 +1584,11 @@ function renderFullDetail(r){
 }
 
 // ---- 구글 리뷰 (Places API New, /api/google-reviews 경유) ----
+// #aiSummaryBody는 이 껍데기 안이 아니라 상세 모달 상단(설명 바로 아래)에 있다 —
+// 요약을 보려고 리뷰 목록까지 스크롤해 내려가지 않도록.
 function renderGoogleReviewShell(){
   return `
     <div class="detail-google-section">
-      <div id="aiSummaryBody" class="ai-summary-body"></div>
       <h4 class="detail-menu-title">${t('googleReviewTitle') || '구글 리뷰'}</h4>
       <div id="googleReviewBody" class="google-review-body">
         <div class="google-review-loading">${t('googleReviewLoading') || '리뷰를 불러오는 중...'}</div>
@@ -1577,7 +1600,7 @@ async function loadGoogleReviews(r){
   const box = document.getElementById('googleReviewBody');
   if(!box) return;
   const cached = store.googleReviews[r.name];
-  if(cached){ box.innerHTML = renderGoogleReviewContent(cached.data); loadReviewAnalysis(r, cached.data); return; }
+  if(cached){ box.innerHTML = renderGoogleReviewContent(cached.data); refreshRatingLabels(r); loadReviewAnalysis(r, cached.data); return; }
   try{
     const url = `/api/google-reviews?name=${encodeURIComponent(r.name)}&lat=${r.lat}&lng=${r.lng}`;
     const res = await fetch(url);
@@ -1587,6 +1610,7 @@ async function loadGoogleReviews(r){
     box.innerHTML = renderGoogleReviewContent(data);
     store.googleReviews[r.name] = { data, fetchedAt: Date.now() };
     saveState();
+    refreshRatingLabels(r);
     loadReviewAnalysis(r, data);
   }catch(e){
     if(document.getElementById('googleReviewBody') === box){

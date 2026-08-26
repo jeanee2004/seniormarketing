@@ -340,6 +340,21 @@ next.md 항목 1을 실제로 구현했다. **다만 next.md의 "다음에 진�
 - 구글 리뷰는 여전히 1b(리퍼러 제한) 때문에 `found:false`라, **배포본에서 AI 요약이 실제로 뜨려면
   1b를 먼저 풀어야 한다** — 코드가 아니라 Cloud Console 설정.
 
+### 같은 세션 후속 2건 (사용자 지적)
+
+- **"실제 리뷰 준비중" 라벨이 거꾸로 붙어 있었다.** 실제 가게는 `rating:null`(평점이 구글에서
+  실시간으로 오니까)이고 예시 3곳만 평점이 하드코딩돼 있어서, **진짜 리뷰가 붙은 가게가 계속
+  "준비중"으로 보이고 목업이 별점을 달고 있었다.** `liveRating(r)`을 새로 만들어
+  `r.rating` → `store.googleReviews[r.name]` 캐시 순으로 보게 하고, `ratingLabel()`과
+  `renderCards()`의 카드 라벨이 둘 다 그걸 쓴다. 구글 응답이 도착하면 `refreshRatingLabels(r)`가
+  열려 있는 상세 헤더(`#detailRatingLabel`)와 카드 그리드를 갱신한다.
+  **한계**: 캐시 기반이라 그 가게 상세를 한 번은 열어야 카드에 별점이 붙는다(첫 로드에 12곳을
+  전부 프리페치하면 Places 호출이 그만큼 늘어서 일부러 안 했다).
+- **AI 요약을 상세 모달 상단으로 옮겼다** — 원래 `renderGoogleReviewShell()` 안에 있어서
+  요약을 보려면 구글 리뷰 자리까지 스크롤해야 했다. 이제 설명(`.detail-desc`) 바로 아래에 있다
+  (`aiTop 254 / googleTop 660`으로 확인). `.ai-summary-body:empty{display:none}` 덕에 요약이
+  없을 때는 그 자리가 아예 접힌다.
+
 ## 다음에 진행할 것
 
 ### 코드 작업
