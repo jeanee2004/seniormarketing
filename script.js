@@ -212,10 +212,14 @@ function pruneAnalysisCache(raw){
   return out;
 }
 
+// 구글 리뷰 텍스트는 이제 언어별로 다르게 받아온다(구글이 languageCode에 맞춰 번역해 돌려줌)
+// — 그래서 캐시 키도 review-analysis와 같은 "이름|언어" 조합이다. 키에 '|'가 없는 옛 캐시는
+// 언어를 알 수 없어(마이그레이션 이전) 버린다.
+function googleCacheKey(name){ return name + '|' + currentLang; }
 function pruneGoogleCache(raw){
   if(!raw || typeof raw !== 'object') return {};
   const out = {};
-  for(const [name, entry] of Object.entries(raw)) if(isFreshGoogle(entry)) out[name] = entry;
+  for(const [key, entry] of Object.entries(raw)) if(key.includes('|') && isFreshGoogle(entry)) out[key] = entry;
   return out;
 }
 
@@ -1545,7 +1549,7 @@ function thumbColor(i){
 // 이게 없으면 진짜 리뷰가 붙은 가게가 계속 "실제 리뷰 준비중"으로 보인다.
 function liveRating(r){
   if(r.rating != null) return { rating: r.rating, reviewCount: r.reviewCount };
-  const c = store.googleReviews[r.name];
+  const c = store.googleReviews[googleCacheKey(r.name)];
   const d = c && c.data;
   if(d && d.found && d.rating != null) return { rating: d.rating, reviewCount: d.reviewCount || 0 };
   return null;
@@ -1610,18 +1614,18 @@ renderExampleCards();
 // 그래서 첫 렌더 직후 한 번 미리 받아둔다. 캐시(GOOGLE_CACHE_TTL)가 살아 있으면
 // 요청을 아예 보내지 않으므로 재방문에는 호출이 0건이다.
 async function prefetchLiveRatings(){
-  const targets = restaurants.filter(r => r.lat && r.lng && !isFreshGoogle(store.googleReviews[r.name]));
+  const targets = restaurants.filter(r => r.lat && r.lng && !isFreshGoogle(store.googleReviews[googleCacheKey(r.name)]));
   if(targets.length === 0) return;
   const results = await Promise.all(targets.map(async r => {
     try{
-      const res = await fetch('/api/google-reviews?name=' + encodeURIComponent(r.name) + '&lat=' + r.lat + '&lng=' + r.lng);
+      const res = await fetch('/api/google-reviews?name=' + encodeURIComponent(r.name) + '&lat=' + r.lat + '&lng=' + r.lng + '&lang=' + mapsLanguage());
       const data = await res.json();
       return data.found ? { name: r.name, data } : null;
     }catch(e){ return null; } // 조용히 건너뛴다 — 못 받으면 "실제 리뷰 준비중"으로 남을 뿐이다
   }));
   const got = results.filter(Boolean);
   if(got.length === 0) return;
-  got.forEach(g => { store.googleReviews[g.name] = { data: g.data, fetchedAt: Date.now() }; });
+  got.forEach(g => { store.googleReviews[googleCacheKey(g.name)] = { data: g.data, fetchedAt: Date.now() }; });
   saveState();
   renderCards();
 }
@@ -2581,17 +2585,17 @@ function renderGoogleReviewShell(){
 async function loadGoogleReviews(r){
   const box = document.getElementById('googleReviewBody');
   if(!box) return;
-  const cached = store.googleReviews[r.name];
+  const cached = store.googleReviews[googleCacheKey(r.name)];
   if(isFreshGoogle(cached)){ box.innerHTML = renderGoogleReviewContent(cached.data); refreshRatingLabels(r); loadReviewAnalysis(r, cached.data); return; }
   try{
-    const url = `/api/google-reviews?name=${encodeURIComponent(r.name)}&lat=${r.lat}&lng=${r.lng}`;
+    const url = `/api/google-reviews?name=${encodeURIComponent(r.name)}&lat=${r.lat}&lng=${r.lng}&lang=${mapsLanguage()}`;
     const res = await fetch(url);
     const data = await res.json();
     // 모달을 닫았다 다른 가게를 열었으면 detailBody가 이미 교체돼 이 컨테이너는 더 이상 문서에 없다
     if(document.getElementById('googleReviewBody') !== box) return;
     box.innerHTML = renderGoogleReviewContent(data);
     // 성공만 캐시한다 — pruneGoogleCache() 주석 참고
-    if(data.found){ store.googleReviews[r.name] = { data, fetchedAt: Date.now() }; saveState(); }
+    if(data.found){ store.googleReviews[googleCacheKey(r.name)] = { data, fetchedAt: Date.now() }; saveState(); }
     refreshRatingLabels(r);
     loadReviewAnalysis(r, data);
   }catch(e){
@@ -2869,7 +2873,7 @@ async function loadLiveSearchGoogleReviews(i){
   if(box.dataset.filled){ box.classList.toggle('show'); return; }
   box.classList.add('show');
 
-  const cached = store.googleReviews[place.name];
+  const cached = store.googleReviews[googleCacheKey(place.name)];
   if(cached){
     box.dataset.filled = '1';
     box.innerHTML = renderGoogleReviewContent(cached.data);
@@ -2878,12 +2882,12 @@ async function loadLiveSearchGoogleReviews(i){
 
   box.innerHTML = `<div class="google-review-loading">${t('googleReviewLoading') || '리뷰를 불러오는 중...'}</div>`;
   try{
-    const url = `/api/google-reviews?name=${encodeURIComponent(place.name)}&lat=${place.lat}&lng=${place.lng}`;
+    const url = `/api/google-reviews?name=${encodeURIComponent(place.name)}&lat=${place.lat}&lng=${place.lng}&lang=${mapsLanguage()}`;
     const res = await fetch(url);
     const data = await res.json();
     box.dataset.filled = '1';
     box.innerHTML = renderGoogleReviewContent(data);
-    store.googleReviews[place.name] = { data, fetchedAt: Date.now() };
+    store.googleReviews[googleCacheKey(place.name)] = { data, fetchedAt: Date.now() };
     saveState();
   }catch(e){
     box.innerHTML = `<div class="google-review-error">${t('googleReviewError') || '리뷰를 불러오지 못했습니다.'}</div>`;

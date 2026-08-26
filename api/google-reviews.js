@@ -21,13 +21,15 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const { name, lat, lng } = req.query || {};
+  const { name, lat, lng, lang } = req.query || {};
   const latNum = Number(lat);
   const lngNum = Number(lng);
   if (!name || !Number.isFinite(latNum) || !Number.isFinite(lngNum)) {
     res.status(400).json({ error: 'missing_params' });
     return;
   }
+  // 화이트리스트 밖 값은 무시하고 기본값으로 — 임의 문자열을 그대로 구글에 넘기지 않는다.
+  const languageCode = ['ko', 'en', 'zh-CN', 'es'].includes(lang) ? lang : 'ko';
 
   try {
     const searchRes = await fetch('https://places.googleapis.com/v1/places:searchText', {
@@ -39,6 +41,7 @@ module.exports = async function handler(req, res) {
       },
       body: JSON.stringify({
         textQuery: name,
+        languageCode,
         locationBias: {
           circle: {
             center: { latitude: latNum, longitude: lngNum },
@@ -71,7 +74,7 @@ module.exports = async function handler(req, res) {
 
     let reviews = place.reviews;
     if (!reviews) {
-      const detailRes = await fetch(`https://places.googleapis.com/v1/places/${place.id}`, {
+      const detailRes = await fetch(`https://places.googleapis.com/v1/places/${place.id}?languageCode=${languageCode}`, {
         headers: {
           'X-Goog-Api-Key': apiKey,
           'X-Goog-FieldMask': 'reviews',
