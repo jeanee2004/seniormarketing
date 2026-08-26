@@ -36,6 +36,7 @@
       <button class="icon-btn icon-btn-search" data-i18n-title="navSearch" title="통합 검색" onclick="openSearch()">🔍</button>
       <button class="icon-btn" data-i18n-title="navGame" title="메뉴 추천 게임" onclick="openGame()">🎲</button>
       <button class="icon-btn" data-i18n-title="navSurvey" title="취향 설문" onclick="openSurvey()">📝</button>
+      <button class="icon-btn icon-btn-theme" id="themeToggle" data-i18n-title="navTheme" data-i18n-aria="navTheme" title="화면 밝기 전환" aria-label="화면 밝기 전환" aria-pressed="false" onclick="toggleTheme()"><span class="theme-dial" aria-hidden="true"></span></button>
       <button class="icon-btn" data-i18n-title="navLang" title="언어 전환" onclick="openLang()">🌐</button>
       <!-- 로그아웃 버튼은 여기 두지 않는다. 마이페이지 안에 이미 있어서 중복이고,
            헤더 버튼을 누르면 어차피 그 마이페이지가 열린다. -->
@@ -366,6 +367,16 @@
     <button type="button" class="overlay-close" onclick="requestCloseReviewForm()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
     <div class="survey-scroll">
       <div id="reviewFormBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 방문 인증 (영수증·간판 사진 → AI 판정) ===== -->
+<div class="survey-overlay" id="visitVerifyOverlay" onclick="closeVisitVerifyOnOverlay(event)">
+  <div class="survey-box" onclick="event.stopPropagation()">
+    <button type="button" class="overlay-close" onclick="requestCloseVisitVerify()" data-i18n-title="closeBtn" data-i18n-aria="closeBtn" title="닫기" aria-label="닫기">✕</button>
+    <div class="survey-scroll">
+      <div id="visitVerifyBody"></div>
     </div>
   </div>
 </div>

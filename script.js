@@ -108,7 +108,7 @@ const sb = (typeof supabase !== 'undefined' && supabase.createClient)
 // B가 A의 저장목록을 보게 된다. 이 모양은 나중에 옮겨갈 서버 테이블
 // saved_restaurants(user_id, restaurant_name, …)와 같아서 이전도 쉬워진다.
 const STORE_KEY = 'bmw:v1';
-let store = { auth:{isLoggedIn:false, name:'', userId:''}, marks:{}, reviews:[], passOrders:[], reviewLikes:{}, myLikedReviews:[], googleReviews:{}, reviewAnalysis:{}, lang:'ko' };
+let store = { auth:{isLoggedIn:false, name:'', userId:''}, marks:{}, reviews:[], passOrders:[], reviewLikes:{}, myLikedReviews:[], googleReviews:{}, reviewAnalysis:{}, lang:'ko', theme:'' };
 
 function loadState(){
   try{
@@ -131,6 +131,8 @@ function loadState(){
       googleReviews: pruneGoogleCache(parsed.googleReviews),
       reviewAnalysis: parsed.reviewAnalysis || {},
       lang: parsed.lang || 'ko',
+      // ''(미설정)이면 OS의 prefers-color-scheme을 따른다. 'light'/'dark'는 사용자가 직접 고른 값.
+      theme: (parsed.theme === 'light' || parsed.theme === 'dark') ? parsed.theme : '',
     };
     // 옛 버전의 parsed.accounts(평문 비밀번호가 들어있던 배열)는 일부러 읽지 않는다.
     // 다음 saveState()에서 저장소에서도 사라진다.
@@ -315,7 +317,7 @@ function escapeHtml(s){
 // 설문·마이페이지·게임·로그인·문의·식권·소개·FAQ 모달과 약관 페이지는 다음 단계에서 번역 예정.
 const i18n = { en: {
   pageTitle:"Bap Meokeoreo Wa — Discover Jochiwon's Local Restaurants",
-  navSearch:"Search", navGame:"Menu Roulette Game", navSurvey:"Taste Survey", navLang:"Language", navLogin:"Sign in", navLogout:"Sign out",
+  navSearch:"Search", navGame:"Menu Roulette Game", navSurvey:"Taste Survey", navLang:"Language", navTheme:"Switch light/dark", navLogin:"Sign in", navLogout:"Sign out",
   headerSearchPh:"Search restaurants, meal passes, partners, pages",
   heroEyebrow:"KU-jodae! Help the Local Owners",
   heroTitle:'Did you know there are great restaurants missing or barely listed on Naver? <span>Now you do.</span>',
@@ -471,6 +473,17 @@ const i18n = { en: {
   reviewRatingLabel:"Rating", reviewPlaceLabel:"Restaurant visited",
   reviewVisibilityLabel:"Show as", reviewVisibilityReal:"Real name ({name})", reviewVisibilityAnon:"Anonymous",
   reviewPhotoLabel:"Attach a photo", reviewOptional:"Optional",
+  visitVerifyTitle:"Verify your visit",
+  visitVerifySub:"Did you really go to {name}? Upload a receipt or a photo of the shop's sign.",
+  visitVerifyNote:"You can only review places you've actually been to. The photo is used for the check only and is not stored.",
+  visitVerifyPhotoLabel:"Receipt or storefront photo",
+  visitVerifySubmit:"Verify", visitVerifyChecking:"Checking...",
+  visitVerifyPreviewAlt:"Preview of the photo you uploaded",
+  visitVerifyErrNoPhoto:"Please upload a photo first.",
+  visitVerifyErrRead:"We couldn't read that photo. Please try another one.",
+  visitVerifyErrServer:"Verification isn't available right now. Please try again in a moment.",
+  visitVerifyFailKind:"This doesn't look like a receipt or a photo of the shop's sign.",
+  visitVerifyFailName:"We couldn't find this restaurant's name in the photo.",
   reviewContentLabel:"Review", reviewContentPh:"What did you like about it?",
   reviewSubmitBtn:"Post review", reviewErrEmpty:"Please write your review.",
   reviewSuccessTitle:"Your review is posted!",
@@ -575,7 +588,7 @@ const i18n = { en: {
   // 중국어는 핵심 경로(헤더·히어로·문제·로드맵·지도·맛집 카드/상세·구글 리뷰·실시간 검색)만 지원 —
   // 그 외 키가 없으면 t()가 null을 반환해 한국어 원문으로 자동 대체된다.
   pageTitle:"Bap Meokeoreo Wa — 发现调治院本地美食",
-  navSearch:"搜索", navGame:"菜单推荐游戏", navSurvey:"口味问卷", navLang:"语言", navLogin:"登录", navLogout:"退出登录",
+  navSearch:"搜索", navGame:"菜单推荐游戏", navSurvey:"口味问卷", navLang:"语言", navTheme:"切换深浅色", navLogin:"登录", navLogout:"退出登录",
   headerSearchPh:"搜索餐厅、餐券、合作、页面",
   heroEyebrow:"KU助队！拜托了老板",
   heroTitle:'你知道吗，有些好吃的餐厅在Naver地图上找不到，或者信息很少？<span>现在你知道了。</span>',
@@ -731,6 +744,17 @@ const i18n = { en: {
   reviewRatingLabel:"评分", reviewPlaceLabel:"到访的餐厅",
   reviewVisibilityLabel:"显示方式", reviewVisibilityReal:"真实姓名（{name}）", reviewVisibilityAnon:"匿名",
   reviewPhotoLabel:"添加照片", reviewOptional:"可选",
+  visitVerifyTitle:"到店认证",
+  visitVerifySub:"您确实去过{name}吗？请上传小票或店铺招牌的照片。",
+  visitVerifyNote:"只有实际到访过的店铺才能写评论。照片仅用于核对，不会保存。",
+  visitVerifyPhotoLabel:"小票或招牌照片",
+  visitVerifySubmit:"认证", visitVerifyChecking:"正在核对……",
+  visitVerifyPreviewAlt:"已上传照片的预览",
+  visitVerifyErrNoPhoto:"请先上传照片。",
+  visitVerifyErrRead:"无法读取该照片，请换一张再试。",
+  visitVerifyErrServer:"目前无法进行认证，请稍后再试。",
+  visitVerifyFailKind:"这看起来不像小票或店铺招牌的照片。",
+  visitVerifyFailName:"照片中未能确认这家店的名称。",
   reviewContentLabel:"评论内容", reviewContentPh:"你喜欢这里的哪一点？",
   reviewSubmitBtn:"发布评论", reviewErrEmpty:"请填写评论内容。",
   reviewSuccessTitle:"评论发布成功！",
@@ -883,6 +907,9 @@ loadState();
 currentLang = store.lang || 'ko';
 applyStaticTranslations();
 applyState();
+// 테마는 클래스만 먼저 건다 — 카드·지도는 아래에서 어차피 처음 그려진다.
+// (여기서 applyTheme()을 부르면 아직 선언 전인 cardGrid를 건드려 TDZ 에러가 난다.)
+document.documentElement.classList.toggle('dark', isDarkTheme());
 
 // 로그인 상태는 renderCards()가 첫 렌더 때부터 참조하므로 여기서 선언한다
 // (손주 로그인 섹션에서 선언하면 초기 renderCards() 호출 시점에 TDZ 에러가 난다).
@@ -1055,7 +1082,8 @@ function bindFoodCardButtons(container){
       if(!r.saved){
         confirmMark(r, '💌', t('confirmSave') || '이 맛집을 가보고 싶은 곳에 담으시겠습니까?', () => { r.saved = true; });
       } else {
-        confirmMark(r, '✔️', t('confirmVisited') || '이 맛집을 방문 완료로 표시하시겠습니까?', () => { r.visited = true; });
+        // 방문 완료는 리뷰 작성의 관문이라 그냥 통과시키지 않는다 — 사진 인증을 먼저 거친다.
+        openVisitVerify(r);
       }
     });
   });
@@ -1115,8 +1143,13 @@ function confirmMark(r, emoji, question, apply){
   });
 }
 
+// 썸네일 배경은 토큰이 아니라 하드코딩 4색이라 테마를 따로 태워줘야 한다
+// (다크에서 이것만 밝게 남으면 카드마다 흰 판이 떠 보인다).
 function thumbColor(i){
-  const colors = ['#E3E9EF','#F3E7DE','#EAE3D9','#E9EDF2'];
+  const dark = document.documentElement.classList.contains('dark');
+  const colors = dark
+    ? ['#2A323D','#37302A','#322E28','#2B333D']
+    : ['#E3E9EF','#F3E7DE','#EAE3D9','#E9EDF2'];
   return colors[i % colors.length];
 }
 
@@ -1186,6 +1219,17 @@ async function prefetchLiveRatings(){
   renderCards();
 }
 prefetchLiveRatings();
+
+// 버튼의 aria-pressed를 첫 상태에 맞춘다(클래스는 위에서 이미 걸었다).
+(function initThemeButton(){
+  const btn = document.getElementById('themeToggle');
+  if(btn) btn.setAttribute('aria-pressed', isDarkTheme() ? 'true' : 'false');
+  // 사용자가 직접 고르기 전까지는 OS 설정을 따라간다.
+  if(window.matchMedia){
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if(mq.addEventListener) mq.addEventListener('change', () => { if(!store.theme) applyTheme(); });
+  }
+})();
 
 // ---- Dummy reviews ----
 const reviews = [
@@ -1390,6 +1434,185 @@ signupEmailInput.addEventListener('input', () => {
   signupErrorEl.textContent = '';
   document.getElementById('signupMsg').style.display = 'none';
 });
+
+// ================= 방문 인증 (영수증·간판 사진 → AI 판정) =================
+// 리뷰 작성은 "방문 완료" 표시를 관문으로 쓴다(openReviewForm). 그런데 방문 완료를 그냥 누르면
+// 끝이라, 가보지도 않은 사람이 악성 리뷰를 남길 수 있었다. 그 앞에 이 인증을 한 번 세운다.
+// visited를 켜는 곳은 bindFoodCardButtons() 한 군데뿐이라 관문도 한 곳이면 된다.
+//
+// 완전한 증명은 아니다 — 남의 영수증 사진도 통과할 수 있다. 억지력이고, 안내 문구도 그렇게 쓴다.
+// 사진은 판정에만 쓰고 저장하지 않는다(리뷰 사진에서 겪은 용량 초과를 반복하지 않기 위해서다).
+let visitVerifyTarget = null;
+let visitVerifyPhoto = '';
+let visitVerifyBusy = false;
+
+function openVisitVerify(r){
+  visitVerifyTarget = r;
+  visitVerifyPhoto = '';
+  visitVerifyBusy = false;
+  renderVisitVerify();
+  document.getElementById('visitVerifyOverlay').classList.add('show');
+}
+function closeVisitVerify(){
+  document.getElementById('visitVerifyOverlay').classList.remove('show');
+  visitVerifyTarget = null;
+  visitVerifyPhoto = '';
+  visitVerifyBusy = false;
+}
+// 판정이 도는 중에는 닫지 않는다. 사진을 이미 골랐으면 설문 이탈과 같은 확인창을 쓴다.
+function requestCloseVisitVerify(){
+  if(visitVerifyBusy) return;
+  if(visitVerifyPhoto) confirmDiscard(closeVisitVerify);
+  else closeVisitVerify();
+}
+function closeVisitVerifyOnOverlay(e){
+  if(e.target === document.getElementById('visitVerifyOverlay')) requestCloseVisitVerify();
+}
+
+function renderVisitVerify(){
+  const r = visitVerifyTarget;
+  if(!r) return;
+  const body = document.getElementById('visitVerifyBody');
+  body.innerHTML = `
+    <div class="auth-head">
+      <div class="emoji">🧾</div>
+      <h3>${t('visitVerifyTitle') || '방문 인증'}</h3>
+      <p>${(t('visitVerifySub') || '{name}에 다녀오신 게 맞나요? 영수증이나 가게 간판 사진을 올려주세요.').replace('{name}', escapeHtml(rName(r)))}</p>
+    </div>
+    <p class="visit-verify-note">${t('visitVerifyNote') || '리뷰는 실제로 다녀온 곳에만 남길 수 있어요. 사진은 확인에만 쓰고 저장하지 않습니다.'}</p>
+    <div class="auth-field">
+      <label>${t('visitVerifyPhotoLabel') || '영수증 또는 간판 사진'}</label>
+      <input type="file" id="visitVerifyInput" accept="image/*" capture="environment" class="review-file">
+      <div id="visitVerifyPreview"></div>
+    </div>
+    <p class="auth-error" id="visitVerifyError"></p>
+    <div class="game-action-row">
+      <button type="button" class="btn-ghost" style="flex:1;" onclick="requestCloseVisitVerify()">${t('closeBtn') || '닫기'}</button>
+      <button type="button" class="survey-close-btn" style="flex:1;" id="visitVerifySubmit">${t('visitVerifySubmit') || '인증하기'}</button>
+    </div>`;
+
+  document.getElementById('visitVerifyInput').addEventListener('change', handleVisitVerifyPhoto);
+  document.getElementById('visitVerifySubmit').addEventListener('click', submitVisitVerify);
+}
+
+function handleVisitVerifyPhoto(e){
+  const file = e.target.files && e.target.files[0];
+  const preview = document.getElementById('visitVerifyPreview');
+  const err = document.getElementById('visitVerifyError');
+  if(err) err.textContent = '';
+  if(!file){ visitVerifyPhoto = ''; preview.innerHTML = ''; return; }
+  readImageAsDataUrl(file).then(dataUrl => {
+    visitVerifyPhoto = dataUrl;
+    preview.innerHTML = `<img class="review-photo" src="${visitVerifyPhoto}" alt="${t('visitVerifyPreviewAlt') || '올린 인증 사진 미리보기'}">`;
+  }).catch(() => {
+    visitVerifyPhoto = '';
+    preview.innerHTML = '';
+    if(err) err.textContent = t('visitVerifyErrRead') || '사진을 읽지 못했어요. 다른 사진으로 다시 시도해주세요.';
+  });
+}
+
+// 판정 실패 사유는 서버가 준 kind/nameMatch로 정한다.
+// reason은 Gemini가 사이트 언어로 써주므로 한 줄 덧붙인다.
+function visitVerifyFailMessage(data){
+  if(data.kind === 'OTHER') return t('visitVerifyFailKind') || '영수증이나 가게 간판 사진으로 보이지 않아요.';
+  return t('visitVerifyFailName') || '사진에서 이 가게의 이름을 확인하지 못했어요.';
+}
+
+async function submitVisitVerify(){
+  if(visitVerifyBusy) return;
+  const r = visitVerifyTarget;
+  const err = document.getElementById('visitVerifyError');
+  const btn = document.getElementById('visitVerifySubmit');
+  if(!r) return;
+  if(!visitVerifyPhoto){
+    err.textContent = t('visitVerifyErrNoPhoto') || '먼저 사진을 올려주세요.';
+    return;
+  }
+
+  visitVerifyBusy = true;
+  err.textContent = '';
+  btn.disabled = true;
+  btn.textContent = t('visitVerifyChecking') || '확인하는 중...';
+
+  try{
+    const res = await fetch('/api/visit-verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: r.name,
+        address: (r.detail && r.detail.address) || r.realAddress || '',
+        image: visitVerifyPhoto,
+        lang: currentLang,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    visitVerifyBusy = false;
+    btn.disabled = false;
+    btn.textContent = t('visitVerifySubmit') || '인증하기';
+
+    // 키가 없거나(500) 상류 실패(502)면 통과시키지 않는다 — 조용히 통과시키면 인증의 의미가 없다.
+    if(!res.ok || data.error){
+      err.textContent = t('visitVerifyErrServer') || '지금은 인증할 수 없어요. 잠시 후 다시 시도해주세요.';
+      return;
+    }
+    if(!data.ok){
+      err.textContent = visitVerifyFailMessage(data) + (data.reason ? ' (' + data.reason + ')' : '');
+      return;
+    }
+
+    closeVisitVerify();
+    // 통과하면 원래의 확인 모달 경로를 그대로 탄다(저장·pushMark·재렌더가 한 곳에 모여 있다).
+    confirmMark(r, '✔️', t('confirmVisited') || '이 맛집을 방문 완료로 표시하시겠습니까?', () => { r.visited = true; });
+  }catch(e){
+    visitVerifyBusy = false;
+    btn.disabled = false;
+    btn.textContent = t('visitVerifySubmit') || '인증하기';
+    err.textContent = t('visitVerifyErrServer') || '지금은 인증할 수 없어요. 잠시 후 다시 시도해주세요.';
+  }
+}
+
+// ---- 다크모드 ----
+// 색은 style.css의 html.dark 한 블록에서 토큰만 갈아끼운다. 여기서 하는 일은
+// 클래스 토글 + 저장 + "토큰을 CSS 밖에서 읽어 쓰는 것들"(지도 타일·핀·썸네일) 갱신뿐이다.
+// 구글 지도는 CSS 밖이라 styles를 직접 넘겨야 한다 — 안 그러면 지도만 하얗게 튄다.
+const MAP_DARK_STYLES = [
+  { elementType:'geometry', stylers:[{color:'#212a35'}] },
+  { elementType:'labels.text.stroke', stylers:[{color:'#212a35'}] },
+  { elementType:'labels.text.fill', stylers:[{color:'#9fb4cc'}] },
+  { featureType:'poi', elementType:'labels.text.fill', stylers:[{color:'#8ea3b8'}] },
+  { featureType:'poi.park', elementType:'geometry', stylers:[{color:'#26362c'}] },
+  { featureType:'road', elementType:'geometry', stylers:[{color:'#2f3a47'}] },
+  { featureType:'road', elementType:'labels.text.fill', stylers:[{color:'#9aafc4'}] },
+  { featureType:'road.highway', elementType:'geometry', stylers:[{color:'#3d4a5a'}] },
+  { featureType:'transit', elementType:'geometry', stylers:[{color:'#2b3540'}] },
+  { featureType:'water', elementType:'geometry', stylers:[{color:'#17222e'}] },
+  { featureType:'water', elementType:'labels.text.fill', stylers:[{color:'#5c7a9b'}] },
+];
+
+function isDarkTheme(){
+  if(store.theme) return store.theme === 'dark';
+  return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+}
+
+// 저장·재렌더까지 한 번에 맡는다(applyLanguage()와 같은 모양). 테마를 바꾸는 곳은 여기 하나다.
+function applyTheme(){
+  const dark = isDarkTheme();
+  document.documentElement.classList.toggle('dark', dark);
+  const btn = document.getElementById('themeToggle');
+  if(btn) btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+  if(typeof gmap !== 'undefined' && gmap){
+    gmap.setOptions({ styles: dark ? MAP_DARK_STYLES : [] });
+    if(typeof renderMarkers === 'function') renderMarkers();  // 핀 색도 토큰을 다시 읽게 한다
+  }
+  if(typeof renderCards === 'function') renderCards();
+  if(typeof renderExampleCards === 'function') renderExampleCards();
+}
+
+function toggleTheme(){
+  store.theme = isDarkTheme() ? 'light' : 'dark';
+  saveState();
+  applyTheme();
+}
 
 // ---- Big text mode ----
 function toggleBigText(){
@@ -1753,6 +1976,9 @@ async function initMap(){
     zoom: 16,
     mapTypeControl: false,
     streetViewControl: false,
+    styles: isDarkTheme() ? MAP_DARK_STYLES : [],
+    // 타일이 도착하기 전 바닥색. styles와 달리 생성 시점에만 먹는다.
+    backgroundColor: isDarkTheme() ? '#212a35' : '#e5e3df',
   });
   renderMarkers();
 }
@@ -2582,27 +2808,38 @@ function renderReviewForm(){
   document.getElementById('reviewForm').addEventListener('submit', submitReview);
 }
 
+// 고른 사진을 지정한 최대 변으로 줄여 JPEG data URL로 돌려준다.
+// 원본 base64를 그대로 쓰면 localStorage 용량 한도를 금방 넘기고(리뷰 사진),
+// 업로드도 그만큼 느려진다(방문 인증). 두 곳이 같은 규칙을 쓰도록 여기 한 곳에 둔다.
+function readImageAsDataUrl(file, max = 800){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('read_failed'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('decode_failed'));
+      img.onload = () => {
+        const scale = Math.min(1, max / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 function handleReviewPhoto(e){
   const file = e.target.files && e.target.files[0];
   const preview = document.getElementById('reviewPhotoPreview');
   if(!file){ reviewPhoto = ''; preview.innerHTML = ''; return; }
-  const reader = new FileReader();
-  reader.onload = () => {
-    const img = new Image();
-    img.onload = () => {
-      // 원본 base64를 그대로 저장하면 localStorage 용량 한도를 금방 넘긴다 — 최대 800px JPEG로 줄여 보관
-      const max = 800;
-      const scale = Math.min(1, max / Math.max(img.width, img.height));
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(img.width * scale);
-      canvas.height = Math.round(img.height * scale);
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      reviewPhoto = canvas.toDataURL('image/jpeg', 0.7);
-      preview.innerHTML = `<img class="review-photo" src="${reviewPhoto}" alt="첨부한 사진 미리보기">`;
-    };
-    img.src = reader.result;
-  };
-  reader.readAsDataURL(file);
+  readImageAsDataUrl(file).then(dataUrl => {
+    reviewPhoto = dataUrl;
+    preview.innerHTML = `<img class="review-photo" src="${reviewPhoto}" alt="첨부한 사진 미리보기">`;
+  }).catch(() => { reviewPhoto = ''; preview.innerHTML = ''; });
 }
 
 function submitReview(e){
@@ -3392,6 +3629,7 @@ const ESC_CLOSERS = {
   surveyOverlay:     () => requestCloseSurvey(),
   gameOverlay:       () => requestCloseGame(),
   reviewFormOverlay: () => requestCloseReviewForm(),
+  visitVerifyOverlay:() => requestCloseVisitVerify(),
   contactOverlay:    () => requestCloseContact(),
   searchOverlay:     () => closeSearch(),
   passOverlay:       () => closePass(),
