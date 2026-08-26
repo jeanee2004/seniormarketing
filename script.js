@@ -493,6 +493,22 @@ function pullPassOrders(){
     }, ignore);
 }
 
+// ---- 사장님 권한(role) — 접근 제어 구조만 (화면은 아직 없음, next.md C5) ----
+// store_owners는 클라이언트가 쓸 수 없는 표다(관리자가 SQL Editor로만 행을 추가한다).
+// 여기서는 로그인한 사람이 자신이 어느 가게의 사장님으로 지정됐는지 읽어오는 것까지만 한다.
+let myOwnedRestaurantIds = [];
+function isStoreOwner(){ return myOwnedRestaurantIds.length > 0; }
+function loadStoreOwnership(){
+  if(!sb || !currentUserId){ myOwnedRestaurantIds = []; return; }
+  const uid = currentUserId;
+  sb.from('store_owners').select('restaurant_id').eq('user_id', uid)
+    .then(({ data, error }) => {
+      if(error || !data) return;
+      if(uid !== currentUserId) return; // 응답을 기다리는 사이 계정이 바뀌면 무시
+      myOwnedRestaurantIds = data.map(row => row.restaurant_id);
+    }, ignore);
+}
+
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
@@ -3102,6 +3118,7 @@ function syncAuthFromSession(session){
   renderReviews();
   pullSaved();
   pullPassOrders();
+  loadStoreOwnership();
 }
 
 // 첫 렌더는 이미 로그아웃 상태로 그려진 뒤다. 세션 확인은 비동기라
