@@ -1840,6 +1840,22 @@ document.querySelectorAll('.map-chip').forEach(chip => {
   chip.addEventListener('click', () => setMapFilter(chip.dataset.mapcat));
 });
 
+// ---- 전체화면 지도 위에 모달 띄우기 ----
+// 브라우저는 전체화면 요소와 그 자손만 그린다. 모달은 <body> 바로 아래에 있어서
+// 지도를 전체화면으로 보는 동안에는 z-index를 아무리 올려도 지도 뒤에 깔린다.
+// 그래서 전체화면에 들어가면 오버레이들을 그 안으로 옮기고, 나오면 body로 되돌린다.
+// (전체화면을 강제로 빠져나오게 하면 사용자가 넓게 보려던 의도를 꺾는다.)
+const FULLSCREEN_MOVABLE = '.survey-overlay, .toast-overlay';
+function relocateOverlays(){
+  const host = document.fullscreenElement || document.webkitFullscreenElement || document.body;
+  document.querySelectorAll(FULLSCREEN_MOVABLE).forEach(el => {
+    if(el.parentElement !== host) host.appendChild(el);
+  });
+}
+document.addEventListener('fullscreenchange', relocateOverlays);
+// 사파리는 접두사 붙은 이벤트를 쓴다
+document.addEventListener('webkitfullscreenchange', relocateOverlays);
+
 // ================= 이용 분석 (GA4) =================
 // 측정 ID는 비밀값이 아니다 — 모든 방문자의 페이지 소스에 그대로 보인다.
 // 비워두면 계측이 통째로 꺼지고 사이트는 지금과 똑같이 동작한다(측정 ID를 받기 전 상태).
@@ -2515,15 +2531,7 @@ function renderMarkers(){
       label: { text: r.emoji, fontSize: '15px' },
       optimized: false,   // 이모지 라벨이 캔버스 합성에서 깨지지 않게 마커마다 개별 DOM으로 그린다
     });
-    marker.addListener('click', () => {
-      // 지도를 전체화면으로 본 상태에서는 모달이 그 아래에 깔려 보이지 않는다
-      // (전체화면 요소가 최상단이라 z-index로는 못 이긴다). 먼저 전체화면을 빠져나온다.
-      if(document.fullscreenElement){
-        Promise.resolve(document.exitFullscreen()).catch(() => {}).then(() => openDetail(idx));
-        return;
-      }
-      openDetail(idx);
-    });
+    marker.addListener('click', () => openDetail(idx));
     // 핀이 34개까지 늘면서 어느 걸 가리키는지 알기 어려워졌다 — hover에 크기로 반응시킨다.
     // 아이콘 객체를 통째로 다시 넘겨야 반영된다(setIcon은 부분 갱신을 안 한다).
     const icon = size => ({
