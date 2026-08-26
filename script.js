@@ -128,7 +128,7 @@ function loadState(){
       passOrders: Array.isArray(parsed.passOrders) ? parsed.passOrders : [],
       reviewLikes: parsed.reviewLikes || {},
       myLikedReviews: Array.isArray(parsed.myLikedReviews) ? parsed.myLikedReviews : [],
-      googleReviews: parsed.googleReviews || {},
+      googleReviews: pruneGoogleCache(parsed.googleReviews),
       reviewAnalysis: parsed.reviewAnalysis || {},
       lang: parsed.lang || 'ko',
     };
@@ -137,6 +137,21 @@ function loadState(){
   }catch(e){
     // 저장소가 막힌 환경(사생활 보호 모드 등) — 조용히 메모리 전용으로 동작한다
   }
+}
+
+// 구글 리뷰 캐시는 영구 저장이 아니라 유효기간이 있는 캐시다.
+// 실패(found:false)를 캐시하면 안 된다 — API 키가 잠깐 막혔던 동안 저장된 "못 찾음"이
+// 그대로 굳어서, 키를 고친 뒤에도 그 가게만 계속 "실제 리뷰 준비중"으로 남는다.
+// (실제로 그 일이 있었다. 그래서 성공만, 그것도 GOOGLE_CACHE_TTL 동안만 캐시한다.)
+const GOOGLE_CACHE_TTL = 12 * 60 * 60 * 1000; // 12시간
+function isFreshGoogle(entry){
+  return !!(entry && entry.data && entry.data.found && (Date.now() - (entry.fetchedAt || 0)) < GOOGLE_CACHE_TTL);
+}
+function pruneGoogleCache(raw){
+  if(!raw || typeof raw !== 'object') return {};
+  const out = {};
+  for(const [name, entry] of Object.entries(raw)) if(isFreshGoogle(entry)) out[name] = entry;
+  return out;
 }
 
 // 옛 저장본은 marks가 { 가게이름: {...} } 였고, 지금은 { userId: { 가게이름: {...} } } 다.
@@ -1150,6 +1165,28 @@ priceMaxInput.addEventListener('input', renderCards);
 renderCards();
 renderExampleCards();
 
+// 카드 그리드의 별점은 구글에서 온다. 상세 모달을 열 때만 받아오면 목록에는 계속
+// "실제 리뷰 준비중"이 남아 있다가 눌러야 별점으로 바뀌는 것처럼 보인다.
+// 그래서 첫 렌더 직후 한 번 미리 받아둔다. 캐시(GOOGLE_CACHE_TTL)가 살아 있으면
+// 요청을 아예 보내지 않으므로 재방문에는 호출이 0건이다.
+async function prefetchLiveRatings(){
+  const targets = restaurants.filter(r => r.lat && r.lng && !isFreshGoogle(store.googleReviews[r.name]));
+  if(targets.length === 0) return;
+  const results = await Promise.all(targets.map(async r => {
+    try{
+      const res = await fetch('/api/google-reviews?name=' + encodeURIComponent(r.name) + '&lat=' + r.lat + '&lng=' + r.lng);
+      const data = await res.json();
+      return data.found ? { name: r.name, data } : null;
+    }catch(e){ return null; } // 조용히 건너뛴다 — 못 받으면 "실제 리뷰 준비중"으로 남을 뿐이다
+  }));
+  const got = results.filter(Boolean);
+  if(got.length === 0) return;
+  got.forEach(g => { store.googleReviews[g.name] = { data: g.data, fetchedAt: Date.now() }; });
+  saveState();
+  renderCards();
+}
+prefetchLiveRatings();
+
 // ---- Dummy reviews ----
 const reviews = [
   {id:'seed0', name:"익명의 재학생", emoji:"🎓", stars:5, place:"할머니 떡볶이", text:"학교 끝나고 늘 여기 와요. 사장님이 항상 반겨주셔서 더 정겹습니다.", likes:14, at:'2026-08-18'},
@@ -1600,7 +1637,7 @@ async function loadGoogleReviews(r){
   const box = document.getElementById('googleReviewBody');
   if(!box) return;
   const cached = store.googleReviews[r.name];
-  if(cached){ box.innerHTML = renderGoogleReviewContent(cached.data); refreshRatingLabels(r); loadReviewAnalysis(r, cached.data); return; }
+  if(isFreshGoogle(cached)){ box.innerHTML = renderGoogleReviewContent(cached.data); refreshRatingLabels(r); loadReviewAnalysis(r, cached.data); return; }
   try{
     const url = `/api/google-reviews?name=${encodeURIComponent(r.name)}&lat=${r.lat}&lng=${r.lng}`;
     const res = await fetch(url);
@@ -1608,8 +1645,8 @@ async function loadGoogleReviews(r){
     // 모달을 닫았다 다른 가게를 열었으면 detailBody가 이미 교체돼 이 컨테이너는 더 이상 문서에 없다
     if(document.getElementById('googleReviewBody') !== box) return;
     box.innerHTML = renderGoogleReviewContent(data);
-    store.googleReviews[r.name] = { data, fetchedAt: Date.now() };
-    saveState();
+    // 성공만 캐시한다 — pruneGoogleCache() 주석 참고
+    if(data.found){ store.googleReviews[r.name] = { data, fetchedAt: Date.now() }; saveState(); }
     refreshRatingLabels(r);
     loadReviewAnalysis(r, data);
   }catch(e){
