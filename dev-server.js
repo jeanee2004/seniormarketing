@@ -53,6 +53,8 @@ const MIME = {
   '.ico': 'image/x-icon',
   '.woff': 'font/woff',
   '.woff2': 'font/woff2',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
 };
 
 // ── Vercel 핸들러 shim ───────────────────────────────────────
@@ -148,6 +150,30 @@ function serveStatic(req, res, url) {
     }
     res.setHeader('Content-Type', MIME[path.extname(target).toLowerCase()] || 'application/octet-stream');
     res.setHeader('Cache-Control', 'no-store'); // 개발 중엔 항상 최신 파일
+    res.setHeader('Accept-Ranges', 'bytes');
+
+    const range = req.headers.range;
+    const m = range && /^bytes=(\d*)-(\d*)$/.exec(range.trim());
+    if (m) {
+      const size = stat.size;
+      let start = m[1] ? Number(m[1]) : null;
+      let end = m[2] ? Number(m[2]) : null;
+      if (start === null) { start = Math.max(0, size - (end || 0)); end = size - 1; }   // bytes=-N (끝에서 N바이트)
+      if (end === null || end >= size) end = size - 1;
+      if (start > end || start >= size) {
+        res.statusCode = 416;
+        res.setHeader('Content-Range', 'bytes */' + size);
+        res.end();
+        return;
+      }
+      res.statusCode = 206;
+      res.setHeader('Content-Range', 'bytes ' + start + '-' + end + '/' + size);
+      res.setHeader('Content-Length', end - start + 1);
+      fs.createReadStream(target, { start, end }).pipe(res);
+      return;
+    }
+
+    res.setHeader('Content-Length', stat.size);
     fs.createReadStream(target).pipe(res);
   });
 }

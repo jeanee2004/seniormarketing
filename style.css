@@ -385,6 +385,21 @@ html.dark .theme-dial{ transform:rotate(180deg); }
   font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
 }
 /* 원형 크롭은 .survey-photo와 같은 방식이다 — 캐릭터 PNG의 체커보드 여백을 잘라낸다 */
+/* 맛집 목록 페이지 이동. 시니어 사용자 기준 터치 영역을 헤더 아이콘(38px)과 맞춘다. */
+.pager{
+  display:flex;justify-content:center;align-items:center;gap:6px;
+  flex-wrap:wrap;margin-top:28px;
+}
+.pager:empty{display:none;}
+.pager-btn{
+  min-width:38px;height:38px;padding:0 12px;border-radius:99px;
+  background:var(--paper);border:1.5px solid var(--line);color:var(--ink-soft);
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.9rem;font-weight:700;
+  transition:background .15s ease,color .15s ease,border-color .15s ease,transform .15s ease;
+}
+.pager-btn:hover:not(:disabled){background:var(--hover-tint);color:var(--slate-dark);transform:translateY(-2px);}
+.pager-btn.is-active{background:var(--slate-surface);border-color:var(--slate-surface);color:#fff;}
+.pager-btn:disabled{opacity:0.4;cursor:default;}
 .filter-empty-art{
   width:110px;aspect-ratio:1/1;border-radius:50%;overflow:hidden;margin:0 auto 16px;
   border:4px solid var(--paper);box-shadow:var(--shadow);
@@ -1383,4 +1398,57 @@ html.dark{
 /* 캐릭터 PNG는 밝은 원형 스티커라 다크에서 너무 튄다 — 살짝만 눌러준다. */
 html.dark .grandma-photo img, html.dark .survey-photo img, html.dark .filter-empty-art img{
   filter:brightness(0.92) saturate(0.95);
+}
+
+/* ===== 히어로 배경 영상 =====
+   영상 파일 경로가 적힌 곳은 index.html의 <source> 한 줄뿐이다 —
+   교체는 assets/HeroPage.mp4를 새 파일로 덮어쓰기만 하면 된다.
+   오버레이는 새 색 계열을 만들지 않고 --base-bg 토큰 하나를 농도로만 얹는다.
+   덕분에 html.dark에서 토큰이 바뀌면 라이트=오프화이트로 덮기,
+   다크=먹색으로 덮기가 자동으로 갈린다(60:30:10 비율을 깨지 않는다). */
+.hero-media{
+  position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+  opacity:0;transition:opacity .6s ease;
+  /* 카피가 놓이는 왼쪽을 진하게, 캐릭터 카드가 놓이는 오른쪽을 옅게 덮는다 */
+  --veil-1:93%; --veil-2:82%; --veil-3:56%;
+}
+/* 재생이 실제로 시작됐을 때만 나타난다. 로드 실패·코덱 미지원이면
+   opacity:0인 채 남아서 기존 히어로 배경(그라디언트)이 그대로 보인다. */
+.hero.hero-video-on .hero-media{opacity:1;}
+.hero-media video{width:100%;height:100%;object-fit:cover;display:block;}
+/* 가독성 오버레이. 첫 줄은 color-mix 미지원 브라우저용 폴백(--base-bg 라이트값). */
+.hero-media::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(100deg, rgba(247,244,238,0.93), rgba(247,244,238,0.82) 46%, rgba(247,244,238,0.56));
+  background:linear-gradient(100deg,
+    color-mix(in srgb, var(--base-bg) var(--veil-1), transparent),
+    color-mix(in srgb, var(--base-bg) var(--veil-2), transparent) 46%,
+    color-mix(in srgb, var(--base-bg) var(--veil-3), transparent));
+}
+/* 10초 루프의 이음매(컷 튐) 뭉개기. 경계 0.4초 동안만 영상이 옅어져 바탕색으로
+   스쳤다 돌아온다 — 켜고 끄는 타이밍은 index.html의 인라인 스크립트가 영상 재생
+   시각에서 직접 가져온다(CSS 애니메이션으로 돌리면 위상이 어긋난다). */
+.hero-media video{transition:opacity .38s ease;}
+.hero.hero-loop-edge .hero-media video{opacity:0.32;}
+/* 다크: 밝은 영상이 혼자 튀지 않게 눌러주고(캐릭터 PNG 처리와 같은 방식) 더 두껍게 덮는다 */
+html.dark .hero-media{--veil-1:94%; --veil-2:88%; --veil-3:70%;}
+html.dark .hero-media video{filter:brightness(0.68) saturate(0.9);}
+/* 모바일은 1단·가운데정렬이라 글자가 폭 전체를 쓴다 — 균일하게 덮는다 */
+@media(max-width:900px){
+  .hero-media::after{
+    background:rgba(247,244,238,0.91);
+    background:color-mix(in srgb, var(--base-bg) 91%, transparent);
+  }
+  html.dark .hero-media::after{
+    background:color-mix(in srgb, var(--base-bg) 93%, transparent);
+  }
+}
+/* .hero::before(종이 질감)는 z-index가 없어서 뒤에 오는 영상 레이어에 덮인다.
+   기존 규칙을 고치는 대신 여기서 z-index만 얹어 질감을 영상 위로 되돌린다. */
+.hero::before{z-index:1;}
+/* 움직임 최소화 사용자에게는 재생하지 않는다.
+   인라인 스크립트가 요소째 제거하지만, 스크립트가 죽어도 막히도록 CSS로도 잠근다. */
+@media(prefers-reduced-motion:reduce){
+  .hero-media{display:none;}
+  .hero-media video{transition:none;}
 }

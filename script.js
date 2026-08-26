@@ -83,6 +83,59 @@ const restaurants = [
     liveReview:true, lat:36.608516105696, lng:127.290049731247, realAddress:"세종특별자치시 조치원읍 내창1길 34-1"},
   {id:"sookine-bapsang", name:"숙이네밥상", nameEn:"Sooki's Table (숙이네밥상)", nameZh:"淑姬家饭桌 (숙이네밥상)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的家常韩式套餐店", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.608995511335, lng:127.291526952076, realAddress:"세종특별자치시 조치원읍 원마루길 16-1"},
+  // ── 2026-08-26 추가: 고려대 세종캠퍼스 1km 이내, 카카오 로컬 + 구글 Places로 실존 확인한 가게들.
+  //    프랜차이즈(카테고리에 브랜드 마디가 있거나 "OO점" 접미사)는 제외하고 개인 가게만 담았다.
+  //    가격대는 구글 priceLevel에서 왔고, 그 값이 없는 곳만 카테고리 기본값이다(next.md 참고).
+  {id:"seochangri-181", name:"서창리181", nameEn:"Seochang-ri 181 (서창리181)", nameZh:"瑞昌里181 (서창리181)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 한식당", descEn:"A Korean restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩餐厅", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+    liveReview:true, lat:36.6095767075366, lng:127.289694903435, realAddress:"세종특별자치시 조치원읍 원마루길 31-5"},
+  {id:"sammat-cafe", name:"삼맛카페", nameEn:"Samat Cafe (삼맛카페)", nameZh:"三味咖啡 (삼맛카페)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+    liveReview:true, lat:36.60822500941674, lng:127.28483105107225, realAddress:"세종특별자치시 조치원읍 모과나무길 34"},
+  {id:"vanilla-garden", name:"바닐라가든", nameEn:"Vanilla Garden (바닐라가든)", nameZh:"香草花园 (바닐라가든)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+    liveReview:true, lat:36.608334206532, lng:127.289625427726, realAddress:"세종특별자치시 조치원읍 내창1길 35"},
+  {id:"dankong", name:"단콩", nameEn:"Dankong (단콩)", nameZh:"甜豆咖啡 (단콩)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+    liveReview:true, lat:36.6138564422386, lng:127.28922913275, realAddress:"세종특별자치시 조치원읍 섭골길 35-4"},
+  {id:"paul-and-banabas", name:"폴앤바나바스", nameEn:"Paul and Barnabas (폴앤바나바스)", nameZh:"保罗与巴拿巴 (폴앤바나바스)", cat:"양식", emoji:"🍝", desc:"조치원읍 골목의 양식당", descEn:"A Western-style restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的西餐厅", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+    liveReview:true, lat:36.60798264373754, lng:127.2893033241067, realAddress:"세종특별자치시 조치원읍 내창3길 20"},
+  {id:"cafe-sujak", name:"카페수작", nameEn:"Cafe Sujak (카페수작)", nameZh:"手工咖啡馆 (카페수작)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+    liveReview:true, lat:36.6094043626304, lng:127.290898078419, realAddress:"세종특별자치시 조치원읍 원마루길 28-1"},
+  {id:"cafe-calendar", name:"카페캘린더", nameEn:"Cafe Calendar (카페캘린더)", nameZh:"日历咖啡馆 (카페캘린더)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+    liveReview:true, lat:36.6084758354333, lng:127.290304424996, realAddress:"세종특별자치시 조치원읍 내창1길 32-1"},
+  {id:"hong-cafe", name:"홍카페", nameEn:"Hong Cafe (홍카페)", nameZh:"洪咖啡 (홍카페)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+    liveReview:true, lat:36.6138660610245, lng:127.289721008169, realAddress:"세종특별자치시 조치원읍 섭골길 31"},
+  {id:"matna-sikdang-bunsik", name:"맛나식당분식", nameEn:"Matna Restaurant & Bunsik (맛나식당분식)", nameZh:"美味食堂粉食 (맛나식당분식)", cat:"분식", emoji:"🍢", desc:"조치원읍 골목의 분식집", descEn:"A Korean snack (bunsik) shop in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩式小吃店", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+    liveReview:true, lat:36.608079882452, lng:127.290079394343, realAddress:"세종특별자치시 조치원읍 내창2길 30"},
+  {id:"imone-dwaeji-gukbap", name:"이모네돼지국밥", nameEn:"Imone Dwaeji-gukbap (이모네돼지국밥)", nameZh:"阿姨家猪肉汤饭 (이모네돼지국밥)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 한식당", descEn:"A Korean restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩餐厅", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+    liveReview:true, lat:36.6143244215738, lng:127.289481273025, realAddress:"세종특별자치시 조치원읍 섭골길 34"},
+  {id:"bundang-ilpum-guksu", name:"분당일품국수", nameEn:"Bundang Ilpum Noodles (분당일품국수)", nameZh:"盆唐一品面条 (분당일품국수)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 한식당", descEn:"A Korean restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩餐厅", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+    liveReview:true, lat:36.6147376747531, lng:127.28552570074, realAddress:"세종특별자치시 조치원읍 섭골길 51-23"},
+  {id:"urban-lounge", name:"어반라운지", nameEn:"Urban Lounge (어반라운지)", nameZh:"都市酒廊 (어반라운지)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+    liveReview:true, lat:36.61467875353, lng:127.288662111208, realAddress:"세종특별자치시 조치원읍 신안새동네2길 15"},
+  {id:"gyodong-jjambbong", name:"교동짬뽕", nameEn:"Gyodong Jjamppong (교동짬뽕)", nameZh:"校洞炒码面 (교동짬뽕)", cat:"중식", emoji:"🥡", desc:"조치원읍 골목의 중식당", descEn:"A Chinese restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的中餐厅", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+    liveReview:true, lat:36.6142189884474, lng:127.289851995861, realAddress:"세종특별자치시 조치원읍 섭골길 30"},
+  {id:"naive", name:"나이브", nameEn:"Naive (나이브)", nameZh:"天真咖啡 (나이브)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+    liveReview:true, lat:36.6072146336185, lng:127.28940216838, realAddress:"세종특별자치시 조치원읍 내창2길 13-3"},
+  {id:"yuram-coffee-roasters", name:"유람 커피로스터스", nameEn:"Yuram Coffee Roasters (유람 커피로스터스)", nameZh:"游览咖啡烘焙 (유람 커피로스터스)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+    liveReview:true, lat:36.6142152703281, lng:127.291007809944, realAddress:"세종특별자치시 조치원읍 신안새동네길 25"},
+  {id:"daily-point", name:"딜리포인트", nameEn:"Dilly Point (딜리포인트)", nameZh:"美味点 (딜리포인트)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+    liveReview:true, lat:36.6095312814038, lng:127.292428760867, realAddress:"세종특별자치시 조치원읍 원마루길 8"},
+  {id:"hunminjeongeum", name:"훈민정음", nameEn:"Hunminjeongeum (훈민정음)", nameZh:"训民正音 (훈민정음)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+    liveReview:true, lat:36.6067909095201, lng:127.289479943118, realAddress:"세종특별자치시 조치원읍 내창3길 6-2"},
+  {id:"siot", name:"시옷", nameEn:"Siot (시옷)", nameZh:"西奥特 (시옷)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩₩", priceValue:9000, saved:false, visited:false,
+    liveReview:true, lat:36.6131699644573, lng:127.280096320418, realAddress:"세종특별자치시 조치원읍 봉신길 69"},
+  {id:"vib", name:"비브", nameEn:"Vibe (비브)", nameZh:"维夫 (비브)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+    liveReview:true, lat:36.6046085750178, lng:127.290128986122, realAddress:"세종특별자치시 조치원읍 행복5길 4"},
+  {id:"neomeo", name:"너머", nameEn:"Neomeo (너머)", nameZh:"那边 (너머)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+    liveReview:true, lat:36.6054794933111, lng:127.292905251462, realAddress:"세종특별자치시 조치원읍 행복6길 32"},
+  {id:"chas", name:"차스", nameEn:"Chas (차스)", nameZh:"查斯 (차스)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+    liveReview:true, lat:36.60417645156744, lng:127.29143281475365, realAddress:"세종특별자치시 조치원읍 행복3길 13"},
+  {id:"second-road", name:"세컨로드", nameEn:"Second Road (세컨로드)", nameZh:"第二道路 (세컨로드)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+    liveReview:true, lat:36.618473252653, lng:127.28948336837, realAddress:"세종특별자치시 조치원읍 돌간2길 6"},
+  {id:"merry-go-round", name:"메리고라운드", nameEn:"Merry-Go-Round (메리고라운드)", nameZh:"旋转木马 (메리고라운드)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+    liveReview:true, lat:36.6186374126704, lng:127.290161420959, realAddress:"세종특별자치시 조치원읍 돌간1길 2"},
+  {id:"roastery-cafe-in", name:"로스터리 카페IN", nameEn:"Roastery Cafe IN (로스터리 카페IN)", nameZh:"IN烘焙咖啡馆 (로스터리 카페IN)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+    liveReview:true, lat:36.6030584936834, lng:127.290179064282, realAddress:"세종특별자치시 조치원읍 행복길 4"},
+  {id:"defense", name:"디펜스", nameEn:"Defense (디펜스)", nameZh:"防御 (디펜스)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+    liveReview:true, lat:36.6027370464379, lng:127.28895961480195, realAddress:"세종특별자치시 조치원읍 문화길 35-6"},
 ];
 
 // ================= Supabase (손주 로그인) =================
@@ -355,7 +408,8 @@ const i18n = { en: {
   realGridSub:"Restaurants actually registered on Kakao/Google. Click one to see real ratings and reviews instantly.",
   liveSearchPh:"Can't find a restaurant? Type a name to search nearby in real time",
   liveSearchBtn:"Search",
-  catAll:"All", catKorean:"Korean", catWestern:"Western", catChinese:"Chinese", catJapanese:"Japanese", catSnack:"Snacks",
+  catAll:"All", catKorean:"Korean", catWestern:"Western", catChinese:"Chinese", catJapanese:"Japanese", catSnack:"Snacks", catCafe:"Cafes",
+  pagerAria:"Restaurant list pages", pagerPrev:"Previous page", pagerNext:"Next page",
   sortRecommend:"Recommended", sortName:"Name (A-Z)", sortRating:"Highest rated", sortReviews:"Most reviewed", sortLatest:"Latest",
   priceMin:"Min", priceMax:"Max", priceWon:"KRW",
   filterEmpty:"No restaurants match these filters yet.",
@@ -407,6 +461,7 @@ const i18n = { en: {
   closeBtn:"Close",
   googleReviewTitle:"Google Reviews", googleReviewLoading:"Loading reviews...", googleReviewError:"Couldn't load reviews. Please try again shortly.",
   aiSummaryTitle:"AI Review Summary", aiSummaryLoading:"🤖 Summarizing reviews...",
+  detailDirections:"🧭 Directions (Google Maps)",
   googleReviewNotFound:"😢 We couldn't find this restaurant on Google Maps.", googleReviewNone:"No reviews yet.",
   googleReviewLink:"See all reviews on Google Maps →", googleReviewAnon:"Anonymous",
   liveSearchLoading:"Searching...", liveSearchEmpty:"No results found.", liveSearchError:"Search failed. Please try again shortly.",
@@ -626,7 +681,8 @@ const i18n = { en: {
   realGridSub:"在Kakao/谷歌上真实登记的店铺。点击即可立即查看真实评分和评论。",
   liveSearchPh:"找不到想要的餐厅？输入店名在学校周边实时搜索更多",
   liveSearchBtn:"搜索",
-  catAll:"全部", catKorean:"韩餐", catWestern:"西餐", catChinese:"中餐", catJapanese:"日料", catSnack:"小吃",
+  catAll:"全部", catKorean:"韩餐", catWestern:"西餐", catChinese:"中餐", catJapanese:"日料", catSnack:"小吃", catCafe:"咖啡馆",
+  pagerAria:"餐厅列表分页", pagerPrev:"上一页", pagerNext:"下一页",
   sortRecommend:"推荐排序", sortName:"名称排序（拼音）", sortRating:"评分最高", sortReviews:"评论最多", sortLatest:"最新",
   priceMin:"最低", priceMax:"最高", priceWon:"韩元",
   filterEmpty:"目前没有符合这些筛选条件的餐厅。",
@@ -648,6 +704,7 @@ const i18n = { en: {
   closeBtn:"关闭",
   googleReviewTitle:"谷歌评论", googleReviewLoading:"正在加载评论...", googleReviewError:"无法加载评论，请稍后再试。",
   aiSummaryTitle:"AI评论摘要", aiSummaryLoading:"🤖 正在总结评论……",
+  detailDirections:"🧭 路线导航（谷歌地图）",
   googleReviewNotFound:"😢 在谷歌地图上找不到这家店。", googleReviewNone:"暂无评论。",
   googleReviewLink:"在谷歌地图查看全部评论 →", googleReviewAnon:"匿名",
   liveSearchLoading:"搜索中...", liveSearchEmpty:"没有找到结果。", liveSearchError:"搜索失败，请稍后再试。",
@@ -941,6 +998,11 @@ const priceMaxInput = document.getElementById('priceMax');
 let currentCat = "전체";
 let currentSort = "recommend";
 
+// 실제 가게는 r.rating이 전부 null이고 평점이 구글에서 온다 — 정렬도 카드 라벨과 같은 값을 봐야 한다.
+// 평점이 아직 없는 곳은 -1로 두어 맨 뒤로 밀린다.
+function ratingOf(r){ const lr = liveRating(r); return lr ? lr.rating : -1; }
+function countOf(r){ const lr = liveRating(r); return lr ? lr.reviewCount : -1; }
+
 function getFilteredList(){
   // 카테고리/정렬 필터는 liveReview(실제 확인된) 가게에만 적용한다. 텍스트 검색은
   // "동네 가게 찾아보기"(runLiveSearch) 하나로 통일했다 — 예시(목업) 가게는
@@ -955,13 +1017,13 @@ function getFilteredList(){
       list = list.slice().sort((a,b) => a.name.localeCompare(b.name, 'ko'));
       break;
     case "rating":
-      list = list.slice().sort((a,b) => b.rating - a.rating);
+      list = list.slice().sort((a,b) => ratingOf(b) - ratingOf(a));
       break;
     case "reviews":
-      list = list.slice().sort((a,b) => b.reviewCount - a.reviewCount);
+      list = list.slice().sort((a,b) => countOf(b) - countOf(a));
       break;
     default:
-      list = list.slice().sort((a,b) => b.rating - a.rating);
+      list = list.slice().sort((a,b) => ratingOf(b) - ratingOf(a));
   }
   return list;
 }
@@ -982,7 +1044,7 @@ function pBenefit(p){
   if(currentLang === 'zh' && p.benefitZh) return p.benefitZh;
   return p.benefit;
 }
-function rCat(r){ return t('cat' + {'전체':'All','한식':'Korean','양식':'Western','중식':'Chinese','일식':'Japanese','분식':'Snack'}[r.cat]) || r.cat; }
+function rCat(r){ return t('cat' + {'전체':'All','한식':'Korean','양식':'Western','중식':'Chinese','일식':'Japanese','분식':'Snack','카페':'Cafe'}[r.cat]) || r.cat; }
 
 // 손주 식권 흐름 전용 — 통화/수량 단위 표기 헬퍼 (언어별 어순·단위가 달라 공용 함수로 뺐다)
 function wonSuffix(n){
@@ -1022,11 +1084,34 @@ function jumpCategory(cat){
   renderCards();
 }
 
+// 가게가 30곳을 넘으면서 한 화면에 다 깔면 스크롤이 너무 길어졌다 — 페이지로 나눈다.
+// 필터/정렬/카테고리를 바꾸면 1페이지로 돌아간다(2페이지를 보던 중 목록이 줄면 빈 화면이 된다).
+const CARDS_PER_PAGE = 18;
+let currentPage = 1;
+// 필터가 바뀌면 1페이지로 되돌린다. 바꾸는 곳(칩·검색·가격·정렬·초기화)마다 리셋을 심는 대신
+// 렌더 시점에 필터 조합이 달라졌는지 한 곳에서 본다 — 필터 축이 늘어도 여기만 고치면 된다.
+let lastFilterSig = null;
+function goToPage(n){
+  currentPage = n;
+  renderCards();
+  // 페이지를 넘기면 목록 맨 위로 — 넘긴 뒤 화면이 그대로면 바뀐 걸 눈치채기 어렵다.
+  const anchor = document.getElementById('restaurants');
+  if(anchor) anchor.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
 function renderCards(){
   cardGrid.innerHTML = "";
-  const list = getFilteredList();
-  filterCount.textContent = (t('filterCountTemplate') || '{n}곳의 맛집').replace('{n}', list.length);
-  filterEmpty.style.display = list.length === 0 ? 'block' : 'none';
+  const sig = [currentCat, currentSort, priceMinInput.value, priceMaxInput.value].join('|');
+  if(sig !== lastFilterSig){ lastFilterSig = sig; currentPage = 1; }
+  const all = getFilteredList();
+  const pageCount = Math.max(1, Math.ceil(all.length / CARDS_PER_PAGE));
+  if(currentPage > pageCount) currentPage = pageCount;   // 필터로 목록이 줄어든 경우
+  const start = (currentPage - 1) * CARDS_PER_PAGE;
+  const list = all.slice(start, start + CARDS_PER_PAGE);
+
+  filterCount.textContent = (t('filterCountTemplate') || '{n}곳의 맛집').replace('{n}', all.length);
+  filterEmpty.style.display = all.length === 0 ? 'block' : 'none';
+  renderPager(pageCount);
   list.forEach((r, i) => {
     const idx = restaurants.indexOf(r);
     // 담기/방문 표시는 로그인한 손주 개인의 기록이므로, 비로그인 상태에서는
@@ -1041,7 +1126,7 @@ function renderCards(){
       ? `★ ${lr.rating} <span style="color:var(--ink-soft);font-weight:400;">(${lr.reviewCount})</span>`
       : `<span style="color:var(--ink-soft);font-weight:400;">${t('cardReviewPending') || '🔎 실제 리뷰 준비중'}</span>`;
     card.innerHTML = `
-      <div class="food-thumb" style="background:${thumbColor(i)}">
+      <div class="food-thumb" style="background:${thumbColor(start + i)}">
         <span>${r.emoji}</span>
         <button class="save-toggle ${saved ? 'saved':''}" data-idx="${idx}" title="가보고 싶은 곳">${saved ? '♥':'♡'}</button>
         <div class="visit-badge ${visited ? 'show':''}">${t('cardVisitBadge') || '✔ 가본 곳'}</div>
@@ -1063,8 +1148,32 @@ function renderCards(){
 
   bindFoodCardButtons(cardGrid);
 
-  // 지도 마커도 같은 getFilteredList() 결과를 쓴다 — 카테고리·검색·가격 필터가 그대로 따라온다.
+  // 지도 마커는 페이지와 무관하게 필터에 걸린 가게 전부를 찍는다 —
+  // 지도는 "어디에 뭐가 있나"를 보는 곳이라 2페이지 가게가 사라지면 오히려 이상하다.
   renderMarkers();
+}
+
+function renderPager(pageCount){
+  const pager = document.getElementById('cardPager');
+  if(!pager) return;
+  if(pageCount <= 1){ pager.innerHTML = ''; return; }
+
+  const btn = (label, page, opts = {}) =>
+    `<button type="button" class="pager-btn${opts.active ? ' is-active' : ''}"` +
+    `${opts.disabled ? ' disabled' : ''} data-page="${page}"${opts.aria ? ` aria-label="${opts.aria}"` : ''}` +
+    `${opts.active ? ' aria-current="page"' : ''}>${label}</button>`;
+
+  let html = btn('‹', currentPage - 1, { disabled: currentPage === 1, aria: t('pagerPrev') || '이전 페이지' });
+  for(let p = 1; p <= pageCount; p += 1) html += btn(String(p), p, { active: p === currentPage });
+  html += btn('›', currentPage + 1, { disabled: currentPage === pageCount, aria: t('pagerNext') || '다음 페이지' });
+  pager.innerHTML = html;
+
+  pager.querySelectorAll('.pager-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      const p = Number(b.dataset.page);
+      if(!b.disabled && p !== currentPage) goToPage(p);
+    });
+  });
 }
 
 // save-toggle/visit-flow-btn 클릭 바인딩 — 그리드(container) 범위로 한정해서
@@ -1795,7 +1904,8 @@ function renderStubDetail(r){
         <span class="detail-info-label">${t('detailAddress') || '📍 주소'}</span>
         <span class="detail-info-val">${escapeHtml(r.realAddress)}</span>
       </div>
-    </div>` : ''}
+    </div>
+    ${renderDirectionsLink(r)}` : ''}
     <div class="detail-stub-note">
       ${isKo
         ? `<strong>상세 정보 준비 중</strong> — ${r.realAddress ? '영업시간·메뉴 구성·원산지' : '주소·영업시간·메뉴 구성·원산지'} 같은 상세 정보는 9월 현장 조사 후 채워질 예정이에요. 예시로 <b>${escapeHtml(rName(restaurants[0]))}</b> 카드에서 어떤 정보가 담길지 미리 확인해보세요.`
@@ -1839,6 +1949,7 @@ function renderFullDetail(r){
         </div>
       `).join('')}
     </div>
+    ${renderDirectionsLink(r)}
 
     <h4 class="detail-menu-title">${t('detailMenuTitle') || '메뉴'}</h4>
     <div class="detail-menu-list">
@@ -1857,6 +1968,19 @@ function renderFullDetail(r){
     ${r.lat && r.lng ? renderGoogleReviewShell() : ''}
     <button type="button" class="survey-close-btn" onclick="closeDetail()">${t('closeBtn') || '닫기'}</button>
   `;
+}
+
+// 길찾기는 사이트 안에서 경로를 그리지 않고 구글 지도로 넘긴다.
+// Directions API를 쓰면 API 사용 설정과 호출당 과금, 출발지 위치 권한까지 필요한데,
+// 실제로 길을 따라가는 건 어차피 지도 앱이라 이득이 적다. 모바일에서는 앱이 바로 열린다.
+function directionsUrl(r){
+  return 'https://www.google.com/maps/dir/?api=1&destination='
+    + encodeURIComponent(r.lat + ',' + r.lng);
+}
+function renderDirectionsLink(r){
+  if(!(r.lat && r.lng)) return '';
+  return `<a class="google-review-link detail-directions" href="${directionsUrl(r)}" target="_blank" rel="noopener">`
+    + `${t('detailDirections') || '🧭 길찾기 (구글 지도)'}</a>`;
 }
 
 // ---- 구글 리뷰 (Places API New, /api/google-reviews 경유) ----
@@ -2056,6 +2180,16 @@ function renderMarkers(){
       optimized: false,   // 이모지 라벨이 캔버스 합성에서 깨지지 않게 마커마다 개별 DOM으로 그린다
     });
     marker.addListener('click', () => openDetail(idx));
+    // 핀이 34개까지 늘면서 어느 걸 가리키는지 알기 어려워졌다 — hover에 크기로 반응시킨다.
+    // 아이콘 객체를 통째로 다시 넘겨야 반영된다(setIcon은 부분 갱신을 안 한다).
+    const icon = size => ({
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: size,
+      fillColor: fill, fillOpacity: 1,
+      strokeColor: line, strokeWeight: 2,
+    });
+    marker.addListener('mouseover', () => { marker.setIcon(icon(19)); marker.setZIndex(999); });
+    marker.addListener('mouseout',  () => { marker.setIcon(icon(15)); marker.setZIndex(null); });
     gMarkers.push(marker);
   });
 }

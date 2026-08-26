@@ -47,6 +47,17 @@
 
 <!-- ===== Hero ===== -->
 <section class="hero">
+  <!-- 히어로 배경 영상. 교체할 때는 assets/HeroPage.mp4 파일만 덮어쓰면 된다 —
+       경로가 적힌 곳은 아래 <source> 한 줄뿐이다.
+       장식이라 aria-hidden(스크린리더에 읽힐 내용이 없다).
+       파일이 없거나 코덱을 못 읽으면 .hero-video-on이 안 붙어서 이 레이어가
+       opacity:0으로 남고, 히어로는 지금 모습 그대로 보인다(조용히 degrade). -->
+  <div class="hero-media" aria-hidden="true">
+    <video class="hero-video" autoplay muted loop playsinline preload="metadata"
+           disablepictureinpicture tabindex="-1">
+      <source src="assets/HeroPage.mp4" type="video/mp4">
+    </video>
+  </div>
   <div class="container hero-grid">
     <div>
       <span class="eyebrow" data-i18n="heroEyebrow">KU조대! 사장님을 부탁해</span>
@@ -72,6 +83,47 @@
       </div>
     </div>
   </div>
+  <!-- 히어로 배경 영상 제어. script.js가 아니라 여기 인라인으로 둔 이유:
+       (1) 전역 상태를 하나도 건드리지 않는 히어로 전용 장식 로직이고,
+       (2) 마크업 바로 옆에서 즉시 실행돼야 첫 프레임 전에 판단이 끝난다.
+       하는 일은 둘뿐이다.
+       1) prefers-reduced-motion: reduce → 영상을 재생하지 않고 요소째 걷어낸다.
+       2) 재생이 실제로 시작된 뒤에만 .hero-video-on을 붙인다 → 로드 실패 시
+          가독성 오버레이도 함께 안 뜨고 히어로가 기존과 동일하게 남는다. -->
+  <script>
+  (function(){
+    var hero = document.querySelector('.hero');
+    var v = hero && hero.querySelector('.hero-video');
+    if(!hero || !v) return;
+    var mq = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+    if(mq && mq.matches){ try{ v.pause(); }catch(e){} v.remove(); return; }
+    var on = function(){ hero.classList.add('hero-video-on'); };
+    // 영상이 캐시에 있으면 이 스크립트가 파싱되기 전에 이미 첫 프레임이 도착해
+    // loadeddata/playing이 끝나 있을 수 있다(실제로 재현됨). 그러면 아래 리스너는
+    // 영영 안 불리므로, 현재 상태를 먼저 확인한다. readyState>=2 = 프레임 있음.
+    if(v.readyState >= 2) on();
+    v.addEventListener('playing', on, {once:true});
+    v.addEventListener('loadeddata', on, {once:true});   // 자동재생이 막힌 환경 대비
+    var p = v.play();
+    if(p && p.catch) p.catch(function(){});              // 자동재생 거부는 조용히 넘긴다
+
+    /* 10초 루프라 이음매에서 컷이 튄다(첫/끝 프레임 화면차 약 14%).
+       경계 0.4초 구간에만 영상을 옅게 눌러 바탕색으로 스쳤다 돌아오게 한다.
+       타이밍은 반드시 영상 재생 시각에서 가져와야 한다 — CSS 애니메이션을 따로
+       돌리면 실제 길이(10.005초)·시작 시점과 위상이 어긋나 엉뚱한 데서 어두워진다.
+       requestVideoFrameCallback이 없으면 이 효과만 조용히 빠진다. */
+    if(typeof v.requestVideoFrameCallback === 'function'){
+      var EDGE = 0.4;
+      var tick = function(_, meta){
+        var d = v.duration || 0;
+        var t = (meta && meta.mediaTime != null) ? meta.mediaTime : v.currentTime;
+        hero.classList.toggle('hero-loop-edge', d > 1 && (t > d - EDGE || t < EDGE));
+        v.requestVideoFrameCallback(tick);
+      };
+      v.requestVideoFrameCallback(tick);
+    }
+  })();
+  </script>
 </section>
 
 <!-- ===== Problem ===== -->
@@ -149,6 +201,7 @@
       <button class="cat-chip" data-cat="중식" data-i18n="catChinese">중식</button>
       <button class="cat-chip" data-cat="일식" data-i18n="catJapanese">일식</button>
       <button class="cat-chip" data-cat="분식" data-i18n="catSnack">분식</button>
+      <button class="cat-chip" data-cat="카페" data-i18n="catCafe">카페</button>
     </div>
     <div class="filter-bar">
       <select id="sortSelect" class="sort-select">
@@ -167,6 +220,7 @@
     </div>
     <p class="filter-count" id="filterCount"></p>
     <div class="card-grid" id="cardGrid"></div>
+    <nav class="pager" id="cardPager" aria-label="맛집 목록 페이지" data-i18n-aria="pagerAria"></nav>
     <div class="filter-empty" id="filterEmpty" style="display:none;">
       <div class="filter-empty-art"><img src="assets/grandma-calm-square.png" alt=""></div>
       <p class="filter-empty-title" data-i18n="filterEmpty">이 조건에 맞는 맛집이 아직 없어요.</p>
