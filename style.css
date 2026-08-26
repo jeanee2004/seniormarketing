@@ -29,6 +29,13 @@ body{
   overflow-x:hidden;
   word-break:keep-all;
 }
+/* keep-all은 한국어 "어절이 중간에서 끊기지 않게" 하려는 규칙인데, 중국어에는 띄어쓰기가 없어서
+   문장 전체가 끊을 수 없는 한 덩어리가 된다. 그러면 히어로 왼쪽 칼럼이 936px를 요구하고
+   할머니 캐릭터 칸이 79px로 찌그러진다(실측). 중국어에서는 기본 줄바꿈으로 되돌린다.
+   lang 속성은 applyStaticTranslations()가 이미 세팅한다. */
+html[lang="zh"] body{
+  word-break:normal;
+}
 /* 큰글씨 모드는 rem 기준값을 바꿔야 실제로 커진다 (body에 걸면 rem이 안 따라옴) */
 html.big-text{ font-size:131.25%; }
 html.big-text .a11y-toggle{ font-size:0.82rem; }
