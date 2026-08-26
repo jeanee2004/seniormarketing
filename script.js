@@ -161,7 +161,7 @@ const sb = (typeof supabase !== 'undefined' && supabase.createClient)
 // B가 A의 저장목록을 보게 된다. 이 모양은 나중에 옮겨갈 서버 테이블
 // saved_restaurants(user_id, restaurant_name, …)와 같아서 이전도 쉬워진다.
 const STORE_KEY = 'bmw:v1';
-let store = { auth:{isLoggedIn:false, name:'', userId:''}, marks:{}, reviews:[], passOrders:[], reviewLikes:{}, myLikedReviews:[], googleReviews:{}, reviewAnalysis:{}, lang:'ko', theme:'', allergies:[] };
+let store = { auth:{isLoggedIn:false, name:'', userId:''}, marks:{}, reviews:[], passOrders:[], passOrdersAdopted:false, reviewLikes:{}, myLikedReviews:[], googleReviews:{}, reviewAnalysis:{}, lang:'ko', theme:'', allergies:[] };
 
 function loadState(){
   try{
@@ -179,6 +179,7 @@ function loadState(){
       marks: normalizeMarks(parsed.marks),
       reviews: Array.isArray(parsed.reviews) ? parsed.reviews : [],
       passOrders: Array.isArray(parsed.passOrders) ? parsed.passOrders : [],
+      passOrdersAdopted: !!parsed.passOrdersAdopted,
       reviewLikes: parsed.reviewLikes || {},
       myLikedReviews: Array.isArray(parsed.myLikedReviews) ? parsed.myLikedReviews : [],
       googleReviews: pruneGoogleCache(parsed.googleReviews),
@@ -364,6 +365,131 @@ function pullSaved(){
       saveState();
       renderCards();
       renderExampleCards();
+    }, ignore);
+}
+
+// ---- 리뷰(공개 피드) · 손주 식권 예약(개인 목록)도 saved_restaurants와 같은 패턴으로 서버에 남는다 ----
+// 리뷰는 저장목록과 달리 "내 것만" 보이는 목록이 아니라 모두가 보는 공개 피드다(구글 리뷰와 같은 성격).
+// 그래서 select는 로그인 여부와 무관하게 전체를 읽어오고, mine 여부만 로그인 상태로 가린다.
+const REVIEWS_TABLE = 'reviews';
+const PASS_ORDERS_TABLE = 'pass_orders';
+
+function reviewRow(rv){
+  return {
+    id: rv.id,
+    user_id: rv.userId,
+    restaurant_id: rv.restaurantId || null,
+    restaurant_name: rv.place,
+    stars: rv.stars,
+    body: rv.text,
+    photo: rv.photo || null,
+    reviewer_name: rv.name,
+    reviewer_emoji: rv.emoji,
+  };
+}
+function pushReview(rv){
+  if(!sb || !rv.userId) return;
+  sb.from(REVIEWS_TABLE).insert(reviewRow(rv)).then(ignore, ignore);
+}
+function pushReviewDelete(id){
+  if(!sb || !currentUserId) return;
+  sb.from(REVIEWS_TABLE).delete().eq('id', id).eq('user_id', currentUserId).then(ignore, ignore);
+}
+function deleteAllMyReviews(){
+  if(!sb || !currentUserId) return;
+  sb.from(REVIEWS_TABLE).delete().eq('user_id', currentUserId).then(ignore, ignore);
+}
+
+// 로그인 여부와 무관하게 페이지 진입 시 한 번 불러온다 — 구글 리뷰처럼 방문자 전체가 보는 공개 피드라서다.
+// 실패해도(CDN 차단·오프라인) 마지막으로 받아둔 로컬 캐시(store.reviews)를 그대로 보여준다.
+function loadCommunityReviews(){
+  if(!sb) return;
+  sb.from(REVIEWS_TABLE)
+    .select('id,user_id,restaurant_id,restaurant_name,stars,body,photo,reviewer_name,reviewer_emoji,created_at')
+    .order('created_at', { ascending:false })
+    .limit(200)
+    .then(({ data, error }) => {
+      if(error || !data) return;
+      store.reviews = data.map(row => ({
+        id: row.id,
+        userId: row.user_id,
+        restaurantId: row.restaurant_id,
+        name: row.reviewer_name,
+        emoji: row.reviewer_emoji,
+        stars: row.stars,
+        place: row.restaurant_name,
+        text: row.body,
+        photo: row.photo || '',
+        at: (row.created_at || '').slice(0, 10),
+      }));
+      saveState();
+      renderReviews();
+    }, ignore);
+}
+
+function passOrderRow(o){
+  return {
+    id: o.id,
+    user_id: currentUserId,
+    restaurant_id: o.restaurantId || null,
+    restaurant_name: o.place,
+    emoji: o.emoji,
+    unit_price: o.unit,
+    count: o.count,
+    bonus: o.bonus,
+    total: o.total,
+  };
+}
+function pushPassOrder(o){
+  if(!sb || !currentUserId) return;
+  sb.from(PASS_ORDERS_TABLE).insert(passOrderRow(o)).then(ignore, ignore);
+}
+function deletePassOrder(id){
+  if(!sb || !currentUserId) return;
+  sb.from(PASS_ORDERS_TABLE).delete().eq('id', id).eq('user_id', currentUserId).then(ignore, ignore);
+}
+function deleteAllPassOrders(){
+  if(!sb || !currentUserId) return;
+  sb.from(PASS_ORDERS_TABLE).delete().eq('user_id', currentUserId).then(ignore, ignore);
+}
+
+// 손주 식권은 저장목록과 같은 "내 것만" 개인 목록이라 로그인 직후 서버 기준으로 맞춘다.
+// passOrders는 계정별로 분리 저장된 적이 없어(store.marks와 달리 평평한 배열), 같은 브라우저에서
+// 다른 계정으로 로그인해도 로컬 캐시가 그대로 남아 있을 수 있다 — 그래서 "서버가 비어 있으면
+// 로컬 값을 올려준다"는 한 번뿐인 승계(store.passOrdersAdopted)로 제한한다. 승계 없이 매번
+// 다시 시도하면 다른 계정의 로컬 잔여물을 새 계정 것으로 잘못 올릴 수 있다.
+function pullPassOrders(){
+  if(!sb || !currentUserId) return;
+  const uid = currentUserId;
+  sb.from(PASS_ORDERS_TABLE)
+    .select('id,restaurant_id,restaurant_name,emoji,unit_price,count,bonus,total,created_at')
+    .eq('user_id', uid)
+    .then(({ data, error }) => {
+      if(error || !data) return;
+      if(uid !== currentUserId) return;
+
+      if(data.length === 0 && store.passOrders.length > 0 && !store.passOrdersAdopted){
+        store.passOrdersAdopted = true;
+        store.passOrders.forEach(pushPassOrder);
+        saveState();
+        return;
+      }
+      store.passOrdersAdopted = true;
+      store.passOrders = data
+        .map(row => ({
+          id: row.id,
+          place: row.restaurant_name,
+          restaurantId: row.restaurant_id,
+          emoji: row.emoji,
+          count: row.count,
+          bonus: row.bonus,
+          unit: row.unit_price,
+          total: row.total,
+          at: (row.created_at || '').slice(0, 10),
+        }))
+        .sort((a, b) => (b.at || '').localeCompare(a.at || ''));
+      saveState();
+      renderMypage();
     }, ignore);
 }
 
@@ -1523,6 +1649,9 @@ function renderReviews(){
   });
   sorted.forEach(r => {
     const liked = store.myLikedReviews.includes(String(r.id));
+    // 리뷰는 이제 모두가 보는 공개 피드다 — "내 것"인지는 저장된 값이 아니라
+    // 로그인한 계정과 작성자 user_id가 같은지로 그때그때 판단한다(시드 더미 리뷰는 userId가 없어 항상 false).
+    const mine = isLoggedIn && !!r.userId && r.userId === currentUserId;
     const div = document.createElement('div');
     div.className = 'review-item';
     div.innerHTML = `
@@ -1539,7 +1668,7 @@ function renderReviews(){
           ${r.at ? `<span class="review-date">${escapeHtml(r.at)}</span>` : ''}
           <button type="button" class="review-like-btn ${liked ? 'liked' : ''}" data-id="${r.id}">👍 <span>${reviewLikeCount(r)}</span></button>
         </div>
-        ${(isLoggedIn && r.mine) ? `<button type="button" class="review-delete-btn" data-id="${r.id}">내 리뷰 삭제</button>` : ''}
+        ${mine ? `<button type="button" class="review-delete-btn" data-id="${r.id}">내 리뷰 삭제</button>` : ''}
       </div>
     `;
     reviewList.appendChild(div);
@@ -1564,12 +1693,13 @@ function renderReviews(){
   // 내가 쓴 리뷰만 되돌릴 수 있게 삭제 버튼을 건다 (시드 더미 리뷰에는 애초에 버튼이 없다)
   reviewList.querySelectorAll('.review-delete-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const id = Number(btn.dataset.id);
+      const id = btn.dataset.id;
       openConfirm({
         emoji:'↩️', title:'리뷰 삭제', text:'작성한 리뷰를 삭제하시겠습니까?', okLabel:'삭제', cancelLabel:'취소',
         onOk: () => {
-          store.reviews = store.reviews.filter(rv => rv.id !== id);
+          store.reviews = store.reviews.filter(rv => String(rv.id) !== id);
           saveState();
+          pushReviewDelete(id);
           renderReviews();
           closeConfirm();
         }
@@ -1578,6 +1708,8 @@ function renderReviews(){
   });
 }
 renderReviews();
+// 로그인 여부와 무관한 공개 피드라 로그인 흐름과 별개로 페이지 진입 시 한 번 불러온다.
+loadCommunityReviews();
 
 reviewSortSelect.addEventListener('change', () => {
   currentReviewSort = reviewSortSelect.value;
@@ -2969,6 +3101,7 @@ function syncAuthFromSession(session){
   renderCards();
   renderReviews();
   pullSaved();
+  pullPassOrders();
 }
 
 // 첫 렌더는 이미 로그아웃 상태로 그려진 뒤다. 세션 확인은 비동기라
@@ -3243,11 +3376,18 @@ function renderMypage(){
   });
   mypageBody.querySelectorAll('.mypage-cancel-pass-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const i = Number(btn.dataset.i);
-      const o = store.passOrders[i];
+      const id = btn.dataset.id;
+      const o = store.passOrders.find(x => String(x.id) === id);
+      if(!o) return;
       openConfirm({
         emoji:'↩️', title: o.place, text:t('mypageConfirmCancelPass')||'이 식권 예약을 취소하시겠습니까?', okLabel:t('mypageCancelPassOk')||'예약 취소', cancelLabel:t('confirmNo')||'아니요',
-        onOk: () => { store.passOrders.splice(i, 1); saveState(); renderMypage(); closeConfirm(); }
+        onOk: () => {
+          store.passOrders = store.passOrders.filter(x => String(x.id) !== id);
+          saveState();
+          deletePassOrder(id);
+          renderMypage();
+          closeConfirm();
+        }
       });
     });
   });
@@ -3272,14 +3412,14 @@ function renderMypagePassList(){
   if(store.passOrders.length === 0){
     return `<div class="mypage-empty">${t('mypageEmptyPass') || '아직 예약한 식권이 없어요.<br>손주 식권 섹션에서 마음에 드는 가게를 골라보세요.'}</div>`;
   }
-  return store.passOrders.map((o, i) => `
+  return store.passOrders.map(o => `
     <div class="survey-result-card">
       <span class="emoji">${o.emoji}</span>
       <div class="info">
         <strong>${escapeHtml(o.place)}</strong>
         <span>${passUnit(o.count + o.bonus)} (${passUnit(o.count)}${o.bonus ? ` + ${t('mypagePassBonusWord')||'보너스'} ${passUnit(o.bonus)}` : ''}) · ${wonSuffix(o.total)} · ${(t('mypagePassDateLine')||'{date} 예약').replace('{date}', escapeHtml(o.at))}</span>
       </div>
-      <button type="button" class="mypage-remove-btn mypage-cancel-pass-btn" data-i="${i}" title="${t('mypageCancelPassTitle')||'예약 취소'}">✕</button>
+      <button type="button" class="mypage-remove-btn mypage-cancel-pass-btn" data-id="${o.id}" title="${t('mypageCancelPassTitle')||'예약 취소'}">✕</button>
     </div>
   `).join('');
 }
@@ -3308,6 +3448,7 @@ const SECTION_RESET = {
     titleKey:'resetPassTitle',    titleKo:'식권 예약 내역 비우기',
     bodyKey:'resetPassBody',      bodyKo:'식권 예약 내역을 모두 지워요. 저장 목록과 가본 곳 기록은 그대로 남아요.',
     apply: () => { store.passOrders = []; },
+    sync: deleteAllPassOrders,
   },
 };
 
@@ -3328,7 +3469,7 @@ function resetSection(tab){
     onOk: () => {
       s.apply();
       saveState();
-      pushAllMarks();
+      (s.sync || pushAllMarks)();
       renderCards();
       renderMypage();
       closeConfirm();
@@ -3346,12 +3487,14 @@ function resetMyData(){
     cancelLabel:t('resetCancel') || '취소',
     onOk: () => {
       restaurants.forEach(r => { r.saved = false; r.visited = false; });
-      store.reviews = store.reviews.filter(rv => !rv.mine);
+      store.reviews = store.reviews.filter(rv => !(isLoggedIn && rv.userId === currentUserId));
       store.passOrders = [];
       store.reviewLikes = {};
       store.myLikedReviews = [];
       saveState();
       pushAllMarks();
+      deleteAllMyReviews();
+      deleteAllPassOrders();
       renderCards();
       renderReviews();
       renderMypage();
@@ -3419,7 +3562,7 @@ function renderReviewForm(){
       <div class="auth-field">
         <label>${t('reviewPlaceLabel') || '방문한 곳'}</label>
         <select id="reviewPlace" class="review-select">
-          ${visitedList.map(r => `<option value="${escapeHtml(r.name)}">${r.emoji} ${escapeHtml(rName(r))}</option>`).join('')}
+          ${visitedList.map(r => `<option value="${escapeHtml(r.id || r.name)}" data-name="${escapeHtml(r.name)}">${r.emoji} ${escapeHtml(rName(r))}</option>`).join('')}
         </select>
       </div>
       <div class="auth-field">
@@ -3508,20 +3651,26 @@ function submitReview(e){
     return;
   }
   const anonymous = document.querySelector('input[name="reviewVisibility"]:checked').value === 'anon';
-  store.reviews.unshift({
-    id: Date.now(),
-    mine: true,
+  const placeSelect = document.getElementById('reviewPlace');
+  const placeOpt = placeSelect.options[placeSelect.selectedIndex];
+  const placeName = placeOpt ? placeOpt.dataset.name : placeSelect.value;
+  const restaurantId = restaurants.some(x => x.id === placeSelect.value) ? placeSelect.value : null;
+  const reviewObj = {
+    id: crypto.randomUUID(),
+    userId: currentUserId,
+    restaurantId,
     name: anonymous ? (t('anonReviewerName')||'익명의 손주') : (currentUserName ? `${currentUserName}${t('namedReviewerSuffix')||' 손주'}` : (t('defaultReviewerName')||'손주')),
     emoji: anonymous ? '🙈' : '🌱',
     stars: reviewRating,
-    place: document.getElementById('reviewPlace').value,
+    place: placeName,
     text,
     photo: reviewPhoto || '',
-    likes: 0,
     at: new Date().toISOString().slice(0, 10),
-  });
+  };
+  store.reviews.unshift(reviewObj);
   const stored = saveState();
   renderReviews();
+  pushReview(reviewObj);
   reviewFormBody.innerHTML = `
     <div class="auth-welcome">
       <div class="emoji">🌾</div>
@@ -4053,7 +4202,9 @@ function submitPassOrder(){
   const r = restaurants[passIdx];
   const p = r.pass;
   const picked = p.bundles[passBundleIdx];
-  store.passOrders.unshift({
+  const order = {
+    id: crypto.randomUUID(),
+    restaurantId: r.id || null,
     place: rName(r),
     emoji: r.emoji,
     count: picked.count,
@@ -4061,8 +4212,10 @@ function submitPassOrder(){
     unit: p.unit,
     total: p.unit * picked.count,
     at: new Date().toISOString().slice(0, 10),
-  });
+  };
+  store.passOrders.unshift(order);
   const stored = saveState();
+  pushPassOrder(order);
   // ko 폴백 템플릿은 '{n}장'이 붙어 있어 단위까지 포함해 통째로 치환해야 하고,
   // en/zh 사전 값은 단위를 이미 문구 안에 풀어써 뒀으므로 숫자만 넘긴다.
   const passCount = currentLang==='ko' ? `${picked.count + picked.bonus}장` : (picked.count + picked.bonus);
