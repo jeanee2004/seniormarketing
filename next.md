@@ -319,11 +319,32 @@ next.md 항목 1을 실제로 구현했다. **다만 next.md의 "다음에 진�
   `renderReviewAnalysisContent()`를 가짜 데이터로 직접 호출해 카드·칩 렌더링과 스타일 확인(스크린샷),
   콘솔 예외 0건. **Gemini 실제 응답 품질은 키가 생긴 뒤 별도 확인 필요.**
 
+## 2026-08-26 세션: AI 리뷰 요약 실제 동작 확인 (Gemini 모델 교체)
+
+`GEMINI_API_KEY`를 받아 `.env.local`에 넣고 처음으로 실제 호출을 해봤더니, 코드가 부르던
+모델이 이미 죽어 있었다. 세 줄 수정으로 끝.
+
+- `gemini-2.5-flash` → **404 "no longer available to new users. use models/gemini-3.6-flash"**.
+  키 문제가 아니라 모델 문제였다(인증은 통과). `GEMINI_MODEL`을 `gemini-3.6-flash`로 교체.
+- 3.x는 **`thinkingConfig.thinkingBudget`을 안 받는다 → 400 INVALID_ARGUMENT**. 같은 자리를
+  `thinkingLevel: 'low'`로 교체(생각을 최소한만 하게 하려던 원래 의도 그대로). `responseSchema` +
+  `responseMimeType:'application/json'`은 3.x에서도 그대로 동작한다.
+- `.env.local`의 키 이름이 `Gemini_API_KEY`였다. **윈도우 로컬에서는 우연히 동작한다**
+  (Node의 `process.env`가 윈도우에선 대소문자를 안 가림). 리눅스인 Vercel에서는 못 찾으므로
+  `GEMINI_API_KEY`로 통일했다. **Vercel 환경변수에도 이 대문자 이름으로 등록해야 배포본이 동작한다.**
+  (같이 들어있던 `Gemini_API_ID`는 코드가 안 읽어서 지웠다.)
+- **검증** — `node dev-server.js`에 실제 리뷰 3건 POST → 200 + 요약 2문장 + 키워드 6개
+  (`주차 불편`만 NEGATIVE로 제대로 분류). 헤드리스 Chrome CDP로 상세 모달(`안쉐프고기해물짬뽕`)에서
+  `loadReviewAnalysis()`의 fetch→렌더→`store.reviewAnalysis` 캐시→캐시 재렌더까지 전 경로 확인,
+  칩 6개 렌더 및 스크린샷 확인, 콘솔 예외 0건(`google.maps.Marker` deprecated 경고만, 기존 사항).
+- 구글 리뷰는 여전히 1b(리퍼러 제한) 때문에 `found:false`라, **배포본에서 AI 요약이 실제로 뜨려면
+  1b를 먼저 풀어야 한다** — 코드가 아니라 Cloud Console 설정.
+
 ## 다음에 진행할 것
 
 ### 코드 작업
-1. ~~**AI 리뷰 분석 기능 구체화**~~ — 2026-08-25 (4)에서 1차 구현 완료(위 참고). 남은 건
-   `GEMINI_API_KEY` 발급/등록과, 키가 생긴 뒤 실제 요약 품질 확인뿐.
+1. ~~**AI 리뷰 분석 기능 구체화**~~ — **완료**(2026-08-25 (4) 구현 + 2026-08-26 실제 동작 확인).
+   남은 건 코드가 아니라 **Vercel 환경변수에 `GEMINI_API_KEY` 등록**과 아래 1b뿐.
    자체 작성 리뷰(`store.reviews`)까지 분석 대상에 합칠지는 아직 미정 — 지금은 구글 리뷰만 쓴다.
 1b. **`GOOGLE_PLACES_API_KEY` 리퍼러 제한 해제** — 위 발견 사항. Cloud Console에서 이 키의
    애플리케이션 제한을 없음/IP 기반으로 바꿔야 구글 리뷰·AI 요약이 실제로 동작한다.

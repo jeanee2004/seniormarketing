@@ -2,7 +2,7 @@
 // GEMINI_API_KEY는 서버(Vercel 환경변수)에만 존재하며 클라이언트로 절대 내려가지 않는다.
 // 가게당 리뷰가 5건 안팎이라 map-reduce/배치 없이 단일 호출로 끝낸다.
 
-const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_MODEL = 'gemini-3.6-flash';
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 const MAX_CONTENT_CHARS = 500;
 const MAX_RETRIES = 2;
@@ -56,7 +56,8 @@ async function callGemini(apiKey, prompt) {
       responseMimeType: 'application/json',
       responseSchema: SCHEMA,
       maxOutputTokens: 1024,
-      thinkingConfig: { thinkingBudget: 0 },
+      // 3.x는 thinkingBudget을 안 받는다(400). thinkingLevel로 최소한만 생각하게 한다.
+      thinkingConfig: { thinkingLevel: 'low' },
     },
   });
 
