@@ -797,6 +797,18 @@ footer ul a:hover{color:#fff;}
   font-size:0.76rem;color:var(--slate-light);margin-bottom:18px;
   font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
 }
+/* 예전엔 .google-review-link(텍스트 링크)를 같이 썼는데, 바로 아래 붙는 .detail-stub-note
+   (점선 박스 "준비 중" 안내)와 시각적으로 구분이 안 돼 "길찾기도 준비중인 섹션"으로
+   오인되는 문제가 있었다. 실제로 동작하는 기능이라는 게 한눈에 보이게 CTA 버튼으로 분리했다. */
+.detail-directions{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--red);color:#fff;padding:11px 22px;border-radius:99px;
+  font-weight:800;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.86rem;
+  margin:14px 0 24px;box-shadow:var(--shadow);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.detail-directions:hover{ transform:translateY(-2px);box-shadow:var(--shadow-hover);color:#fff; }
+
 .detail-stub-note{
   background:var(--base-bg);border:1.5px dashed var(--slate-light);border-radius:14px;
   padding:16px;font-size:0.84rem;color:var(--ink-soft);margin-bottom:22px;

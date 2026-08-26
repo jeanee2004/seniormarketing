@@ -2537,7 +2537,7 @@ function directionsUrl(r, origin){
 }
 function renderDirectionsLink(r){
   if(!(r.lat && r.lng)) return '';
-  return `<a class="google-review-link detail-directions" href="${directionsUrl(r)}" target="_blank" rel="noopener" onclick="return openDirections(event, '${r.id}')">`
+  return `<a class="detail-directions" href="${directionsUrl(r)}" target="_blank" rel="noopener" onclick="return openDirections(event, '${r.id}')">`
     + `${t('detailDirections') || '🧭 길찾기 (구글 지도)'}</a>`;
 }
 // 위치 권한은 "길찾기"를 실제로 누른 시점에만 묻는다 — 들어오자마자 위치를 요청하는 사이트는
@@ -2737,6 +2737,7 @@ async function initMap(){
     zoom: 16,
     mapTypeControl: false,
     streetViewControl: false,
+    scaleControl: true,
     styles: isDarkTheme() ? MAP_DARK_STYLES : [],
     // 타일이 도착하기 전 바닥색. styles와 달리 생성 시점에만 먹는다.
     backgroundColor: isDarkTheme() ? '#212a35' : '#e5e3df',
