@@ -161,7 +161,7 @@ const sb = (typeof supabase !== 'undefined' && supabase.createClient)
 // B가 A의 저장목록을 보게 된다. 이 모양은 나중에 옮겨갈 서버 테이블
 // saved_restaurants(user_id, restaurant_name, …)와 같아서 이전도 쉬워진다.
 const STORE_KEY = 'bmw:v1';
-let store = { auth:{isLoggedIn:false, name:'', userId:''}, marks:{}, reviews:[], passOrders:[], reviewLikes:{}, myLikedReviews:[], googleReviews:{}, reviewAnalysis:{}, lang:'ko', theme:'' };
+let store = { auth:{isLoggedIn:false, name:'', userId:''}, marks:{}, reviews:[], passOrders:[], reviewLikes:{}, myLikedReviews:[], googleReviews:{}, reviewAnalysis:{}, lang:'ko', theme:'', allergies:[] };
 
 function loadState(){
   try{
@@ -187,6 +187,7 @@ function loadState(){
       lang: parsed.lang || 'ko',
       // ''(미설정)이면 OS의 prefers-color-scheme을 따른다. 'light'/'dark'는 사용자가 직접 고른 값.
       theme: (parsed.theme === 'light' || parsed.theme === 'dark') ? parsed.theme : '',
+      allergies: Array.isArray(parsed.allergies) ? parsed.allergies : [],
     };
     // 옛 버전의 parsed.accounts(평문 비밀번호가 들어있던 배열)는 일부러 읽지 않는다.
     // 다음 saveState()에서 저장소에서도 사라진다.
@@ -542,6 +543,11 @@ const i18n = { en: {
   // 마이페이지
   mypageTitle:"{name}'s My Page", mypageTitleGeneric:"My Page",
   mypageTabSaved:"Want to visit", mypageTabVisited:"Visited", mypageTabPass:"Meal passes",
+  allergyTitle:"🥜 Allergy settings", allergySub:"We'll warn you before opening a place that may use what you pick.",
+  allergyWarnTitle:"Heads up before you go in", allergyWarnBody:"This place may serve dishes containing {list}. Please check with the owner before ordering.",
+  allergyWarnOk:"Got it, show me",
+  allergen_shellfish:"Shellfish", allergen_fish:"Fish & seafood", allergen_milk:"Milk", allergen_wheat:"Wheat & gluten",
+  allergen_nuts:"Nuts", allergen_pork:"Pork", allergen_beef:"Beef", allergen_egg:"Egg",
   mypageResetLink:"Reset all my activity", mypageLogoutBtn:"Sign out",
   mypageEmptySaved:"No saved restaurants yet.", mypageEmptyVisited:"No visit records yet.",
   mypageEmptyPass:"No meal passes reserved yet.<br>Pick a restaurant you like in the grandchild meal pass section.",
@@ -836,6 +842,11 @@ const i18n = { en: {
   // 마이페이지
   mypageTitle:"{name}的我的页面", mypageTitleGeneric:"我的页面",
   mypageTabSaved:"想去的地方", mypageTabVisited:"去过的地方", mypageTabPass:"餐券",
+  allergyTitle:"🥜 过敏原设置", allergySub:"打开可能含有所选食材的店铺时，我们会提前提醒你。",
+  allergyWarnTitle:"进店前请先确认", allergyWarnBody:"这家店可能有含{list}的菜品，点餐前请务必向老板确认。",
+  allergyWarnOk:"知道了，继续查看",
+  allergen_shellfish:"甲壳类", allergen_fish:"鱼类·海鲜", allergen_milk:"牛奶", allergen_wheat:"小麦·麸质",
+  allergen_nuts:"坚果", allergen_pork:"猪肉", allergen_beef:"牛肉", allergen_egg:"鸡蛋",
   mypageResetLink:"重置我的全部活动记录", mypageLogoutBtn:"登出",
   mypageEmptySaved:"还没有保存的餐厅。", mypageEmptyVisited:"还没有到访记录。",
   mypageEmptyPass:"还没有预订的餐券。<br>请在孙辈餐券栏目中选择你喜欢的餐厅。",
@@ -1765,6 +1776,52 @@ async function submitVisitVerify(){
   }
 }
 
+// ================= 알레르기 경고 =================
+// 지금은 가게별 메뉴 데이터가 예시 1곳뿐이라(detail.menu) 메뉴 단위 판정을 할 수 없다.
+// 그래서 카테고리와 상호에서 읽히는 "가능성"까지만 알린다. 메뉴가 채워지면(9월 현장 조사)
+// detail.menu[].composition을 직접 훑는 2단계로 올린다.
+//
+// 문구는 반드시 "있을 수 있다"로 쓴다 — 틀린 알레르기 정보는 안전 문제라,
+// 없는 걸 있다고 하는 것보다 있는 걸 없다고 하는 쪽이 훨씬 위험하다.
+const ALLERGENS = ['shellfish','fish','milk','wheat','nuts','pork','beef','egg'];
+const ALLERGEN_KO = {
+  shellfish:'갑각류', fish:'생선·해산물', milk:'우유', wheat:'밀·글루텐',
+  nuts:'견과류', pork:'돼지고기', beef:'소고기', egg:'계란',
+};
+// 한국어 주격조사는 앞 글자의 받침에 따라 갈린다("갑각류가" / "생선·해산물이").
+// "이(가)"로 도망가면 경고문이 어색해져서 읽는 힘이 떨어진다.
+function withSubjectParticle(word){
+  const c = word.charCodeAt(word.length - 1);
+  const hasBatchim = (c >= 0xAC00 && c <= 0xD7A3) && ((c - 0xAC00) % 28 !== 0);
+  return word + (hasBatchim ? '이' : '가');
+}
+function allergenLabel(key){ return (currentLang === 'ko') ? ALLERGEN_KO[key] : (t('allergen_' + key) || ALLERGEN_KO[key]); }
+
+// 카테고리에서 오는 기본 가능성 + 상호에 드러난 단서
+const CAT_RISK = {
+  일식:['fish','wheat'], 중식:['wheat'], 양식:['wheat','milk'],
+  분식:['wheat'], 카페:['milk'], 한식:[],
+};
+const NAME_RISK = [
+  [/짬뽕|해물|해산물|새우|게|킹크랩|랍스터/, ['shellfish','fish']],
+  [/초밥|스시|회|생선|참치|연어/, ['fish']],
+  [/라멘|우동|국수|칼국수|돈까스|파스타|피자|제과|베이커리|빵/, ['wheat']],
+  [/카페|커피|라떼|로스터/, ['milk']],
+  [/돼지|국밥|족발|보쌈|삼겹/, ['pork']],
+  [/소고기|한우|갈비/, ['beef']],
+];
+function riskOf(r){
+  const set = new Set(CAT_RISK[r.cat] || []);
+  NAME_RISK.forEach(([re, keys]) => { if(re.test(r.name)) keys.forEach(k => set.add(k)); });
+  return [...set];
+}
+// 사용자가 등록한 알레르기와 겹치는 것만 돌려준다
+function allergyHits(r){
+  const mine = store.allergies || [];
+  if(mine.length === 0) return [];
+  return riskOf(r).filter(k => mine.includes(k));
+}
+
 // ---- 다크모드 ----
 // 색은 style.css의 html.dark 한 블록에서 토큰만 갈아끼운다. 여기서 하는 일은
 // 클래스 토글 + 저장 + "토큰을 CSS 밖에서 읽어 쓰는 것들"(지도 타일·핀·썸네일) 갱신뿐이다.
@@ -1947,7 +2004,24 @@ const detailBody = document.getElementById('detailBody');
 
 // 언어를 바꿨을 때 열려 있는 상세를 다시 그리려면 어느 가게였는지 알아야 한다.
 let currentDetailIdx = -1;
+// 한 번 확인한 가게는 이 방문 동안 다시 묻지 않는다(저장하지 않는다 —
+// 다음에 올 때는 다시 알려주는 편이 안전하다).
+const allergyAcked = new Set();
 function openDetail(idx){
+  const hits = allergyHits(restaurants[idx]);
+  if(hits.length > 0 && !allergyAcked.has(restaurants[idx].id)){
+    const names = hits.map(allergenLabel).join(', ');
+    const listText = (currentLang === 'ko') ? withSubjectParticle(names) : names;
+    openConfirm({
+      emoji:'⚠️',
+      title:t('allergyWarnTitle') || '잠깐! 확인하고 가세요',
+      text:(t('allergyWarnBody') || '{list} 들어간 메뉴가 있을 수 있어요. 주문 전에 사장님께 꼭 확인해주세요.').replace('{list}', listText),
+      okLabel:t('allergyWarnOk') || '알겠어요, 볼게요',
+      cancelLabel:t('confirmNo') || '아니요',
+      onOk: () => { allergyAcked.add(restaurants[idx].id); closeConfirm(); openDetail(idx); },
+    });
+    return;
+  }
   const r = restaurants[idx];
   currentDetailIdx = idx;
   detailBody.innerHTML = r.detail ? renderFullDetail(r) : renderStubDetail(r);
@@ -2791,6 +2865,13 @@ function renderMypage(){
       <button type="button" class="mypage-tab ${mypageTab==='pass'?'active':''}" id="tabPass">${t('mypageTabPass') || '식권'}</button>
     </div>
     <div class="mypage-list">${body}</div>
+    <div class="mypage-allergy">
+      <div class="mypage-allergy-head">${t('allergyTitle') || '🥜 알레르기 등록'}</div>
+      <p class="mypage-allergy-sub">${t('allergySub') || '고른 재료가 들어갈 수 있는 가게를 열면 미리 알려드려요.'}</p>
+      <div class="mypage-allergy-chips">
+        ${ALLERGENS.map(k => `<button type="button" class="allergy-chip ${(store.allergies||[]).includes(k) ? 'on' : ''}" data-allergen="${k}" aria-pressed="${(store.allergies||[]).includes(k)}">${allergenLabel(k)}</button>`).join('')}
+      </div>
+    </div>
     <div class="mypage-reset-row">
       <button type="button" class="mypage-reset-link" onclick="resetSection('${mypageTab}')">${sectionResetLabel(mypageTab)}</button>
       <button type="button" class="mypage-reset-link" onclick="resetMyData()">${t('mypageResetLink') || '내 활동 기록 전체 초기화'}</button>
@@ -2800,6 +2881,16 @@ function renderMypage(){
       <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeMypage()">${t('closeBtn') || '닫기'}</button>
     </div>
   `;
+  mypageBody.querySelectorAll('.allergy-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const key = chip.dataset.allergen;
+      const list = store.allergies || (store.allergies = []);
+      const i = list.indexOf(key);
+      if(i >= 0) list.splice(i, 1); else list.push(key);
+      saveState();
+      renderMypage();   // 칩 상태만 바뀌므로 통째로 다시 그려도 부담이 없다
+    });
+  });
   document.getElementById('tabSaved').addEventListener('click', () => { mypageTab='saved'; renderMypage(); });
   document.getElementById('tabVisited').addEventListener('click', () => { mypageTab='visited'; renderMypage(); });
   document.getElementById('tabPass').addEventListener('click', () => { mypageTab='pass'; renderMypage(); });

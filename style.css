@@ -1461,3 +1461,24 @@ html.dark .hero-media video{filter:brightness(0.68) saturate(0.9);}
   .hero-media{display:none;}
   .hero-media video{transition:none;}
 }
+
+/* 알레르기 등록 — 마이페이지에 탭을 늘리지 않고 한 줄로 얹는다. */
+.mypage-allergy{
+  border-top:1px solid var(--line);margin-top:16px;padding-top:14px;
+}
+.mypage-allergy-head{
+  font-family:'Gaegu','Gowun Dodum',sans-serif;font-size:1.05rem;color:var(--slate-dark);
+}
+.mypage-allergy-sub{
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.8rem;
+  color:var(--ink-soft);margin:2px 0 10px;
+}
+.mypage-allergy-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.allergy-chip{
+  padding:7px 13px;border-radius:99px;border:1.5px solid var(--line);
+  background:var(--paper);color:var(--ink-soft);
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.82rem;
+  transition:background .15s ease,color .15s ease,border-color .15s ease;
+}
+.allergy-chip:hover{background:var(--hover-tint);}
+.allergy-chip.on{background:var(--red);border-color:var(--red);color:#fff;font-weight:700;}
