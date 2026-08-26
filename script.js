@@ -1859,7 +1859,7 @@ document.addEventListener('webkitfullscreenchange', relocateOverlays);
 // ================= 이용 분석 (GA4) =================
 // 측정 ID는 비밀값이 아니다 — 모든 방문자의 페이지 소스에 그대로 보인다.
 // 비워두면 계측이 통째로 꺼지고 사이트는 지금과 똑같이 동작한다(측정 ID를 받기 전 상태).
-const GA_MEASUREMENT_ID = '';
+const GA_MEASUREMENT_ID = 'G-EV1JDZ5WGD';
 
 // 이벤트를 보내는 코드는 이 함수 밖에 두지 않는다. 나중에 GA를 끄거나 자체 수집(Supabase)으로
 // 옮길 때 고칠 곳이 한 군데가 된다 — loadState/saveState가 저장소를 독점하는 것과 같은 구조.
