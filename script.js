@@ -129,7 +129,8 @@ function loadState(){
       reviewLikes: parsed.reviewLikes || {},
       myLikedReviews: Array.isArray(parsed.myLikedReviews) ? parsed.myLikedReviews : [],
       googleReviews: pruneGoogleCache(parsed.googleReviews),
-      reviewAnalysis: parsed.reviewAnalysis || {},
+      // 옛 캐시는 키가 가게 이름뿐이라 어떤 언어로 받은 요약인지 알 수 없다 — 버린다.
+      reviewAnalysis: pruneAnalysisCache(parsed.reviewAnalysis),
       lang: parsed.lang || 'ko',
       // ''(미설정)이면 OS의 prefers-color-scheme을 따른다. 'light'/'dark'는 사용자가 직접 고른 값.
       theme: (parsed.theme === 'light' || parsed.theme === 'dark') ? parsed.theme : '',
@@ -149,6 +150,13 @@ const GOOGLE_CACHE_TTL = 12 * 60 * 60 * 1000; // 12시간
 function isFreshGoogle(entry){
   return !!(entry && entry.data && entry.data.found && (Date.now() - (entry.fetchedAt || 0)) < GOOGLE_CACHE_TTL);
 }
+function pruneAnalysisCache(raw){
+  if(!raw || typeof raw !== 'object') return {};
+  const out = {};
+  for(const [key, entry] of Object.entries(raw)) if(key.includes('|')) out[key] = entry;
+  return out;
+}
+
 function pruneGoogleCache(raw){
   if(!raw || typeof raw !== 'object') return {};
   const out = {};
@@ -398,7 +406,7 @@ const i18n = { en: {
   detailStubBodyPartial:"Hours, menu, and ingredient origin",
   closeBtn:"Close",
   googleReviewTitle:"Google Reviews", googleReviewLoading:"Loading reviews...", googleReviewError:"Couldn't load reviews. Please try again shortly.",
-  aiSummaryTitle:"AI Review Summary",
+  aiSummaryTitle:"AI Review Summary", aiSummaryLoading:"🤖 Summarizing reviews...",
   googleReviewNotFound:"😢 We couldn't find this restaurant on Google Maps.", googleReviewNone:"No reviews yet.",
   googleReviewLink:"See all reviews on Google Maps →", googleReviewAnon:"Anonymous",
   liveSearchLoading:"Searching...", liveSearchEmpty:"No results found.", liveSearchError:"Search failed. Please try again shortly.",
@@ -639,7 +647,7 @@ const i18n = { en: {
   detailStubBodyPartial:"营业时间、菜单构成和食材产地",
   closeBtn:"关闭",
   googleReviewTitle:"谷歌评论", googleReviewLoading:"正在加载评论...", googleReviewError:"无法加载评论，请稍后再试。",
-  aiSummaryTitle:"AI评论摘要",
+  aiSummaryTitle:"AI评论摘要", aiSummaryLoading:"🤖 正在总结评论……",
   googleReviewNotFound:"😢 在谷歌地图上找不到这家店。", googleReviewNone:"暂无评论。",
   googleReviewLink:"在谷歌地图查看全部评论 →", googleReviewAnon:"匿名",
   liveSearchLoading:"搜索中...", liveSearchEmpty:"没有找到结果。", liveSearchError:"搜索失败，请稍后再试。",
@@ -899,6 +907,11 @@ function applyLanguage(lang){
   if(typeof renderPassCards === 'function') renderPassCards();
   // 지도 마커 툴팁도 가게 이름을 담고 있어서 같이 다시 그려야 한다
   if(typeof renderMarkers === 'function') renderMarkers();
+  // 상세가 열려 있으면 그것도 다시 그린다 — AI 요약은 언어별로 따로 받아오므로
+  // 여기서 다시 그리지 않으면 바꾸기 전 언어의 요약이 그대로 남는다.
+  if(currentDetailIdx >= 0 && detailOverlay && detailOverlay.classList.contains('show')){
+    openDetail(currentDetailIdx);
+  }
   store.lang = currentLang;
   saveState();
 }
@@ -1751,8 +1764,11 @@ function getSurveyRecommendations(){
 const detailOverlay = document.getElementById('detailOverlay');
 const detailBody = document.getElementById('detailBody');
 
+// 언어를 바꿨을 때 열려 있는 상세를 다시 그리려면 어느 가게였는지 알아야 한다.
+let currentDetailIdx = -1;
 function openDetail(idx){
   const r = restaurants[idx];
+  currentDetailIdx = idx;
   detailBody.innerHTML = r.detail ? renderFullDetail(r) : renderStubDetail(r);
   detailOverlay.classList.add('show');
   if(r.lat && r.lng) loadGoogleReviews(r);
@@ -1888,23 +1904,31 @@ async function loadReviewAnalysis(r, googleData){
   const box = document.getElementById('aiSummaryBody');
   if(!box) return;
 
-  const cached = store.reviewAnalysis[r.name];
+  // 요약은 사이트 언어로 나오므로 캐시도 언어별로 따로 잡는다 —
+  // 키가 가게 이름 하나면 한국어로 받아둔 요약이 영어 화면에도 그대로 남는다.
+  const cacheKey = r.name + '|' + currentLang;
+  const cached = store.reviewAnalysis[cacheKey];
   if(cached){ box.innerHTML = renderReviewAnalysisContent(cached.data); return; }
+
+  // 요약은 모델 응답을 기다려야 해서 몇 초씩 걸린다. 그동안 빈 칸이면 기능이 없는 것처럼 보여서
+  // (실제로 "요약이 안 뜬다"로 읽혔다) 자리를 잡아두고 불러오는 중임을 알린다.
+  box.innerHTML = `<div class="ai-summary-card is-loading">${t('aiSummaryLoading') || '🤖 AI가 리뷰를 요약하는 중...'}</div>`;
 
   try{
     const res = await fetch('/api/review-analysis', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: r.name, reviews: reviews.map(rv => ({ text: rv.text, rating: rv.rating })) }),
+      body: JSON.stringify({ name: r.name, lang: currentLang, reviews: reviews.map(rv => ({ text: rv.text, rating: rv.rating })) }),
     });
     const data = await res.json();
-    if(document.getElementById('aiSummaryBody') !== box) return;
-    if(!data.found) return; // 키 없음/실패 — 섹션을 그냥 비워둔다
+    if(document.getElementById('aiSummaryBody') !== box) return;  // 그 사이 다른 가게를 열었다
+    if(!data.found){ box.innerHTML = ''; return; } // 키 없음/실패 — 섹션을 그냥 비워둔다
     box.innerHTML = renderReviewAnalysisContent(data);
-    store.reviewAnalysis[r.name] = { data, fetchedAt: Date.now() };
+    store.reviewAnalysis[cacheKey] = { data, fetchedAt: Date.now() };
     saveState();
   }catch(e){
     // 조용히 건너뛴다 — AI 요약은 부가 기능이라 실패해도 상세 모달의 나머지는 그대로 동작해야 한다
+    if(document.getElementById('aiSummaryBody') === box) box.innerHTML = '';
   }
 }
 

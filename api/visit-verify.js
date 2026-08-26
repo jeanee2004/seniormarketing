@@ -6,7 +6,9 @@
 // GEMINI_API_KEY는 서버(Vercel 환경변수)에만 존재하며 클라이언트로 절대 내려가지 않는다.
 // 사진은 판정에만 쓰고 어디에도 저장하지 않는다.
 
-const GEMINI_MODEL = 'gemini-3.6-flash';
+// review-analysis.js와 같은 이유로 lite 계열을 쓴다 — 3.6-flash는 무료 티어 하루 20건이라
+// 인증이 하루 스무 번만 되는 셈이 된다. 자세한 배경은 그 파일의 주석 참고.
+const GEMINI_MODEL = 'gemini-3.5-flash-lite';
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 const MAX_RETRIES = 2;
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;

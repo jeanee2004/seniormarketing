@@ -797,6 +797,10 @@ footer ul a:hover{color:#fff;}
 
 /* AI 리뷰 요약 — 구글 리뷰가 있을 때만 채워지는 부가 카드. 슬레이트가 구조색, 레드는 안 쓴다(10% 룰은 CTA 전용). */
 .ai-summary-body:empty{ display:none; }
+.ai-summary-card.is-loading{
+  color:var(--ink-soft);font-size:0.86rem;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
+}
 .ai-summary-card{
   background:var(--slate-tint);border-radius:14px;padding:16px;margin-bottom:16px;
 }
