@@ -1015,6 +1015,7 @@ function applyStaticTranslations(){
 
 // 언어 전환의 실제 진입점 — 정적 텍스트 갱신 + 동적 렌더 함수 재실행 + 저장
 function applyLanguage(lang){
+  track('lang_change', { lang });
   currentLang = lang;
   applyStaticTranslations();
   if(typeof renderCards === 'function') renderCards();
@@ -1166,6 +1167,7 @@ function resetFilters(){
 
 // "이런 맛집은 어때요?" 추천 칩 — 기존 카테고리 필터를 그대로 쓴다
 function jumpCategory(cat){
+  track('filter_use', { filter:'category', value:cat });
   currentCat = cat;
   setCatChip(cat);
   priceMinInput.value = '';
@@ -1352,7 +1354,11 @@ function confirmMark(r, emoji, question, apply){
   openConfirm({
     emoji, title:rName(r), text:question,
     okLabel:t('confirmOk') || '확인', cancelLabel:t('confirmNo') || '아니요',
-    onOk: () => { apply(); saveState(); pushMark(r); renderCards(); renderExampleCards(); closeConfirm(); }
+    onOk: () => {
+      apply(); saveState(); pushMark(r); renderCards(); renderExampleCards(); closeConfirm();
+      track(r.visited ? 'visit_verified' : (r.saved ? 'save_place' : 'unsave_place'),
+            { item_id:r.id, item_category:r.cat });
+    }
   });
 }
 
@@ -1834,6 +1840,108 @@ document.querySelectorAll('.map-chip').forEach(chip => {
   chip.addEventListener('click', () => setMapFilter(chip.dataset.mapcat));
 });
 
+// ================= 이용 분석 (GA4) =================
+// 측정 ID는 비밀값이 아니다 — 모든 방문자의 페이지 소스에 그대로 보인다.
+// 비워두면 계측이 통째로 꺼지고 사이트는 지금과 똑같이 동작한다(측정 ID를 받기 전 상태).
+const GA_MEASUREMENT_ID = '';
+
+// 이벤트를 보내는 코드는 이 함수 밖에 두지 않는다. 나중에 GA를 끄거나 자체 수집(Supabase)으로
+// 옮길 때 고칠 곳이 한 군데가 된다 — loadState/saveState가 저장소를 독점하는 것과 같은 구조.
+// 개인 식별 정보는 절대 넘기지 않는다: 이메일·이름·사용자 id 금지, 가게 id/카테고리/언어 코드만.
+function track(name, params){
+  if(typeof window.gtag !== 'function') return;   // 측정 ID 없음 · CDN 차단 · 광고 차단기
+  try{ window.gtag('event', name, params || {}); }catch(e){ /* 계측 실패가 기능 실패가 되면 안 된다 */ }
+}
+
+function initAnalytics(){
+  if(!GA_MEASUREMENT_ID) return;
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function(){ window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  // allow_google_signals:false — 광고·인구통계 데이터를 받지 않는다. 이 사이트에 필요 없고,
+  // 켜두면 방문자가 적을 때 GA가 행을 가려버려서(데이터 임계값) 오히려 리포트가 비어 보인다.
+  window.gtag('config', GA_MEASUREMENT_ID, { anonymize_ip:true, allow_google_signals:false });
+
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_MEASUREMENT_ID;
+  document.head.appendChild(s);
+
+  observeSections();
+  observeScrollDepth();
+  observeWebVitals();
+}
+
+// ---- 섹션별 체류 시간 ----
+// 스크롤할 때마다 보내면 이벤트가 폭증해서 리포트를 못 쓴다.
+// 화면에 들어온 시각만 기억했다가 벗어날 때 한 번, 페이지를 떠날 때 한 번 보낸다.
+function observeSections(){
+  if(!('IntersectionObserver' in window)) return;
+  const since = new Map();
+  const flush = (el) => {
+    const t0 = since.get(el);
+    if(t0 === undefined) return;
+    since.delete(el);
+    const sec = Math.round((Date.now() - t0) / 1000);
+    if(sec >= 2) track('section_view', { section: el.id || 'hero', seconds: sec });  // 스쳐 지나간 건 버린다
+  };
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if(en.isIntersecting) since.set(en.target, Date.now());
+      else flush(en.target);
+    });
+  }, { threshold: 0.5 });   // 절반 이상 보일 때만 "보고 있다"로 친다
+  document.querySelectorAll('section').forEach(el => io.observe(el));
+  // 탭을 덮거나 페이지를 떠나도 마지막 구간이 남지 않게 한다
+  const flushAll = () => document.querySelectorAll('section').forEach(flush);
+  document.addEventListener('visibilitychange', () => { if(document.hidden) flushAll(); });
+  window.addEventListener('pagehide', flushAll);
+}
+
+// ---- 스크롤 깊이 ----
+// GA4 기본 계측은 90% 하나뿐이라 어디서 멈추는지 알 수 없다. 구간을 나눠 한 번씩만 보낸다.
+function observeScrollDepth(){
+  const marks = [25, 50, 75, 100];
+  const sent = new Set();
+  let ticking = false;
+  const check = () => {
+    ticking = false;
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    if(h <= 0) return;
+    const pct = Math.min(100, Math.round((window.scrollY / h) * 100));
+    marks.forEach(m => { if(pct >= m && !sent.has(m)){ sent.add(m); track('scroll_depth', { percent: m }); } });
+  };
+  window.addEventListener('scroll', () => {
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(check);   // 스크롤마다 계산하면 프레임이 깎인다
+  }, { passive: true });
+}
+
+// ---- Core Web Vitals ----
+// 실무에서 페이지 품질을 볼 때 쓰는 지표다. web-vitals 라이브러리를 들이지 않고
+// (이 저장소는 의존성이 없다) 브라우저 내장 PerformanceObserver로 LCP·CLS만 잰다.
+function observeWebVitals(){
+  if(!('PerformanceObserver' in window)) return;
+  let lcp = 0, cls = 0;
+  try{
+    new PerformanceObserver(list => {
+      const entries = list.getEntries();
+      lcp = Math.round(entries[entries.length - 1].startTime);
+    }).observe({ type:'largest-contentful-paint', buffered:true });
+    new PerformanceObserver(list => {
+      list.getEntries().forEach(en => { if(!en.hadRecentInput) cls += en.value; });
+    }).observe({ type:'layout-shift', buffered:true });
+  }catch(e){ return; }   // 사파리 등 미지원 브라우저
+  // 값이 확정되는 건 페이지를 떠날 때다 — 그때 한 번만 보낸다
+  window.addEventListener('pagehide', () => {
+    if(lcp) track('web_vitals', { metric:'LCP', value: lcp });
+    track('web_vitals', { metric:'CLS', value: Math.round(cls * 1000) / 1000 });
+  }, { once:true });
+}
+
+initAnalytics();
+
 // ---- 글로벌 내비 (모바일 햄버거) ----
 // 모달이 아니라 헤더에 붙는 패널이라 .survey-overlay 구조를 쓰지 않는다.
 // 링크를 누르면 바로 닫는다 — 같은 페이지 앵커라 패널이 남아 있으면 도착지를 가린다.
@@ -1899,6 +2007,7 @@ function applyTheme(){
 
 function toggleTheme(){
   store.theme = isDarkTheme() ? 'light' : 'dark';
+  track('theme_change', { mode: store.theme });
   saveState();
   applyTheme();
 }
@@ -2062,6 +2171,8 @@ function openDetail(idx){
   }
   const r = restaurants[idx];
   currentDetailIdx = idx;
+  // GA4 권장 이벤트명을 그대로 쓴다 — 커스텀 이름과 달리 기본 리포트가 알아서 집계해준다
+  track('view_item', { items:[{ item_id:r.id, item_name:r.name, item_category:r.cat }] });
   detailBody.innerHTML = r.detail ? renderFullDetail(r) : renderStubDetail(r);
   detailOverlay.classList.add('show');
   if(r.lat && r.lng) loadGoogleReviews(r);
@@ -2163,7 +2274,7 @@ function directionsUrl(r){
 }
 function renderDirectionsLink(r){
   if(!(r.lat && r.lng)) return '';
-  return `<a class="google-review-link detail-directions" href="${directionsUrl(r)}" target="_blank" rel="noopener">`
+  return `<a class="google-review-link detail-directions" href="${directionsUrl(r)}" target="_blank" rel="noopener" onclick="track('directions_click', { item_id:'${r.id}' })">`
     + `${t('detailDirections') || '🧭 길찾기 (구글 지도)'}</a>`;
 }
 
@@ -2367,6 +2478,7 @@ window.gm_authFailure = function(){
 // 카드 쪽 카테고리 필터(currentCat) 위에 한 겹 더 얹는 것이라 둘이 함께 걸린다.
 let mapFilter = 'all';
 function setMapFilter(kind){
+  track('filter_use', { filter:'map', value:kind });
   mapFilter = kind;
   document.querySelectorAll('.map-chip').forEach(c => c.classList.toggle('active', c.dataset.mapcat === kind));
   renderMarkers();
@@ -2450,6 +2562,8 @@ async function runLiveSearch(){
 liveSearchInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') runLiveSearch(); });
 
 function renderLiveSearchResults(){
+  // 결과 수까지 같이 보낸다 — 0건 검색어가 곧 "아직 없는 가게" 목록이 된다
+  track('search', { search_term: q, results: liveSearchList.length });
   if(liveSearchList.length === 0){
     liveSearchResults.innerHTML = `<div class="google-review-empty">${t('liveSearchEmpty') || '검색 결과가 없어요.'}</div>`;
     return;
@@ -2699,6 +2813,9 @@ updateHeaderAuthUI();
 function syncAuthFromSession(session){
   const user = session && session.user;
   const wasUserId = currentUserId;
+  // 로그인 상태가 확정되는 곳은 여기 하나다. 핸들러마다 심으면 새로고침에도 다시 세어진다.
+  // 사용자 id는 보내지 않는다 — 개인 식별에 쓰일 수 있다.
+  if(user && !wasUserId) track('login', { method:'email' });
   isLoggedIn = !!user;
   currentUserId = user ? user.id : '';
   currentUserName = user ? ((user.user_metadata && user.user_metadata.name) || '') : '';
@@ -3801,6 +3918,7 @@ function renderPassConfirm(){
 }
 
 function submitPassOrder(){
+  track('pass_reserve', {});
   const r = restaurants[passIdx];
   const p = r.pass;
   const picked = p.bundles[passBundleIdx];
