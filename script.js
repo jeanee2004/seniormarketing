@@ -380,6 +380,7 @@ function escapeHtml(s){
 const i18n = { en: {
   pageTitle:"Bap Meokeoreo Wa — Discover Jochiwon's Local Restaurants",
   navSearch:"Search", navGame:"Menu Roulette Game", navSurvey:"Taste Survey", navLang:"Language", navTheme:"Switch light/dark", navLogin:"Sign in",
+  mapFilterAria:"Map display type", mapFilterAll:"All", mapFilterFood:"Food", mapFilterCafe:"Cafes",
   navMenuAria:"Main sections", navMenuEat:"Restaurants", navMenuMap:"Map", navMenuAbout:"About", navMenuJoin:"Get involved",
   navLogout:"Sign out",
   headerSearchPh:"Search restaurants, meal passes, partners, pages",
@@ -681,6 +682,7 @@ const i18n = { en: {
   // 그 외 키가 없으면 t()가 null을 반환해 한국어 원문으로 자동 대체된다.
   pageTitle:"Bap Meokeoreo Wa — 发现调治院本地美食",
   navSearch:"搜索", navGame:"菜单推荐游戏", navSurvey:"口味问卷", navLang:"语言", navTheme:"切换深浅色", navLogin:"登录",
+  mapFilterAria:"地图显示类型", mapFilterAll:"全部", mapFilterFood:"餐厅", mapFilterCafe:"咖啡馆",
   navMenuAria:"主要栏目", navMenuEat:"餐厅", navMenuMap:"地图", navMenuAbout:"介绍", navMenuJoin:"一起参与",
   navLogout:"退出登录",
   headerSearchPh:"搜索餐厅、餐券、合作、页面",
@@ -1828,6 +1830,10 @@ function allergyHits(r){
   return riskOf(r).filter(k => mine.includes(k));
 }
 
+document.querySelectorAll('.map-chip').forEach(chip => {
+  chip.addEventListener('click', () => setMapFilter(chip.dataset.mapcat));
+});
+
 // ---- 글로벌 내비 (모바일 햄버거) ----
 // 모달이 아니라 헤더에 붙는 패널이라 .survey-overlay 구조를 쓰지 않는다.
 // 링크를 누르면 바로 닫는다 — 같은 페이지 앵커라 패널이 남아 있으면 도착지를 가린다.
@@ -2285,6 +2291,13 @@ const CAMPUS_CENTER = { lat: 36.6109529892437, lng: 127.286987211083 }; // 고�
 //   로컬: config.js(.gitignore)가 window.APP_CONFIG로 넣어준다.
 //   배포: config.js가 저장소에 없으므로 /api/map-key가 서버 환경변수에서 읽어 내려준다.
 // 배포본에서 지도가 안 뜨던 원인이 이거였다 — 키가 빈 문자열이라 스크립트를 로드조차 안 했다.
+// 지도 라벨 언어는 스크립트 URL에 박혀서 로드된 뒤에는 바꿀 수 없다(구글이 재초기화를 지원하지 않는다).
+// 그래서 "로드 시점의 사이트 언어"를 따른다 — 언어를 바꾸고 새로고침하면 지도도 따라온다.
+// 지도만 다시 불러오려고 스크립트를 두 번 주입하면 오히려 깨진다.
+function mapsLanguage(){
+  return { ko:'ko', en:'en', zh:'zh-CN' }[currentLang] || 'ko';
+}
+
 async function resolveMapsKey(){
   if(MAPS_KEY) return MAPS_KEY;
   try{
@@ -2307,7 +2320,7 @@ async function loadGoogleMaps(){
   }
   const s = document.createElement('script');
   s.src = `https://maps.googleapis.com/maps/api/js?key=${key}`
-        + `&callback=initMap&v=weekly&loading=async&language=ko&region=KR`;
+        + `&callback=initMap&v=weekly&loading=async&language=${mapsLanguage()}&region=KR`;
   s.async = true;
   document.head.appendChild(s);
 }
@@ -2350,6 +2363,20 @@ window.gm_authFailure = function(){
 
 // 마커는 항상 getFilteredList()의 결과를 따른다 — 카드 그리드와 같은 필터를 공유한다.
 // 지도가 아직 준비되지 않았거나(키 없음/로딩 중) 좌표가 없는 가게는 조용히 건너뛴다.
+// 지도는 카드 목록과 달리 "밥 먹을 데냐 커피 마실 데냐"만 갈라도 충분해서 3단으로 둔다.
+// 카드 쪽 카테고리 필터(currentCat) 위에 한 겹 더 얹는 것이라 둘이 함께 걸린다.
+let mapFilter = 'all';
+function setMapFilter(kind){
+  mapFilter = kind;
+  document.querySelectorAll('.map-chip').forEach(c => c.classList.toggle('active', c.dataset.mapcat === kind));
+  renderMarkers();
+}
+function passesMapFilter(r){
+  if(mapFilter === 'cafe') return r.cat === '카페';
+  if(mapFilter === 'food') return r.cat !== '카페';
+  return true;
+}
+
 function renderMarkers(){
   if(!gmap) return;
 
@@ -2361,7 +2388,7 @@ function renderMarkers(){
   gMarkers.forEach(m => m.setMap(null));
   gMarkers = [];
 
-  getFilteredList().filter(r => r.lat && r.lng).forEach(r => {
+  getFilteredList().filter(r => r.lat && r.lng && passesMapFilter(r)).forEach(r => {
     const idx = restaurants.indexOf(r);
     const marker = new google.maps.Marker({
       map: gmap,
@@ -2376,7 +2403,15 @@ function renderMarkers(){
       label: { text: r.emoji, fontSize: '15px' },
       optimized: false,   // 이모지 라벨이 캔버스 합성에서 깨지지 않게 마커마다 개별 DOM으로 그린다
     });
-    marker.addListener('click', () => openDetail(idx));
+    marker.addListener('click', () => {
+      // 지도를 전체화면으로 본 상태에서는 모달이 그 아래에 깔려 보이지 않는다
+      // (전체화면 요소가 최상단이라 z-index로는 못 이긴다). 먼저 전체화면을 빠져나온다.
+      if(document.fullscreenElement){
+        Promise.resolve(document.exitFullscreen()).catch(() => {}).then(() => openDetail(idx));
+        return;
+      }
+      openDetail(idx);
+    });
     // 핀이 34개까지 늘면서 어느 걸 가리키는지 알기 어려워졌다 — hover에 크기로 반응시킨다.
     // 아이콘 객체를 통째로 다시 넘겨야 반영된다(setIcon은 부분 갱신을 안 한다).
     const icon = size => ({

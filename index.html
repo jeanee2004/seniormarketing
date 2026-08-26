@@ -211,6 +211,11 @@
     <span class="eyebrow" data-i18n="mapEyebrow">MAP</span>
     <h2 class="section-title" data-i18n="mapTitle">조치원 미니 지도</h2>
     <p class="section-sub" data-i18n="mapBody">실제로 확인된 가게 위치예요. 핀을 누르면 상세보기로 이동해요. 나머지 가게는 9월 현장 조사 후 하나씩 추가될 예정이에요.</p>
+    <div class="map-filter" role="group" aria-label="지도 표시 종류" data-i18n-aria="mapFilterAria">
+      <button type="button" class="map-chip active" data-mapcat="all" data-i18n="mapFilterAll">전체</button>
+      <button type="button" class="map-chip" data-mapcat="food" data-i18n="mapFilterFood">음식점</button>
+      <button type="button" class="map-chip" data-mapcat="cafe" data-i18n="mapFilterCafe">카페</button>
+    </div>
     <div class="map-wrap">
       <div id="miniMap" class="map-canvas"></div>
     </div>
