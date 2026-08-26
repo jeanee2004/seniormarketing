@@ -409,6 +409,27 @@ const i18n = { en: {
   liveSearchPh:"Can't find a restaurant? Type a name to search nearby in real time",
   liveSearchBtn:"Search",
   catAll:"All", catKorean:"Korean", catWestern:"Western", catChinese:"Chinese", catJapanese:"Japanese", catSnack:"Snacks", catCafe:"Cafes",
+  descVarCafe0:"A good-vibes cafe in a Jochiwon-eup backstreet",
+  descVarCafe1:"A backstreet cafe for a quick cup",
+  descVarCafe2:"A backstreet cafe to drop by between classes",
+  descVarCafe3:"A Jochiwon-eup backstreet cafe to settle into",
+  descVarCafe4:"A Jochiwon-eup backstreet cafe for one more cup",
+  descVarKorean0:"A hearty Korean spot in a Jochiwon-eup backstreet",
+  descVarKorean1:"A filling meal in a Jochiwon-eup backstreet",
+  descVarKorean2:"The backstreet Korean spot for \"what should I eat today\"",
+  descVarKorean3:"A Jochiwon-eup backstreet spot for home-style cooking",
+  descVarWestern0:"A cozy Western restaurant in a Jochiwon-eup backstreet",
+  descVarWestern1:"A knife-and-fork meal in a Jochiwon-eup backstreet",
+  descVarWestern2:"A Jochiwon-eup backstreet spot for a slightly special day",
+  descVarChinese0:"A wok-fired Chinese spot in a Jochiwon-eup backstreet",
+  descVarChinese1:"A one-bowl Chinese spot in a Jochiwon-eup backstreet",
+  descVarChinese2:"A Jochiwon-eup backstreet spot worth the jjajang-or-jjamppong debate",
+  descVarJapanese0:"A quiet Japanese restaurant in a Jochiwon-eup backstreet",
+  descVarJapanese1:"A one-bowl Japanese spot in a Jochiwon-eup backstreet",
+  descVarJapanese2:"A Jochiwon-eup backstreet spot you slurp clean",
+  descVarSnack0:"A nostalgic bunsik shop in a Jochiwon-eup backstreet",
+  descVarSnack1:"A backstreet bunsik shop for a light bite",
+  descVarSnack2:"A Jochiwon-eup backstreet spot for tteokbokki cravings",
   pagerAria:"Restaurant list pages", pagerPrev:"Previous page", pagerNext:"Next page",
   sortRecommend:"Recommended", sortName:"Name (A-Z)", sortRating:"Highest rated", sortReviews:"Most reviewed", sortLatest:"Latest",
   priceMin:"Min", priceMax:"Max", priceWon:"KRW",
@@ -682,6 +703,27 @@ const i18n = { en: {
   liveSearchPh:"找不到想要的餐厅？输入店名在学校周边实时搜索更多",
   liveSearchBtn:"搜索",
   catAll:"全部", catKorean:"韩餐", catWestern:"西餐", catChinese:"中餐", catJapanese:"日料", catSnack:"小吃", catCafe:"咖啡馆",
+  descVarCafe0:"位于调治院邑小巷、氛围很好的咖啡馆",
+  descVarCafe1:"小巷里可以快速喝一杯的咖啡馆",
+  descVarCafe2:"课间顺路歇脚的小巷咖啡馆",
+  descVarCafe3:"调治院邑小巷里可以坐下来待着的咖啡馆",
+  descVarCafe4:"再来一杯的调治院邑小巷咖啡馆",
+  descVarKorean0:"调治院邑小巷里让人吃得踏实的韩餐厅",
+  descVarKorean1:"调治院邑小巷里扎实的一餐",
+  descVarKorean2:"纠结今天吃什么时会去的小巷韩餐厅",
+  descVarKorean3:"想念家常饭时去的调治院邑小巷馆子",
+  descVarWestern0:"调治院邑小巷里小而温馨的西餐厅",
+  descVarWestern1:"在调治院邑小巷用刀叉吃的一餐",
+  descVarWestern2:"调治院邑小巷里适合稍微特别日子的西餐厅",
+  descVarChinese0:"调治院邑小巷里有锅气的中餐厅",
+  descVarChinese1:"调治院邑小巷里的一碗中餐",
+  descVarChinese2:"值得纠结炸酱面还是炒码面的小巷中餐厅",
+  descVarJapanese0:"调治院邑小巷里安静的日餐厅",
+  descVarJapanese1:"调治院邑小巷里的一碗日料",
+  descVarJapanese2:"一口气吸溜干净的调治院邑小巷日餐厅",
+  descVarSnack0:"调治院邑小巷里充满回忆的韩式小吃店",
+  descVarSnack1:"小巷里轻松填饱肚子的小吃店",
+  descVarSnack2:"想吃炒年糕时去的调治院邑小巷小吃店",
   pagerAria:"餐厅列表分页", pagerPrev:"上一页", pagerNext:"下一页",
   sortRecommend:"推荐排序", sortName:"名称排序（拼音）", sortRating:"评分最高", sortReviews:"评论最多", sortLatest:"最新",
   priceMin:"最低", priceMax:"最高", priceWon:"韩元",
@@ -1034,7 +1076,37 @@ function rName(r){
   if(currentLang === 'zh' && r.nameZh) return r.nameZh;
   return r.name;
 }
+// 수집 스크립트가 카테고리에서 찍어낸 정형문 6종. 카페만 19곳이라 목록이 전부 같은 문장이었다.
+// 이 문장을 그대로 쓰는 가게만 문구를 갈아끼운다 — "가정식 백반집", "초밥·롤 전문점"처럼
+// 더 구체적으로 적힌 설명은 정보가 더 많으므로 건드리지 않는다.
+const GENERIC_DESC = {
+  '조치원읍 골목의 한식당':'Korean', '조치원읍 골목의 양식당':'Western',
+  '조치원읍 골목의 중식당':'Chinese', '조치원읍 골목의 일식당':'Japanese',
+  '조치원읍 골목의 분식집':'Snack',   '조치원읍 골목의 카페':'Cafe',
+};
+// 한국어 원문은 여기, 다른 언어는 i18n 사전의 같은 키(descVar<카테고리><번호>)에 둔다.
+// 언어를 추가할 때 가게 데이터는 건드리지 않고 사전에 블록만 더하면 된다.
+const DESC_VARIANTS = {
+  Cafe: ['조치원읍 골목의 느낌 좋은 카페','호로록 마시고 가는 골목 카페','수업 사이에 들르기 좋은 골목 카페','조치원읍 골목, 자리 잡고 앉는 카페','한 잔 하고 가는 조치원읍 골목 카페'],
+  Korean: ['밥심이 통하는 조치원읍 골목 한식당','조치원읍 골목의 든든한 한 끼','오늘 뭐 먹지 할 때 가는 골목 한식당','조치원읍 골목, 집밥 생각날 때'],
+  Western: ['조치원읍 골목의 아담한 양식당','포크로 먹는 조치원읍 골목 한 끼','조치원읍 골목, 조금 특별한 날 양식당'],
+  Chinese: ['불맛 나는 조치원읍 골목 중식당','조치원읍 골목의 한 그릇 중식','조치원읍 골목, 짬짜면 고민되는 집'],
+  Japanese: ['조치원읍 골목의 조용한 일식당','조치원읍 골목, 한 그릇 일식','후루룩 비우는 조치원읍 골목 일식당'],
+  Snack: ['조치원읍 골목의 추억 돋는 분식집','가볍게 배 채우는 골목 분식집','조치원읍 골목, 떡볶이 생각날 때'],
+};
+// id 슬러그 해시로 고른다 — 랜덤이면 다시 그릴 때마다 문구가 바뀌어 사이트가 불안정해 보인다.
+function descVariant(r){
+  const group = GENERIC_DESC[r.desc];
+  if(!group || !r.id) return null;
+  const pool = DESC_VARIANTS[group];
+  let h = 0;
+  for(let i = 0; i < r.id.length; i += 1) h = (h * 31 + r.id.charCodeAt(i)) >>> 0;
+  const n = h % pool.length;
+  return (currentLang === 'ko') ? pool[n] : (t('descVar' + group + n) || pool[n]);
+}
 function rDesc(r){
+  const v = descVariant(r);
+  if(v) return v;
   if(currentLang === 'en' && r.descEn) return r.descEn;
   if(currentLang === 'zh' && r.descZh) return r.descZh;
   return r.desc;
