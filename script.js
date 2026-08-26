@@ -1239,7 +1239,9 @@ function renderCards(){
 function renderPager(pageCount){
   const pager = document.getElementById('cardPager');
   if(!pager) return;
-  if(pageCount <= 1){ pager.innerHTML = ''; return; }
+  // 한 페이지뿐이어도 "1"을 남긴다 — 페이저가 통째로 사라지면 목록이 여기서 끝인지
+  // 아직 덜 그려진 건지 구분이 안 된다. 대신 앞뒤 버튼은 비활성으로 남는다.
+  if(pageCount < 1) { pager.innerHTML = ''; return; }
 
   const btn = (label, page, opts = {}) =>
     `<button type="button" class="pager-btn${opts.active ? ' is-active' : ''}"` +
