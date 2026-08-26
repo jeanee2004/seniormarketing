@@ -464,6 +464,9 @@ const i18n = { en: {
   footerAbout:'"KU-jodae! Help the Local Owners" — a social contribution project by Matjip KU-jodae, a Korea University Sejong Campus student team, built to grow together with the local business community.',
   footerServiceHead:"Service", footerMapLink:"View map", footerPassLink:'Grandchild meal pass<span class="badge-live">Reservations open</span>', footerSponsorLink:"Support us",
   footerInfoHead:"Info", footerIntroLink:"About this service", footerFaqLink:"Contact us", footerSignupLink:"Sign up for launch alerts",
+  footerAdminHead:"Admin", footerAnalyticsLink:"Usage analytics", footerOwnerLink:"Owner page",
+  adminGateTitle:"Admin check", adminGateBody:"You're heading to the usage analytics page. Please enter the password.",
+  adminGateOk:"Enter", adminGateWrong:"That password doesn't match.",
   footerLegalHead:"Legal", footerPrivacyLink:"Privacy Policy", footerTermsLink:"Terms of Service",
   footerOperator:"<b>Operator</b> Matjip KU-jodae, a Korea University Sejong Campus student team",
   footerProject:"<b>Project name</b> KU-jodae! Help the Local Owners",
@@ -788,6 +791,9 @@ const i18n = { en: {
   footerAbout:'"KU助队！拜托了老板"——高丽大学世宗校区学生团队味集KU助队发起的社会公益项目，致力于与本地商圈一起成长。',
   footerServiceHead:"服务", footerMapLink:"查看地图", footerPassLink:'孙辈餐券<span class="badge-live">可预约</span>', footerSponsorLink:"支持我们",
   footerInfoHead:"信息", footerIntroLink:"关于本服务", footerFaqLink:"联系我们", footerSignupLink:"订阅上线通知",
+  footerAdminHead:"管理员", footerAnalyticsLink:"使用分析", footerOwnerLink:"店主页面",
+  adminGateTitle:"管理员确认", adminGateBody:"即将前往使用分析页面，请输入密码。",
+  adminGateOk:"进入", adminGateWrong:"密码不正确。",
   footerLegalHead:"法律", footerPrivacyLink:"隐私政策", footerTermsLink:"服务条款",
   footerOperator:"<b>运营机构</b> 高丽大学世宗校区学生团队 味集KU助队",
   footerProject:"<b>项目名称</b> KU助队！拜托了老板",
@@ -1839,6 +1845,50 @@ function allergyHits(r){
 document.querySelectorAll('.map-chip').forEach(chip => {
   chip.addEventListener('click', () => setMapFilter(chip.dataset.mapcat));
 });
+
+// ---- 관리자 입구 (이용 분석) ----
+// 이건 보안 장치가 아니다. 브라우저에 있는 값은 소스에 그대로 보인다.
+// "링크를 눌러본 사람이 실수로 들어가는 것"을 막는 정도이고, 실제 방어선은
+// GA 자체의 구글 계정 로그인이다. 진짜 접근 제어가 필요해지면 사장님 페이지와 함께
+// 서버에서 역할(role)을 확인하는 방식으로 가야 한다(next.md C5).
+const ADMIN_PASSPHRASE = 'JeaneeIsAGirl';
+const ANALYTICS_URL = 'https://analytics.google.com/analytics/web/';
+
+function openAdminGate(){
+  openConfirm({
+    emoji:'🔐',
+    title:t('adminGateTitle') || '관리자 확인',
+    text:t('adminGateBody') || '이용 분석 페이지로 이동합니다. 비밀번호를 입력해주세요.',
+    okLabel:t('adminGateOk') || '들어가기',
+    cancelLabel:t('closeBtn') || '닫기',
+    onOk: submitAdminGate,
+  });
+  // 확인 모달에는 입력칸이 없어서 버튼 줄 앞에 하나 끼워 넣는다 —
+  // 이것 하나 때문에 새 모달을 만들면 관리해야 할 오버레이만 늘어난다.
+  const row = confirmBody.querySelector('.game-action-row');
+  if(!row) return;
+  row.insertAdjacentHTML('beforebegin',
+    '<input type="password" id="adminPw" class="review-textarea" autocomplete="current-password" ' +
+    'style="min-height:0;height:44px;margin-bottom:12px;" aria-label="' + (t('adminGateTitle') || '관리자 확인') + '">' +
+    '<p class="auth-error" id="adminPwError"></p>');
+  const input = document.getElementById('adminPw');
+  input.focus();
+  input.addEventListener('keydown', e => { if(e.key === 'Enter') submitAdminGate(); });
+}
+
+function submitAdminGate(){
+  const input = document.getElementById('adminPw');
+  const err = document.getElementById('adminPwError');
+  if(!input) return;
+  if(input.value !== ADMIN_PASSPHRASE){
+    if(err) err.textContent = t('adminGateWrong') || '비밀번호가 맞지 않아요.';
+    input.value = '';
+    input.focus();
+    return;
+  }
+  closeConfirm();
+  window.open(ANALYTICS_URL, '_blank', 'noopener');
+}
 
 // ---- 전체화면 지도 위에 모달 띄우기 ----
 // 브라우저는 전체화면 요소와 그 자손만 그린다. 모달은 <body> 바로 아래에 있어서
