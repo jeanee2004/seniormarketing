@@ -2251,13 +2251,32 @@ const CAMPUS_CENTER = { lat: 36.6109529892437, lng: 127.286987211083 }; // 고�
 // callback=initMap이 아직 없는 순간에 불려 "initMap is not a function"으로 죽을 수 있다.
 // 키가 비어 있으면(config.js 없음/미기입) 그냥 건너뛴다 — sb === null 일 때와 같은 degrade 방식이라
 // 지도만 비고 페이지의 나머지 기능은 그대로 동작한다.
-function loadGoogleMaps(){
-  if(!MAPS_KEY){
-    console.warn('[지도] config.js에 Google_Javascript_API_key가 없어 지도를 건너뜁니다.');
+// 키를 얻는 경로가 둘이다.
+//   로컬: config.js(.gitignore)가 window.APP_CONFIG로 넣어준다.
+//   배포: config.js가 저장소에 없으므로 /api/map-key가 서버 환경변수에서 읽어 내려준다.
+// 배포본에서 지도가 안 뜨던 원인이 이거였다 — 키가 빈 문자열이라 스크립트를 로드조차 안 했다.
+async function resolveMapsKey(){
+  if(MAPS_KEY) return MAPS_KEY;
+  try{
+    const res = await fetch('/api/map-key');
+    if(!res.ok) return '';
+    const data = await res.json();
+    return data.key || '';
+  }catch(e){
+    return '';   // file://로 열었거나 오프라인 — 지도만 비고 나머지는 그대로 동작한다
+  }
+}
+
+async function loadGoogleMaps(){
+  const key = await resolveMapsKey();
+  if(!key){
+    console.warn('[지도] 지도 키를 찾지 못해 지도를 건너뜁니다.');
+    console.warn('  · 로컬: config.js에 Google_Javascript_API_key를 넣고 dev-server로 여세요.');
+    console.warn('  · 배포: Vercel 환경변수 Google_Javascript_API_key가 등록돼 있는지 확인하세요.');
     return;
   }
   const s = document.createElement('script');
-  s.src = `https://maps.googleapis.com/maps/api/js?key=${MAPS_KEY}`
+  s.src = `https://maps.googleapis.com/maps/api/js?key=${key}`
         + `&callback=initMap&v=weekly&loading=async&language=ko&region=KR`;
   s.async = true;
   document.head.appendChild(s);
