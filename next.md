@@ -460,6 +460,31 @@ limit: 20, model: gemini-3.6-flash
 lite 모델도 응답에 몇 초가 걸리는데 그동안 요약 자리가 완전히 비어 있어서, 기능이 없는 것처럼
 보였다(실제로 "요약이 안 뜬다"로 읽힌 원인 중 하나). `#aiSummaryBody`에 로딩 카드를 먼저 깔고,
 실패하면 다시 비운다. i18n 키 `aiSummaryLoading` ko/en/zh 추가.
+### AI 요약 공용 캐시 (Supabase `review_summaries`)
+
+브라우저 로컬 캐시만으로는 호출이 "방문자 수 × 가게 수 × 언어 수"로 늘어나 무료 티어 한도를
+다시 만난다. 요약은 모든 사용자에게 같은 결과라 서버에 한 번만 저장하면 호출이
+"가게 수 × 언어 수"로 고정된다.
+
+- **표**: `supabase/review_summaries.sql` (MCP `apply_migration`으로 적용 완료).
+  `unique (restaurant_id, lang)` — 가게·언어당 한 줄이고 리뷰가 바뀌면 **덮어쓴다**(줄이 안 는다).
+  `source_hash`는 리뷰 원문+별점의 sha256이라, 구글 리뷰가 바뀌면 해시가 달라져 자동으로 다시 만든다.
+- **RLS는 켜고 정책은 0개** — 공개 키로는 읽기도 쓰기도 안 된다. 개인 데이터는 아니지만 공개 키로
+  insert를 열면 누구나 아무 가게의 요약을 심을 수 있다(리뷰가 공개라 `source_hash`도 계산 가능).
+  `saved_restaurants`의 `auth.uid() = user_id` 패턴을 안 쓴 이유 — 거긴 사람마다 자기 줄이 있지만
+  여긴 주인이 없는 공용 캐시다.
+- **`api/review-analysis.js`**: 해시로 캐시를 먼저 읽고, 맞으면 Gemini를 아예 안 부른다.
+  없으면 호출 후 upsert. **응답을 먼저 보내고 저장은 그 뒤에** 한다(저장 때문에 사용자가 느려지지 않게).
+  supabase-js를 서버에 들이지 않았다 — 이 저장소는 의존성이 없고 PostgREST는 `fetch`로 충분하다.
+- **`script.js`**: 요청에 `id`(슬러그)를 함께 보낸다. 캐시 키가 가게 이름이면 이름이 바뀔 때 깨진다.
+  브라우저 로컬 캐시는 그대로 1차 캐시로 남는다(같은 사람이 다시 열면 네트워크 요청 자체가 없다).
+- **`SUPABASE_URL` + `SUPABASE_SECRET_KEY`가 없으면 캐시를 통째로 건너뛰고 예전처럼 동작한다.**
+  검증: 키 없는 상태에서 `cached:false`, 1.4초, 요약 정상.
+
+**남은 것 (사용자)**: Supabase 대시보드 → Project Settings → API keys → `secret` 키를
+`.env.local`에 `SUPABASE_SECRET_KEY=sb_secret_...`으로 추가하고, Vercel 환경변수에도
+`SUPABASE_SECRET_KEY`와 `SUPABASE_URL`을 같은 대문자 이름으로 등록. 등록 후 캐시 적중을 검증할 것
+(같은 가게를 두 번 호출 → 두 번째가 `cached:true`이고 즉시 응답).
 ## 다음에 진행할 것
 
 ### 코드 작업

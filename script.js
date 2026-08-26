@@ -1918,7 +1918,8 @@ async function loadReviewAnalysis(r, googleData){
     const res = await fetch('/api/review-analysis', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: r.name, lang: currentLang, reviews: reviews.map(rv => ({ text: rv.text, rating: rv.rating })) }),
+      // id(슬러그)는 서버 공용 캐시의 키다 — 가게 이름은 바뀔 수 있어서 이름으로 잡지 않는다.
+      body: JSON.stringify({ id: r.id, name: r.name, lang: currentLang, reviews: reviews.map(rv => ({ text: rv.text, rating: rv.rating })) }),
     });
     const data = await res.json();
     if(document.getElementById('aiSummaryBody') !== box) return;  // 그 사이 다른 가게를 열었다
