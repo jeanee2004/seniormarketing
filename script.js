@@ -435,7 +435,7 @@ const i18n = { en: {
   descVarSnack1:"A backstreet bunsik shop for a light bite",
   descVarSnack2:"A Jochiwon-eup backstreet spot for tteokbokki cravings",
   pagerAria:"Restaurant list pages", pagerPrev:"Previous page", pagerNext:"Next page",
-  sortRecommend:"Recommended", sortName:"Name (A-Z)", sortRating:"Highest rated", sortReviews:"Most reviewed", sortLatest:"Latest",
+  sortRecommend:"Recommended", sortName:"Name (A-Z)", sortRating:"Highest rated", sortReviews:"Most reviewed", sortLatest:"Latest", sortDistance:"Nearest",
   priceMin:"Min", priceMax:"Max", priceWon:"KRW",
   filterEmpty:"No restaurants match these filters yet.",
   filterEmptySub:"How about these?", filterReset:"Clear filters and show everything",
@@ -740,7 +740,7 @@ const i18n = { en: {
   descVarSnack1:"小巷里轻松填饱肚子的小吃店",
   descVarSnack2:"想吃炒年糕时去的调治院邑小巷小吃店",
   pagerAria:"餐厅列表分页", pagerPrev:"上一页", pagerNext:"下一页",
-  sortRecommend:"推荐排序", sortName:"名称排序（拼音）", sortRating:"评分最高", sortReviews:"评论最多", sortLatest:"最新",
+  sortRecommend:"推荐排序", sortName:"名称排序（拼音）", sortRating:"评分最高", sortReviews:"评论最多", sortLatest:"最新", sortDistance:"最近",
   priceMin:"最低", priceMax:"最高", priceWon:"韩元",
   filterEmpty:"目前没有符合这些筛选条件的餐厅。",
   filterEmptySub:"这些餐厅怎么样？", filterReset:"清除筛选，查看全部",
@@ -1063,11 +1063,28 @@ const priceMinInput = document.getElementById('priceMin');
 const priceMaxInput = document.getElementById('priceMax');
 let currentCat = "전체";
 let currentSort = "recommend";
+// 길찾기 출발지 + "가까운 순" 정렬이 함께 쓰는 현재 위치. 페이지 진입 시 자동으로 묻지 않고,
+// 길찾기 버튼을 누르거나 "가까운 순"을 고르는 시점(사용자 행동)에만 요청한다.
+let userLocation = null;
 
 // 실제 가게는 r.rating이 전부 null이고 평점이 구글에서 온다 — 정렬도 카드 라벨과 같은 값을 봐야 한다.
 // 평점이 아직 없는 곳은 -1로 두어 맨 뒤로 밀린다.
 function ratingOf(r){ const lr = liveRating(r); return lr ? lr.rating : -1; }
 function countOf(r){ const lr = liveRating(r); return lr ? lr.reviewCount : -1; }
+// api/google-reviews.js의 haversine과 같은 식 — 좌표 간 거리(m)를 구하는 계산은 여기도 저기도 같다.
+function haversineMeters(lat1, lng1, lat2, lng2){
+  const R = 6371000;
+  const toRad = (deg) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+// 좌표 없는 가게나 위치를 아직 못 받은 상태는 맨 뒤로 밀린다(ratingOf의 -1과 같은 관례).
+function distanceOf(r){
+  if(!userLocation || !r.lat || !r.lng) return Infinity;
+  return haversineMeters(userLocation.lat, userLocation.lng, r.lat, r.lng);
+}
 
 function getFilteredList(){
   // 카테고리/정렬 필터는 liveReview(실제 확인된) 가게에만 적용한다. 텍스트 검색은
@@ -1087,6 +1104,9 @@ function getFilteredList(){
       break;
     case "reviews":
       list = list.slice().sort((a,b) => countOf(b) - countOf(a));
+      break;
+    case "distance":
+      list = list.slice().sort((a,b) => distanceOf(a) - distanceOf(b));
       break;
     default:
       list = list.slice().sort((a,b) => ratingOf(b) - ratingOf(a));
@@ -1413,7 +1433,27 @@ document.querySelectorAll('.cat-chip').forEach(chip => {
 });
 
 sortSelect.addEventListener('change', () => {
-  currentSort = sortSelect.value;
+  const val = sortSelect.value;
+  // "가까운 순"은 위치가 있어야 의미가 있다 — 처음 고르는 순간에만 권한을 묻고,
+  // 페이지 진입 시에는 절대 먼저 묻지 않는다(대부분 거절당하는 패턴을 피한다).
+  if(val === 'distance' && !userLocation){
+    if(!('geolocation' in navigator)){
+      sortSelect.value = currentSort;
+      openToast('locationUnavailable');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        currentSort = 'distance';
+        renderCards();
+      },
+      () => { sortSelect.value = currentSort; openToast('locationDenied'); },
+      { timeout: 8000 }
+    );
+    return;
+  }
+  currentSort = val;
   renderCards();
 });
 
@@ -1553,6 +1593,8 @@ const toastContent = {
   vendor:{emoji:'🧑‍🌾', title:'사장님용 페이지 준비 중', text:'조치원 로컬 식당 사장님을 위한 입점 신청 페이지를 별도로 준비 중이에요.'},
   info:{emoji:'🌾', title:'준비 중이에요', text:'해당 페이지는 곧 열릴 예정입니다.'},
   share:{emoji:'💬', title:'공유 기능 준비 중', text:'친구에게 공유하는 기능이 곧 추가됩니다. 지금은 링크 복사를 이용해보세요!'},
+  locationDenied:{emoji:'📍', title:'위치 권한이 필요해요', text:'가까운 순으로 보려면 위치 권한을 허용해주세요.'},
+  locationUnavailable:{emoji:'📍', title:'위치를 사용할 수 없어요', text:'이 브라우저나 기기에서는 위치 정보를 가져올 수 없어요.'},
 };
 const overlay = document.getElementById('toastOverlay');
 function openToast(key){
@@ -2334,14 +2376,45 @@ function renderFullDetail(r){
 // 길찾기는 사이트 안에서 경로를 그리지 않고 구글 지도로 넘긴다.
 // Directions API를 쓰면 API 사용 설정과 호출당 과금, 출발지 위치 권한까지 필요한데,
 // 실제로 길을 따라가는 건 어차피 지도 앱이라 이득이 적다. 모바일에서는 앱이 바로 열린다.
-function directionsUrl(r){
-  return 'https://www.google.com/maps/dir/?api=1&destination='
+// origin이 있으면(사용자 위치) 내 위치 기준 경로로, 없으면 예전처럼 목적지만 넘긴다.
+function directionsUrl(r, origin){
+  let url = 'https://www.google.com/maps/dir/?api=1&destination='
     + encodeURIComponent(r.lat + ',' + r.lng);
+  if(origin) url += '&origin=' + encodeURIComponent(origin.lat + ',' + origin.lng);
+  return url;
 }
 function renderDirectionsLink(r){
   if(!(r.lat && r.lng)) return '';
-  return `<a class="google-review-link detail-directions" href="${directionsUrl(r)}" target="_blank" rel="noopener" onclick="track('directions_click', { item_id:'${r.id}' })">`
+  return `<a class="google-review-link detail-directions" href="${directionsUrl(r)}" target="_blank" rel="noopener" onclick="return openDirections(event, '${r.id}')">`
     + `${t('detailDirections') || '🧭 길찾기 (구글 지도)'}</a>`;
+}
+// 위치 권한은 "길찾기"를 실제로 누른 시점에만 묻는다 — 들어오자마자 위치를 요청하는 사이트는
+// 대부분 거절당한다. 거절/미지원이면 조용히 목적지만 넘기는 기존 동작으로 degrade한다.
+// 새 탭은 클릭 이벤트 안에서 동기적으로 먼저 열어둔다 — 위치 응답을 기다렸다가 열면
+// 브라우저 팝업 차단에 걸리기 쉽다(사용자 제스처와의 연결이 끊긴 것으로 판단됨).
+function openDirections(e, id){
+  if(e) e.preventDefault();
+  const r = restaurants.find(x => x.id === id);
+  if(!r) return false;
+  track('directions_click', { item_id: id });
+  if(userLocation){
+    window.open(directionsUrl(r, userLocation), '_blank');
+    return false;
+  }
+  const win = window.open('about:blank', '_blank');
+  if(!('geolocation' in navigator)){
+    if(win) win.location.href = directionsUrl(r);
+    return false;
+  }
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      if(win) win.location.href = directionsUrl(r, userLocation);
+    },
+    () => { if(win) win.location.href = directionsUrl(r); },
+    { timeout: 8000 }
+  );
+  return false;
 }
 
 // ---- 구글 리뷰 (Places API New, /api/google-reviews 경유) ----
