@@ -637,6 +637,9 @@ const i18n = { en: {
   aiSummaryTitle:"AI Review Summary", aiSummaryLoading:"🤖 Summarizing reviews...",
   detailDirections:"🧭 Directions (Google Maps)",
   detailNoLocationNote:"🧭 This is example data with no real location yet, so directions aren't available.",
+  detailRouteBtn:"📍 View walking route as text", detailRouteLoading:"Loading route…",
+  detailRouteNoGeo:"This browser doesn't support location.", detailRouteNoPermission:"Allow location access to see the route.",
+  detailRouteUnavailable:"Route info isn't available right now.",
   googleReviewNotFound:"😢 We couldn't find this restaurant on Google Maps.", googleReviewNone:"No reviews yet.",
   googleReviewLink:"See all reviews on Google Maps →", googleReviewAnon:"Anonymous",
   liveSearchLoading:"Searching...", liveSearchEmpty:"No results found.", liveSearchError:"Search failed. Please try again shortly.",
@@ -911,6 +914,9 @@ const i18n = { en: {
   aiSummaryTitle:"AI评论摘要", aiSummaryLoading:"🤖 正在总结评论……",
   detailDirections:"🧭 路线导航（谷歌地图）",
   detailNoLocationNote:"🧭 这是示例数据，暂无真实位置信息，无法提供路线导航。",
+  detailRouteBtn:"📍 查看文字版步行路线", detailRouteLoading:"正在加载路线…",
+  detailRouteNoGeo:"此浏览器不支持定位功能。", detailRouteNoPermission:"需要允许定位权限才能查看路线。",
+  detailRouteUnavailable:"暂时无法获取路线信息。",
   googleReviewNotFound:"😢 在谷歌地图上找不到这家店。", googleReviewNone:"暂无评论。",
   googleReviewLink:"在谷歌地图查看全部评论 →", googleReviewAnon:"匿名",
   liveSearchLoading:"搜索中...", liveSearchEmpty:"没有找到结果。", liveSearchError:"搜索失败，请稍后再试。",
@@ -1247,6 +1253,9 @@ const i18n = { en: {
   aiSummaryTitle:"Resumen de reseñas con IA", aiSummaryLoading:"🤖 Resumiendo reseñas...",
   detailDirections:"🧭 Cómo llegar (Google Maps)",
   detailNoLocationNote:"🧭 Son datos de ejemplo sin ubicación real todavía, así que no hay ruta disponible.",
+  detailRouteBtn:"📍 Ver ruta a pie en texto", detailRouteLoading:"Cargando ruta…",
+  detailRouteNoGeo:"Este navegador no admite la ubicación.", detailRouteNoPermission:"Permite el acceso a tu ubicación para ver la ruta.",
+  detailRouteUnavailable:"La información de la ruta no está disponible ahora.",
   googleReviewNotFound:"😢 No pudimos encontrar este restaurante en Google Maps.", googleReviewNone:"Aún no hay reseñas.",
   googleReviewLink:"Ver todas las reseñas en Google Maps →", googleReviewAnon:"Anónimo",
   liveSearchLoading:"Buscando...", liveSearchEmpty:"No se encontraron resultados.", liveSearchError:"La búsqueda falló. Inténtalo de nuevo en un momento.",
@@ -2764,7 +2773,8 @@ function renderStubDetail(r){
         <span class="detail-info-val">${escapeHtml(r.realAddress)}</span>
       </div>
     </div>
-    ${renderDirectionsLink(r)}` : ''}
+    ${renderDirectionsLink(r)}
+    ${renderRouteTextBlock(r)}` : ''}
     <div class="detail-stub-note">
       ${isKo
         ? `<strong>상세 정보 준비 중</strong> — ${r.realAddress ? '영업시간·메뉴 구성·원산지' : '주소·영업시간·메뉴 구성·원산지'} 같은 상세 정보는 9월 현장 조사 후 채워질 예정이에요. 예시로 <b>${escapeHtml(rName(restaurants[0]))}</b> 카드에서 어떤 정보가 담길지 미리 확인해보세요.`
@@ -2809,6 +2819,7 @@ function renderFullDetail(r){
       `).join('')}
     </div>
     ${renderDirectionsLink(r)}
+    ${renderRouteTextBlock(r)}
 
     <h4 class="detail-menu-title">${t('detailMenuTitle') || '메뉴'}</h4>
     <div class="detail-menu-list">
@@ -2829,9 +2840,11 @@ function renderFullDetail(r){
   `;
 }
 
-// 길찾기는 사이트 안에서 경로를 그리지 않고 구글 지도로 넘긴다.
-// Directions API를 쓰면 API 사용 설정과 호출당 과금, 출발지 위치 권한까지 필요한데,
-// 실제로 길을 따라가는 건 어차피 지도 앱이라 이득이 적다. 모바일에서는 앱이 바로 열린다.
+// 길찾기 "버튼"은 여전히 사이트 안에서 경로선을 그리지 않고 구글 지도로 넘긴다 — 실제로
+// 길을 따라가는 건 어차피 지도 앱이 낫고, 모바일에서는 앱이 바로 열린다.
+// 다만 지도로 넘어가기 전에 대략 어떤 경로인지 알고 싶다는 요청이 있어, 텍스트 요약만은
+// Directions API로 따로 보여준다(아래 renderRouteTextBlock/loadRouteText) — 지도 위에 선을
+// 그리지 않으니 DirectionsRenderer는 안 쓰지만, 호출 자체는 같은 유료 API라 버튼을 눌렀을 때만 부른다.
 // origin이 있으면(사용자 위치) 내 위치 기준 경로로, 없으면 예전처럼 목적지만 넘긴다.
 function directionsUrl(r, origin){
   let url = 'https://www.google.com/maps/dir/?api=1&destination='
@@ -2845,6 +2858,67 @@ function renderDirectionsLink(r){
   }
   return `<a class="detail-directions" href="${directionsUrl(r)}" target="_blank" rel="noopener" onclick="return openDirections(event, '${r.id}')">`
     + `${t('detailDirections') || '🧭 길찾기 (구글 지도)'}</a>`;
+}
+
+// 텍스트 추천 경로 — 클라이언트에서 바로 Directions(레거시)를 부르면 프로젝트에 별도로
+// 활성화해야 하고 신형 Routes API로의 전환이 권장되는 상태라, 서버 엔드포인트(api/walk-route.js,
+// Routes API REST)를 거친다. 구글 리뷰(google-reviews.js)와 같은 서버-키 경유 관례.
+function renderRouteTextBlock(r){
+  if(!(r.lat && r.lng)) return '';
+  return `
+    <div class="detail-route">
+      <button type="button" class="btn-ghost detail-route-btn" onclick="loadRouteText('${r.id}')">${t('detailRouteBtn') || '📍 여기서 오는 길 텍스트로 보기'}</button>
+      <div id="routeTextBody" class="route-text-body"></div>
+    </div>
+  `;
+}
+// 길찾기 버튼과 같은 원칙 — 이 버튼을 실제로 눌렀을 때만 위치 권한을 묻는다.
+// 이미 길찾기로 위치를 받아둔 상태면(userLocation) 다시 묻지 않고 바로 쓴다.
+async function loadRouteText(id){
+  const r = restaurants.find(x => x.id === id);
+  const body = document.getElementById('routeTextBody');
+  if(!r || !body) return;
+  body.innerHTML = `<p class="route-text-loading">${t('detailRouteLoading') || '경로를 불러오는 중…'}</p>`;
+
+  if(!userLocation){
+    if(!('geolocation' in navigator)){
+      body.innerHTML = `<p class="route-text-error">${t('detailRouteNoGeo') || '이 브라우저는 위치 정보를 지원하지 않아요.'}</p>`;
+      return;
+    }
+    userLocation = await new Promise(resolve => {
+      navigator.geolocation.getCurrentPosition(
+        pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => resolve(null),
+        { timeout: 8000 }
+      );
+    });
+  }
+  if(!userLocation){
+    body.innerHTML = `<p class="route-text-error">${t('detailRouteNoPermission') || '위치 권한을 허용하지 않으면 경로를 볼 수 없어요.'}</p>`;
+    return;
+  }
+
+  try{
+    const url = `/api/walk-route?originLat=${userLocation.lat}&originLng=${userLocation.lng}`
+      + `&destLat=${r.lat}&destLng=${r.lng}&lang=${mapsLanguage()}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if(!res.ok || !data.found){
+      body.innerHTML = `<p class="route-text-error">${t('detailRouteUnavailable') || '지금은 경로 안내를 불러올 수 없어요.'}</p>`;
+      return;
+    }
+    const mins = data.durationSeconds != null ? Math.round(data.durationSeconds / 60) : null;
+    const km = data.distanceMeters != null ? (data.distanceMeters / 1000).toFixed(1) : null;
+    const minUnit = { ko:'분', en:' min', zh:'分钟', es:' min' }[currentLang] || 'min';
+    const summary = (mins != null && km != null) ? `🚶 ${mins}${minUnit} · ${km}km` : '';
+    const steps = (data.steps || []).map(s => `<li>${escapeHtml(s)}</li>`).join('');
+    body.innerHTML = `
+      ${summary ? `<p class="route-text-summary">${summary}</p>` : ''}
+      ${steps ? `<ol class="route-text-steps">${steps}</ol>` : ''}
+    `;
+  }catch(e){
+    body.innerHTML = `<p class="route-text-error">${t('detailRouteUnavailable') || '지금은 경로 안내를 불러올 수 없어요.'}</p>`;
+  }
 }
 // 위치 권한은 "길찾기"를 실제로 누른 시점에만 묻는다 — 들어오자마자 위치를 요청하는 사이트는
 // 대부분 거절당한다. 거절/미지원이면 조용히 목적지만 넘기는 기존 동작으로 degrade한다.
