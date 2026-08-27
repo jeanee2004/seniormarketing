@@ -636,6 +636,7 @@ const i18n = { en: {
   googleReviewTitle:"Google Reviews", googleReviewLoading:"Loading reviews...", googleReviewError:"Couldn't load reviews. Please try again shortly.",
   aiSummaryTitle:"AI Review Summary", aiSummaryLoading:"🤖 Summarizing reviews...",
   detailDirections:"🧭 Directions (Google Maps)",
+  detailNoLocationNote:"🧭 This is example data with no real location yet, so directions aren't available.",
   googleReviewNotFound:"😢 We couldn't find this restaurant on Google Maps.", googleReviewNone:"No reviews yet.",
   googleReviewLink:"See all reviews on Google Maps →", googleReviewAnon:"Anonymous",
   liveSearchLoading:"Searching...", liveSearchEmpty:"No results found.", liveSearchError:"Search failed. Please try again shortly.",
@@ -688,6 +689,7 @@ const i18n = { en: {
   authErrGeneric:"Something went wrong. Please try again in a moment.",
   authErrWrongPw:"Incorrect password.",
   authWelcomeTitle:"Welcome, {name}!", authWelcomeBody:"Registration complete. We'll let you know first when we officially launch.",
+  authWelcomeBodyLogin:"Welcome back! Great to see you again.",
   authWelcomeMypageBtn:"Go to My Page",
   headerAuthSavedLabel:"My saved places", headerAuthMypageTitle:"{name}'s My Page",
   logoutTitle:"Sign out?", logoutBody:"After signing out, you'll need to sign in again to use saved lists, write reviews, and more.",
@@ -908,6 +910,7 @@ const i18n = { en: {
   googleReviewTitle:"谷歌评论", googleReviewLoading:"正在加载评论...", googleReviewError:"无法加载评论，请稍后再试。",
   aiSummaryTitle:"AI评论摘要", aiSummaryLoading:"🤖 正在总结评论……",
   detailDirections:"🧭 路线导航（谷歌地图）",
+  detailNoLocationNote:"🧭 这是示例数据，暂无真实位置信息，无法提供路线导航。",
   googleReviewNotFound:"😢 在谷歌地图上找不到这家店。", googleReviewNone:"暂无评论。",
   googleReviewLink:"在谷歌地图查看全部评论 →", googleReviewAnon:"匿名",
   liveSearchLoading:"搜索中...", liveSearchEmpty:"没有找到结果。", liveSearchError:"搜索失败，请稍后再试。",
@@ -993,6 +996,7 @@ const i18n = { en: {
   authErrGeneric:"处理失败，请稍后再试。",
   authErrWrongPw:"密码错误。",
   authWelcomeTitle:"欢迎，{name}！", authWelcomeBody:"注册完成。正式上线时我们会第一时间通知你。",
+  authWelcomeBodyLogin:"欢迎回来！很高兴再次见到你。",
   authWelcomeMypageBtn:"前往我的页面",
   headerAuthSavedLabel:"我保存的地方", headerAuthMypageTitle:"{name}的我的页面",
   logoutTitle:"要登出吗？", logoutBody:"登出后，使用保存列表、撰写评论等功能需要重新登录。",
@@ -1242,6 +1246,7 @@ const i18n = { en: {
   googleReviewTitle:"Reseñas de Google", googleReviewLoading:"Cargando reseñas...", googleReviewError:"No se pudieron cargar las reseñas. Inténtalo de nuevo en un momento.",
   aiSummaryTitle:"Resumen de reseñas con IA", aiSummaryLoading:"🤖 Resumiendo reseñas...",
   detailDirections:"🧭 Cómo llegar (Google Maps)",
+  detailNoLocationNote:"🧭 Son datos de ejemplo sin ubicación real todavía, así que no hay ruta disponible.",
   googleReviewNotFound:"😢 No pudimos encontrar este restaurante en Google Maps.", googleReviewNone:"Aún no hay reseñas.",
   googleReviewLink:"Ver todas las reseñas en Google Maps →", googleReviewAnon:"Anónimo",
   liveSearchLoading:"Buscando...", liveSearchEmpty:"No se encontraron resultados.", liveSearchError:"La búsqueda falló. Inténtalo de nuevo en un momento.",
@@ -1291,6 +1296,7 @@ const i18n = { en: {
   authErrGeneric:"Algo salió mal. Por favor inténtalo de nuevo en un momento.",
   authErrWrongPw:"Contraseña incorrecta.",
   authWelcomeTitle:"¡Bienvenido, {name}!", authWelcomeBody:"Registro completo. Te avisaremos antes que a nadie cuando lancemos oficialmente.",
+  authWelcomeBodyLogin:"¡Bienvenido de nuevo! Qué bueno verte otra vez.",
   authWelcomeMypageBtn:"Ir a Mi Página",
   headerAuthSavedLabel:"Mis lugares guardados", headerAuthMypageTitle:"Mi Página de {name}",
   logoutTitle:"¿Cerrar sesión?", logoutBody:"Después de cerrar sesión, necesitarás iniciar sesión de nuevo para usar las listas guardadas, escribir reseñas y más.",
@@ -2834,7 +2840,9 @@ function directionsUrl(r, origin){
   return url;
 }
 function renderDirectionsLink(r){
-  if(!(r.lat && r.lng)) return '';
+  if(!(r.lat && r.lng)){
+    return `<p class="detail-example-note">${t('detailNoLocationNote') || '🧭 예시로 채워둔 데이터라 아직 위치 정보가 없어서 길찾기를 열 수 없어요.'}</p>`;
+  }
   return `<a class="detail-directions" href="${directionsUrl(r)}" target="_blank" rel="noopener" onclick="return openDirections(event, '${r.id}')">`
     + `${t('detailDirections') || '🧭 길찾기 (구글 지도)'}</a>`;
 }
@@ -3036,6 +3044,13 @@ async function initMap(){
     mapTypeControl: false,
     streetViewControl: false,
     scaleControl: true,
+    // 45도 이미지가 있는 위치에서 자동으로 뜨는 회전(방향) 컨트롤이 확대·축소 버튼과
+    // 겹쳐 보여서 껐다 — 이 지도는 회전 기능 자체가 필요 없다.
+    rotateControl: false,
+    // 기본값(협조 모드)은 두 손가락으로만 지도를 움직일 수 있어 작은 화면·비전체화면
+    // 임베드에서는 전체화면으로 키워야만 확대·축소가 편했다. greedy로 한 손가락 드래그·
+    // 핀치 줌을 바로 받는다(대신 지도 위에서는 페이지 스크롤이 지도 팬으로 먹힌다 — 의도한 트레이드오프).
+    gestureHandling: 'greedy',
     styles: isDarkTheme() ? MAP_DARK_STYLES : [],
     // 타일이 도착하기 전 바닥색. styles와 달리 생성 시점에만 먹는다.
     backgroundColor: isDarkTheme() ? '#212a35' : '#e5e3df',
@@ -3079,6 +3094,21 @@ function passesMapFilter(r){
   return true;
 }
 
+// 이모지를 SVG 아이콘 안에 미리 구워 넣는다 — 예전에는 벡터 심볼 + 별도 DOM 라벨(이모지
+// 텍스트)을 합쳐서 optimized:false로만 안 깨졌는데, 마커가 34개로 늘면서 팬/줌마다 DOM을
+// 전부 재배치해야 해서 버벅였다. 이모지까지 통째로 이미지 하나(data URI)로 만들면
+// optimized:true(캔버스 렌더링)로도 깨지지 않는다.
+function markerIcon(emoji, fill, line, r){
+  const d = r * 2;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${d}" height="${d}">`
+    + `<circle cx="${r}" cy="${r}" r="${r - 2}" fill="${fill}" stroke="${line}" stroke-width="2"/>`
+    + `<text x="${r}" y="${r + 5}" font-size="${r}" text-anchor="middle">${emoji}</text></svg>`;
+  return {
+    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+    scaledSize: new google.maps.Size(d, d),
+    anchor: new google.maps.Point(r, r),
+  };
+}
 function renderMarkers(){
   if(!gmap) return;
 
@@ -3096,26 +3126,13 @@ function renderMarkers(){
       map: gmap,
       position: { lat: r.lat, lng: r.lng },
       title: rName(r),
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 15,
-        fillColor: fill, fillOpacity: 1,
-        strokeColor: line, strokeWeight: 2,
-      },
-      label: { text: r.emoji, fontSize: '15px' },
-      optimized: false,   // 이모지 라벨이 캔버스 합성에서 깨지지 않게 마커마다 개별 DOM으로 그린다
+      icon: markerIcon(r.emoji, fill, line, 15),
+      optimized: true,
     });
     marker.addListener('click', () => openDetail(idx));
     // 핀이 34개까지 늘면서 어느 걸 가리키는지 알기 어려워졌다 — hover에 크기로 반응시킨다.
-    // 아이콘 객체를 통째로 다시 넘겨야 반영된다(setIcon은 부분 갱신을 안 한다).
-    const icon = size => ({
-      path: google.maps.SymbolPath.CIRCLE,
-      scale: size,
-      fillColor: fill, fillOpacity: 1,
-      strokeColor: line, strokeWeight: 2,
-    });
-    marker.addListener('mouseover', () => { marker.setIcon(icon(19)); marker.setZIndex(999); });
-    marker.addListener('mouseout',  () => { marker.setIcon(icon(15)); marker.setZIndex(null); });
+    marker.addListener('mouseover', () => { marker.setIcon(markerIcon(r.emoji, fill, line, 19)); marker.setZIndex(999); });
+    marker.addListener('mouseout',  () => { marker.setIcon(markerIcon(r.emoji, fill, line, 15)); marker.setZIndex(null); });
     gMarkers.push(marker);
   });
 }
@@ -3615,7 +3632,9 @@ function renderAuthWelcome(name){
     <div class="auth-welcome">
       <div class="emoji">🌾</div>
       <h3>${(t('authWelcomeTitle') || '환영해요, {name}!').replace('{name}', label)}</h3>
-      <p>${t('authWelcomeBody') || '손주 등록이 완료됐어요. 정식 오픈하면 가장 먼저 알려드릴게요.'}</p>
+      <p>${authMode === 'signup'
+        ? (t('authWelcomeBody') || '손주 등록이 완료됐어요. 정식 오픈하면 가장 먼저 알려드릴게요.')
+        : (t('authWelcomeBodyLogin') || '다시 오신 걸 환영해요!')}</p>
       <div class="game-action-row">
         <button type="button" class="btn-ghost" style="flex:1;" onclick="closeAuth()">${t('closeBtn') || '닫기'}</button>
         <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeAuth(); openMypage('saved');">${t('authWelcomeMypageBtn') || '마이페이지 보러가기'}</button>
