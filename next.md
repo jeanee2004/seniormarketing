@@ -817,4 +817,50 @@ C7. **구글 검색에 사이트 등록하기 (Search Console)** — `site:senio
 - `d7efecd` 복사 토스트가 모달 뒤로 깔리던 z-index 문제 (1000 → 1200)
 - `8aae116` robots.txt · sitemap.xml · canonical · og 절대경로
 - `7d150cc` next.md에 Search Console 등록(C7) 정리
+
+## 2026-08-28 세션 (이어서) — 사장님 페이지(owner.html) 신설, 커밋 `9e46100`
+
+사용자가 Stitch로 그려온 사장님용 목업 6개(사장님 시작하기 / 매장 등록·브랜딩 / 방문자 분석 /
+SNS·식권 관리 / 매장 정보 관리 / SNS 프로모션)를 받아서 진행했다.
+
+- **`design-owner.md` 신설** — 목업 6개 원본 HTML을 참고용으로 보존. 실제 구현에서 색상/폰트만
+  사이트 토큰(Gaegu/Gowun Dodum, `--slate`/`--red`/`--base-bg`)으로 치환했다.
+- **`owner.html` 신설** — 6개 화면 전부(축소 없이)를 한 정적 페이지에 구현. 각 화면은
+  `.owner-screen`(사이드바+탑바+본문 카드) 공유 컴포넌트로 재사용해서 코드 중복 없이 만들었다.
+  실제 매장 데이터/계정 기능이 없으므로 각 화면에 "🚧 예시 화면 · 목업 데이터" 배지를 달고, 화면 내
+  버튼은 전부 `is-soon`으로 비활성화했다 — **의도적으로 잠금(로그인/접근 제어) 없이 공개 페이지로
+  둔 상태**다. 사용자가 완성도를 먼저 확인한 뒤 다음 단계로 잠그기로 했다(아래 할 일 참고).
+- **진입점 통합** — `index.html`의 "함께 만들어요" join-grid에 있던 "사장님이신가요?" 카드
+  (`openToast('vendor')`)를 삭제하고, 푸터 "관리자" 블록의 "사장님 페이지" 링크 하나로 합쳤다.
+  이제 `<a href="owner.html">` 정적 링크 — `is-soon`/토스트 제거. `script.js`의 이제 안 쓰는
+  `vendor` 토스트 항목도 같이 지웠다.
+- **CTA 연결 방식**: `owner.html`의 "사장님 제휴·입점 문의하기" 버튼은 `script.js`를 직접 로드하지
+  않는다(script.js는 index.html 전용 DOM에 강하게 결합돼 있어서 그대로 붙이면 깨진다 —
+  privacy.html/terms.html과 같은 이유). 대신 `index.html?apply=owner#join`으로 이동시키고,
+  `script.js` 맨 끝(ESC_CLOSERS 등록 다음)에서 `?apply=owner`를 감지해 기존
+  `openContact('partnerStore')`를 자동으로 연다. **주의**: 이 자동 오픈 코드는 반드시 파일 맨
+  끝 근처에 둬야 한다 — `renderCards()` 직후처럼 이른 위치에 두면 `contactTypes`가 아직
+  선언되지 않아 `ReferenceError: Cannot access 'contactTypes' before initialization`가 난다
+  (한 번 이 실수로 걸렸다, 헤드리스 브라우저로 잡음).
+- 헤드리스 크롬으로 검증 완료: `owner.html` 콘솔 에러 0, 6개 화면 전부 렌더, 푸터 링크 →
+  `owner.html` 이동, CTA → `index.html`로 이동 후 문의 모달 자동 오픈, join-grid 카드 3개로
+  레이아웃 정상.
+
+### 다음에 할 일 — owner.html 잠그기 (이번 세션 범위 아님, 사용자가 완성도 확인 후 요청 예정)
+
+지금 `owner.html`은 URL만 알면 누구나 열리는 공개 페이지다. 사용자가 화면 완성도를 확인한 뒤
+접근 제어를 씌워달라고 할 것. 참고할 기존 패턴:
+
+- `script.js:2450` 근처 `openAdminGate()` — "이용 분석"(`index.html`의 관리자 링크)에 이미 쓰이는
+  비밀번호 게이트 패턴. 가장 간단하게는 이 방식을 owner.html에도 씌우는 것.
+- 다만 `next.md` C5 항목(진짜 사장님 로그인/역할 구분, `store_owners(user_id, restaurant_id)`
+  테이블 + RLS)이 정석 해법이다 — 지금 인증에는 역할(role) 구분이 없어서 아무 이메일로 가입해도
+  손주 계정이 된다. 비밀번호 게이트는 임시방편이고, 제대로 하려면 C5부터 설계해야 한다.
+- 다음 세션에서 정할 것: 임시로 `openAdminGate()`류 비밀번호 게이트만 씌울지, 아니면 이 김에
+  C5(진짜 사장님 계정)까지 착수할지 — 사용자에게 먼저 물어볼 것.
+
+### 별도 보류 — D1(프랑스어)·D2(히어로 영상)는 그대로 남아있음
+
+이번 사장님 페이지 작업과 무관하게, 위 D1/D2는 아직 처리 전이다. 사용자가 "사장님 페이지부터"
+순서를 정했을 뿐 취소된 게 아니니, D1/D2 섹션 내용 그대로 다음 세션에서 이어서 진행할 것.
 - `3c0e57f` 검색 오타 보정 — "이런 걸 찾으셨나요?" 제안
