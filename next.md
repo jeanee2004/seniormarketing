@@ -752,38 +752,29 @@ C7. **구글 검색에 사이트 등록하기 (Search Console)** — `site:senio
 아래 두 가지는 서브에이전트가 작업하던 중 세션이 끝났다. **결과물이 남아 있는지 먼저 확인하고**,
 없으면 처음부터 다시 하면 된다. 둘 다 요구사항은 여기 적힌 것으로 충분하다.
 
-### D1. 프랑스어(fr) 추가 — 별도 워크트리에서 진행 중이었다
+### D1. 프랑스어(fr) 추가 — ✅ 완료 (2026-08-29, 커밋 `9e46100`~`700c413` 중 병합+마무리 커밋)
 
-- 위치: `.claude/worktrees/agent-a83eabcf5668e49d2` / 브랜치 `worktree-agent-a83eabcf5668e49d2`
-- **이 브랜치는 `7d150cc`에서 갈라져 나갔다** — 즉 그 뒤에 main에 들어간 `3c0e57f`
-  (검색 오타 보정)의 변경이 **없다**. 병합하면 그 커밋이 추가한 i18n 키 4개
-  (`searchNoResultsFor` / `searchDidYouMean` / `searchCheckSpelling` / `searchMaybeThisShop`)의
-  **프랑스어 번역이 비어 있을 것이다.** 병합 후 반드시 채우고 키 일치를 다시 검증할 것.
-- 워크트리를 정리하려면: `git worktree remove .claude/worktrees/agent-a83eabcf5668e49d2 --force`
-  (locked 상태면 `git worktree unlock` 먼저). 브랜치도 필요 없으면 `git branch -D`.
-- **`.claude/worktrees/`는 절대 커밋하지 말 것** — 레포 전체 복사본이라 저장소 안에 저장소가
-  통째로 들어간다. `git add -A` 대신 파일을 명시해서 add 할 것.
+`origin/worktree-agent-a83eabcf5668e49d2`(WIP `c79828d`)를 main에 병합했다. 확인해보니 그
+브랜치에 아래 체크리스트가 **이미 전부 반영돼 있었다** — 중국어·스페인어 때와 동일한 패턴으로:
+`i18n.fr` 사전(당시 507키, en/zh/es와 완전 일치), `descVar*` 키, `surveyQuestions`의
+`titleFr`/`subFr`/`optionsFr`, 가게 37곳 `nameFr`(10곳은 `descFr`도 — es와 동일한 커버리지),
+식권 3곳 `benefitFr`, `rName()`/`rDesc()`/`passBenefit()`/`wonSuffix()`/`passUnit()`의 fr 분기,
+`mapsLanguage()`의 `fr:'fr'`, `SUPPORTED_LANGS`에 `fr` 포함, `privacy.html`/`terms.html` 5단
+순환(ko→en→zh→es→fr), `api/walk-route.js`·`api/review-analysis.js`·`api/visit-verify.js`
+화이트리스트에 `fr` 포함.
 
-언어 추가 시 손봐야 하는 지점(중국어·스페인어 때와 동일):
+병합 후 실제로 남아있던 유일한 격차는 예상대로 **`3c0e57f`(검색 오타 보정)가 추가한 키 4개
+(`searchNoResultsFor`/`searchDidYouMean`/`searchCheckSpelling`/`searchMaybeThisShop`)의 fr
+번역 공백**이었다 — 이 브랜치가 `7d150cc`에서 갈라져 나가 그 커밋을 못 받았기 때문. en/zh/es와
+같은 위치에 채워 넣고 스크립트로 4개 언어 키 집합을 재검증(전부 511키, 완전 일치).
 
-- `script.js`의 `i18n`에 `fr` 사전 신설. **한국어는 사전에 없다** — `t(key) || '한국어'` 인라인
-  폴백 구조라, en/zh/es에 있는 키를 하나도 빠짐없이 옮겨야 한다. 현재 세 사전 모두 **511개**이고
-  집합이 완전히 일치한다(검증 완료). 스크립트로 키 집합 일치를 반드시 확인할 것.
-- 카드 문구 변형 키 `descVar<카테고리><번호>` — 데이터가 아니라 사전에 있다.
-- `surveyQuestions`의 `titleZh`/`subZh`/`optionsZh` 계열 → `Fr` 추가.
-- 가게 37곳의 `nameFr`/`descFr`, 식권 보유 가게의 `benefitFr`.
-  이름은 기존 패턴대로 "번역 (한글 원문)" 형태.
-- `rName()`/`rDesc()`/`passBenefit()`의 `currentLang === 'es'` 분기 옆에 `fr` 추가.
-- `wonSuffix()`/`passUnit()` — 통화·수량 단위의 언어별 어순.
-- `mapsLanguage()` — `{ko,en,zh,es}`에 `fr:'fr'` 추가.
-- **`SUPPORTED_LANGS`에 `fr`을 넣지 않으면 모달 버튼이 "준비중"으로만 뜬다.** 중국어 때 실제로
-  났던 버그다(위 13줄 참고). 반드시 넣고 실제 전환까지 확인할 것.
-- `privacy.html` / `terms.html` — `script.js`를 안 쓰고 각자 인라인 토글을 갖고 있다.
-  지금 한국어→English→中文→Español 순환이니 Français를 추가한다. `(기재 예정)` 자리표시자는
-  다른 언어에서 하던 대로 유지 — 실제 값을 지어내지 말 것.
-- `api/walk-route.js`의 언어 화이트리스트 `['ko','en','zh-CN','es']`에 `'fr'` 추가.
-- `api/review-analysis.js` / `api/visit-verify.js` — 스페인어 커밋 `335b0c2`가 이 둘도 건드렸다.
-  `git show 335b0c2 -- api/` 로 확인하고 같은 처리를 할 것.
+헤드리스 브라우저로 실제 전환까지 확인 완료: 헤더 검색 오타보정 문구("Aucun résultat pour
+« … »." / "Vérifiez l'orthographe de votre recherche.") 정상 출력, `privacy.html`/`terms.html`
+5단 순환 각각 h1·본문·버튼 라벨까지 프랑스어로 정상 전환, `localStorage` 공유로 페이지 간 언어
+유지 확인, 콘솔 에러 0.
+
+원격 브랜치 `origin/worktree-agent-a83eabcf5668e49d2`는 병합 완료됐으니 필요 없으면 삭제해도 된다
+(`git push origin --delete worktree-agent-a83eabcf5668e49d2`) — 아직 안 지웠다.
 
 ### D2. 히어로 배경 영상이 더 잘 보이게 오버레이 조절 (B3의 구체화)
 
