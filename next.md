@@ -645,6 +645,15 @@ C1. **Vercel 환경변수** — 배포본에서 아직 안 되는 것들의 원�
      여기서 막는 건 "저장소에 키가 남는 것"이고, 노출의 방어선은 Cloud Console의 리퍼러 제한이다.
    - `GEMINI_API_KEY` (대문자) — AI 요약·방문 인증
    - `SUPABASE_SECRET_KEY` + `SUPABASE_URL` — 요약 공용 캐시(없으면 캐시만 꺼짐)
+C1-1. **Routes API 활성화 — "여기서 가는 길" 텍스트 경로가 지금 안 뜨는 원인.**
+   `/api/walk-route`가 부르는 `routes.googleapis.com`이 키에서 막혀 있다. 서버에서 직접 확인한
+   실제 응답: `403 PERMISSION_DENIED / API_KEY_SERVICE_BLOCKED` (project 730047037395).
+   화면에는 "지금은 경로 안내를 불러올 수 없어요"만 뜨므로 코드를 아무리 봐도 원인이 안 보인다.
+   → Google Cloud Console에서 **Routes API를 사용 설정**하고, `GOOGLE_PLACES_API_KEY`에
+   API 제한이 걸려 있으면 허용 목록에 Routes API를 추가한다. **코드 수정은 필요 없다.**
+   (이번에 `api/walk-route.js`가 구글의 응답 본문을 서버 로그에 남기도록 바꿔서,
+   다음엔 같은 문제를 로그만 보고 바로 알 수 있다.)
+
 C2. **지도 고도화** — 건물별 위경도 수집(답사) 후 building-level 길찾기로 전환.
    길찾기 자체는 구글 지도로 넘기는 방식으로 이미 붙어 있다.
 
@@ -660,3 +669,33 @@ C5. **사장님 페이지 신설 + 접근 제어** — 가게 운영자용 별�
 
 C6. **운영 전환 시** — 커스텀 SMTP(Resend/SendGrid) 붙이고 이메일 인증 되살리기,
    법적 고지의 `(기재 예정)` 채우기, Supabase의 Leaked Password Protection 켜기.
+
+## 2026-08-28 세션에서 한 것
+
+- **Supabase 일시정지 방지 GitHub Action** (`.github/workflows/keep-alive.yml`) — 3일마다
+  `public.reviews`에서 1행을 읽는다. 이 표를 고른 건 `select using (true)` 정책이라 anon 키로
+  확실히 200이 떨어지기 때문이다(`saved_restaurants`는 RLS 때문에 anon에게 늘 빈 응답이라
+  "살아있음"의 신호가 약하다). 주소·키는 저장소 Secrets(`SUPABASE_URL` /
+  `SUPABASE_PUBLISHABLE_KEY`)에서만 읽고 워크플로 파일에는 문자열로 넣지 않았다.
+  수동 실행으로 HTTP 200 확인 완료. **참고: GitHub은 60일간 커밋이 없으면 schedule을 자동으로 끈다.**
+- **길찾기가 먹통이 되는 두 경로를 막았다** (`script.js`의 `openDirections` / `loadRouteText`).
+  `getCurrentPosition`의 `timeout`은 **권한이 허용된 뒤부터** 재는 시계라, 사용자가 권한 팝업을
+  그냥 두면 success/error 콜백이 영영 오지 않는다 → 새 탭이 `about:blank`로 멈추고, 텍스트 경로는
+  "불러오는 중…"에서 안 넘어간다. 게다가 새 탭이 포커스를 가져가서 권한 팝업은 뒤로 가려진
+  원래 탭에 뜨기 때문에, 사용자는 물어본 적도 없는데 빈 탭만 보게 된다. 권한 대기까지 포함하는
+  watchdog(6초)을 따로 걸어 해결했다.
+  팝업 차단으로 `window.open`이 `null`을 주는 경우도, 앵커를 `preventDefault`로 이미 죽여둔
+  탓에 클릭이 완전히 무반응이었다 → 현재 탭 이동으로 폴백하게 했다.
+  헤드리스 크롬 CDP로 네 경우(권한 허용 / 권한 무응답 / 팝업 차단 / 텍스트 경로) 모두 검증.
+- 텍스트 경로 버튼 문구: "여기서 오는 길" → **"여기서 가는 길"**.
+  한국어는 사전이 아니라 인라인 폴백 문자열이라 거기를 고쳤고, en/zh/es는 원래 방향이
+  드러나지 않는 표현이라 그대로 뒀다.
+
+### 이번에 못 고친 것 (코드 문제가 아님)
+
+- **텍스트 경로는 여전히 안 뜬다.** Routes API 미활성화 문제 — 위 C1-1 참고.
+- **예시 가게 3곳(조치원 할매국밥 · 역전 왕돈까스 · 할머니 떡볶이)은 길찾기 버튼 자체가 없다.**
+  `lat`/`lng`가 없어서 `renderDirectionsLink`가 안내문으로 대체하고 `renderRouteTextBlock`은
+  빈 문자열을 돌려준다. 주소도 "(임의 주소 · 실제 주소 아님)"이라 지오코딩으로 좌표를 만들어
+  넣으면 엉뚱한 곳을 가리키게 된다. **C3 현장 조사에서 실제 좌표를 받아 채우는 게 맞다.**
+  하필 상세 정보가 가장 잘 채워진 3곳이라, 이 카드만 열어보면 길찾기 기능이 아예 없는 것처럼 보인다.

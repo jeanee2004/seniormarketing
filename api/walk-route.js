@@ -38,6 +38,11 @@ module.exports = async function handler(req, res) {
     });
 
     if (!routeRes.ok) {
+      // 구글이 왜 거절했는지 삼키지 않는다 — 키 제한이나 API 미활성화
+      // (403 API_KEY_SERVICE_BLOCKED)처럼 콘솔 설정 문제일 때, 이 로그가 없으면
+      // 화면에는 '지금은 경로 안내를 불러올 수 없어요'만 뜨고 원인을 알 길이 없다.
+      const detail = await routeRes.text().catch(() => '');
+      console.error('[walk-route] Routes API', routeRes.status, detail.slice(0, 500));
       res.status(502).json({ error: 'upstream_error' });
       return;
     }
@@ -62,6 +67,7 @@ module.exports = async function handler(req, res) {
       steps,
     });
   } catch (e) {
+    console.error('[walk-route]', e && e.message);
     res.status(502).json({ error: 'upstream_error' });
   }
 };

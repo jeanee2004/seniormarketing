@@ -2867,7 +2867,7 @@ function renderRouteTextBlock(r){
   if(!(r.lat && r.lng)) return '';
   return `
     <div class="detail-route">
-      <button type="button" class="btn-ghost detail-route-btn" onclick="loadRouteText('${r.id}')">${t('detailRouteBtn') || '📍 여기서 오는 길 텍스트로 보기'}</button>
+      <button type="button" class="btn-ghost detail-route-btn" onclick="loadRouteText('${r.id}')">${t('detailRouteBtn') || '📍 여기서 가는 길 텍스트로 보기'}</button>
       <div id="routeTextBody" class="route-text-body"></div>
     </div>
   `;
@@ -2885,11 +2885,16 @@ async function loadRouteText(id){
       body.innerHTML = `<p class="route-text-error">${t('detailRouteNoGeo') || '이 브라우저는 위치 정보를 지원하지 않아요.'}</p>`;
       return;
     }
+    // openDirections와 같은 이유 — 권한 팝업을 그냥 두면 콜백이 오지 않아
+    // "경로를 불러오는 중…"이 영원히 남는다. 권한 대기까지 재는 시계를 따로 건다.
     userLocation = await new Promise(resolve => {
+      let settled = false;
+      const finish = v => { if(settled) return; settled = true; resolve(v); };
+      const watchdog = setTimeout(() => finish(null), 6000);
       navigator.geolocation.getCurrentPosition(
-        pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => resolve(null),
-        { timeout: 8000 }
+        pos => { clearTimeout(watchdog); finish({ lat: pos.coords.latitude, lng: pos.coords.longitude }); },
+        () => { clearTimeout(watchdog); finish(null); },
+        { timeout: 5000 }
       );
     });
   }
@@ -2934,17 +2939,32 @@ function openDirections(e, id){
     return false;
   }
   const win = window.open('about:blank', '_blank');
+  // 팝업이 차단되면 새 탭 자체가 없다 — 위에서 preventDefault로 앵커의 기본 이동까지 막아둔
+  // 상태라, 여기서 폴백하지 않으면 눌러도 아무 일도 일어나지 않는 버튼이 된다.
+  if(!win){ location.href = directionsUrl(r); return false; }
   if(!('geolocation' in navigator)){
-    if(win) win.location.href = directionsUrl(r);
+    win.location.href = directionsUrl(r);
     return false;
   }
+  // getCurrentPosition의 timeout 시계는 "권한이 허용된 뒤"부터 돈다. 사용자가 권한 팝업을
+  // 그냥 두면 success/error 둘 다 영영 오지 않아 새 탭이 about:blank로 멈춘다 — 게다가 새 탭이
+  // 포커스를 가져가서 권한 팝업은 뒤로 가려진 원래 탭에 뜬다(사용자는 빈 탭만 보게 된다).
+  // 그래서 권한 대기 시간까지 포함하는 시계를 따로 걸고, 늦으면 목적지만 넘겨서라도 연다.
+  let done = false;
+  const go = origin => {
+    if(done) return;
+    done = true;
+    win.location.href = directionsUrl(r, origin);
+  };
+  const watchdog = setTimeout(() => go(null), 6000);
   navigator.geolocation.getCurrentPosition(
     pos => {
+      clearTimeout(watchdog);
       userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-      if(win) win.location.href = directionsUrl(r, userLocation);
+      go(userLocation);
     },
-    () => { if(win) win.location.href = directionsUrl(r); },
-    { timeout: 8000 }
+    () => { clearTimeout(watchdog); go(null); },
+    { timeout: 5000 }
   );
   return false;
 }
