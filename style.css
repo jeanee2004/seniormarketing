@@ -603,8 +603,10 @@ html.dark .theme-dial{ transform:rotate(180deg); }
 .live-search-item{
   background:var(--paper);border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;
 }
+/* 복사 버튼은 펼치기 버튼 안이 아니라 옆에 둔다 — button 안의 button은 유효하지 않다 */
+.live-search-item-row{display:flex;align-items:center;gap:8px;padding-right:16px;}
 .live-search-item-head{
-  width:100%;display:flex;flex-direction:column;gap:4px;text-align:left;
+  flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;text-align:left;
   padding:16px 20px;background:none;border:none;cursor:pointer;
 }
 .live-search-item-name{font-family:'Gaegu',cursive;font-size:1.1rem;color:var(--slate-dark);}
@@ -782,6 +784,22 @@ footer ul a:hover{color:#fff;}
 .detail-info-row:last-child{border-bottom:none;}
 .detail-info-label{flex:0 0 108px;color:var(--slate-dark);font-weight:700;}
 .detail-info-val{flex:1;color:var(--ink-soft);}
+
+/* 주소·전화 원터치 복사 버튼.
+   보조 액션이라 빨강(--red 계열, CTA 전용)을 쓰지 않고 슬레이트 톤만 쓴다. */
+.copy-btn{
+  flex:0 0 auto;
+  width:28px;height:28px;padding:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--slate-tint);color:var(--slate-dark);
+  border:1px solid var(--line);border-radius:9px;
+  font-size:0.8rem;line-height:1;cursor:pointer;
+  transition:background 0.15s ease, transform 0.15s ease;
+}
+.copy-btn:hover{background:var(--hover-tint);}
+.copy-btn:active{transform:scale(0.92);}
+/* 상세 정보 줄은 값이 여러 줄로 접힐 수 있어서 버튼을 첫 줄에 맞춘다 */
+.detail-info-row .copy-btn{align-self:flex-start;}
 
 .detail-menu-title{color:var(--slate-dark);font-size:1.1rem;margin-bottom:12px;}
 .detail-menu-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}

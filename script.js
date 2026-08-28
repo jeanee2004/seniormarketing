@@ -627,6 +627,9 @@ const i18n = { en: {
   cardVisitedLabel:"✔ Visit recorded", cardMarkVisited:"Mark as visited", cardWantToVisit:"Add to want-to-visit",
   filterCountTemplate:"{n} restaurants",
   detailAddress:"📍 Address", detailHours:"🕐 Hours", detailClosed:"🚫 Closed", detailPhone:"☎️ Phone", detailReservation:"📅 Reservations",
+  copyAddressBtn:"Copy address", copyPhoneBtn:"Copy phone number",
+  copyOkTitle:"Copied", copyOkBody:"It's on your clipboard — paste it wherever you need.",
+  copyFailTitle:"Couldn't copy", copyFailBody:"Your browser blocked the copy. Please select the text and copy it by hand.",
   detailCapacity:"🪑 Capacity", detailParking:"🚗 Parking", detailMobilePay:"📱 Mobile pay", detailVouchers:"🎟️ Vouchers/passes",
   detailMenuTitle:"Menu", detailOrigin:"Origin: ", detailExampleNote:"* This is example info — real details will be added after the field survey.",
   detailStubTitle:"Details coming soon", detailStubBody:" will be added after the September field survey. See the Jochiwon Grandma's Gukbap card for a preview of what will be included.",
@@ -904,6 +907,9 @@ const i18n = { en: {
   cardVisitedLabel:"✔ 已记录到访", cardMarkVisited:"标记为已到访", cardWantToVisit:"添加到想去的地方",
   filterCountTemplate:"{n}家餐厅",
   detailAddress:"📍 地址", detailHours:"🕐 营业时间", detailClosed:"🚫 休息日", detailPhone:"☎️ 电话", detailReservation:"📅 预约",
+  copyAddressBtn:"复制地址", copyPhoneBtn:"复制电话号码",
+  copyOkTitle:"已复制", copyOkBody:"已存入剪贴板，可以直接粘贴使用。",
+  copyFailTitle:"复制失败", copyFailBody:"浏览器阻止了复制，请手动选中文字复制。",
   detailCapacity:"🪑 可容纳人数", detailParking:"🚗 停车", detailMobilePay:"📱 移动支付", detailVouchers:"🎟️ 代金券/餐券",
   detailMenuTitle:"菜单", detailOrigin:"产地：", detailExampleNote:"* 这是示例信息，实地调查后将更新为真实数据。",
   detailStubTitle:"详细信息准备中", detailStubBody:"，将在9月实地调查后补充完整。可先在调治院奶奶汤饭卡片中预览会包含哪些信息。",
@@ -1243,6 +1249,9 @@ const i18n = { en: {
   cardVisitedLabel:"✔ Visita registrada", cardMarkVisited:"Marcar como visitado", cardWantToVisit:"Añadir a quiero ir",
   filterCountTemplate:"{n} restaurantes",
   detailAddress:"📍 Dirección", detailHours:"🕐 Horario", detailClosed:"🚫 Cerrado", detailPhone:"☎️ Teléfono", detailReservation:"📅 Reservas",
+  copyAddressBtn:"Copiar dirección", copyPhoneBtn:"Copiar teléfono",
+  copyOkTitle:"Copiado", copyOkBody:"Ya está en tu portapapeles: pégalo donde lo necesites.",
+  copyFailTitle:"No se pudo copiar", copyFailBody:"El navegador bloqueó la copia. Selecciona el texto y cópialo a mano.",
   detailCapacity:"🪑 Capacidad", detailParking:"🚗 Estacionamiento", detailMobilePay:"📱 Pago móvil", detailVouchers:"🎟️ Bonos/vales",
   detailMenuTitle:"Menú", detailOrigin:"Origen: ", detailExampleNote:"* Esta es información de ejemplo — los detalles reales se añadirán tras el reconocimiento de campo.",
   detailStubTitle:"Detalles próximamente", detailStubBody:" se añadirá tras el reconocimiento de campo de septiembre. Consulta la ficha de Gukbap de la Abuela de Jochiwon para ver un adelanto de lo que incluirá.",
@@ -2133,6 +2142,67 @@ function copyLink(){
   }).catch(()=> openToast('share'));
 }
 
+// ---- 주소·전화 원터치 복사 ----
+// 주소/전화가 나오는 자리가 상세(예시 가게·실제 가게)와 실시간 검색 결과로 흩어져 있어서,
+// 버튼 마크업(copyBtnHtml)과 복사 로직(copyText)을 각각 한 곳에만 둔다.
+// 클릭은 document 위임 하나로 받는다 — 이 자리들은 전부 innerHTML로 매번 새로 그려져서,
+// 렌더 함수마다 리스너를 다시 매다는 코드가 늘어나는 걸 막으려는 것.
+// 복사할 원문은 data-copy 속성에 escapeHtml을 통과시켜 넣는다(따옴표까지 이스케이프된다).
+function copyBtnHtml(value, key, ko){
+  if(!value) return '';
+  const label = t(key) || ko;
+  return `<button type="button" class="copy-btn" data-copy="${escapeHtml(String(value))}" title="${escapeHtml(label)}" aria-label="${escapeHtml(label)}">📋</button>`;
+}
+
+// 새 알림 UI를 만들지 않고 기존 토스트를 그대로 쓴다(copyLink()와 같은 방식).
+function copyToast(ok){
+  openToast('info');
+  document.getElementById('toastEmoji').textContent = ok ? '📋' : '⚠️';
+  document.getElementById('toastTitle').textContent = ok
+    ? (t('copyOkTitle') || '복사했어요')
+    : (t('copyFailTitle') || '복사하지 못했어요');
+  document.getElementById('toastText').textContent = ok
+    ? (t('copyOkBody') || '클립보드에 담았어요. 원하는 곳에 붙여넣어 보세요.')
+    : (t('copyFailBody') || '브라우저가 복사를 막았어요. 글자를 직접 선택해서 복사해주세요.');
+}
+
+// navigator.clipboard는 보안 컨텍스트(https·localhost)에서만 동작한다.
+// 사내망 IP나 file://로 열어보는 경우가 있어 execCommand 폴백을 하나만 남긴다.
+function legacyCopy(text){
+  try{
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:-1000px;opacity:0;';
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand('copy');
+    ta.remove();
+    return ok;
+  }catch(e){ return false; }
+}
+
+function copyText(text){
+  if(!text) return;
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(
+      () => copyToast(true),
+      () => copyToast(legacyCopy(text))   // 조용히 죽지 않게 실패도 반드시 알린다
+    );
+  } else {
+    copyToast(legacyCopy(text));
+  }
+}
+
+// 캡처 단계에 다는 게 핵심이다 — 모달 안쪽 .survey-box가 onclick="event.stopPropagation()"으로
+// 버블링을 끊기 때문에, 버블 단계 위임으로는 상세 모달 안의 복사 버튼 클릭이 여기까지 오지 못한다.
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest && e.target.closest('.copy-btn');
+  if(!btn) return;
+  e.preventDefault();
+  copyText(btn.dataset.copy || '');
+}, true);
+
 // ---- Email signup ----
 const signupEmailInput = document.getElementById('signupEmail');
 const signupErrorEl = document.getElementById('signupError');
@@ -2771,6 +2841,7 @@ function renderStubDetail(r){
       <div class="detail-info-row">
         <span class="detail-info-label">${t('detailAddress') || '📍 주소'}</span>
         <span class="detail-info-val">${escapeHtml(r.realAddress)}</span>
+        ${copyBtnHtml(r.realAddress, 'copyAddressBtn', '주소 복사')}
       </div>
     </div>
     ${renderDirectionsLink(r)}
@@ -2787,11 +2858,12 @@ function renderStubDetail(r){
 
 function renderFullDetail(r){
   const d = r.detail;
+  // 세 번째 칸은 복사 버튼용 [i18n 키, 한국어 폴백] — 주소·전화 줄에만 붙는다
   const infoRows = [
-    [t('detailAddress') || '📍 주소', d.address],
+    [t('detailAddress') || '📍 주소', d.address, ['copyAddressBtn', '주소 복사']],
     [t('detailHours') || '🕐 영업시간', d.hours],
     [t('detailClosed') || '🚫 휴무일', d.closed],
-    [t('detailPhone') || '☎️ 전화', d.phone],
+    [t('detailPhone') || '☎️ 전화', d.phone, ['copyPhoneBtn', '전화번호 복사']],
     [t('detailReservation') || '📅 예약', d.reservation],
     [t('detailCapacity') || '🪑 수용 인원', d.capacity],
     [t('detailParking') || '🚗 주차', d.parking],
@@ -2811,10 +2883,11 @@ function renderFullDetail(r){
     <div id="aiSummaryBody" class="ai-summary-body"></div>
 
     <div class="detail-info-grid">
-      ${infoRows.map(([label,val]) => `
+      ${infoRows.map(([label,val,copy]) => `
         <div class="detail-info-row">
           <span class="detail-info-label">${label}</span>
           <span class="detail-info-val">${val}</span>
+          ${copy ? copyBtnHtml(val, copy[0], copy[1]) : ''}
         </div>
       `).join('')}
     </div>
@@ -3246,7 +3319,7 @@ async function runLiveSearch(){
     const res = await fetch(`/api/kakao-search?query=${encodeURIComponent(q)}`);
     const data = await res.json();
     liveSearchList = (data && data.results) || [];
-    renderLiveSearchResults();
+    renderLiveSearchResults(q);
   }catch(e){
     liveSearchResults.innerHTML = `<div class="google-review-error">${t('liveSearchError') || '검색에 실패했습니다. 잠시 후 다시 시도해주세요.'}</div>`;
   }
@@ -3254,7 +3327,7 @@ async function runLiveSearch(){
 
 liveSearchInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') runLiveSearch(); });
 
-function renderLiveSearchResults(){
+function renderLiveSearchResults(q){
   // 결과 수까지 같이 보낸다 — 0건 검색어가 곧 "아직 없는 가게" 목록이 된다
   track('search', { search_term: q, results: liveSearchList.length });
   if(liveSearchList.length === 0){
@@ -3263,10 +3336,13 @@ function renderLiveSearchResults(){
   }
   liveSearchResults.innerHTML = liveSearchList.map((place, i) => `
     <div class="live-search-item">
-      <button type="button" class="live-search-item-head" data-i="${i}">
-        <span class="live-search-item-name">${escapeHtml(place.name)}</span>
-        <span class="live-search-item-addr">${escapeHtml(place.address || '')}</span>
-      </button>
+      <div class="live-search-item-row">
+        <button type="button" class="live-search-item-head" data-i="${i}">
+          <span class="live-search-item-name">${escapeHtml(place.name)}</span>
+          <span class="live-search-item-addr">${escapeHtml(place.address || '')}</span>
+        </button>
+        ${copyBtnHtml(place.address, 'copyAddressBtn', '주소 복사')}
+      </div>
       <div class="live-search-item-google" id="liveSearchGoogle-${i}"></div>
     </div>
   `).join('');
@@ -4689,6 +4765,11 @@ function goSection(id){
 const shortcutItems = [
   {icon:'🗺️', label:'조치원 미니 지도', sub:'로컬 맛집 위치 보기', keywords:'지도 맵 map 위치 조치원', run:() => goSection('map')},
   {icon:'🍽️', label:'맛집 둘러보기', sub:'카테고리 · 가격 필터', keywords:'맛집 목록 리스트 카드 오늘 뭐 먹지', run:() => goSection('restaurants')},
+  {icon:'🤝', label:'함께 만들어요', sub:'제휴 · 참여 · 후원 한자리에', keywords:'함께 제휴 참여 후원 사장님 입점 손주 힘 보태기 커뮤니티 together', run:() => goSection('join')},
+  {icon:'⭐', label:'방문 후기', sub:'먼저 다녀온 사람들의 이야기', keywords:'리뷰 후기 평점 별점 review 방문기', run:() => goSection('reviews')},
+  {icon:'💌', label:'친구에게 알리기', sub:'공유하기', keywords:'공유 share 친구 추천 알리기 링크 카톡', run:() => goSection('share')},
+  {icon:'🏘️', label:'왜 만들었나', sub:'우리가 풀려는 문제', keywords:'소개 문제 이유 왜 배경 about 취지', run:() => goSection('problem')},
+  {icon:'🚩', label:'개강 후 답사 계획', sub:'터줏대감 사장님 찾아가기', keywords:'답사 개강 로드맵 조사 계획 coming soon 곧', run:() => goSection('discover')},
   {icon:'🎟️', label:'손주 식권', sub:'식권 예약과 제휴 안내', keywords:'식권 패스 pass 제휴 구매 예약 할인 멤버십', run:() => { closeAllSearch(); openPassInfo(); }},
   {icon:'📝', label:'취향 설문', sub:'내 취향에 맞는 맛집 추천', keywords:'취향 설문 추천 테스트', run:() => { closeAllSearch(); openSurvey(); }},
   {icon:'🎲', label:'메뉴 추천 게임', sub:'타로 · 룰렛으로 고르기', keywords:'게임 룰렛 타로 랜덤 뽑기 결정장애', run:() => { closeAllSearch(); openGame(); }},
@@ -4762,7 +4843,9 @@ function runSearch(query, container){
   const groups = searchAll(q);
   groups.forEach(g => g.hits.forEach(h => searchFlat.push(h)));
 
-  const hint = `<button type="button" class="search-hint" data-fallback="1">🔍 맛집 목록에서 "${escapeHtml(q)}" 찾아보기</button>`;
+  // 검색어를 넘기지 않는다 — 카카오를 쓰는 가게 검색과 사이트 내 검색은 별개 기능이라,
+  // 여기서는 "저기 가면 가게를 찾을 수 있다"고 안내만 하고 대신 검색해주지 않는다.
+  const hint = `<button type="button" class="search-hint" data-fallback="1">🏪 동네 가게 이름으로 찾으시나요? 가게 검색으로 가기</button>`;
   container.innerHTML = groups.length === 0
     ? `<div class="search-empty">"${escapeHtml(q)}"에 해당하는 결과가 없어요.</div>${hint}`
     : groups.map(g => `
@@ -4791,7 +4874,7 @@ function runSearch(query, container){
     });
   });
   const fallback = container.querySelector('.search-hint');
-  if(fallback) fallback.addEventListener('click', () => applyHeaderQuery(q));
+  if(fallback) fallback.addEventListener('click', () => goLiveSearch());
 }
 
 function paintSearchActive(container){
@@ -4803,11 +4886,13 @@ function paintSearchActive(container){
 }
 
 // Enter로 검색어를 동네 가게 검색에 넘긴다 (기존 헤더 검색은 스크롤만 하고 검색어를 버렸다)
-function applyHeaderQuery(q){
-  liveSearchInput.value = q;
-  runLiveSearch();
+// 헤더 검색은 "사이트 안에서 찾기"라 외부 API를 부르지 않는다. eat local의 가게 검색은
+// 카카오 API를 쓰는 별개 기능이므로, 여기서는 그쪽 검색창으로 데려다주기만 하고
+// 검색어를 옮기거나 대신 실행하지 않는다 — 두 검색을 섞지 않기 위한 의도적인 선택이다.
+function goLiveSearch(){
   closeAllSearch();
   document.getElementById('restaurants').scrollIntoView({behavior:'smooth'});
+  liveSearchInput.focus({preventScroll:true});
 }
 
 function handleSearchKey(e, input, container){
@@ -4824,7 +4909,7 @@ function handleSearchKey(e, input, container){
     e.preventDefault();
     const item = searchFlat[searchActiveIndex];
     if(item) item.run();
-    else if(input.value.trim()) applyHeaderQuery(input.value.trim());
+    else if(input.value.trim()) goLiveSearch();
     return;
   }
   if(e.key === 'Escape'){

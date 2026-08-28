@@ -47,13 +47,15 @@ Fonts are loaded from Google Fonts via a `<link>` in `<head>` (Gaegu, Gowun Dodu
 
 Four entries also carry an optional `pass` object (`unit`/`bundles`/`benefit`/`validDays`) — the same "only some entries are fleshed out" idea as `detail`. `getPassRestaurants()` (`restaurants.filter(r => r.pass)`) is what the 손주 식권 grid and the search source both read, so adding `pass` to another listing is all it takes to put that shop on sale.
 
-`getFilteredList()` is the single source of truth for what the restaurant grid shows — category, text search, price min/max, and sort all compose there. If you add a new filter/sort axis, it goes in this function, not in `renderCards()`.
+`getFilteredList()` is the single source of truth for what the restaurant grid shows — category, price min/max, and sort compose there. **Text search is not one of its axes** (see Header search below); it lives in `runLiveSearch`. If you add a new filter/sort axis, it goes in this function, not in `renderCards()`.
 
 ### Header search (`searchSources`)
 
 The header search is a grouped universal search, not a restaurant filter. `searchSources` is an array of `{type, items()}`; each item is `{icon, label, sub, keywords, run}` and `run()` only calls existing functions (`openDetail`, `openPass`, `openContact`, `openSurvey`, section scrolls…). **To make something searchable, add a source or an item — don't touch `runSearch`/`searchAll`.** Caps live in `SEARCH_PER_SOURCE` (4) and `SEARCH_MAX` (10).
 
-Keyboard: ↓/↑ walk `searchFlat` and Enter runs the highlighted item. With nothing highlighted (the default after each keystroke), Enter instead falls back to `applyHeaderQuery()`, which pushes the text into `currentQuery`, syncs `cardSearch.value`, re-renders the grid, and scrolls to the list — so the header box still behaves like a restaurant search when you just type and hit Enter. The same fallback is exposed as the clickable hint row at the bottom of the dropdown.
+Keyboard: ↓/↑ walk `searchFlat` and Enter runs the highlighted item. With nothing highlighted (the default after each keystroke), Enter falls back to `goLiveSearch()`, which only scrolls to the 동네 가게 찾아보기 box and focuses it. The same fallback is the clickable hint row at the bottom of the dropdown.
+
+**The header search and the 동네 가게 찾아보기 box are two different features and must not be wired together.** The header is site-wide search over content that already exists in the page (`searchSources`) — it calls no API. The eat-local box (`runLiveSearch`) is a live restaurant lookup against the Kakao API (`/api/kakao-search`). `goLiveSearch()` deliberately does **not** copy the query across or run the search for the user; it just points them at the right box. An earlier version did both (`applyHeaderQuery` set `liveSearchInput.value` and called `runLiveSearch()`), which made typing in the header fire a Kakao request — don't reintroduce that. There is no local text filter on the grid any more: `getFilteredList()` handles category/price/sort only, and text search belongs to `runLiveSearch`.
 
 `.nav-search-wrap` is hidden below 860px; mobile gets the `🔍` `.icon-btn-search` which opens `#searchOverlay`. Both inputs feed the same `runSearch()` with different containers — keep them in sync rather than forking the renderer.
 
@@ -82,7 +84,7 @@ Every overlay (survey, restaurant detail, mini-game, auth, mypage) reuses the sa
 - Multi-step overlays (설문, 게임) route both the X and the backdrop through `requestCloseX()` → `confirmDiscard()`, so leaving mid-flow asks first. Both paths must use the same guard, or the rule splits in two.
 - `applyStaticTranslations()` handles `data-i18n` / `-placeholder` / `-title` / `-aria`. Screen-reader labels follow the site language, not the browser's.
 
-State is plain top-level `let` variables in `script.js` (`currentCat`, `currentQuery`, `currentSort`, `isLoggedIn`, `currentUserName`, `rouletteItems`, `surveyAnswers`, etc.) — no store/framework. The subset that survives a reload is mirrored into `store` and written by `saveState()` (see Persistence below). `updateHeaderAuthUI()` is the one place that reconciles header button state with `isLoggedIn`; call it after any auth state change instead of hand-editing header DOM elsewhere.
+State is plain top-level `let` variables in `script.js` (`currentCat`, `currentSort`, `isLoggedIn`, `currentUserName`, `rouletteItems`, `surveyAnswers`, etc.) — no store/framework. The subset that survives a reload is mirrored into `store` and written by `saveState()` (see Persistence below). `updateHeaderAuthUI()` is the one place that reconciles header button state with `isLoggedIn`; call it after any auth state change instead of hand-editing header DOM elsewhere.
 
 Login/mypage is **real auth backed by Supabase** (email + password) and intentionally uses "손주" (grandchild) framing instead of generic "회원" — see the "손주 로그인/가입" comment block in `script.js`.
 
