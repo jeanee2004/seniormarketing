@@ -1,0 +1,12 @@
+# 밥 먹으러 와 — 크롤러 안내
+# 색인을 막는 게 목적이 아니라, 크롤러에게 사이트맵 위치를 알려주는 게 목적이다.
+# 법적 고지 페이지(privacy.html / terms.html)는 각 파일의 <meta name="robots" content="noindex">로
+# 이미 색인에서 빠지므로 여기서 따로 막지 않는다(막으면 그 meta를 읽지도 못한다).
+
+User-agent: *
+Allow: /
+
+# 서버리스 엔드포인트는 사람이 볼 페이지가 아니다
+Disallow: /api/
+
+Sitemap: https://seniormarketing.vercel.app/sitemap.xml

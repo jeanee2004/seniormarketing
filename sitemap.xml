@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 색인 대상은 랜딩 페이지 한 장뿐이다. privacy.html / terms.html은 noindex라 넣지 않는다
+     (noindex인 URL을 사이트맵에 넣으면 서로 모순되는 신호가 된다). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://seniormarketing.vercel.app/</loc>
+    <lastmod>2026-08-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
