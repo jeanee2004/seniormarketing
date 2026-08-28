@@ -64,7 +64,10 @@ input,textarea,select{background-color:var(--paper);color:var(--ink);}
   font-size:0.8rem;
   font-weight:800;
   letter-spacing:0.08em;
-  color:var(--red);
+  /* var(--red)는 이 배경 위에서 라이트 모드 3.61:1로 AA(4.5:1) 미달이었다(실측).
+     --red-dark로 바꾸면 라이트 4.79:1, 다크 6.58:1 — 배경은 그대로 두고 글자만
+     한 단계 진하게. 히어로 영상 위에 얹힐 때도 이 배경 자체는 영상과 무관하다. */
+  color:var(--red-dark);
   background:rgba(214,67,46,0.09);
   padding:6px 14px;
   border-radius:99px;
