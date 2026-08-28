@@ -2148,6 +2148,19 @@ function copyLink(){
 // 클릭은 document 위임 하나로 받는다 — 이 자리들은 전부 innerHTML로 매번 새로 그려져서,
 // 렌더 함수마다 리스너를 다시 매다는 코드가 늘어나는 걸 막으려는 것.
 // 복사할 원문은 data-copy 속성에 escapeHtml을 통과시켜 넣는다(따옴표까지 이스케이프된다).
+// 정보 한 줄. 값이 없으면 줄 자체를 그리지 않고, 복사 대상인 줄(주소·전화)에는 복사 버튼이
+// 자동으로 따라붙는다 — 나중에 데이터에 realPhone 같은 필드를 채워 넣기만 하면
+// 화면에 줄이 생기면서 복사 버튼까지 같이 뜬다. 자리마다 손으로 붙이지 않기 위한 함수다.
+function infoRowHtml(label, value, copyKey, copyKo){
+  if(!value) return '';
+  return `
+      <div class="detail-info-row">
+        <span class="detail-info-label">${label}</span>
+        <span class="detail-info-val">${escapeHtml(String(value))}</span>
+        ${copyKey ? copyBtnHtml(value, copyKey, copyKo) : ''}
+      </div>`;
+}
+
 function copyBtnHtml(value, key, ko){
   if(!value) return '';
   const label = t(key) || ko;
@@ -2825,6 +2838,11 @@ function closeDetailOnOverlay(e){ if(e.target === detailOverlay) closeDetail(); 
 
 function renderStubDetail(r){
   const isKo = currentLang === 'ko';
+  // 현장 조사로 realPhone 같은 값이 채워지면 줄과 복사 버튼이 자동으로 생긴다.
+  const infoRows = [
+    infoRowHtml(t('detailAddress') || '📍 주소', r.realAddress, 'copyAddressBtn', '주소 복사'),
+    infoRowHtml(t('detailPhone') || '☎️ 전화', r.realPhone, 'copyPhoneBtn', '전화번호 복사'),
+  ].join('');
   return `
     <div class="detail-head">
       <span class="detail-emoji">${r.emoji}</span>
@@ -2836,16 +2854,8 @@ function renderStubDetail(r){
     </div>
     <p class="detail-desc">${rDesc(r)}</p>
     <div id="aiSummaryBody" class="ai-summary-body"></div>
-    ${r.realAddress ? `
-    <div class="detail-info-grid">
-      <div class="detail-info-row">
-        <span class="detail-info-label">${t('detailAddress') || '📍 주소'}</span>
-        <span class="detail-info-val">${escapeHtml(r.realAddress)}</span>
-        ${copyBtnHtml(r.realAddress, 'copyAddressBtn', '주소 복사')}
-      </div>
-    </div>
-    ${renderDirectionsLink(r)}
-    ${renderRouteTextBlock(r)}` : ''}
+    ${infoRows ? `<div class="detail-info-grid">${infoRows}</div>` : ''}
+    ${r.realAddress ? `${renderDirectionsLink(r)}${renderRouteTextBlock(r)}` : ''}
     <div class="detail-stub-note">
       ${isKo
         ? `<strong>상세 정보 준비 중</strong> — ${r.realAddress ? '영업시간·메뉴 구성·원산지' : '주소·영업시간·메뉴 구성·원산지'} 같은 상세 정보는 9월 현장 조사 후 채워질 예정이에요. 예시로 <b>${escapeHtml(rName(restaurants[0]))}</b> 카드에서 어떤 정보가 담길지 미리 확인해보세요.`
@@ -2858,18 +2868,17 @@ function renderStubDetail(r){
 
 function renderFullDetail(r){
   const d = r.detail;
-  // 세 번째 칸은 복사 버튼용 [i18n 키, 한국어 폴백] — 주소·전화 줄에만 붙는다
   const infoRows = [
-    [t('detailAddress') || '📍 주소', d.address, ['copyAddressBtn', '주소 복사']],
-    [t('detailHours') || '🕐 영업시간', d.hours],
-    [t('detailClosed') || '🚫 휴무일', d.closed],
-    [t('detailPhone') || '☎️ 전화', d.phone, ['copyPhoneBtn', '전화번호 복사']],
-    [t('detailReservation') || '📅 예약', d.reservation],
-    [t('detailCapacity') || '🪑 수용 인원', d.capacity],
-    [t('detailParking') || '🚗 주차', d.parking],
-    [t('detailMobilePay') || '📱 모바일페이', d.mobilePay],
-    [t('detailVouchers') || '🎟️ 상품권/식권', d.vouchers],
-  ];
+    infoRowHtml(t('detailAddress') || '📍 주소', d.address, 'copyAddressBtn', '주소 복사'),
+    infoRowHtml(t('detailHours') || '🕐 영업시간', d.hours),
+    infoRowHtml(t('detailClosed') || '🚫 휴무일', d.closed),
+    infoRowHtml(t('detailPhone') || '☎️ 전화', d.phone, 'copyPhoneBtn', '전화번호 복사'),
+    infoRowHtml(t('detailReservation') || '📅 예약', d.reservation),
+    infoRowHtml(t('detailCapacity') || '🪑 수용 인원', d.capacity),
+    infoRowHtml(t('detailParking') || '🚗 주차', d.parking),
+    infoRowHtml(t('detailMobilePay') || '📱 모바일페이', d.mobilePay),
+    infoRowHtml(t('detailVouchers') || '🎟️ 상품권/식권', d.vouchers),
+  ].join('');
   return `
     <div class="detail-head">
       <span class="detail-emoji">${r.emoji}</span>
@@ -2882,15 +2891,7 @@ function renderFullDetail(r){
     <p class="detail-desc">${rDesc(r)}</p>
     <div id="aiSummaryBody" class="ai-summary-body"></div>
 
-    <div class="detail-info-grid">
-      ${infoRows.map(([label,val,copy]) => `
-        <div class="detail-info-row">
-          <span class="detail-info-label">${label}</span>
-          <span class="detail-info-val">${val}</span>
-          ${copy ? copyBtnHtml(val, copy[0], copy[1]) : ''}
-        </div>
-      `).join('')}
-    </div>
+    <div class="detail-info-grid">${infoRows}</div>
     ${renderDirectionsLink(r)}
     ${renderRouteTextBlock(r)}
 
@@ -3343,6 +3344,11 @@ function renderLiveSearchResults(q){
         </button>
         ${copyBtnHtml(place.address, 'copyAddressBtn', '주소 복사')}
       </div>
+      ${place.phone ? `
+      <div class="live-search-item-row live-search-item-phone">
+        <span class="live-search-item-addr">${escapeHtml(place.phone)}</span>
+        ${copyBtnHtml(place.phone, 'copyPhoneBtn', '전화번호 복사')}
+      </div>` : ''}
       <div class="live-search-item-google" id="liveSearchGoogle-${i}"></div>
     </div>
   `).join('');

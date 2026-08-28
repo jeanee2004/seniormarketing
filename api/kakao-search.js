@@ -41,6 +41,7 @@ module.exports = async function handler(req, res) {
     const results = (data.documents || []).map((d) => ({
       name: d.place_name,
       address: d.road_address_name || d.address_name,
+      phone: d.phone || '',
       lat: Number(d.y),
       lng: Number(d.x),
       category: d.category_name,

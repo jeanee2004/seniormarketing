@@ -611,6 +611,9 @@ html.dark .theme-dial{ transform:rotate(180deg); }
 }
 .live-search-item-name{font-family:'Gaegu',cursive;font-size:1.1rem;color:var(--slate-dark);}
 .live-search-item-addr{font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.82rem;color:var(--ink-soft);}
+/* 전화번호 줄은 펼치기 버튼 밖에 있어 head의 padding을 못 받는다 — 주소와 왼쪽을 맞춘다 */
+.live-search-item-phone{padding:0 16px 14px 20px;margin-top:-10px;}
+.live-search-item-phone .live-search-item-addr{flex:1;min-width:0;}
 .live-search-item-google{display:none;padding:0 20px 18px;}
 .live-search-item-google.show{display:block;}
 
