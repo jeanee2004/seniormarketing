@@ -670,6 +670,47 @@ C5. **사장님 페이지 신설 + 접근 제어** — 가게 운영자용 별�
 C6. **운영 전환 시** — 커스텀 SMTP(Resend/SendGrid) 붙이고 이메일 인증 되살리기,
    법적 고지의 `(기재 예정)` 채우기, Supabase의 Leaked Password Protection 켜기.
 
+C7. **구글 검색에 사이트 등록하기 (Search Console)** — `site:seniormarketing.vercel.app`로
+   검색해도 안 나온다. **막힌 게 아니라 발견이 안 된 것이다.** 아래는 이미 확인을 마쳤다:
+
+   | 확인 항목 | 결과 |
+   |---|---|
+   | Googlebot UA 접근 | 200 (차단 없음) |
+   | Vercel 인증 벽 | 없음 |
+   | `noindex` 헤더/메타 | 없음 |
+   | JS 없이 읽히는 본문 | 약 3,200자, `h1` 1개 + `h2` 9개 (색인에 충분) |
+
+   사이트 쪽 준비는 끝났다 — `robots.txt`, `sitemap.xml`, `canonical`, 절대경로 `og:image`를
+   넣고 배포까지 확인했다. **다만 이 파일들은 찾아온 크롤러에게 길을 알려줄 뿐,
+   크롤러를 불러오지는 못한다.** 이 사이트로 들어오는 외부 링크가 하나도 없는 게 진짜 원인이다.
+
+   **남은 일은 Search Console 등록이고, 이건 구글 계정 로그인이 필요해 Claude가 대신 못 한다.**
+   세 가지 경로가 있다:
+
+   1. **메타태그만 붙여넣기 (가장 빠름)** — Search Console에서 URL 접두어
+      `https://seniormarketing.vercel.app/` 등록 → 소유권 확인에서 "HTML 태그" 선택 →
+      나오는 `<meta name="google-site-verification" content="...">` 한 줄을 Claude에게 주면
+      `index.html`에 넣고 배포까지 한다. 그 뒤 사이트맵 제출 + URL 검사 → 색인 생성 요청.
+   2. **gcloud 설치 후 링크 승인** — `winget install Google.CloudSDK` 후
+      `gcloud auth application-default login --scopes=https://www.googleapis.com/auth/siteverification,https://www.googleapis.com/auth/webmasters`.
+      구글 기본 클라이언트를 쓰므로 OAuth 클라이언트를 따로 만들 필요가 없다. 승인만 하면
+      이후 소유권 확인·속성 등록·사이트맵 제출을 Site Verification API / Search Console API로 자동화할 수 있다.
+   3. **OAuth 클라이언트 직접 발급** — Cloud Console(기존 프로젝트 `730047037395`)에서
+      "데스크톱 앱" OAuth 클라이언트 ID를 만들어 client_id·secret을 넘기면, 로컬 루프백
+      리디렉션(`http://localhost:PORT`)으로 승인 플로우를 돌릴 수 있다. (구글은 2022년에
+      OOB 방식을 폐기해서 루프백만 가능하다.) Site Verification API와 Search Console API를
+      프로젝트에서 사용 설정해야 한다.
+
+   곁다리로 할 수 있는 것:
+   - **README 추가** — `jeanee2004/seniormarketing`은 public이고 About의 homepage에 이미
+     주소가 걸려 있는데 README가 없다. GitHub 레포 페이지는 구글이 자주 크롤링하므로,
+     README에 라이브 링크를 넣으면 계정 없이도 발견될 확률이 올라간다. 확실하진 않다.
+   - **네이버 서치어드바이저** — 조치원 로컬 서비스라 국내 유입만 보면 구글보다 효과가 클 수 있다.
+
+   **`*.vercel.app`은 구글이 색인은 해도 순위를 거의 주지 않는다.** 검색 유입을 실제로
+   만들려면 커스텀 도메인이 근본 해법이고, 옮길 때 도메인을 바꿀 곳은 세 군데다 —
+   `robots.txt`의 Sitemap 줄, `sitemap.xml`의 `<loc>`, `index.html`의 `canonical`/`og:url`/`og:image`.
+
 ## 2026-08-28 세션에서 한 것
 
 - **Supabase 일시정지 방지 GitHub Action** (`.github/workflows/keep-alive.yml`) — 3일마다
@@ -690,6 +731,12 @@ C6. **운영 전환 시** — 커스텀 SMTP(Resend/SendGrid) 붙이고 이메�
 - 텍스트 경로 버튼 문구: "여기서 오는 길" → **"여기서 가는 길"**.
   한국어는 사전이 아니라 인라인 폴백 문자열이라 거기를 고쳤고, en/zh/es는 원래 방향이
   드러나지 않는 표현이라 그대로 뒀다.
+
+- **검색엔진 색인 준비** — 배포본에 `robots.txt`와 `sitemap.xml`이 둘 다 404였다.
+  둘을 만들고, `/`와 `/index.html`이 모두 200이라 중복으로 잡히던 것을 `canonical`로 고정했다.
+  `og:image`/`twitter:image`가 상대경로라 크롤러와 SNS가 못 읽던 것도 절대 URL로 바꿨다.
+  사이트맵에는 랜딩 페이지만 넣었다 — `privacy.html`/`terms.html`은 `noindex`라 함께 넣으면
+  신호가 모순된다. 배포 반영까지 확인 완료. **등록 자체는 아직 안 됐다 — 위 C7 참고.**
 
 ### 이번에 못 고친 것 (코드 문제가 아님)
 
