@@ -773,8 +773,7 @@ C7. **구글 검색에 사이트 등록하기 (Search Console)** — `site:senio
 5단 순환 각각 h1·본문·버튼 라벨까지 프랑스어로 정상 전환, `localStorage` 공유로 페이지 간 언어
 유지 확인, 콘솔 에러 0.
 
-원격 브랜치 `origin/worktree-agent-a83eabcf5668e49d2`는 병합 완료됐으니 필요 없으면 삭제해도 된다
-(`git push origin --delete worktree-agent-a83eabcf5668e49d2`) — 아직 안 지웠다.
+원격 브랜치 `origin/worktree-agent-a83eabcf5668e49d2`는 병합 완료 후 삭제했다.
 
 ### D2. 히어로 배경 영상이 더 잘 보이게 오버레이 조절 (B3의 구체화)
 
