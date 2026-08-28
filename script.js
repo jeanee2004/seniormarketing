@@ -2067,7 +2067,6 @@ const toastContent = {
   login:{emoji:'👤', title:'로그인 준비 중', text:'로그인하고 나만의 맛집 리스트를 관리하는 기능, 곧 만나보세요.'},
   mypage:{emoji:'📌', title:'마이페이지 준비 중', text:'방문 기록과 저장 목록을 한눈에 보는 마이페이지가 곧 열립니다.'},
   more:{emoji:'🍽️', title:'더 많은 맛집 준비 중', text:'9월 개강 후 현장 조사를 통해 더 많은 로컬 맛집을 채워나갈 예정이에요.'},
-  vendor:{emoji:'🧑‍🌾', title:'사장님용 페이지 준비 중', text:'조치원 로컬 식당 사장님을 위한 입점 신청 페이지를 별도로 준비 중이에요.'},
   info:{emoji:'🌾', title:'준비 중이에요', text:'해당 페이지는 곧 열릴 예정입니다.'},
   share:{emoji:'💬', title:'공유 기능 준비 중', text:'친구에게 공유하는 기능이 곧 추가됩니다. 지금은 링크 복사를 이용해보세요!'},
   locationDenied:{emoji:'📍', title:'위치 권한이 필요해요', text:'가까운 순으로 보려면 위치 권한을 허용해주세요.'},
@@ -5155,3 +5154,9 @@ document.addEventListener('keydown', e => {
   const close = ESC_CLOSERS[top.id];
   if(close) close();
 });
+
+// owner.html의 CTA(?apply=owner)로 넘어오면 사장님 제휴 신청 모달을 자동으로 연다.
+if(new URLSearchParams(location.search).get('apply') === 'owner'){
+  openContact('partnerStore');
+  history.replaceState(null, '', location.pathname + location.hash);
+}

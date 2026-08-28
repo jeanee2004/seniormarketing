@@ -1588,4 +1588,119 @@ html.dark .hero-media video{filter:brightness(0.68) saturate(0.9);}
   transition:background .15s ease,color .15s ease,border-color .15s ease;
 }
 .map-chip:hover{background:var(--hover-tint);}
+
+/* ===== 사장님 페이지 (owner.html) =====
+   목업 6개 화면을 하나의 정적 페이지에 전부 담는다. 화면마다 색만 다른 걸 반복하지 않도록
+   .owner-screen 계열 클래스를 공유 컴포넌트로 쓴다. */
+.owner-hero{
+  max-width:640px;margin:0 auto;text-align:center;
+  background:var(--paper);border-radius:24px;padding:52px 36px;
+  border:1px solid var(--line);box-shadow:var(--shadow);
+}
+.owner-hero .owner-emoji{font-size:3rem;margin-bottom:14px;}
+.owner-hero p{color:var(--ink-soft);max-width:480px;margin:0 auto 28px;font-size:1.02rem;}
+.owner-hero-note{margin-top:16px;font-size:0.86rem;color:var(--ink-soft);}
+
+.mock-banner{
+  display:flex;align-items:center;gap:10px;
+  background:var(--slate-tint);color:var(--slate-dark);
+  border-radius:14px;padding:14px 20px;margin:36px 0 28px;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.88rem;font-weight:700;
+}
+.mock-banner .emoji{font-size:1.2rem;flex-shrink:0;}
+
+.owner-tabs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px;}
+.owner-tab{
+  padding:9px 18px;border-radius:99px;border:1.5px solid var(--slate-tint);
+  background:var(--paper);color:var(--slate-dark);
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.86rem;font-weight:700;
+  transition:background .15s ease,transform .15s ease;
+}
+.owner-tab:hover{background:var(--hover-tint);transform:translateY(-2px);}
+
+.owner-screen{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-bottom:32px;overflow:hidden;scroll-margin-top:100px;
+}
+.owner-screen-bar{
+  display:flex;align-items:center;gap:10px;
+  background:var(--slate-surface);color:#fff;padding:12px 20px;
+}
+.owner-screen-bar .dots{display:flex;gap:6px;}
+.owner-screen-bar .dots span{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,0.35);}
+.owner-screen-bar strong{
+  font-family:'Gaegu','Gowun Dodum',sans-serif;font-size:1.05rem;font-weight:700;margin-left:4px;
+}
+.owner-screen-bar .mock-tag{
+  margin-left:auto;font-size:0.7rem;font-weight:800;background:rgba(255,255,255,0.18);
+  padding:3px 10px;border-radius:99px;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
+}
+.owner-screen-body{display:grid;grid-template-columns:180px 1fr;}
+@media(max-width:760px){ .owner-screen-body{grid-template-columns:1fr;} }
+.owner-sidebar{
+  background:var(--base-bg-2);border-right:1px solid var(--line);padding:18px 12px;
+}
+@media(max-width:760px){ .owner-sidebar{display:none;} }
+.owner-sidebar a{
+  display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.86rem;font-weight:700;
+  color:var(--ink-soft);margin-bottom:2px;
+}
+.owner-sidebar a.active{background:var(--paper);color:var(--red);}
+.owner-main{padding:24px;}
+.owner-main p.owner-lead{color:var(--ink-soft);margin-bottom:20px;font-size:0.94rem;}
+
+.owner-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:22px;}
+.owner-stat-card{
+  background:var(--base-bg);border:1px solid var(--line);border-radius:14px;padding:16px;
+}
+.owner-stat-card .label{font-size:0.78rem;color:var(--ink-soft);margin-bottom:6px;}
+.owner-stat-card .value{font-family:'Gaegu','Gowun Dodum',sans-serif;font-size:1.5rem;font-weight:700;color:var(--slate-dark);}
+.owner-stat-card .delta{font-size:0.76rem;color:var(--red);font-weight:700;margin-top:4px;}
+
+.owner-card{
+  background:var(--base-bg);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px;
+}
+.owner-card h4{font-family:'Gaegu','Gowun Dodum',sans-serif;font-size:1.05rem;color:var(--slate-dark);margin-bottom:10px;}
+.owner-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:760px){ .owner-grid-2{grid-template-columns:1fr;} }
+
+.owner-field{margin-bottom:14px;}
+.owner-field label{display:block;font-size:0.82rem;font-weight:700;color:var(--ink-soft);margin-bottom:6px;}
+.owner-field input,.owner-field select,.owner-field textarea{
+  width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid var(--slate-tint);
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.9rem;
+}
+
+.owner-bars{display:flex;align-items:flex-end;gap:8px;height:120px;margin:10px 0;}
+.owner-bars .bar{flex:1;background:var(--slate-light);border-radius:6px 6px 0 0;position:relative;}
+.owner-bars .bar.peak{background:var(--red);}
+.owner-bars-labels{display:flex;gap:8px;}
+.owner-bars-labels span{flex:1;text-align:center;font-size:0.72rem;color:var(--ink-soft);}
+
+.owner-feed-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:10px;margin-bottom:16px;}
+.owner-feed-thumb{
+  aspect-ratio:1/1;border-radius:10px;background:var(--slate-tint);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.6rem;gap:2px;
+}
+.owner-feed-thumb small{font-size:0.65rem;color:var(--slate-dark);}
+
+.owner-menu-item{
+  border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;background:var(--paper);
+}
+.owner-menu-item .row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+.owner-menu-item .row strong{font-family:'Gaegu','Gowun Dodum',sans-serif;font-size:1.02rem;}
+.owner-menu-item .row .price{color:var(--red);font-weight:800;}
+.owner-menu-item .origin{font-size:0.78rem;color:var(--slate-dark);}
+
+.owner-list-item{
+  display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:0.88rem;
+}
+.owner-list-item:last-child{border-bottom:none;}
+.owner-list-item .icon{font-size:1.1rem;flex-shrink:0;}
+.owner-list-item .time{font-size:0.76rem;color:var(--ink-soft);margin-top:2px;}
+
+.owner-toggle-row{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.owner-actions-row{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;}
+.owner-actions-row .btn-primary, .owner-actions-row .btn-ghost{padding:11px 22px;font-size:0.86rem;}
 .map-chip.active{background:var(--slate-surface);border-color:var(--slate-surface);color:#fff;}
