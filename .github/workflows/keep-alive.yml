@@ -1,0 +1,51 @@
+# Supabase 무료 플랜은 일정 기간 요청이 하나도 없으면 프로젝트를 일시 정지시킨다.
+# 3일에 한 번 테이블에서 1행만 읽어서 "살아있음"을 알린다.
+#
+# 필요한 저장소 Secrets (Settings → Secrets and variables → Actions):
+#   SUPABASE_URL              예) https://xxxxxxxx.supabase.co
+#   SUPABASE_PUBLISHABLE_KEY  공개(anon/publishable) 키. service_role 키는 절대 넣지 말 것.
+#
+# 참고: GitHub는 60일간 커밋이 없는 저장소의 schedule을 자동으로 꺼버린다.
+#       그때는 Actions 탭에서 이 워크플로를 다시 켜거나 "Run workflow"로 수동 실행하면 된다.
+
+name: Supabase keep-alive
+
+on:
+  schedule:
+    # 3일마다 03:00 UTC(= 12:00 KST). 매월 1·4·7…28·31일에 돌기 때문에
+    # 월말~월초 한 번은 간격이 하루이틀 어긋나는데, 정지 방지용으로는 충분하다.
+    - cron: '0 3 */3 * *'
+  workflow_dispatch:   # Actions 탭에서 수동 실행
+
+# 저장소 내용을 읽을 필요가 없는 잡이라 권한을 최소로 준다.
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: public.reviews 에서 1행 조회
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_PUBLISHABLE_KEY:-}" ]; then
+            echo "::error::SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY 시크릿이 설정되지 않았습니다."
+            exit 1
+          fi
+
+          # 응답 본문은 로그에 찍지 않는다 (-o). 상태코드만 확인한다.
+          code=$(curl -sS --max-time 30 -o /tmp/keepalive.json -w '%{http_code}' \
+            -H "apikey: ${SUPABASE_PUBLISHABLE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_PUBLISHABLE_KEY}" \
+            "${SUPABASE_URL}/rest/v1/reviews?select=id&limit=1")
+
+          echo "HTTP ${code}"
+          if [ "${code}" != "200" ]; then
+            echo "::error::Supabase 응답이 200이 아닙니다 (HTTP ${code})."
+            exit 1
+          fi
+          echo "Supabase 정상 응답 — 프로젝트가 깨어 있습니다."
