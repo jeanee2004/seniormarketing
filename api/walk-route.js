@@ -19,7 +19,7 @@ module.exports = async function handler(req, res) {
     return;
   }
   // 화이트리스트 밖 값은 무시하고 기본값으로 — 임의 문자열을 그대로 구글에 넘기지 않는다.
-  const languageCode = ['ko', 'en', 'zh-CN', 'es'].includes(lang) ? lang : 'ko';
+  const languageCode = ['ko', 'en', 'zh-CN', 'es', 'fr'].includes(lang) ? lang : 'ko';
 
   try {
     const routeRes = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
