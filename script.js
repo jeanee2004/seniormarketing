@@ -646,6 +646,8 @@ const i18n = { en: {
   googleReviewNotFound:"😢 We couldn't find this restaurant on Google Maps.", googleReviewNone:"No reviews yet.",
   googleReviewLink:"See all reviews on Google Maps →", googleReviewAnon:"Anonymous",
   liveSearchLoading:"Searching...", liveSearchEmpty:"No results found.", liveSearchError:"Search failed. Please try again shortly.",
+  searchNoResultsFor:"No results for \"{q}\".", searchDidYouMean:"Did you mean?",
+  searchCheckSpelling:"Please check that your search term is spelled correctly.", searchMaybeThisShop:"Did you mean one of these shops?",
   confirmLoginTitle:"Sign-in required", confirmLoginBody:"This feature requires signing in. Sign in and build your own restaurant list!", confirmLoginOk:"Sign in", confirmLoginCancel:"Close",
   discardTitle:"Leave without finishing?", discardBody:"What you've picked so far won't be saved.",
   discardOk:"Leave", discardCancel:"Keep going",
@@ -926,6 +928,8 @@ const i18n = { en: {
   googleReviewNotFound:"😢 在谷歌地图上找不到这家店。", googleReviewNone:"暂无评论。",
   googleReviewLink:"在谷歌地图查看全部评论 →", googleReviewAnon:"匿名",
   liveSearchLoading:"搜索中...", liveSearchEmpty:"没有找到结果。", liveSearchError:"搜索失败，请稍后再试。",
+  searchNoResultsFor:"没有找到与“{q}”相关的结果。", searchDidYouMean:"您是不是在找这些？",
+  searchCheckSpelling:"请确认搜索词是否正确。", searchMaybeThisShop:"您要找的是这家店吗？",
   confirmLoginTitle:"需要登录", confirmLoginBody:"此功能需要登录。登录后即可创建你自己的餐厅列表！", confirmLoginOk:"登录", confirmLoginCancel:"关闭",
   discardTitle:"要中途退出吗？", discardBody:"目前选择的内容不会被保存。",
   discardOk:"退出", discardCancel:"继续",
@@ -1268,6 +1272,8 @@ const i18n = { en: {
   googleReviewNotFound:"😢 No pudimos encontrar este restaurante en Google Maps.", googleReviewNone:"Aún no hay reseñas.",
   googleReviewLink:"Ver todas las reseñas en Google Maps →", googleReviewAnon:"Anónimo",
   liveSearchLoading:"Buscando...", liveSearchEmpty:"No se encontraron resultados.", liveSearchError:"La búsqueda falló. Inténtalo de nuevo en un momento.",
+  searchNoResultsFor:"No hay resultados para \"{q}\".", searchDidYouMean:"¿Quisiste decir esto?",
+  searchCheckSpelling:"Comprueba que el término de búsqueda sea correcto.", searchMaybeThisShop:"¿Buscabas alguno de estos locales?",
   confirmLoginTitle:"Se requiere iniciar sesión", confirmLoginBody:"Esta función requiere iniciar sesión. ¡Inicia sesión y crea tu propia lista de restaurantes!", confirmLoginOk:"Iniciar sesión", confirmLoginCancel:"Cerrar",
   discardTitle:"¿Salir sin terminar?", discardBody:"Lo que has elegido hasta ahora no se guardará.",
   discardOk:"Salir", discardCancel:"Continuar",
@@ -3307,6 +3313,107 @@ function renderMarkers(){
 
 loadGoogleMaps();
 
+// ================= 검색 오타 보정 (퍼지 매칭) =================
+// 헤더 통합 검색과 동네 가게 검색이 "이런 걸 찾으셨나요?"를 만들 때 공유하는 유일한 유사도 계산이다.
+// 외부 의존성 없이 편집거리 하나만 쓰고, 한글은 음절을 초·중·종성으로 나눠 부분 점수를 준다
+// ("짬뽕"↔"짭뽕"은 종성 하나 차이라, 음절이 통째로 다른 경우보다 훨씬 가깝게 나와야 한다).
+
+const HANGUL_FIRST = 0xac00, HANGUL_LAST = 0xd7a3;
+const CHOSEONG = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+
+// 비교용 정규화: 소문자 + 라틴 발음구별부호 제거(NFD로 분해해 결합문자만 삭제) + 공백·기호 제거.
+// 마지막에 NFC로 되돌려 한글은 음절 한 글자로 유지한다 — 자모 분해는 unitCost에서만 한다.
+function fuzzyKey(s){
+  return String(s).toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '').normalize('NFC')
+    .replace(/[\s·,.!?()[\]{}'"~\-_/&+|]/g, '');
+}
+
+// 글자 하나 사이의 거리(0~1). 한글 음절끼리는 초/중/종성 중 다른 개수의 1/3 — 자모 한 개 오타는 0.33.
+function unitCost(a, b){
+  if(a === b) return 0;
+  if(a >= HANGUL_FIRST && a <= HANGUL_LAST && b >= HANGUL_FIRST && b <= HANGUL_LAST){
+    const x = a - HANGUL_FIRST, y = b - HANGUL_FIRST;
+    let d = 0;
+    if(Math.floor(x / 588) !== Math.floor(y / 588)) d++;          // 초성
+    if(Math.floor((x % 588) / 28) !== Math.floor((y % 588) / 28)) d++; // 중성
+    if(x % 28 !== y % 28) d++;                                     // 종성
+    return d / 3;
+  }
+  return 1;
+}
+
+// 질의가 후보 문자열 "어딘가에" 비슷하게 들어있는지 — 후보의 앞뒤를 잘라내는 비용이 0인 편집거리.
+// 후보는 키워드를 전부 이어붙인 긴 문자열이라, 통짜 편집거리로는 아무것도 안 걸린다.
+function fuzzyScore(q, text){
+  const m = q.length, n = text.length;
+  if(!m || !n) return 0;
+  let prev = new Array(n + 1).fill(0);   // 첫 행이 전부 0 = 시작 위치 자유
+  let cur = new Array(n + 1);
+  for(let i = 1; i <= m; i++){
+    cur[0] = i;
+    const qc = q.charCodeAt(i - 1);
+    for(let j = 1; j <= n; j++){
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + unitCost(qc, text.charCodeAt(j - 1)));
+    }
+    const swap = prev; prev = cur; cur = swap;
+  }
+  let best = prev[0];
+  for(let j = 1; j <= n; j++) if(prev[j] < best) best = prev[j];  // 끝 위치도 자유
+  return 1 - best / m;
+}
+
+// 임계값은 질의 길이로 정한다. 짧을수록 "비슷한 것"이 폭발적으로 늘어 오탐이 되므로 엄격하게 잡는다.
+// 2글자에서 0.6 = 허용 비용 0.8 → 음절을 통째로 바꾸는 건(비용 1.0) 못 통과하고,
+// "짭→짬"(0.33)이나 "븈→뷰"(0.67)처럼 자모 한두 개 차이만 통과한다.
+function fuzzyMinScore(len){
+  if(len <= 1) return 2;   // 1글자는 제안하지 않는다 (도달 불가능한 점수)
+  if(len <= 2) return 0.6;
+  if(len <= 4) return 0.7;
+  return 0.75;
+}
+
+// 초성만 친 질의("ㄱㅂ")는 편집거리가 통하지 않으니 후보의 초성 문자열에 그대로 들어있는지만 본다.
+// 질의가 전부 초성일 때만 켜지므로 보통 검색어의 오탐은 늘지 않는다.
+function isChoseongQuery(q){ return q.length >= 2 && /^[ㄱ-ㅎ]+$/.test(q); }
+function choseongKey(text){
+  let out = '';
+  for(let i = 0; i < text.length; i++){
+    const c = text.charCodeAt(i);
+    out += (c >= HANGUL_FIRST && c <= HANGUL_LAST) ? CHOSEONG[Math.floor((c - HANGUL_FIRST) / 588)] : ' ';
+  }
+  return out;
+}
+
+// 긴 키워드 문자열을 타자마다 다시 정규화하지 않도록 결과를 재사용한다.
+const fuzzyKeyCache = new Map();
+function fuzzyKeyOf(s){
+  let v = fuzzyKeyCache.get(s);
+  if(v === undefined){ v = fuzzyKey(s); fuzzyKeyCache.set(s, v); }
+  return v;
+}
+
+// 질의(정규화됨)와 후보 문자열의 유사도. 임계 미만이면 0. 두 검색이 함께 쓰는 유일한 판정 함수다.
+function fuzzyMatch(qKey, text){
+  const key = fuzzyKeyOf(text);
+  if(!key) return 0;
+  if(isChoseongQuery(qKey)) return choseongKey(key).includes(qKey) ? 1 : 0;
+  const score = fuzzyScore(qKey, key);
+  return score >= fuzzyMinScore(qKey.length) ? score : 0;
+}
+
+// 이미 이 페이지에 등록된 가게 중 철자가 비슷한 곳. 로컬 restaurants 배열만 본다 —
+// 카카오가 0건을 준 뒤 "혹시 이 가게인가요?"를 띄우는 용도라, 여기서 API를 더 부르면 안 된다.
+function localShopSuggestions(query, limit = 3){
+  const qKey = fuzzyKey(query);
+  if(qKey.length < 2) return [];
+  return restaurants
+    .map((r, i) => ({r, i, s: fuzzyMatch(qKey, `${r.name} ${r.nameEn || ''} ${r.nameZh || ''} ${r.nameEs || ''}`)}))
+    .filter(x => x.s > 0)
+    .sort((a, b) => b.s - a.s)
+    .slice(0, limit);
+}
+
 // ================= 실시간 가게 검색 (카카오 로컬 API 경유) =================
 const liveSearchInput = document.getElementById('liveSearchInput');
 const liveSearchResults = document.getElementById('liveSearchResults');
@@ -3332,7 +3439,30 @@ function renderLiveSearchResults(q){
   // 결과 수까지 같이 보낸다 — 0건 검색어가 곧 "아직 없는 가게" 목록이 된다
   track('search', { search_term: q, results: liveSearchList.length });
   if(liveSearchList.length === 0){
-    liveSearchResults.innerHTML = `<div class="google-review-empty">${t('liveSearchEmpty') || '검색 결과가 없어요.'}</div>`;
+    // 카카오가 이미 자체 매칭을 하므로 여기서 검색어를 고쳐 다시 부르지 않는다.
+    // 대신 철자 확인을 안내하고, 이미 이 페이지에 있는 가게 중 비슷한 이름만 로컬로 골라 보여준다.
+    const near = localShopSuggestions(q);
+    liveSearchResults.innerHTML = `
+      <div class="google-review-empty">
+        ${t('liveSearchEmpty') || '검색 결과가 없어요.'}
+        <span class="search-check">${t('searchCheckSpelling') || '검색어가 정확한지 확인해주세요.'}</span>
+      </div>
+      ${near.length ? `
+        <div class="live-search-suggest">
+          <div class="search-group-title">${t('searchMaybeThisShop') || '혹시 이 가게인가요?'}</div>
+          ${near.map(({r, i}) => `
+            <button type="button" class="search-item" data-i="${i}">
+              <span class="search-icon">${r.emoji}</span>
+              <span class="search-text">
+                <span class="search-label">${escapeHtml(rName(r))}</span>
+                <span class="search-sub">${escapeHtml(rCat(r))} · ${escapeHtml(rDesc(r))}</span>
+              </span>
+            </button>`).join('')}
+        </div>` : ''}
+    `;
+    liveSearchResults.querySelectorAll('.live-search-suggest .search-item').forEach(btn => {
+      btn.addEventListener('click', () => openDetail(Number(btn.dataset.i)));
+    });
     return;
   }
   liveSearchResults.innerHTML = liveSearchList.map((place, i) => `
@@ -4801,7 +4931,8 @@ const searchSources = [
       icon: r.emoji,
       label: r.name,
       sub: `${rCat(r)} · ${ratingLabel(r)} · ${r.priceValue.toLocaleString()}원`,
-      keywords: `${r.name} ${r.desc} ${r.cat}`,
+      // 이름 네 언어를 모두 넣어야 영어·중국어·스페인어로 쳐도 한국어 가게가 걸린다
+      keywords: `${r.name} ${r.nameEn || ''} ${r.nameZh || ''} ${r.nameEs || ''} ${r.desc} ${r.cat}`,
       run: () => { closeAllSearch(); openDetail(i); },
     })),
   },
@@ -4811,7 +4942,7 @@ const searchSources = [
       icon:'🎟️',
       label: `${r.name} 식권`,
       sub: `장당 ${r.pass.unit.toLocaleString()}원 · ${r.pass.benefit}`,
-      keywords: `${r.name} 식권 패스 pass 쿠폰 ${r.pass.benefit} ${r.cat}`,
+      keywords: `${r.name} ${r.nameEn || ''} ${r.nameZh || ''} ${r.nameEs || ''} 식권 패스 pass 쿠폰 ${r.pass.benefit} ${r.cat}`,
       run: () => { closeAllSearch(); openPass(restaurants.indexOf(r)); },
     })),
   },
@@ -4837,6 +4968,23 @@ function searchAll(query){
   return groups;
 }
 
+// 정확 일치가 한 건도 없을 때만 도는 보조 경로 — 오타를 감안해 비슷한 항목을 모은다.
+// 소스 구분 없이 점수순으로 섞어 "이런 걸 찾으셨나요?" 한 그룹으로 내보낸다.
+// 여기서도 fuzzyMatch 하나만 쓰고, 외부 API는 부르지 않는다(헤더 검색은 사이트 안에서만 찾는다).
+function searchSuggest(query){
+  const qKey = fuzzyKey(query);
+  if(qKey.length < 2) return [];
+  const scored = [];
+  for(const src of searchSources){
+    for(const it of src.items()){
+      const s = fuzzyMatch(qKey, it.keywords);
+      if(s > 0) scored.push({it, s});
+    }
+  }
+  scored.sort((a, b) => b.s - a.s);
+  return scored.slice(0, SEARCH_PER_SOURCE).map(x => x.it);
+}
+
 function runSearch(query, container){
   const q = query.trim();
   searchActiveIndex = -1;
@@ -4847,30 +4995,46 @@ function runSearch(query, container){
     return;
   }
   const groups = searchAll(q);
+  // 정확 일치가 하나라도 있으면 기존 동작 그대로 — 오타 보정은 0건일 때만 끼어든다.
+  const suggestions = groups.length ? [] : searchSuggest(q);
   groups.forEach(g => g.hits.forEach(h => searchFlat.push(h)));
+  suggestions.forEach(h => searchFlat.push(h));  // 제안 항목도 ↓/↑·Enter로 그대로 움직인다
+
+  const itemHtml = h => `
+    <button type="button" class="search-item" data-i="${searchFlat.indexOf(h)}">
+      <span class="search-icon">${h.icon}</span>
+      <span class="search-text">
+        <span class="search-label">${escapeHtml(h.label)}</span>
+        <span class="search-sub">${escapeHtml(h.sub)}</span>
+      </span>
+    </button>
+  `;
 
   // 검색어를 넘기지 않는다 — 카카오를 쓰는 가게 검색과 사이트 내 검색은 별개 기능이라,
   // 여기서는 "저기 가면 가게를 찾을 수 있다"고 안내만 하고 대신 검색해주지 않는다.
   const hint = `<button type="button" class="search-hint" data-fallback="1">🏪 동네 가게 이름으로 찾으시나요? 가게 검색으로 가기</button>`;
-  container.innerHTML = groups.length === 0
-    ? `<div class="search-empty">"${escapeHtml(q)}"에 해당하는 결과가 없어요.</div>${hint}`
-    : groups.map(g => `
+  let body;
+  if(groups.length){
+    body = groups.map(g => `
+      <div class="search-group">
+        <div class="search-group-title">${escapeHtml(g.type)}</div>
+        ${g.hits.map(itemHtml).join('')}
+      </div>
+    `).join('');
+  }else{
+    const none = (t('searchNoResultsFor') || '"{q}"에 해당하는 결과가 없어요.').replace('{q}', () => escapeHtml(q));
+    body = `<div class="search-empty">${none}${suggestions.length ? ''
+      : `<span class="search-check">${t('searchCheckSpelling') || '검색어가 정확한지 확인해주세요.'}</span>`}</div>`;
+    if(suggestions.length){
+      body += `
         <div class="search-group">
-          <div class="search-group-title">${escapeHtml(g.type)}</div>
-          ${g.hits.map(h => {
-            const i = searchFlat.indexOf(h);
-            return `
-              <button type="button" class="search-item" data-i="${i}">
-                <span class="search-icon">${h.icon}</span>
-                <span class="search-text">
-                  <span class="search-label">${escapeHtml(h.label)}</span>
-                  <span class="search-sub">${escapeHtml(h.sub)}</span>
-                </span>
-              </button>
-            `;
-          }).join('')}
+          <div class="search-group-title">${t('searchDidYouMean') || '이런 걸 찾으셨나요?'}</div>
+          ${suggestions.map(itemHtml).join('')}
         </div>
-      `).join('') + hint;
+      `;
+    }
+  }
+  container.innerHTML = body + hint;
   container.classList.add('show');
 
   container.querySelectorAll('.search-item').forEach(btn => {

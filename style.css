@@ -1296,6 +1296,15 @@ section[id]{scroll-margin-top:88px;}
   padding:16px 12px;text-align:center;font-size:0.85rem;color:var(--ink-soft);
   font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
 }
+/* 오타 안내 — 결과 없음 문구 아래 한 줄. 빨강은 CTA 전용이라 여기엔 쓰지 않는다 */
+.search-check{
+  display:block;margin-top:6px;color:var(--slate-light);font-size:0.8rem;
+}
+/* 카카오 검색이 0건일 때 페이지에 이미 있는 비슷한 가게를 제안하는 자리 */
+.live-search-suggest{
+  margin-top:10px;padding:6px;
+  background:var(--paper);border:1.5px solid var(--slate-tint);border-radius:14px;
+}
 .search-hint{
   width:100%;margin-top:6px;padding:10px;border-radius:12px;
   background:var(--base-bg);color:var(--slate-dark);font-weight:700;font-size:0.82rem;
