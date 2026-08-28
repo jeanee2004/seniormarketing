@@ -1572,6 +1572,8 @@ const i18n = { en: {
   googleReviewNotFound:"😢 Nous n'avons pas trouvé ce restaurant sur Google Maps.", googleReviewNone:"Aucun avis pour l'instant.",
   googleReviewLink:"Voir tous les avis sur Google Maps →", googleReviewAnon:"Anonyme",
   liveSearchLoading:"Recherche en cours…", liveSearchEmpty:"Aucun résultat trouvé.", liveSearchError:"La recherche a échoué. Réessayez dans un instant.",
+  searchNoResultsFor:"Aucun résultat pour « {q} ».", searchDidYouMean:"Cherchiez-vous ceci ?",
+  searchCheckSpelling:"Vérifiez l'orthographe de votre recherche.", searchMaybeThisShop:"Cherchiez-vous l'une de ces boutiques ?",
   confirmLoginTitle:"Connexion requise", confirmLoginBody:"Cette fonction demande d'être connecté. Connectez-vous et composez votre propre liste de restaurants !", confirmLoginOk:"Se connecter", confirmLoginCancel:"Fermer",
   discardTitle:"Quitter sans terminer ?", discardBody:"Ce que vous avez choisi jusqu'ici ne sera pas enregistré.",
   discardOk:"Quitter", discardCancel:"Continuer",
