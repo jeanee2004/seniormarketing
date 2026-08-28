@@ -1481,17 +1481,39 @@ html.dark .grandma-photo img, html.dark .survey-photo img, html.dark .filter-emp
   opacity:0;transition:opacity .6s ease;
   /* 카피가 놓이는 왼쪽을 진하게, 캐릭터 카드가 놓이는 오른쪽을 옅게 덮는다.
      중간 지점(56%)은 히어로 카피 단이 끝나는 자리에 맞춘 값이다 —
-     1120px 컨테이너에서 h1·본문이 화면 폭의 절반쯤에서 끝난다. */
-  --veil-1:94%; --veil-2:89%; --veil-3:54%;
+     1120px 컨테이너에서 h1·본문이 화면 폭의 절반쯤에서 끝난다.
+     이 값(v1/v2)은 눈대중이 아니라 실측이다 — <video>를 캔버스에 그려 실제
+     밝은/어두운 프레임 + 루프 이음매 저노출(opacity:0.32) 프레임까지 픽셀을
+     뽑아 h1·본문 위치에서 합성 배경색의 WCAG 대비비를 계산해서 정했다
+     (desktop 920/1440px 최악값: 라이트 h1span 3.17:1/3.21:1(기준 3:1),
+     본문 4.78:1/4.90:1(기준 4.5:1) — 두 값 다 최소 5% 여유를 두고 골랐다).
+     eyebrow 뱃지(.eyebrow의 9% 불투명 배경)는 이 영상 오버레이와 무관하게
+     영상이 전혀 없는 순수 --base-bg 위에서도 텍스트 대비가 약 3.6:1로,
+     이 컴포넌트 자체가 사이트 전역에서 이미 AA 기준(4.5:1) 미달이다 — 이번
+     작업으로 만든 문제가 아니라 손대지 않았고, 히어로에서도 그대로 남아있다
+     (별도 후속 필요, next.md 참고). */
+  --veil-1:88%; --veil-2:87%; --veil-3:54%;
 }
 /* 재생이 실제로 시작됐을 때만 나타난다. 로드 실패·코덱 미지원이면
    opacity:0인 채 남아서 기존 히어로 배경(그라디언트)이 그대로 보인다. */
 .hero.hero-video-on .hero-media{opacity:1;}
 .hero-media video{width:100%;height:100%;object-fit:cover;display:block;}
+/* 노트북 창 폭을 줄이면(2단 그리드가 유지되는 900~1440px 구간) 히어로 높이는
+   카피 블록 높이에 그대로 끌려가는데, 영상 원본 비율(16:9)과 점점 벌어져서
+   object-fit:cover가 옆을 심하게 잘라내 "확대돼 보인다"(실측: 1440px에서는
+   영상 가로폭의 100%가 보이는데 920px에서는 72%만 보임 — 28% 크롭).
+   object-fit은 cover가 맞는 선택이라 그대로 두고, 대신 이 레이어가 커버할
+   수 있는 최대 높이를 영상 원본 비율로 못 박아서 카피가 그보다 길어지는
+   구간에서는 아래쪽만 히어로 자체 배경(그라디언트)으로 넘어가게 한다.
+   --hero-ratio는 index.html 인라인 스크립트가 영상의 실제 videoWidth/Height로
+   채운다 — 다른 비율 영상으로 교체해도 이 값이 자동으로 따라간다. */
+@media(min-width:901px){
+  .hero-media{max-height:calc(100vw / var(--hero-ratio, 1.778));}
+}
 /* 가독성 오버레이. 첫 줄은 color-mix 미지원 브라우저용 폴백(--base-bg 라이트값). */
 .hero-media::after{
   content:"";position:absolute;inset:0;
-  background:linear-gradient(100deg, rgba(247,244,238,0.94), rgba(247,244,238,0.89) 56%, rgba(247,244,238,0.54));
+  background:linear-gradient(100deg, rgba(247,244,238,0.88), rgba(247,244,238,0.87) 56%, rgba(247,244,238,0.54));
   background:linear-gradient(100deg,
     color-mix(in srgb, var(--base-bg) var(--veil-1), transparent),
     color-mix(in srgb, var(--base-bg) var(--veil-2), transparent) 56%,
@@ -1502,17 +1524,22 @@ html.dark .grandma-photo img, html.dark .survey-photo img, html.dark .filter-emp
    시각에서 직접 가져온다(CSS 애니메이션으로 돌리면 위상이 어긋난다). */
 .hero-media video{transition:opacity .38s ease;}
 .hero.hero-loop-edge .hero-media video{opacity:0.32;}
-/* 다크: 밝은 영상이 혼자 튀지 않게 눌러주고(캐릭터 PNG 처리와 같은 방식) 더 두껍게 덮는다 */
-html.dark .hero-media{--veil-1:94%; --veil-2:88%; --veil-3:68%;}
+/* 다크: 밝은 영상이 혼자 튀지 않게 눌러주고(캐릭터 PNG 처리와 같은 방식) 더 두껍게 덮는다.
+   실측(desktop 920/1440px 최악값): h1span 4.06:1/4.20:1(기준 3:1),
+   본문 4.98:1/4.73:1(기준 4.5:1), 전부 5% 이상 여유. eyebrow는 라이트와 같은
+   이유로 사이트 전역 이슈라 이 범위 밖(3.9~4.0:1, 미달이지만 손대지 않음). */
+html.dark .hero-media{--veil-1:83%; --veil-2:82%; --veil-3:68%;}
 html.dark .hero-media video{filter:brightness(0.68) saturate(0.9);}
-/* 모바일은 1단·가운데정렬이라 글자가 폭 전체를 쓴다 — 균일하게 덮는다 */
+/* 모바일은 1단·가운데정렬이라 글자가 폭 전체를 쓴다 — 균일하게 덮는다.
+   실측(390/375/430px 최악값): 라이트 88% → h1span 3.20:1, 본문 4.86:1(둘 다
+   기준+5% 이상). 다크 81% → h1span 3.91~4.32:1, 본문 4.78~4.83:1. */
 @media(max-width:900px){
   .hero-media::after{
-    background:rgba(247,244,238,0.91);
-    background:color-mix(in srgb, var(--base-bg) 91%, transparent);
+    background:rgba(247,244,238,0.88);
+    background:color-mix(in srgb, var(--base-bg) 88%, transparent);
   }
   html.dark .hero-media::after{
-    background:color-mix(in srgb, var(--base-bg) 93%, transparent);
+    background:color-mix(in srgb, var(--base-bg) 81%, transparent);
   }
 }
 /* .hero::before(종이 질감)는 z-index가 없어서 뒤에 오는 영상 레이어에 덮인다.

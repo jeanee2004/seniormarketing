@@ -68,9 +68,14 @@
        경로가 적힌 곳은 아래 <source> 한 줄뿐이다.
        장식이라 aria-hidden(스크린리더에 읽힐 내용이 없다).
        파일이 없거나 코덱을 못 읽으면 .hero-video-on이 안 붙어서 이 레이어가
-       opacity:0으로 남고, 히어로는 지금 모습 그대로 보인다(조용히 degrade). -->
+       opacity:0으로 남고, 히어로는 지금 모습 그대로 보인다(조용히 degrade).
+       preload="auto": 실기기(특히 카톡 인앱 브라우저·저전력 모드의 iOS Safari)에서
+       autoplay 자체가 지연·차단되는 경우가 있다 — preload="metadata"였을 때는
+       play()가 실패하면 프레임 데이터를 더 안 당겨와서 loadeddata가 영영 안 붙는
+       사례가 있었다. auto로 바꿔 play() 성공 여부와 무관하게 첫 프레임을 미리
+       받아두면, 재생이 막혀도 최소한 정지 프레임은 배경으로 보인다. -->
   <div class="hero-media" aria-hidden="true">
-    <video class="hero-video" autoplay muted loop playsinline preload="metadata"
+    <video class="hero-video" autoplay muted loop playsinline preload="auto"
            disablepictureinpicture tabindex="-1">
       <source src="assets/HeroPage.mp4" type="video/mp4">
     </video>
@@ -123,6 +128,19 @@
     v.addEventListener('loadeddata', on, {once:true});   // 자동재생이 막힌 환경 대비
     var p = v.play();
     if(p && p.catch) p.catch(function(){});              // 자동재생 거부는 조용히 넘긴다
+
+    // 좁은 화면(노트북 창 폭 줄이기 등)에서 히어로 섹션 높이가 콘텐츠에 끌려
+    // 영상 원본 비율(16:9)과 크게 벌어지면 object-fit:cover가 옆을 심하게 잘라내
+    // "확대돼 보인다"는 문제가 생긴다. 실제 영상의 가로세로 비율을 CSS 변수로
+    // 넘겨서(style.css의 .hero-media max-height가 이 값을 쓴다) 파일을 다른
+    // 비율 영상으로 교체해도 숫자를 다시 맞출 필요가 없게 한다.
+    var setRatio = function(){
+      if(v.videoWidth && v.videoHeight){
+        hero.style.setProperty('--hero-ratio', (v.videoWidth / v.videoHeight));
+      }
+    };
+    setRatio();
+    v.addEventListener('loadedmetadata', setRatio);
 
     /* 10초 루프라 이음매에서 컷이 튄다(첫/끝 프레임 화면차 약 14%).
        경계 0.4초 구간에만 영상을 옅게 눌러 바탕색으로 스쳤다 돌아오게 한다.
