@@ -32,7 +32,7 @@ const SCHEMA = {
 
 // 리뷰 원문은 대부분 한국어지만 출력 언어는 사이트 언어를 따라가야 한다 —
 // 영어로 보는 사람에게 한국어 요약만 나오면 이 기능이 없는 것과 같다.
-const LANG_NAME = { ko: '한국어', en: '영어', zh: '중국어(간체)', es: '스페인어' };
+const LANG_NAME = { ko: '한국어', en: '영어', zh: '중국어(간체)', es: '스페인어', fr: '프랑스어' };
 
 function systemInstruction(lang){
   const out = LANG_NAME[lang] || LANG_NAME.ko;
@@ -180,7 +180,7 @@ module.exports = async function handler(req, res) {
     try { body = JSON.parse(body); } catch (e) { body = {}; }
   }
   const reviews = (body && Array.isArray(body.reviews)) ? body.reviews : [];
-  const lang = ['ko', 'en', 'zh', 'es'].includes(body && body.lang) ? body.lang : 'ko';
+  const lang = ['ko', 'en', 'zh', 'es', 'fr'].includes(body && body.lang) ? body.lang : 'ko';
   // 가게 이름이 아니라 슬러그로 잡는다 — 이름은 바뀔 수 있고 슬러그는 안 바뀐다.
   const restaurantId = String((body && body.id) || '').trim();
   if (reviews.length === 0) {

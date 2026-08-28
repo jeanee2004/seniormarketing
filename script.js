@@ -10,7 +10,7 @@ let gMarkers = [];
 
 // ---- Dummy restaurant data ----
 const restaurants = [
-  {id:"jochiwon-halmae-gukbap", name:"조치원 할매국밥", nameEn:"Jochiwon Grandma's Gukbap (조치원 할매국밥)", nameZh:"调治院奶奶汤饭 (조치원 할매국밥)", nameEs:"Gukbap de la Abuela de Jochiwon (조치원 할매국밥)", cat:"한식", emoji:"🍚", desc:"40년 전통, 진한 국물의 소문난 국밥집", descEn:"A well-known gukbap house with 40 years of tradition and rich broth", descZh:"有着40年传统、汤底浓郁的知名汤饭店", descEs:"Una casa de gukbap muy conocida, con 40 años de tradición y un caldo intenso", rating:4.8, reviewCount:212, price:"₩", priceValue:9000, saved:false, visited:false, detail:{
+  {id:"jochiwon-halmae-gukbap", name:"조치원 할매국밥", nameEn:"Jochiwon Grandma's Gukbap (조치원 할매국밥)", nameZh:"调治院奶奶汤饭 (조치원 할매국밥)", nameEs:"Gukbap de la Abuela de Jochiwon (조치원 할매국밥)", nameFr:"Gukbap de la Grand-mère de Jochiwon (조치원 할매국밥)", cat:"한식", emoji:"🍚", desc:"40년 전통, 진한 국물의 소문난 국밥집", descEn:"A well-known gukbap house with 40 years of tradition and rich broth", descZh:"有着40年传统、汤底浓郁的知名汤饭店", descEs:"Una casa de gukbap muy conocida, con 40 años de tradición y un caldo intenso", descFr:"Une adresse à gukbap réputée, 40 ans de tradition et un bouillon corsé", rating:4.8, reviewCount:212, price:"₩", priceValue:9000, saved:false, visited:false, detail:{
     isExample:true,
     address:"세종특별자치시 조치원읍 죽림리 123-4 (임의 주소 · 실제 주소 아님)",
     hours:"매일 07:00 - 20:00 (재료 소진 시 조기 마감)",
@@ -28,9 +28,9 @@ const restaurants = [
     ]
   },
   // pass가 있는 가게만 손주 식권 섹션과 검색에 노출된다 (detail과 같은 방식 — 일부만 채워둔 예시)
-  pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", benefitZh:"买10送1", benefitEs:"Compra 10, llévate 1 gratis", validDays:180}},
-  {id:"yeokjeon-wang-donkatsu", name:"역전 왕돈까스", nameEn:"Yeokjeon King Donkatsu (역전 왕돈까스)", nameZh:"驿前炸猪排大王 (역전 왕돈까스)", nameEs:"Yeokjeon Rey del Donkatsu (역전 왕돈까스)", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", descEn:"Thick handmade donkatsu with generous portions", descZh:"厚实的手工炸猪排，分量十足", descEs:"Donkatsu grueso hecho a mano, con porciones generosas", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
-    pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", benefitZh:"买10送1", benefitEs:"Compra 10, llévate 1 gratis", validDays:90},
+  pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", benefitZh:"买10送1", benefitEs:"Compra 10, llévate 1 gratis", benefitFr:"10 achetés, 1 offert", validDays:180}},
+  {id:"yeokjeon-wang-donkatsu", name:"역전 왕돈까스", nameEn:"Yeokjeon King Donkatsu (역전 왕돈까스)", nameZh:"驿前炸猪排大王 (역전 왕돈까스)", nameEs:"Yeokjeon Rey del Donkatsu (역전 왕돈까스)", nameFr:"Yeokjeon Roi du Donkatsu (역전 왕돈까스)", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", descEn:"Thick handmade donkatsu with generous portions", descZh:"厚实的手工炸猪排，分量十足", descEs:"Donkatsu grueso hecho a mano, con porciones generosas", descFr:"Un donkatsu épais fait maison, servi en portions généreuses", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
+    pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", benefitZh:"买10送1", benefitEs:"Compra 10, llévate 1 gratis", benefitFr:"10 achetés, 1 offert", validDays:90},
     detail:{
       isExample:true,
       address:"세종특별자치시 조치원읍 원리 78-1 (임의 주소 · 실제 주소 아님)",
@@ -47,22 +47,22 @@ const restaurants = [
         {name:"치즈돈까스", price:"10,500원", composition:"돈까스+모짜렐라 + 밥 + 수프", origin:"돼지고기 국내산, 치즈 수입산"},
       ]
     }},
-  {id:"an-chef-jjambbong", name:"안쉐프고기해물짬뽕", nameEn:"An-Chef Meat & Seafood Jjambbong (안쉐프고기해물짬뽕)", nameZh:"安主厨肉类海鲜炒码面 (안쉐프고기해물짬뽕)", nameEs:"An-Chef Jjamppong de Carne y Mariscos (안쉐프고기해물짬뽕)", cat:"중식", emoji:"🥡", desc:"고기와 해물을 함께 낸 얼큰한 짬뽕집", descEn:"A spicy jjambbong spot serving both meat and seafood", descZh:"肉类与海鲜同煮的辣味炒码面店", descEs:"Un local de jjamppong picante que sirve carne y mariscos a la vez", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+  {id:"an-chef-jjambbong", name:"안쉐프고기해물짬뽕", nameEn:"An-Chef Meat & Seafood Jjambbong (안쉐프고기해물짬뽕)", nameZh:"安主厨肉类海鲜炒码面 (안쉐프고기해물짬뽕)", nameEs:"An-Chef Jjamppong de Carne y Mariscos (안쉐프고기해물짬뽕)", nameFr:"An-Chef Jjamppong Viande et Fruits de Mer (안쉐프고기해물짬뽕)", cat:"중식", emoji:"🥡", desc:"고기와 해물을 함께 낸 얼큰한 짬뽕집", descEn:"A spicy jjambbong spot serving both meat and seafood", descZh:"肉类与海鲜同煮的辣味炒码面店", descEs:"Un local de jjamppong picante que sirve carne y mariscos a la vez", descFr:"Un jjamppong bien relevé qui réunit viande et fruits de mer", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.61477503455844, lng:127.2857292835937, realAddress:"세종특별자치시 조치원읍 섭골길 51-21"},
-  {id:"jagal-dondon", name:"자갈돈돈", nameEn:"Jagal Dondon (자갈돈돈)", nameZh:"紫葛顿顿 (자갈돈돈)", nameEs:"Jagal Dondon (자갈돈돈)", cat:"한식", emoji:"🥩", desc:"조치원읍 골목의 고기구이집", descEn:"A grilled-meat restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的烤肉店", descEs:"Un restaurante de carne a la parrilla en un callejón de Jochiwon-eup", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+  {id:"jagal-dondon", name:"자갈돈돈", nameEn:"Jagal Dondon (자갈돈돈)", nameZh:"紫葛顿顿 (자갈돈돈)", nameEs:"Jagal Dondon (자갈돈돈)", nameFr:"Jagal Dondon (자갈돈돈)", cat:"한식", emoji:"🥩", desc:"조치원읍 골목의 고기구이집", descEn:"A grilled-meat restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的烤肉店", descEs:"Un restaurante de carne a la parrilla en un callejón de Jochiwon-eup", descFr:"Un grill de viande dans une ruelle de Jochiwon-eup", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
     liveReview:true, lat:36.6080898465768, lng:127.29005819471818, realAddress:"세종특별자치시 조치원읍 내창2길 30"},
-  {id:"wooridul-sikdang", name:"우리들식당", nameEn:"Wooridul Sikdang (우리들식당)", nameZh:"我们食堂 (우리들식당)", nameEs:"Wooridul Sikdang (우리들식당)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的家常韩式套餐店", descEs:"Un restaurante de comidas caseras coreanas (baekban) en un callejón de Jochiwon-eup", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {id:"wooridul-sikdang", name:"우리들식당", nameEn:"Wooridul Sikdang (우리들식당)", nameZh:"我们食堂 (우리들식당)", nameEs:"Wooridul Sikdang (우리들식당)", nameFr:"Wooridul Sikdang (우리들식당)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的家常韩式套餐店", descEs:"Un restaurante de comidas caseras coreanas (baekban) en un callejón de Jochiwon-eup", descFr:"Un restaurant de cuisine familiale coréenne (baekban) dans une ruelle de Jochiwon-eup", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.6080899912077, lng:127.288885692635, realAddress:"세종특별자치시 조치원읍 내창3길 19"},
-  {id:"paul-barna", name:"폴바나", nameEn:"Paul, Barna (폴바나)", nameZh:"波尔巴纳 (폴바나)", nameEs:"Paul, Barna (폴바나)", cat:"양식", emoji:"🍝", desc:"조치원읍 골목의 양식당", descEn:"A Western-style restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的西餐厅", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+  {id:"paul-barna", name:"폴바나", nameEn:"Paul, Barna (폴바나)", nameZh:"波尔巴纳 (폴바나)", nameEs:"Paul, Barna (폴바나)", nameFr:"Paul, Barna (폴바나)", cat:"양식", emoji:"🍝", desc:"조치원읍 골목의 양식당", descEn:"A Western-style restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的西餐厅", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
     liveReview:true, lat:36.60819819730195, lng:127.28885703507063, realAddress:"세종특별자치시 조치원읍 내창3길 19"},
-  {id:"donseu", name:"돈스", nameEn:"Donseu (돈스)", nameZh:"顿思 (돈스)", nameEs:"Donseu (돈스)", cat:"일식", emoji:"🍱", desc:"조치원읍 골목의 돈까스·우동집", descEn:"A donkatsu and udon spot in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的炸猪排、乌冬面店", descEs:"Un local de donkatsu y udon en un callejón de Jochiwon-eup", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+  {id:"donseu", name:"돈스", nameEn:"Donseu (돈스)", nameZh:"顿思 (돈스)", nameEs:"Donseu (돈스)", nameFr:"Donseu (돈스)", cat:"일식", emoji:"🍱", desc:"조치원읍 골목의 돈까스·우동집", descEn:"A donkatsu and udon spot in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的炸猪排、乌冬面店", descEs:"Un local de donkatsu y udon en un callejón de Jochiwon-eup", descFr:"Une adresse à donkatsu et udon dans une ruelle de Jochiwon-eup", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.60735076086951, lng:127.29343318591735, realAddress:"세종특별자치시 조치원읍 돌마루7길 6"},
-  {id:"the-ramen", name:"더라멘", nameEn:"The Ramen (더라멘)", nameZh:"拉面屋 (더라멘)", nameEs:"The Ramen (더라멘)", cat:"일식", emoji:"🍜", desc:"조치원읍 골목의 라멘집", descEn:"A ramen shop in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的拉面店", descEs:"Una tienda de ramen en un callejón de Jochiwon-eup", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+  {id:"the-ramen", name:"더라멘", nameEn:"The Ramen (더라멘)", nameZh:"拉面屋 (더라멘)", nameEs:"The Ramen (더라멘)", nameFr:"The Ramen (더라멘)", cat:"일식", emoji:"🍜", desc:"조치원읍 골목의 라멘집", descEn:"A ramen shop in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的拉面店", descEs:"Una tienda de ramen en un callejón de Jochiwon-eup", descFr:"Une boutique de ramen dans une ruelle de Jochiwon-eup", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.607796147725, lng:127.289286979365, realAddress:"세종특별자치시 조치원읍 내창3길 16-1"},
-  {id:"sushi-power-plant-12g", name:"초밥발전소12g", nameEn:"Sushi Power Plant 12g (초밥발전소12g)", nameZh:"寿司发电站12g (초밥발전소12g)", nameEs:"Planta de Energía del Sushi 12g (초밥발전소12g)", cat:"일식", emoji:"🍣", desc:"조치원읍 골목의 초밥·롤 전문점", descEn:"A sushi and roll specialist in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的寿司卷专门店", descEs:"Un especialista en sushi y rollos en un callejón de Jochiwon-eup", rating:null, reviewCount:null, price:"₩₩", priceValue:13000, saved:false, visited:false,
+  {id:"sushi-power-plant-12g", name:"초밥발전소12g", nameEn:"Sushi Power Plant 12g (초밥발전소12g)", nameZh:"寿司发电站12g (초밥발전소12g)", nameEs:"Planta de Energía del Sushi 12g (초밥발전소12g)", nameFr:"Centrale du Sushi 12g (초밥발전소12g)", cat:"일식", emoji:"🍣", desc:"조치원읍 골목의 초밥·롤 전문점", descEn:"A sushi and roll specialist in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的寿司卷专门店", descEs:"Un especialista en sushi y rollos en un callejón de Jochiwon-eup", descFr:"Un spécialiste des sushis et makis dans une ruelle de Jochiwon-eup", rating:null, reviewCount:null, price:"₩₩", priceValue:13000, saved:false, visited:false,
     liveReview:true, lat:36.60695328676086, lng:127.2894090160121, realAddress:"세종특별자치시 조치원읍 내창3길 8"},
-  {id:"halmoni-tteokbokki", name:"할머니 떡볶이", nameEn:"Grandma's Tteokbokki (할머니 떡볶이)", nameZh:"奶奶炒年糕 (할머니 떡볶이)", nameEs:"Tteokbokki de la Abuela (할머니 떡볶이)", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", descEn:"Sweet and spicy old-school tteokbokki, a student favorite snack", descZh:"香辣香甜的怀旧炒年糕，学生们的最爱零食", descEs:"Tteokbokki dulce y picante al estilo tradicional, el bocadillo favorito de los estudiantes", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
-    pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", benefitEn:"Buy 20, get 3 free", benefitZh:"买20送3", benefitEs:"Compra 20, llévate 3 gratis", validDays:180},
+  {id:"halmoni-tteokbokki", name:"할머니 떡볶이", nameEn:"Grandma's Tteokbokki (할머니 떡볶이)", nameZh:"奶奶炒年糕 (할머니 떡볶이)", nameEs:"Tteokbokki de la Abuela (할머니 떡볶이)", nameFr:"Tteokbokki de la Grand-mère (할머니 떡볶이)", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", descEn:"Sweet and spicy old-school tteokbokki, a student favorite snack", descZh:"香辣香甜的怀旧炒年糕，学生们的最爱零食", descEs:"Tteokbokki dulce y picante al estilo tradicional, el bocadillo favorito de los estudiantes", descFr:"Un tteokbokki sucré-piquant à l'ancienne, le goûter préféré des étudiants", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
+    pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", benefitEn:"Buy 20, get 3 free", benefitZh:"买20送3", benefitEs:"Compra 20, llévate 3 gratis", benefitFr:"20 achetés, 3 offerts", validDays:180},
     detail:{
       isExample:true,
       address:"세종특별자치시 조치원읍 봉산리 5-2 (임의 주소 · 실제 주소 아님)",
@@ -79,62 +79,62 @@ const restaurants = [
         {name:"모둠튀김", price:"5,000원", composition:"튀김 5종 모둠", origin:"식용유 국내산"},
       ]
     }},
-  {id:"parangsae-bunsik", name:"파랑새분식", nameEn:"Blue Bird Bunsik (파랑새분식)", nameZh:"青鸟小吃 (파랑새분식)", nameEs:"Bunsik del Pájaro Azul (파랑새분식)", cat:"분식", emoji:"🍙", desc:"조치원읍 골목의 분식집", descEn:"A Korean snack (bunsik) shop in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩式小吃店", rating:null, reviewCount:null, price:"₩", priceValue:5000, saved:false, visited:false,
+  {id:"parangsae-bunsik", name:"파랑새분식", nameEn:"Blue Bird Bunsik (파랑새분식)", nameZh:"青鸟小吃 (파랑새분식)", nameEs:"Bunsik del Pájaro Azul (파랑새분식)", nameFr:"Bunsik de l'Oiseau Bleu (파랑새분식)", cat:"분식", emoji:"🍙", desc:"조치원읍 골목의 분식집", descEn:"A Korean snack (bunsik) shop in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩式小吃店", rating:null, reviewCount:null, price:"₩", priceValue:5000, saved:false, visited:false,
     liveReview:true, lat:36.608516105696, lng:127.290049731247, realAddress:"세종특별자치시 조치원읍 내창1길 34-1"},
-  {id:"sookine-bapsang", name:"숙이네밥상", nameEn:"Sooki's Table (숙이네밥상)", nameZh:"淑姬家饭桌 (숙이네밥상)", nameEs:"La Mesa de Sooki (숙이네밥상)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的家常韩式套餐店", descEs:"Un restaurante de comidas caseras coreanas (baekban) en un callejón de Jochiwon-eup", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {id:"sookine-bapsang", name:"숙이네밥상", nameEn:"Sooki's Table (숙이네밥상)", nameZh:"淑姬家饭桌 (숙이네밥상)", nameEs:"La Mesa de Sooki (숙이네밥상)", nameFr:"La Table de Sooki (숙이네밥상)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 가정식 백반집", descEn:"A home-style Korean set-meal restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的家常韩式套餐店", descEs:"Un restaurante de comidas caseras coreanas (baekban) en un callejón de Jochiwon-eup", descFr:"Un restaurant de cuisine familiale coréenne (baekban) dans une ruelle de Jochiwon-eup", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.608995511335, lng:127.291526952076, realAddress:"세종특별자치시 조치원읍 원마루길 16-1"},
   // ── 2026-08-26 추가: 고려대 세종캠퍼스 1km 이내, 카카오 로컬 + 구글 Places로 실존 확인한 가게들.
   //    프랜차이즈(카테고리에 브랜드 마디가 있거나 "OO점" 접미사)는 제외하고 개인 가게만 담았다.
   //    가격대는 구글 priceLevel에서 왔고, 그 값이 없는 곳만 카테고리 기본값이다(next.md 참고).
-  {id:"seochangri-181", name:"서창리181", nameEn:"Seochang-ri 181 (서창리181)", nameZh:"瑞昌里181 (서창리181)", nameEs:"Seochang-ri 181 (서창리181)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 한식당", descEn:"A Korean restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩餐厅", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+  {id:"seochangri-181", name:"서창리181", nameEn:"Seochang-ri 181 (서창리181)", nameZh:"瑞昌里181 (서창리181)", nameEs:"Seochang-ri 181 (서창리181)", nameFr:"Seochang-ri 181 (서창리181)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 한식당", descEn:"A Korean restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩餐厅", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.6095767075366, lng:127.289694903435, realAddress:"세종특별자치시 조치원읍 원마루길 31-5"},
-  {id:"sammat-cafe", name:"삼맛카페", nameEn:"Samat Cafe (삼맛카페)", nameZh:"三味咖啡 (삼맛카페)", nameEs:"Samat Cafe (삼맛카페)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+  {id:"sammat-cafe", name:"삼맛카페", nameEn:"Samat Cafe (삼맛카페)", nameZh:"三味咖啡 (삼맛카페)", nameEs:"Samat Cafe (삼맛카페)", nameFr:"Samat Cafe (삼맛카페)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
     liveReview:true, lat:36.60822500941674, lng:127.28483105107225, realAddress:"세종특별자치시 조치원읍 모과나무길 34"},
-  {id:"vanilla-garden", name:"바닐라가든", nameEn:"Vanilla Garden (바닐라가든)", nameZh:"香草花园 (바닐라가든)", nameEs:"Vanilla Garden (바닐라가든)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+  {id:"vanilla-garden", name:"바닐라가든", nameEn:"Vanilla Garden (바닐라가든)", nameZh:"香草花园 (바닐라가든)", nameEs:"Vanilla Garden (바닐라가든)", nameFr:"Vanilla Garden (바닐라가든)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
     liveReview:true, lat:36.608334206532, lng:127.289625427726, realAddress:"세종특별자치시 조치원읍 내창1길 35"},
-  {id:"dankong", name:"단콩", nameEn:"Dankong (단콩)", nameZh:"甜豆咖啡 (단콩)", nameEs:"Dankong (단콩)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {id:"dankong", name:"단콩", nameEn:"Dankong (단콩)", nameZh:"甜豆咖啡 (단콩)", nameEs:"Dankong (단콩)", nameFr:"Dankong (단콩)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.6138564422386, lng:127.28922913275, realAddress:"세종특별자치시 조치원읍 섭골길 35-4"},
-  {id:"paul-and-banabas", name:"폴앤바나바스", nameEn:"Paul and Barnabas (폴앤바나바스)", nameZh:"保罗与巴拿巴 (폴앤바나바스)", nameEs:"Paul and Barnabas (폴앤바나바스)", cat:"양식", emoji:"🍝", desc:"조치원읍 골목의 양식당", descEn:"A Western-style restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的西餐厅", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+  {id:"paul-and-banabas", name:"폴앤바나바스", nameEn:"Paul and Barnabas (폴앤바나바스)", nameZh:"保罗与巴拿巴 (폴앤바나바스)", nameEs:"Paul and Barnabas (폴앤바나바스)", nameFr:"Paul and Barnabas (폴앤바나바스)", cat:"양식", emoji:"🍝", desc:"조치원읍 골목의 양식당", descEn:"A Western-style restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的西餐厅", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
     liveReview:true, lat:36.60798264373754, lng:127.2893033241067, realAddress:"세종특별자치시 조치원읍 내창3길 20"},
-  {id:"cafe-sujak", name:"카페수작", nameEn:"Cafe Sujak (카페수작)", nameZh:"手工咖啡馆 (카페수작)", nameEs:"Cafe Sujak (카페수작)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {id:"cafe-sujak", name:"카페수작", nameEn:"Cafe Sujak (카페수작)", nameZh:"手工咖啡馆 (카페수작)", nameEs:"Cafe Sujak (카페수작)", nameFr:"Cafe Sujak (카페수작)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.6094043626304, lng:127.290898078419, realAddress:"세종특별자치시 조치원읍 원마루길 28-1"},
-  {id:"cafe-calendar", name:"카페캘린더", nameEn:"Cafe Calendar (카페캘린더)", nameZh:"日历咖啡馆 (카페캘린더)", nameEs:"Cafe Calendar (카페캘린더)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+  {id:"cafe-calendar", name:"카페캘린더", nameEn:"Cafe Calendar (카페캘린더)", nameZh:"日历咖啡馆 (카페캘린더)", nameEs:"Cafe Calendar (카페캘린더)", nameFr:"Cafe Calendar (카페캘린더)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
     liveReview:true, lat:36.6084758354333, lng:127.290304424996, realAddress:"세종특별자치시 조치원읍 내창1길 32-1"},
-  {id:"hong-cafe", name:"홍카페", nameEn:"Hong Cafe (홍카페)", nameZh:"洪咖啡 (홍카페)", nameEs:"Hong Cafe (홍카페)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {id:"hong-cafe", name:"홍카페", nameEn:"Hong Cafe (홍카페)", nameZh:"洪咖啡 (홍카페)", nameEs:"Hong Cafe (홍카페)", nameFr:"Hong Cafe (홍카페)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.6138660610245, lng:127.289721008169, realAddress:"세종특별자치시 조치원읍 섭골길 31"},
-  {id:"matna-sikdang-bunsik", name:"맛나식당분식", nameEn:"Matna Restaurant & Bunsik (맛나식당분식)", nameZh:"美味食堂粉食 (맛나식당분식)", nameEs:"Matna Restaurante y Bunsik (맛나식당분식)", cat:"분식", emoji:"🍢", desc:"조치원읍 골목의 분식집", descEn:"A Korean snack (bunsik) shop in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩式小吃店", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+  {id:"matna-sikdang-bunsik", name:"맛나식당분식", nameEn:"Matna Restaurant & Bunsik (맛나식당분식)", nameZh:"美味食堂粉食 (맛나식당분식)", nameEs:"Matna Restaurante y Bunsik (맛나식당분식)", nameFr:"Matna Restaurant et Bunsik (맛나식당분식)", cat:"분식", emoji:"🍢", desc:"조치원읍 골목의 분식집", descEn:"A Korean snack (bunsik) shop in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩式小吃店", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
     liveReview:true, lat:36.608079882452, lng:127.290079394343, realAddress:"세종특별자치시 조치원읍 내창2길 30"},
-  {id:"imone-dwaeji-gukbap", name:"이모네돼지국밥", nameEn:"Imone Dwaeji-gukbap (이모네돼지국밥)", nameZh:"阿姨家猪肉汤饭 (이모네돼지국밥)", nameEs:"Imone Dwaeji-gukbap (이모네돼지국밥)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 한식당", descEn:"A Korean restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩餐厅", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {id:"imone-dwaeji-gukbap", name:"이모네돼지국밥", nameEn:"Imone Dwaeji-gukbap (이모네돼지국밥)", nameZh:"阿姨家猪肉汤饭 (이모네돼지국밥)", nameEs:"Imone Dwaeji-gukbap (이모네돼지국밥)", nameFr:"Imone Dwaeji-gukbap (이모네돼지국밥)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 한식당", descEn:"A Korean restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩餐厅", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.6143244215738, lng:127.289481273025, realAddress:"세종특별자치시 조치원읍 섭골길 34"},
-  {id:"bundang-ilpum-guksu", name:"분당일품국수", nameEn:"Bundang Ilpum Noodles (분당일품국수)", nameZh:"盆唐一品面条 (분당일품국수)", nameEs:"Bundang Ilpum Fideos (분당일품국수)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 한식당", descEn:"A Korean restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩餐厅", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
+  {id:"bundang-ilpum-guksu", name:"분당일품국수", nameEn:"Bundang Ilpum Noodles (분당일품국수)", nameZh:"盆唐一品面条 (분당일품국수)", nameEs:"Bundang Ilpum Fideos (분당일품국수)", nameFr:"Bundang Ilpum Nouilles (분당일품국수)", cat:"한식", emoji:"🍲", desc:"조치원읍 골목의 한식당", descEn:"A Korean restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的韩餐厅", rating:null, reviewCount:null, price:"₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.6147376747531, lng:127.28552570074, realAddress:"세종특별자치시 조치원읍 섭골길 51-23"},
-  {id:"urban-lounge", name:"어반라운지", nameEn:"Urban Lounge (어반라운지)", nameZh:"都市酒廊 (어반라운지)", nameEs:"Urban Lounge (어반라운지)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+  {id:"urban-lounge", name:"어반라운지", nameEn:"Urban Lounge (어반라운지)", nameZh:"都市酒廊 (어반라운지)", nameEs:"Urban Lounge (어반라운지)", nameFr:"Urban Lounge (어반라운지)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
     liveReview:true, lat:36.61467875353, lng:127.288662111208, realAddress:"세종특별자치시 조치원읍 신안새동네2길 15"},
-  {id:"gyodong-jjambbong", name:"교동짬뽕", nameEn:"Gyodong Jjamppong (교동짬뽕)", nameZh:"校洞炒码面 (교동짬뽕)", nameEs:"Gyodong Jjamppong (교동짬뽕)", cat:"중식", emoji:"🥡", desc:"조치원읍 골목의 중식당", descEn:"A Chinese restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的中餐厅", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {id:"gyodong-jjambbong", name:"교동짬뽕", nameEn:"Gyodong Jjamppong (교동짬뽕)", nameZh:"校洞炒码面 (교동짬뽕)", nameEs:"Gyodong Jjamppong (교동짬뽕)", nameFr:"Gyodong Jjamppong (교동짬뽕)", cat:"중식", emoji:"🥡", desc:"조치원읍 골목의 중식당", descEn:"A Chinese restaurant in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的中餐厅", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.6142189884474, lng:127.289851995861, realAddress:"세종특별자치시 조치원읍 섭골길 30"},
-  {id:"naive", name:"나이브", nameEn:"Naive (나이브)", nameZh:"天真咖啡 (나이브)", nameEs:"Naive (나이브)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {id:"naive", name:"나이브", nameEn:"Naive (나이브)", nameZh:"天真咖啡 (나이브)", nameEs:"Naive (나이브)", nameFr:"Naive (나이브)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.6072146336185, lng:127.28940216838, realAddress:"세종특별자치시 조치원읍 내창2길 13-3"},
-  {id:"yuram-coffee-roasters", name:"유람 커피로스터스", nameEn:"Yuram Coffee Roasters (유람 커피로스터스)", nameZh:"游览咖啡烘焙 (유람 커피로스터스)", nameEs:"Yuram Coffee Roasters (유람 커피로스터스)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+  {id:"yuram-coffee-roasters", name:"유람 커피로스터스", nameEn:"Yuram Coffee Roasters (유람 커피로스터스)", nameZh:"游览咖啡烘焙 (유람 커피로스터스)", nameEs:"Yuram Coffee Roasters (유람 커피로스터스)", nameFr:"Yuram Coffee Roasters (유람 커피로스터스)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
     liveReview:true, lat:36.6142152703281, lng:127.291007809944, realAddress:"세종특별자치시 조치원읍 신안새동네길 25"},
-  {id:"daily-point", name:"딜리포인트", nameEn:"Dilly Point (딜리포인트)", nameZh:"美味点 (딜리포인트)", nameEs:"Dilly Point (딜리포인트)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
+  {id:"daily-point", name:"딜리포인트", nameEn:"Dilly Point (딜리포인트)", nameZh:"美味点 (딜리포인트)", nameEs:"Dilly Point (딜리포인트)", nameFr:"Dilly Point (딜리포인트)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:8000, saved:false, visited:false,
     liveReview:true, lat:36.6095312814038, lng:127.292428760867, realAddress:"세종특별자치시 조치원읍 원마루길 8"},
-  {id:"hunminjeongeum", name:"훈민정음", nameEn:"Hunminjeongeum (훈민정음)", nameZh:"训民正音 (훈민정음)", nameEs:"Hunminjeongeum (훈민정음)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+  {id:"hunminjeongeum", name:"훈민정음", nameEn:"Hunminjeongeum (훈민정음)", nameZh:"训民正音 (훈민정음)", nameEs:"Hunminjeongeum (훈민정음)", nameFr:"Hunminjeongeum (훈민정음)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
     liveReview:true, lat:36.6067909095201, lng:127.289479943118, realAddress:"세종특별자치시 조치원읍 내창3길 6-2"},
-  {id:"siot", name:"시옷", nameEn:"Siot (시옷)", nameZh:"西奥特 (시옷)", nameEs:"Siot (시옷)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩₩", priceValue:9000, saved:false, visited:false,
+  {id:"siot", name:"시옷", nameEn:"Siot (시옷)", nameZh:"西奥特 (시옷)", nameEs:"Siot (시옷)", nameFr:"Siot (시옷)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩₩", priceValue:9000, saved:false, visited:false,
     liveReview:true, lat:36.6131699644573, lng:127.280096320418, realAddress:"세종특별자치시 조치원읍 봉신길 69"},
-  {id:"vib", name:"비브", nameEn:"Vibe (비브)", nameZh:"维夫 (비브)", nameEs:"Vibe (비브)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
+  {id:"vib", name:"비브", nameEn:"Vibe (비브)", nameZh:"维夫 (비브)", nameEs:"Vibe (비브)", nameFr:"Vibe (비브)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩₩", priceValue:15000, saved:false, visited:false,
     liveReview:true, lat:36.6046085750178, lng:127.290128986122, realAddress:"세종특별자치시 조치원읍 행복5길 4"},
-  {id:"neomeo", name:"너머", nameEn:"Neomeo (너머)", nameZh:"那边 (너머)", nameEs:"Neomeo (너머)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+  {id:"neomeo", name:"너머", nameEn:"Neomeo (너머)", nameZh:"那边 (너머)", nameEs:"Neomeo (너머)", nameFr:"Neomeo (너머)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
     liveReview:true, lat:36.6054794933111, lng:127.292905251462, realAddress:"세종특별자치시 조치원읍 행복6길 32"},
-  {id:"chas", name:"차스", nameEn:"Chas (차스)", nameZh:"查斯 (차스)", nameEs:"Chas (차스)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+  {id:"chas", name:"차스", nameEn:"Chas (차스)", nameZh:"查斯 (차스)", nameEs:"Chas (차스)", nameFr:"Chas (차스)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
     liveReview:true, lat:36.60417645156744, lng:127.29143281475365, realAddress:"세종특별자치시 조치원읍 행복3길 13"},
-  {id:"second-road", name:"세컨로드", nameEn:"Second Road (세컨로드)", nameZh:"第二道路 (세컨로드)", nameEs:"Second Road (세컨로드)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+  {id:"second-road", name:"세컨로드", nameEn:"Second Road (세컨로드)", nameZh:"第二道路 (세컨로드)", nameEs:"Second Road (세컨로드)", nameFr:"Second Road (세컨로드)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
     liveReview:true, lat:36.618473252653, lng:127.28948336837, realAddress:"세종특별자치시 조치원읍 돌간2길 6"},
-  {id:"merry-go-round", name:"메리고라운드", nameEn:"Merry-Go-Round (메리고라운드)", nameZh:"旋转木马 (메리고라운드)", nameEs:"Merry-Go-Round (메리고라운드)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+  {id:"merry-go-round", name:"메리고라운드", nameEn:"Merry-Go-Round (메리고라운드)", nameZh:"旋转木马 (메리고라운드)", nameEs:"Merry-Go-Round (메리고라운드)", nameFr:"Merry-Go-Round (메리고라운드)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
     liveReview:true, lat:36.6186374126704, lng:127.290161420959, realAddress:"세종특별자치시 조치원읍 돌간1길 2"},
-  {id:"roastery-cafe-in", name:"로스터리 카페IN", nameEn:"Roastery Cafe IN (로스터리 카페IN)", nameZh:"IN烘焙咖啡馆 (로스터리 카페IN)", nameEs:"Roastery Cafe IN (로스터리 카페IN)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+  {id:"roastery-cafe-in", name:"로스터리 카페IN", nameEn:"Roastery Cafe IN (로스터리 카페IN)", nameZh:"IN烘焙咖啡馆 (로스터리 카페IN)", nameEs:"Roastery Cafe IN (로스터리 카페IN)", nameFr:"Roastery Cafe IN (로스터리 카페IN)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
     liveReview:true, lat:36.6030584936834, lng:127.290179064282, realAddress:"세종특별자치시 조치원읍 행복길 4"},
-  {id:"defense", name:"디펜스", nameEn:"Defense (디펜스)", nameZh:"防御 (디펜스)", nameEs:"Defense (디펜스)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
+  {id:"defense", name:"디펜스", nameEn:"Defense (디펜스)", nameZh:"防御 (디펜스)", nameEs:"Defense (디펜스)", nameFr:"Defense (디펜스)", cat:"카페", emoji:"☕", desc:"조치원읍 골목의 카페", descEn:"A cafe in a Jochiwon-eup backstreet", descZh:"位于调治院邑小巷里的咖啡馆", rating:null, reviewCount:null, price:"₩", priceValue:6000, saved:false, visited:false,
     liveReview:true, lat:36.6027370464379, lng:127.28895961480195, realAddress:"세종특별자치시 조치원읍 문화길 35-6"},
 ];
 
@@ -1444,6 +1444,304 @@ const i18n = { en: {
   communityQrSoon:"El grupo aún no se ha creado. Una vez que esté abierto, aparecerá aquí un código QR.",
   grandchildDefaultName:"Nieto", mealPassWord:"Bono de comida", ownerBonusLabel:"Bono del dueño",
   mypagePassBonusWord:"bono", mypagePassDateLine:"Reservado el {date}", reviewCharUnit:"",
+}, fr: {
+  pageTitle:"Bap Meokeoreo Wa — Découvrez les restaurants de quartier de Jochiwon",
+  navSearch:"Rechercher", navGame:"Roulette des menus", navSurvey:"Questionnaire de goûts", navLang:"Langue", navTheme:"Basculer entre le mode clair et le mode sombre", navLogin:"Se connecter",
+  mapFilterAria:"Type d'affichage de la carte", mapFilterAll:"Tout", mapFilterFood:"Restaurants", mapFilterCafe:"Cafés",
+  navMenuAria:"Sections principales", navMenuEat:"Restaurants", navMenuMap:"Carte", navMenuAbout:"À propos", navMenuJoin:"Participer",
+  navLogout:"Se déconnecter",
+  headerSearchPh:"Cherchez un restaurant, un ticket repas, un partenaire, une page",
+  heroEyebrow:"KU-jodae ! Aidons les patrons du quartier",
+  heroTitle:"Saviez-vous qu'il existe d'excellents restaurants absents de Naver, ou à peine référencés ? <span>Maintenant, vous le savez.</span>",
+  heroBody:"Une équipe d'étudiants du campus de Sejong de l'université de Corée, <b>Matjip KU-jodae</b>, arpente les ruelles de Jochiwon-eup pour les dénicher. Nous commençons par repérer les vrais restaurants de quartier qui n'apparaissent pas du tout sur Naver/Kakao Map, ou qui n'y figurent qu'avec très peu d'informations. Découvrez des restaurants de quartier au rapport qualité-prix imbattable, à partager entre étudiants du campus de Sejong des universités de Corée et de Hongik et habitants du coin.",
+  heroBrowse:"Voir les restaurants", heroNotify:"Prévenez-moi au lancement",
+  heroQuickpick:"Sauvetage des indécis · Je choisis pour vous en 3 secondes", heroSpeech:"Venez manger avec nous !",
+  problemEyebrow:"POURQUOI BAP MEOKEOREO WA", problemTitle:"À ne se fier qu'aux applis de cartes, on passe à côté du meilleur",
+  problemSub:"Une histoire bien connue des étudiants du campus de Sejong des universités de Corée et de Hongik, des étudiants en échange, du personnel et des habitants du quartier.",
+  problem1Title:"Absents des cartes, ou à peine référencés",
+  problem1Body:"Les restaurants de quartier tenus depuis des décennies sont souvent totalement absents de Naver/Kakao Map, ou référencés sans la moindre photo : impossible de tomber dessus, même en cherchant.",
+  problem2Title:"Toujours le même restaurant",
+  problem2Body:"Il y a tout près des restaurants de quartier meilleurs et moins chers, mais faute de moyen de les trouver, on retombe toujours sur les mêmes.",
+  problem3Title:"On a besoin les uns des autres",
+  problem3Body:"Les clients découvrent des pépites, les patrons gagnent en visibilité et en chiffre d'affaires : tout le quartier avance ensemble.",
+  discoverEyebrow:"BIENTÔT", discoverTitle:"Dès la rentrée, nous irons à la rencontre des patrons du quartier",
+  discoverBody:"Des restaurants de quartier bien réels, totalement absents des cartes ou référencés avec très peu d'informations : après la rentrée de septembre, notre équipe d'étudiants arpentera les ruelles de Jochiwon-eup, rencontrera les patrons et les présentera ici un par un. Les restaurants portant le badge 🌐 ci-dessous donnent un aperçu de l'intégration en direct des avis Google ; la vraie liste des restaurants de quartier que nous aurons trouvés et accompagnés nous-mêmes remplira bientôt cet espace.",
+  discoverStep1:"Repérage sur le terrain dans les ruelles de Jochiwon-eup (après la rentrée de septembre)",
+  discoverStep2:"Trouver les patrons du quartier peu référencés et compléter leurs informations",
+  discoverStep3:"Les publier ici comme vrais restaurants de quartier, un par un",
+  discoverBtn:"Signalez un restaurant de quartier près de chez vous",
+  mapEyebrow:"CARTE", mapTitle:"Mini-carte de Jochiwon",
+  mapBody:"Les emplacements des restaurants que nous avons réellement vérifiés. Touchez un repère pour voir le détail. Les autres viendront peu à peu après le repérage de terrain de septembre.",
+  mapCampusLabel:"🏫 Campus de Sejong de l'université de Corée",
+  mapAuthFail:"Impossible de charger la carte.",
+  eatLocalEyebrow:"MANGER LOCAL", eatLocalTitle:"On mange quoi aujourd'hui ?",
+  realGridTitle:"📍 Restaurants réels vérifiés · Avis Google en direct",
+  realGridSub:"Des restaurants réellement enregistrés sur Kakao/Google. Cliquez sur l'un d'eux pour voir aussitôt les notes et les avis réels.",
+  liveSearchPh:"Vous ne trouvez pas un restaurant ? Tapez un nom pour chercher autour de vous en temps réel",
+  liveSearchBtn:"Rechercher",
+  catAll:"Tout", catKorean:"Coréen", catWestern:"Occidental", catChinese:"Chinois", catJapanese:"Japonais", catSnack:"Snacks", catCafe:"Cafés",
+  descVarCafe0:"Un café au cadre agréable dans une ruelle de Jochiwon-eup",
+  descVarCafe1:"Un café de ruelle où l'on boit vite fait avant de repartir",
+  descVarCafe2:"Un café de ruelle idéal pour un passage entre deux cours",
+  descVarCafe3:"Un café d'une ruelle de Jochiwon-eup où l'on s'installe tranquillement",
+  descVarCafe4:"Un café de ruelle à Jochiwon-eup pour prendre une tasse en passant",
+  descVarKorean0:"Un restaurant coréen de ruelle à Jochiwon-eup qui vous remet d'aplomb",
+  descVarKorean1:"Un repas qui tient au corps, dans une ruelle de Jochiwon-eup",
+  descVarKorean2:"Le restaurant coréen de ruelle où l'on va quand on ne sait pas quoi manger",
+  descVarKorean3:"Une ruelle de Jochiwon-eup, pour quand la cuisine de la maison vous manque",
+  descVarWestern0:"Un petit restaurant occidental niché dans une ruelle de Jochiwon-eup",
+  descVarWestern1:"Un repas à la fourchette dans une ruelle de Jochiwon-eup",
+  descVarWestern2:"Un restaurant occidental de ruelle à Jochiwon-eup, pour un jour un peu spécial",
+  descVarChinese0:"Un restaurant chinois de ruelle à Jochiwon-eup au bon goût de wok",
+  descVarChinese1:"Un bol de cuisine chinoise dans une ruelle de Jochiwon-eup",
+  descVarChinese2:"La ruelle de Jochiwon-eup où l'on hésite entre jjajangmyeon et jjamppong",
+  descVarJapanese0:"Un restaurant japonais tout tranquille dans une ruelle de Jochiwon-eup",
+  descVarJapanese1:"Un bol de cuisine japonaise dans une ruelle de Jochiwon-eup",
+  descVarJapanese2:"Un restaurant japonais de ruelle à Jochiwon-eup, que l'on vide d'une traite",
+  descVarSnack0:"Un bunsik plein de nostalgie dans une ruelle de Jochiwon-eup",
+  descVarSnack1:"Un bunsik de ruelle pour se caler l'estomac sans se ruiner",
+  descVarSnack2:"Une ruelle de Jochiwon-eup, pour quand on a envie de tteokbokki",
+  pagerAria:"Pages de la liste des restaurants", pagerPrev:"Page précédente", pagerNext:"Page suivante",
+  sortRecommend:"Recommandés", sortName:"Nom (A-Z)", sortRating:"Mieux notés", sortReviews:"Plus commentés", sortLatest:"Plus récents", sortDistance:"Plus proches",
+  priceMin:"Min", priceMax:"Max", priceWon:"wons",
+  filterEmpty:"Aucun restaurant ne correspond encore à ces filtres.",
+  filterEmptySub:"Et ceux-là ?", filterReset:"Effacer les filtres et tout afficher",
+  filterEmptyKorean:"🍚 Coréen", filterEmptyJapanese:"🍜 Japonais", filterEmptyWestern:"🍝 Occidental",
+  exampleGridTitle:"🔎 Restaurants d'exemple (en attente du repérage de terrain)",
+  exampleGridSub:"Informations de référence en attendant la fin du repérage de terrain. Touchez le cœur pour ajouter un lieu à vos envies d'y aller.",
+  loadMore:'Afficher plus de restaurants <span class="badge-soon">Ouverture en septembre</span>',
+  reviewEyebrow:"AVIS", reviewTitle:"Les récits de celles et ceux qui y sont allés",
+  reviewSearchPh:"Rechercher dans les avis (nom du restaurant, mot-clé)",
+  reviewWriteBtn:"Écrivez votre avis vous aussi",
+  reviewSoon:"<strong>Les données d'avis arrivent bientôt</strong> — dès que de vrais avis de visite s'accumuleront après la rentrée de septembre, une fonction de résumé des avis par IA sera lancée elle aussi.",
+  surveyTitle:"Parlez-nous un peu de vos goûts", surveyBody:"Répondez à un court questionnaire sur le niveau de piquant, vos catégories préférées et votre budget pour recevoir des recommandations sur mesure.", surveyBtn:"Commencer le questionnaire de goûts",
+  shareEyebrow:"PARTAGER", shareTitle:"Parlez-en aussi à vos amis de la fac",
+  shareBody:"Les pépites sont encore meilleures quand on les partage. Recommandez « Bap Meokeoreo Wa » à un ami.",
+  shareKakao:"Partager sur KakaoTalk", shareCopy:"Copier le lien", shareText:"Partager par message", shareInsta:"Partager sur Instagram",
+  joinEyebrow:"ENSEMBLE", joinTitle:"Construisons-le ensemble",
+  joinBody:"Pour les patrons, pour nous, pour le quartier : nous avons fait de la place à toutes celles et ceux qui veulent rejoindre ce projet.",
+  join1Title:'Vous tenez un restaurant ?<span class="badge-soon">Ouverture en septembre</span>',
+  join1Body:"Un espace d'inscription pour les patrons de restaurants de quartier de Jochiwon qui souhaitent mettre leur établissement en avant.",
+  join2Title:"Donnez-nous un coup de main", join2Body:"Nous cherchons des personnes prêtes à nous rejoindre en planification, développement, design et enquête de terrain.",
+  join3Title:"Parlez-nous aussi des adresses de votre quartier", join3Body:"Même en dehors de Jochiwon, si notre démarche vous parle, écrivez-nous quand vous voulez.",
+  signupTitle:"Soyez les premiers informés", signupBody:"Nous vous enverrons un e-mail avant tout le monde au lancement de la bêta et à chaque nouveau restaurant ajouté.",
+  signupEmailPh:"Saisissez votre adresse e-mail", signupBtn:"S'inscrire en avant-première",
+  signupErrEmail:"Cette adresse e-mail a l'air un peu bizarre ! 💌",
+  signupMsg:"C'est enregistré ! Nous vous préviendrons avant tout le monde au lancement 🌾",
+  footerAbout:"« KU-jodae ! Aidons les patrons du quartier » — un projet de contribution sociale de Matjip KU-jodae, une équipe d'étudiants du campus de Sejong de l'université de Corée, né pour grandir avec les commerces du quartier.",
+  footerServiceHead:"Service", footerMapLink:"Voir la carte", footerPassLink:'Ticket repas du petit-enfant<span class="badge-live">Réservations ouvertes</span>', footerSponsorLink:"Nous soutenir",
+  footerInfoHead:"Informations", footerIntroLink:"À propos du service", footerFaqLink:"Nous contacter", footerSignupLink:"S'abonner aux alertes de lancement",
+  footerAdminHead:"Administration", footerAnalyticsLink:"Statistiques d'utilisation", footerOwnerLink:"Espace patron",
+  adminGateTitle:"Vérification administrateur", adminGateBody:"Vous allez accéder à la page des statistiques d'utilisation. Veuillez saisir le mot de passe.",
+  adminGateOk:"Entrer", adminGateWrong:"Ce mot de passe ne correspond pas.",
+  footerLegalHead:"Mentions légales", footerPrivacyLink:"Politique de confidentialité", footerTermsLink:"Conditions d'utilisation",
+  footerOperator:"<b>Exploitant</b> Matjip KU-jodae, une équipe d'étudiants du campus de Sejong de l'université de Corée",
+  footerProject:"<b>Nom du projet</b> KU-jodae ! Aidons les patrons du quartier",
+  footerServiceName:"<b>Nom du service</b> Bap Meokeoreo Wa",
+  footerEmail:"<b>E-mail de contact</b> (à venir)",
+  footerOfficer:"<b>Responsable de la protection des données</b> (à venir)",
+  footerBottom:"© 2026 Bap Meokeoreo Wa · KU-jodae ! Aidons les patrons du quartier. Matjip KU-jodae (campus de Sejong de l'université de Corée).",
+  a11yToggle:"🔍 Mode gros caractères",
+  confirmOk:"OK", confirmNo:"Non",
+  cardReviewPending:"🔎 Avis en direct bientôt disponibles", cardVisitBadge:"✔ Visité", cardLiveBadge:"🌐 Avis Google en direct", cardMockTag:"Données d'exemple",
+  cardVisitedLabel:"✔ Visite enregistrée", cardMarkVisited:"Marquer comme visité", cardWantToVisit:"Ajouter à mes envies d'y aller",
+  filterCountTemplate:"{n} restaurants",
+  detailAddress:"📍 Adresse", detailHours:"🕐 Horaires", detailClosed:"🚫 Fermeture", detailPhone:"☎️ Téléphone", detailReservation:"📅 Réservation",
+  copyAddressBtn:"Copier l'adresse", copyPhoneBtn:"Copier le numéro",
+  copyOkTitle:"Copié", copyOkBody:"C'est dans votre presse-papiers : collez-le où vous en avez besoin.",
+  copyFailTitle:"Copie impossible", copyFailBody:"Le navigateur a bloqué la copie. Sélectionnez le texte et copiez-le à la main.",
+  detailCapacity:"🪑 Capacité", detailParking:"🚗 Stationnement", detailMobilePay:"📱 Paiement mobile", detailVouchers:"🎟️ Bons et chèques",
+  detailMenuTitle:"Menu", detailOrigin:"Origine : ", detailExampleNote:"* Ces informations ne sont qu'un exemple — le détail réel sera ajouté après le repérage de terrain.",
+  detailStubTitle:"Détails à venir", detailStubBody:" seront ajoutés après le repérage de terrain de septembre. Jetez un œil à la fiche du Gukbap de la Grand-mère de Jochiwon pour un aperçu de ce qui vous attend.",
+  detailStubBodyFull:"L'adresse, les horaires, le menu et l'origine des ingrédients",
+  detailStubBodyPartial:"Les horaires, le menu et l'origine des ingrédients",
+  closeBtn:"Fermer",
+  googleReviewTitle:"Avis Google", googleReviewLoading:"Chargement des avis…", googleReviewError:"Impossible de charger les avis. Réessayez dans un instant.",
+  aiSummaryTitle:"Résumé des avis par IA", aiSummaryLoading:"🤖 Résumé des avis en cours…",
+  detailDirections:"🧭 Itinéraire (Google Maps)",
+  detailNoLocationNote:"🧭 Ce sont des données d'exemple, sans emplacement réel pour l'instant : aucun itinéraire n'est disponible.",
+  detailRouteBtn:"📍 Voir l'itinéraire à pied en texte", detailRouteLoading:"Chargement de l'itinéraire…",
+  detailRouteNoGeo:"Ce navigateur ne prend pas en charge la géolocalisation.", detailRouteNoPermission:"Autorisez l'accès à votre position pour voir l'itinéraire.",
+  detailRouteUnavailable:"Les informations d'itinéraire ne sont pas disponibles pour le moment.",
+  googleReviewNotFound:"😢 Nous n'avons pas trouvé ce restaurant sur Google Maps.", googleReviewNone:"Aucun avis pour l'instant.",
+  googleReviewLink:"Voir tous les avis sur Google Maps →", googleReviewAnon:"Anonyme",
+  liveSearchLoading:"Recherche en cours…", liveSearchEmpty:"Aucun résultat trouvé.", liveSearchError:"La recherche a échoué. Réessayez dans un instant.",
+  confirmLoginTitle:"Connexion requise", confirmLoginBody:"Cette fonction demande d'être connecté. Connectez-vous et composez votre propre liste de restaurants !", confirmLoginOk:"Se connecter", confirmLoginCancel:"Fermer",
+  discardTitle:"Quitter sans terminer ?", discardBody:"Ce que vous avez choisi jusqu'ici ne sera pas enregistré.",
+  discardOk:"Quitter", discardCancel:"Continuer",
+  confirmUnsave:"Retirer de vos envies d'y aller ?", confirmUnsaveVisited:"Retirer de vos envies d'y aller ? Votre visite enregistrée pour ce lieu sera supprimée elle aussi.", confirmSave:"Ajouter ce restaurant à vos envies d'y aller ?", confirmVisited:"Marquer ce restaurant comme visité ?",
+  surveyPrev:"Précédent", surveyNext:"Suivant", surveyResult:"Voir les résultats",
+  surveyResultTitle:"Et ceux-là ?", surveyResultSub:"Des restaurants de quartier choisis selon vos goûts",
+  gameTitle:"Choisissons quoi manger, façon jeu", gameSub:"Fini l'indécision ! Choisissez l'un des deux",
+  gameTarotName:"Tarot du menu du jour", gameTarotDesc:"Tirez une carte et découvrez votre destin culinaire",
+  gameRouletteName:"Roulette des menus", gameRouletteDesc:"Écrivez vos envies et laissez la roulette décider",
+  gameBack:"← Choisir un autre jeu",
+  tarotTitle:"Tarot du menu du jour", tarotSub:"{n} cartes défilent. Touchez pour tirer le plat du jour",
+  tarotRedraw:"Tirer à nouveau",
+  rouletteTitle:"Roulette des menus", rouletteSub:"Ajoutez au moins 2 envies, puis lancez",
+  roulettePh:"ex. gukbap, pizza, malatang", rouletteAdd:"Ajouter",
+  rouletteEmpty:"Ajoutez quelques plats", rouletteMin:"Ajoutez au moins 2 plats",
+  rouletteReady:"{n} options parmi lesquelles choisir", rouletteSpin:"🎡 Lancer", rouletteRespin:"🎡 Relancer",
+  authIntentSave:"Pour garder les lieux où vous voulez aller, devenez d'abord l'un de nos petits-enfants !",
+  authIntentMypage:"Il faut vous inscrire pour utiliser Mon espace.",
+  authIntentReview:"Inscrivez-vous d'abord pour laisser un avis.",
+  authIntentPass:"Les tickets repas sont rattachés à votre compte, alors inscrivez-vous d'abord.",
+  authIntentLogin:"Content de vous revoir ! Connectez-vous à votre compte.",
+  authTitle:"Devenez l'un de nos petits-enfants", authTabSignup:"S'inscrire", authTabLogin:"Se connecter",
+  authNameLabel:"Nom", authNamePh:"Comment doit-on vous appeler ?",
+  authIdLabel:"Adresse e-mail", authIdPh:"exemple@courriel.com",
+  authPwLabel:"Mot de passe", authPwPh:"Mot de passe",
+  authPw2Label:"Confirmer le mot de passe", authPw2Ph:"Saisissez à nouveau votre mot de passe",
+  authSubmitSignup:"M'inscrire et commencer", authSubmitLogin:"Se connecter",
+  authErrFormat:"Veuillez saisir une adresse e-mail valide.",
+  authErrPwMismatch:"Les mots de passe ne correspondent pas. Veuillez vérifier.",
+  authErrDupe:"Ce compte existe déjà. Connectez-vous depuis l'onglet « Se connecter ».",
+  authErrNotFound:"Aucun compte trouvé. Inscrivez-vous d'abord depuis l'onglet « S'inscrire ».",
+  authErrPwShort:"Le mot de passe doit comporter au moins 6 caractères.",
+  mypageResetSaved:"Effacer mes envies d'y aller", mypageResetVisited:"Effacer mes visites", mypageResetPass:"Effacer mes réservations de tickets",
+  resetSavedTitle:"Effacer mes envies d'y aller", resetSavedBody:"Cela efface tous les lieux que vous avez gardés. Vos visites et vos réservations de tickets sont conservées.",
+  resetVisitedTitle:"Effacer mes visites", resetVisitedBody:"Cela efface toutes les marques de visite. Vos lieux gardés et vos avis sont conservés.",
+  resetPassTitle:"Effacer mes réservations de tickets", resetPassBody:"Cela efface toutes les réservations de tickets. Vos lieux gardés et vos visites sont conservés.",
+  authErrPwEmpty:"Veuillez saisir votre mot de passe.",
+  authErrNameEmpty:"Dites-nous comment vous appeler.",
+  authErrNotConfirmed:"Votre e-mail n'est pas encore vérifié. Consultez votre boîte de réception.",
+  authErrNeedConfirm:"Nous vous avons envoyé un e-mail de confirmation. Vérifiez-le, puis connectez-vous.",
+  authErrRate:"Trop de tentatives. Réessayez dans un instant.",
+  authErrNetwork:"La connexion a échoué. Réessayez dans un instant.",
+  authErrOffline:"Nous n'arrivons pas à joindre le serveur de connexion pour le moment. Réessayez dans un instant.",
+  authErrGeneric:"Une erreur est survenue. Réessayez dans un instant.",
+  authErrWrongPw:"Mot de passe incorrect.",
+  authWelcomeTitle:"Bienvenue, {name} !", authWelcomeBody:"Inscription terminée. Nous vous préviendrons avant tout le monde lors du lancement officiel.",
+  authWelcomeBodyLogin:"Content de vous revoir ! Ravi de vous retrouver.",
+  authWelcomeMypageBtn:"Aller à Mon espace",
+  headerAuthSavedLabel:"Mes lieux gardés", headerAuthMypageTitle:"Mon espace de {name}",
+  logoutTitle:"Se déconnecter ?", logoutBody:"Après la déconnexion, il faudra vous reconnecter pour retrouver vos listes, écrire des avis, etc.",
+  logoutOk:"Se déconnecter", logoutCancel:"Annuler",
+  mypageTitle:"Mon espace de {name}", mypageTitleGeneric:"Mon espace",
+  mypageTabSaved:"Envies d'y aller", mypageTabVisited:"Visités", mypageTabPass:"Tickets repas",
+  allergyTitle:"🥜 Réglage des allergies", allergySub:"Nous vous préviendrons avant d'ouvrir un lieu susceptible d'utiliser ce que vous cochez.",
+  allergyWarnTitle:"À savoir avant d'entrer", allergyWarnBody:"Ce lieu peut servir des plats contenant {list}. Vérifiez auprès du patron avant de commander.",
+  allergyWarnOk:"Compris, afficher",
+  allergen_shellfish:"Crustacés", allergen_fish:"Poissons et fruits de mer", allergen_milk:"Lait", allergen_wheat:"Blé et gluten",
+  allergen_nuts:"Fruits à coque", allergen_pork:"Porc", allergen_beef:"Bœuf", allergen_egg:"Œuf",
+  mypageResetLink:"Réinitialiser toute mon activité", mypageLogoutBtn:"Se déconnecter",
+  mypageEmptySaved:"Aucun restaurant gardé pour l'instant.", mypageEmptyVisited:"Aucune visite enregistrée pour l'instant.",
+  mypageEmptyPass:"Aucun ticket repas réservé pour l'instant.<br>Choisissez un restaurant qui vous plaît dans la section Ticket repas du petit-enfant.",
+  mypageRemoveSavedTitle:"Retirer de mes envies d'y aller", mypageRemoveVisitedTitle:"Annuler la visite enregistrée",
+  mypageConfirmUnvisit:"Annuler cette visite enregistrée ?",
+  mypageCancelPassTitle:"Annuler la réservation", mypageConfirmCancelPass:"Annuler cette réservation de ticket repas ?", mypageCancelPassOk:"Annuler la réservation",
+  resetTitle:"Réinitialiser mon activité", resetBody:"Cela efface vos lieux gardés, vos visites, vos avis et vos réservations de tickets repas. C'est irréversible.",
+  resetOk:"Réinitialiser", resetCancel:"Annuler",
+  reviewFormTitle:"Écrivez votre avis vous aussi", reviewFormSub:"Partagez un avis sincère sur un restaurant où vous êtes allé.",
+  reviewFormNoVisitTitle:"Vous ne pouvez pas encore écrire d'avis", reviewFormNoVisitBody:"Vous ne pouvez commenter que les restaurants que vous avez marqués comme visités.",
+  reviewFormNoVisitOk:"Parcourir les restaurants",
+  reviewRatingLabel:"Note", reviewPlaceLabel:"Restaurant visité",
+  reviewVisibilityLabel:"Afficher sous", reviewVisibilityReal:"Nom réel ({name})", reviewVisibilityAnon:"Anonyme",
+  reviewPhotoLabel:"Joindre une photo", reviewOptional:"Facultatif",
+  visitVerifyTitle:"Vérifiez votre visite",
+  visitVerifySub:"Êtes-vous vraiment allé chez {name} ? Envoyez un reçu ou une photo de l'enseigne.",
+  visitVerifyNote:"Vous ne pouvez commenter que les lieux où vous êtes réellement allé. La photo sert uniquement à la vérification et n'est pas conservée.",
+  visitVerifyPhotoLabel:"Reçu ou photo de l'enseigne",
+  visitVerifySubmit:"Vérifier", visitVerifyChecking:"Vérification en cours…",
+  visitVerifyPreviewAlt:"Aperçu de la photo que vous avez envoyée",
+  visitVerifyErrNoPhoto:"Veuillez d'abord envoyer une photo.",
+  visitVerifyErrRead:"Nous n'avons pas pu lire cette photo. Essayez-en une autre.",
+  visitVerifyErrServer:"La vérification n'est pas disponible pour le moment. Réessayez dans un instant.",
+  visitVerifyFailKind:"Cela ne ressemble ni à un reçu ni à une photo d'enseigne.",
+  visitVerifyFailName:"Nous n'avons pas retrouvé le nom de ce restaurant sur la photo.",
+  reviewContentLabel:"Avis", reviewContentPh:"Qu'est-ce qui vous a plu dans ce lieu ?",
+  reviewSubmitBtn:"Publier l'avis", reviewErrEmpty:"Veuillez écrire votre avis.",
+  reviewSuccessTitle:"Votre avis est publié !",
+  reviewSuccessBodyOk:"Merci du partage ! Il figure déjà dans la liste des avis.",
+  reviewSuccessBodyFail:"Ajouté à la liste des avis. En revanche, la photo était trop lourde pour être enregistrée — elle pourrait disparaître au rechargement.",
+  anonReviewerName:"Petit-enfant anonyme", namedReviewerSuffix:" (petit-enfant)", defaultReviewerName:"Un petit-enfant",
+  introSub:"À la découverte des restaurants de quartier de Jochiwon-eup",
+  introVision:"Retrouver les vrais restaurants de quartier absents ou mal référencés sur les cartes, et bâtir un écosystème de commerces locaux où clients et patrons prospèrent ensemble",
+  introOverviewHead:"Présentation du projet",
+  introOverviewBody:"« KU-jodae ! Aidons les patrons du quartier » — un service porté par des étudiants, né d'un projet de contribution sociale du campus de Sejong de l'université de Corée. Étudiants et habitants trouvent et présentent eux-mêmes les restaurants de quartier de Jochiwon-eup absents de Naver/Kakao Map, ou référencés avec très peu d'informations.",
+  introMakerHead:"Qui l'a créé",
+  introMakerBody:"Un projet de contribution sociale conçu et réalisé par Matjip KU-jodae, une équipe d'étudiants en politique économique du campus de Sejong de l'université de Corée.",
+  introProgressHead:"Avancement",
+  introProgressBody:"Nous sommes actuellement en phase de pré-lancement et recueillons les inscriptions anticipées. Nous prévoyons d'ouvrir le service complet après avoir complété les données réelles des restaurants lors d'un repérage de terrain, après la rentrée de septembre.",
+  introFaqBtn:"Questions fréquentes",
+  faqTitle:"Nous contacter", faqSub:"Consultez d'abord les questions fréquentes pour une réponse rapide.",
+  faqQ1:"Qu'est-ce que Bap Meokeoreo Wa ?",
+  faqA1:"C'est un service né du projet « KU-jodae ! Aidons les patrons du quartier ». Étudiants et habitants trouvent et présentent eux-mêmes les restaurants de quartier de Jochiwon-eup absents des cartes en ligne comme Naver/Kakao Map, ou référencés avec très peu d'informations.",
+  faqQ2:"Sommes-nous avant le lancement officiel ?",
+  faqA2:"Oui, nous recueillons pour l'instant les inscriptions anticipées en phase de préparation, et prévoyons d'ouvrir le service complet avec de vraies données de restaurants après la rentrée de septembre.",
+  faqQ3:"Mon restaurant peut-il être référencé lui aussi ?",
+  faqA3:"Oui ! Nous préparons une page d'inscription pour les patrons. Nous vous guiderons via le bouton « Vous tenez un restaurant ? » dès qu'elle sera prête.",
+  faqQ4:"Tout le monde peut-il écrire un avis ?",
+  faqA4:"Seuls les membres connectés peuvent écrire un avis, et uniquement pour les restaurants qu'ils ont marqués comme visités — une protection minimale contre les faux avis.",
+  faqQ5:"Comment mes données personnelles sont-elles utilisées ?",
+  faqA5:"Elles servent uniquement aux finalités indiquées dans notre politique de confidentialité (identification des membres, fourniture du service) et sont gérées en toute sécurité, conformément à la réglementation applicable.",
+  faqQ6:"J'aimerais donner un coup de main ou rejoindre l'équipe.",
+  faqA6:"Laissez-nous un message via le menu « Donnez-nous un coup de main » et nous vous indiquerons la suite.",
+  faqFootPrefix:"Vous n'avez pas trouvé votre réponse ? Écrivez-nous via ", faqFootBold:"Donnez-nous un coup de main", faqFootSuffix:".",
+  faqContactBtn:"Envoyer une demande",
+  supportTitle:"Donnez-nous un coup de main", supportSub:"Ce projet attend des mains amies.",
+  supportTeamTitle:"J'aimerais rejoindre l'équipe", supportTeamDesc:"De l'enquête de terrain à la planification et au développement — il y a une place pour vous.",
+  supportSponsorTitle:"J'aimerais soutenir ce projet", supportSponsorDesc:"Aidez à faire avancer un projet mené sans but lucratif.",
+  contactNameLabel:"Nom", contactNamePh:"Nom ou pseudo",
+  contactReachLabel:"Contact / e-mail", contactReachPh:"E-mail ou numéro de téléphone pour vous joindre",
+  contactMessageOptional:"Facultatif", contactSubmitBtn:"Envoyer la demande",
+  contactErrName:"Veuillez saisir votre nom.", contactErrReach:"Veuillez saisir un e-mail ou un numéro de téléphone valide.",
+  contactBack:"Retour", contactSuccessTitle:"Votre demande est bien partie !",
+  contactSuccessBody:"Merci, {name}. Nous vous recontacterons avec les coordonnées que vous avez laissées.<br>({type})",
+  ct_team_title:"J'aimerais rejoindre l'équipe", ct_team_sub:"Nous attendons des coéquipiers pour construire tout ça ensemble.",
+  ct_team_note:"Planification, développement, design, enquête de terrain — tous les rôles sont les bienvenus. Nous vous contacterons avec les coordonnées que vous laisserez.",
+  ct_team_field:"Domaine dans lequel vous aimeriez aider",
+  ct_team_opt1:"Enquête de terrain (trouver des restaurants)", ct_team_opt2:"Planification / Exploitation", ct_team_opt3:"Design", ct_team_opt4:"Développement", ct_team_opt5:"Marketing / Contenu", ct_team_opt6:"Je ne sais pas encore",
+  ct_team_msgLabel:"Autre chose à nous dire", ct_team_msgPh:"Dites-nous librement pourquoi vous aimeriez nous rejoindre, ou quand vous êtes disponible.",
+  ct_sponsor_title:"J'aimerais soutenir ce projet", ct_sponsor_sub:"Chaque contribution nous aide à trouver un restaurant de quartier de plus.",
+  ct_sponsor_note:"Ce projet est pour l'instant mené sans but lucratif : les dons servent uniquement à l'enquête de terrain et aux frais de fonctionnement.",
+  ct_sponsor_field:"Type de soutien",
+  ct_sponsor_opt1:"Don ponctuel", ct_sponsor_opt2:"Don régulier", ct_sponsor_opt3:"Don en nature / en compétences", ct_sponsor_opt4:"Je préfère d'abord poser une question",
+  ct_sponsor_msgLabel:"Message à propos de votre soutien", ct_sponsor_msgPh:"Partagez vos questions ou vos idées sur la façon de nous soutenir.",
+  ct_partnerStore_title:"Demande de partenariat pour les patrons", ct_partnerStore_sub:"Préparons ensemble des tickets repas et des avantages pour les étudiants.",
+  ct_partnerStore_note:"L'inscription et les demandes de partenariat sont gratuites. Vous fixez vous-même les avantages du ticket repas et sa durée de validité ; le modèle de commission est encore en discussion.",
+  ct_partnerStore_field:"Avantage souhaité",
+  ct_partnerStore_opt1:"Ticket repas 10+1", ct_partnerStore_opt2:"Réduction étudiante", ct_partnerStore_opt3:"Réduction sur un menu fixe", ct_partnerStore_opt4:"Je préfère d'abord poser une question",
+  ct_partnerStore_msgLabel:"À propos de votre restaurant / autre chose", ct_partnerStore_msgPh:"Indiquez le nom de votre restaurant, son emplacement et l'avantage que vous envisagez.",
+  ct_partnerOrg_title:"Partenariat avec une association étudiante ou un club", ct_partnerOrg_sub:"Créons des avantages pour les membres de votre organisation.",
+  ct_partnerOrg_note:"Le campus de Sejong de l'université de Corée a déjà des restaurants partenaires, comme le programme KU Membership. Nous voulons aider les restaurants de quartier absents des cartes à rejoindre ce même espace — les conditions sont encore en discussion.",
+  ct_partnerOrg_field:"Type d'organisation",
+  ct_partnerOrg_opt1:"Association étudiante", ct_partnerOrg_opt2:"Club", ct_partnerOrg_opt3:"Organisation du campus", ct_partnerOrg_opt4:"Autre groupe",
+  ct_partnerOrg_msgLabel:"Le type de partenariat souhaité", ct_partnerOrg_msgPh:"Indiquez le nom de votre organisation, sa taille et l'avantage que vous aimeriez.",
+  ct_expand_title:"Trouvez aussi les restaurants de quartier chez moi", ct_expand_sub:"Même en dehors de Jochiwon, si notre démarche vous parle.",
+  ct_expand_note:"Le modèle économique n'est pas encore défini. Nous réfléchissons pour l'instant à une extension sans but lucratif et cherchons comment travailler ensemble.",
+  ct_expand_field:"Quartier que vous proposez", ct_expand_fieldPh:"ex. Dodam-dong à Sejong, Sachang-dong à Cheongju",
+  ct_expand_msgLabel:"Votre proposition", ct_expand_msgPh:"Parlez-nous du quartier et de ce que ce service y apporterait.",
+  passPerUnit:"par ticket", passValidDays:"Valable {n} jours", passBuyBtn:"Réserver un ticket repas",
+  passSelectTitle:"Ticket repas de {name}", passHowMany:"Combien en voulez-vous ?",
+  passSummaryCount:"{n} tickets", passSummaryBonus:"Bonus du patron +{n}", passSummaryTotal:"Tickets que vous recevrez", passSummaryAmount:"Montant à payer",
+  passNextBtn:"Suivant", passConfirmTitle:"On réserve comme ça ?", passConfirmSub:"Nous enverrons une réservation avec le détail suivant.",
+  passSummaryStore:"Restaurant", passSummaryBought:"Tickets achetés", passSummaryValid:"Durée de validité", passSummaryValidVal:"{n} jours à partir de la première utilisation",
+  passPrepayNote:"Pour l'instant, cela n'envoie qu'une <b>pré-commande</b>. Le paiement réel sera activé au lancement officiel — aucune somme n'est prélevée à ce stade.",
+  passSubmitBtn:"Envoyer la pré-commande", passBackBtn:"Retour",
+  passSuccessTitle:"Votre réservation est enregistrée !",
+  passSuccessBodyOk:"Nous avons mis {n} tickets de côté pour {name}. Nous vous préviendrons pour le paiement au lancement officiel.",
+  passSuccessBodyFail:"Nous avons enregistré votre ticket pour {name}, mais le stockage était plein et nous n'avons pas pu le consigner — il pourrait disparaître au rechargement.",
+  passSeeMyPasses:"Voir mes tickets repas",
+  passInfoTitle:'Ticket repas du petit-enfant<span class="badge-live">Réservations ouvertes</span>',
+  passInfoBody:"Préchargez un ticket repas chez un restaurant que vous aimez. Recevez des tickets supplémentaires selon l'offre du patron, et utilisez-en un à chaque visite.",
+  passBenefit1Title:"10 achetés, 1 offert", passBenefit1Body:"Achetez en lot et recevez les tickets supplémentaires fixés par le patron. Les avantages varient d'un restaurant à l'autre.",
+  passBenefit2Title:"Payez vos repas d'avance", passBenefit2Body:"Payez d'avance au lieu de régler repas après repas, et allégez la charge sur votre porte-monnaie.",
+  passBenefit3Title:"Les patrons gagnent des habitués", passBenefit3Body:"Les restaurants encaissent à l'avance et gagnent des clients réguliers — tout le monde y gagne.",
+  passListTitle:"Restaurants qui préparent des tickets repas",
+  passMoreNote:"D'autres restaurants ouvriront progressivement des tickets, après nos échanges avec les patrons lors du repérage de terrain de septembre.",
+  passPartnerTitle:"Nous préparons aussi des partenariats",
+  passPartnerBody:"Le campus de Sejong de l'université de Corée a déjà des restaurants partenaires, comme le programme KU Membership. Nous pensons que les restaurants de quartier absents des cartes peuvent rejoindre ce même espace une fois qu'on les aura découverts.",
+  passPartnerStoreBtn:"Demande de partenariat pour les patrons", passPartnerOrgBtn:"Partenariat avec une association étudiante ou un club",
+  passNotice:"<strong>Le paiement n'est pas encore disponible.</strong> Nous sommes pour l'instant dans une phase de préparation sans but lucratif : les tickets repas n'acceptent donc que des <b>pré-commandes</b> — l'intégration du paiement réel arrivera au lancement officiel. Les avantages et les durées de validité sont fixés par le patron.",
+  join4Title:"Rejoignez notre communauté", join4Body:"Les échanges en temps réel se passent dans notre groupe sur un réseau social externe.",
+  communityTitle:"Rejoignez notre communauté",
+  communityBody:"Les échanges en temps réel se passent dans un groupe sur un réseau social externe comme KakaoTalk ou Instagram. Ce site fournit seulement le lien d'accès et le QR code.",
+  communityJoinBtn:"Rejoindre le groupe",
+  communityQrReady:"Scannez le QR code ci-dessous ou touchez le bouton pour nous rejoindre.",
+  communityQrSoon:"Le groupe n'est pas encore créé. Dès qu'il sera ouvert, un QR code apparaîtra ici.",
+  grandchildDefaultName:"Petit-enfant", mealPassWord:"Ticket repas", ownerBonusLabel:"Bonus du patron",
+  mypagePassBonusWord:"bonus", mypagePassDateLine:"Réservé le {date}", reviewCharUnit:"",
 } };
 
 let currentLang = 'ko';
@@ -1579,6 +1877,7 @@ function rName(r){
   if(currentLang === 'en' && r.nameEn) return r.nameEn;
   if(currentLang === 'zh' && r.nameZh) return r.nameZh;
   if(currentLang === 'es' && r.nameEs) return r.nameEs;
+  if(currentLang === 'fr' && r.nameFr) return r.nameFr;
   return r.name;
 }
 // 수집 스크립트가 카테고리에서 찍어낸 정형문 6종. 카페만 19곳이라 목록이 전부 같은 문장이었다.
@@ -1615,12 +1914,14 @@ function rDesc(r){
   if(currentLang === 'en' && r.descEn) return r.descEn;
   if(currentLang === 'zh' && r.descZh) return r.descZh;
   if(currentLang === 'es' && r.descEs) return r.descEs;
+  if(currentLang === 'fr' && r.descFr) return r.descFr;
   return r.desc;
 }
 function pBenefit(p){
   if(currentLang === 'en' && p.benefitEn) return p.benefitEn;
   if(currentLang === 'zh' && p.benefitZh) return p.benefitZh;
   if(currentLang === 'es' && p.benefitEs) return p.benefitEs;
+  if(currentLang === 'fr' && p.benefitFr) return p.benefitFr;
   return p.benefit;
 }
 function rCat(r){ return t('cat' + {'전체':'All','한식':'Korean','양식':'Western','중식':'Chinese','일식':'Japanese','분식':'Snack','카페':'Cafe'}[r.cat]) || r.cat; }
@@ -1630,12 +1931,14 @@ function wonSuffix(n){
   if(currentLang === 'en') return `₩${n.toLocaleString()}`;
   if(currentLang === 'zh') return `${n.toLocaleString()}韩元`;
   if(currentLang === 'es') return `${n.toLocaleString()} wones`;
+  if(currentLang === 'fr') return `${n.toLocaleString()} wons`;
   return `${n.toLocaleString()}원`;
 }
 function passUnit(n){
   if(currentLang === 'en') return `${n}`;
   if(currentLang === 'zh') return `${n}张`;
   if(currentLang === 'es') return `${n}`;
+  if(currentLang === 'fr') return `${n}`;
   return `${n}장`;
 }
 
@@ -2678,30 +2981,33 @@ function toggleBigText(){
 const surveyQuestions = [
   {
     key:'spice',
-    title:'매운맛은 어느 정도가 좋아요?', titleEn:'How spicy do you like it?', titleZh:'你喜欢多辣的口味？', titleEs:'¿Qué tan picante te gusta?',
-    sub:'취향에 맞는 맛집을 찾는 데 참고할게요', subEn:"We'll use this to find restaurants that match your taste", subZh:'我们会据此为你寻找符合口味的餐厅', subEs:'Usaremos esto para encontrar restaurantes que combinen con tu gusto',
+    title:'매운맛은 어느 정도가 좋아요?', titleEn:'How spicy do you like it?', titleZh:'你喜欢多辣的口味？', titleEs:'¿Qué tan picante te gusta?', titleFr:'Vous aimez ça piquant comment ?',
+    sub:'취향에 맞는 맛집을 찾는 데 참고할게요', subEn:"We'll use this to find restaurants that match your taste", subZh:'我们会据此为你寻找符合口味的餐厅', subEs:'Usaremos esto para encontrar restaurantes que combinen con tu gusto', subFr:"Nous nous en servirons pour trouver des restaurants à votre goût",
     options:['안 매운 게 좋아요','보통이 좋아요','매콤한 게 좋아요','아주 매워야 해요'],
     optionsEn:['Not spicy at all','A little spicy is fine','I like it spicy','Has to be very spicy'],
     optionsZh:['完全不辣', '微辣就好', '喜欢辣一点', '必须非常辣'],
-    optionsEs:['Nada picante', 'Un poco picante está bien', 'Me gusta picante', 'Tiene que ser muy picante']
+    optionsEs:['Nada picante', 'Un poco picante está bien', 'Me gusta picante', 'Tiene que ser muy picante'],
+    optionsFr:['Pas piquant du tout', 'Un peu piquant, ça va', "J'aime quand ça pique", 'Il faut que ça brûle']
   },
   {
     key:'cat',
-    title:'어떤 음식이 제일 끌리세요?', titleEn:'What kind of food sounds best?', titleZh:'你最想吃哪种类型的食物？', titleEs:'¿Qué tipo de comida te apetece más?',
-    sub:'가장 자주 생각나는 카테고리를 골라주세요', subEn:'Pick the category you crave most often', subZh:'请选择你最常想到的类型', subEs:'Elige la categoría que más se te antoja',
+    title:'어떤 음식이 제일 끌리세요?', titleEn:'What kind of food sounds best?', titleZh:'你最想吃哪种类型的食物？', titleEs:'¿Qué tipo de comida te apetece más?', titleFr:"Quel type de cuisine vous tente le plus ?",
+    sub:'가장 자주 생각나는 카테고리를 골라주세요', subEn:'Pick the category you crave most often', subZh:'请选择你最常想到的类型', subEs:'Elige la categoría que más se te antoja', subFr:"Choisissez la catégorie qui vous vient le plus souvent à l'esprit",
     options:['한식','양식','중식','일식','분식'],
     optionsEn:['Korean','Western','Chinese','Japanese','Snacks'],
     optionsZh:['韩餐','西餐','中餐','日料','小吃'],
-    optionsEs:['Coreana', 'Occidental', 'China', 'Japonesa', 'Bocadillos']
+    optionsEs:['Coreana', 'Occidental', 'China', 'Japonesa', 'Bocadillos'],
+    optionsFr:['Coréen', 'Occidental', 'Chinois', 'Japonais', 'Snacks']
   },
   {
     key:'budget',
-    title:'한 끼 예산은 어느 정도가 좋아요?', titleEn:"What's your budget for a meal?", titleZh:'你一餐的预算大概是多少？', titleEs:'¿Cuál es tu presupuesto para una comida?',
-    sub:'가성비에 맞는 곳부터 보여드릴게요', subEn:"We'll show you great-value spots first", subZh:'我们会优先展示性价比高的地方', subEs:'Te mostraremos primero los lugares con mejor relación calidad-precio',
+    title:'한 끼 예산은 어느 정도가 좋아요?', titleEn:"What's your budget for a meal?", titleZh:'你一餐的预算大概是多少？', titleEs:'¿Cuál es tu presupuesto para una comida?', titleFr:'Quel budget pour un repas ?',
+    sub:'가성비에 맞는 곳부터 보여드릴게요', subEn:"We'll show you great-value spots first", subZh:'我们会优先展示性价比高的地方', subEs:'Te mostraremos primero los lugares con mejor relación calidad-precio', subFr:"Nous vous montrerons d'abord les meilleurs rapports qualité-prix",
     options:['₩ 가볍게','₩₩ 넉넉하게'],
     optionsEn:['₩ Light meal','₩₩ Generous meal'],
     optionsZh:['₩ 简单一餐','₩₩ 丰盛一餐'],
-    optionsEs:['₩ Comida ligera', '₩₩ Comida abundante']
+    optionsEs:['₩ Comida ligera', '₩₩ Comida abundante'],
+    optionsFr:['₩ Repas léger', '₩₩ Repas copieux']
   },
 ];
 const priceMap = {'₩ 가볍게':'₩', '₩₩ 넉넉하게':'₩₩'};
@@ -2738,9 +3044,9 @@ function renderSurvey(){
   if(surveyStep < surveyQuestions.length){
     const q = surveyQuestions[surveyStep];
     const picked = surveyAnswers[q.key];
-    const qTitle = (currentLang === 'en' && q.titleEn) ? q.titleEn : (currentLang === 'zh' && q.titleZh) ? q.titleZh : (currentLang === 'es' && q.titleEs) ? q.titleEs : q.title;
-    const qSub = (currentLang === 'en' && q.subEn) ? q.subEn : (currentLang === 'zh' && q.subZh) ? q.subZh : (currentLang === 'es' && q.subEs) ? q.subEs : q.sub;
-    const qOptions = (currentLang === 'en' && q.optionsEn) ? q.optionsEn : (currentLang === 'zh' && q.optionsZh) ? q.optionsZh : (currentLang === 'es' && q.optionsEs) ? q.optionsEs : q.options;
+    const qTitle = (currentLang === 'en' && q.titleEn) ? q.titleEn : (currentLang === 'zh' && q.titleZh) ? q.titleZh : (currentLang === 'es' && q.titleEs) ? q.titleEs : (currentLang === 'fr' && q.titleFr) ? q.titleFr : q.title;
+    const qSub = (currentLang === 'en' && q.subEn) ? q.subEn : (currentLang === 'zh' && q.subZh) ? q.subZh : (currentLang === 'es' && q.subEs) ? q.subEs : (currentLang === 'fr' && q.subFr) ? q.subFr : q.sub;
+    const qOptions = (currentLang === 'en' && q.optionsEn) ? q.optionsEn : (currentLang === 'zh' && q.optionsZh) ? q.optionsZh : (currentLang === 'es' && q.optionsEs) ? q.optionsEs : (currentLang === 'fr' && q.optionsFr) ? q.optionsFr : q.options;
     surveyBody.innerHTML = `
       <div class="survey-step">
         <h3>${qTitle}</h3>
@@ -2988,7 +3294,7 @@ async function loadRouteText(id){
     }
     const mins = data.durationSeconds != null ? Math.round(data.durationSeconds / 60) : null;
     const km = data.distanceMeters != null ? (data.distanceMeters / 1000).toFixed(1) : null;
-    const minUnit = { ko:'분', en:' min', zh:'分钟', es:' min' }[currentLang] || 'min';
+    const minUnit = { ko:'분', en:' min', zh:'分钟', es:' min', fr:' min' }[currentLang] || 'min';
     const summary = (mins != null && km != null) ? `🚶 ${mins}${minUnit} · ${km}km` : '';
     const steps = (data.steps || []).map(s => `<li>${escapeHtml(s)}</li>`).join('');
     body.innerHTML = `
@@ -3171,7 +3477,7 @@ const CAMPUS_CENTER = { lat: 36.6109529892437, lng: 127.286987211083 }; // 고�
 // 그래서 "로드 시점의 사이트 언어"를 따른다 — 언어를 바꾸고 새로고침하면 지도도 따라온다.
 // 지도만 다시 불러오려고 스크립트를 두 번 주입하면 오히려 깨진다.
 function mapsLanguage(){
-  return { ko:'ko', en:'en', zh:'zh-CN', es:'es' }[currentLang] || 'ko';
+  return { ko:'ko', en:'en', zh:'zh-CN', es:'es', fr:'fr' }[currentLang] || 'ko';
 }
 
 async function resolveMapsKey(){
@@ -4205,7 +4511,7 @@ function submitReview(e){
 // 나머지 언어는 아직 번역이 없어 선택만 저장되고 "준비중" 안내만 뜬다.
 const langOverlay = document.getElementById('langOverlay');
 const langBody = document.getElementById('langBody');
-const SUPPORTED_LANGS = ['ko', 'en', 'zh', 'es'];
+const SUPPORTED_LANGS = ['ko', 'en', 'zh', 'es', 'fr'];
 
 // 각 언어 이름은 해당 언어 표기로 (영어를 원하면 English 버튼을 누르도록)
 const languages = [
