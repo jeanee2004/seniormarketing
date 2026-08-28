@@ -637,9 +637,12 @@ footer ul a:hover{color:#fff;}
 }
 
 /* ===== Toast / Popup ===== */
+/* 토스트는 무엇 때문에 떴든 그 위에 보여야 한다 — 상세 모달(.survey-overlay 1001) 안에서
+   주소를 복사하면 "복사했어요"가 모달 뒤로 깔려 보이지 않던 문제가 있었다.
+   확인창(#confirmOverlay 1100)보다도 위에 둔다. */
 .toast-overlay{
   position:fixed;inset:0;background:rgba(43,42,38,0.42);
-  display:flex;align-items:center;justify-content:center;z-index:1000;
+  display:flex;align-items:center;justify-content:center;z-index:1200;
   opacity:0;pointer-events:none;transition:opacity .2s ease;padding:20px;
 }
 .toast-overlay.show{opacity:1;pointer-events:auto;}
