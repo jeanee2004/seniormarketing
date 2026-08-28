@@ -3528,6 +3528,12 @@ async function initMap(){
     // 45도 이미지가 있는 위치에서 자동으로 뜨는 회전(방향) 컨트롤이 확대·축소 버튼과
     // 겹쳐 보여서 껐다 — 이 지도는 회전 기능 자체가 필요 없다.
     rotateControl: false,
+    // 최신 Maps JS API는 방향키(팬)+확대·축소를 하나로 묶은 "카메라 컨트롤"을 기본으로
+    // 띄우는데, 세로로 길게 겹쳐 보여서 껐다. 옛날처럼 방향키만 따로 두는 컨트롤은 API에서
+    // 이미 없어진 지 오래라 되살릴 수 없다 — 대신 팬은 아래 gestureHandling:'greedy'가
+    // 주는 한손가락 드래그로 하고, 확대·축소만 별도의 단순한 +/- 컨트롤로 남긴다.
+    cameraControl: false,
+    zoomControl: true,
     // 기본값(협조 모드)은 두 손가락으로만 지도를 움직일 수 있어 작은 화면·비전체화면
     // 임베드에서는 전체화면으로 키워야만 확대·축소가 편했다. greedy로 한 손가락 드래그·
     // 핀치 줌을 바로 받는다(대신 지도 위에서는 페이지 스크롤이 지도 팬으로 먹힌다 — 의도한 트레이드오프).
@@ -4638,8 +4644,8 @@ function submitReview(e){
 }
 
 // ================= 언어 선택 =================
-// 한국어/English는 실제로 동작(핵심 경로 번역, applyLanguage 참고).
-// 나머지 언어는 아직 번역이 없어 선택만 저장되고 "준비중" 안내만 뜬다.
+// SUPPORTED_LANGS(ko/en/zh/es/fr)는 실제로 동작(전체 경로 번역, applyLanguage 참고).
+// 日本語·Deutsch는 아직 번역이 없어 선택만 저장되고 "준비중" 안내만 뜬다.
 const langOverlay = document.getElementById('langOverlay');
 const langBody = document.getElementById('langBody');
 const SUPPORTED_LANGS = ['ko', 'en', 'zh', 'es', 'fr'];
@@ -4667,7 +4673,7 @@ function renderLang(){
     <div class="auth-head">
       <div class="emoji">🌐</div>
       <h3>언어 선택 / Language</h3>
-      <p>한국어/English는 바로 적용돼요. 나머지 언어는 정식 오픈 때 제공될 예정이에요.</p>
+      <p>한국어·English·中文·Español·Français는 바로 적용돼요. 日本語·Deutsch는 정식 오픈 때 제공될 예정이에요.</p>
     </div>
     <div class="lang-grid">
       ${languages.map(l => `
