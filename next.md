@@ -981,3 +981,106 @@ veil을 잠깐 꺼서 raw 프레임을 스크린샷으로 직접 확인해 샘�
 백그라운드/비활성 탭의 미디어 요청을 스로틀하는 것인지, 그 세션 상태 고유의 문제인지는 불명),
 **히어로 영상이 실제로 재생되는 상태가 필요한 작업은 `claude-in-chrome` 확장 대신 전용
 헤드리스 크롬 + raw CDP 방식을 먼저 쓸 것** — 재현성 있는 경험칙으로 남겨둔다.
+
+## 2026-08-29 세션(이어서 2): owner.html 접근 제어 (C5 마무리) + 문의 접수함(contact_submissions)
+
+세션 시작 시점에 next.md 내용이 서로 모순돼 있었다(D1 프랑스어를 "미착수"라고 적어둔 옛 문단이
+"완료" 문단 뒤에 그대로 남아 있었음) — 사용자가 "프랑스어 어제 끝낸거 아니야?"로 바로 잡아줌.
+확인해보니 **D1(프랑스어)과 B1(리뷰·식권예약 Supabase 이전)은 실제로 이미 완료돼 있었다**
+(`SUPPORTED_LANGS`에 fr 포함 확인, `reviews`/`pass_orders` 테이블 MCP로 실존 확인,
+`pushReview`/`pullPassOrders` 등 클라이언트 함수도 이미 배선됨). **CLAUDE.md가 이 사실을
+반영하지 못하고 여전히 "리뷰·식권예약은 아직 localStorage뿐"이라고 적어 둔 게 이번 세션 초반
+혼란의 직접 원인**이라 CLAUDE.md의 "Known gaps"·"Persistence" 절을 실제 상태에 맞게 고쳤다
+(언어 전환·AI 리뷰 요약도 PRD엔 "로드맵"으로 남아 있지만 실제로는 이미 진짜 기능이라 같이 정정).
+**교훈: 세션 시작 시 next.md/CLAUDE.md의 "완료" 주장을 코드·DB로 교차 검증할 것** — 특히
+같은 파일 안에서 모순되는 문장이 있으면 최신 커밋 로그 쪽을 믿는다.
+
+오늘 실제로 새로 한 작업은 사용자가 요청한 **owner.html 접근 제어**다. C5(`53dbdc4`)에서
+`store_owners` 표(사장님 role, RLS로 클라이언트 쓰기 완전 차단 — 관리자가 대시보드에서 직접
+행 추가)까지는 이미 만들어져 있었지만 "화면은 아직 없다"고 명시돼 있었다 — 그 화면을 이번에 붙였다.
+
+- **`public.contact_submissions` 신설** (`supabase/contact_submissions.sql`, MCP로 적용 완료) —
+  지금까지 손주 힘 보태기/후원/사장님 제휴 등 문의 폼(`submitContact()`)은 접수 확인 화면만
+  보여주고 **어디에도 남기지 않았다**(관리자가 실제로 확인할 방법이 없었다는 뜻). `store_owners`와
+  같은 철학으로 insert 정책만 열고 select는 아무한테도(로그인해도) 안 열었다 — 관리자는 대시보드
+  Table Editor로 확인(서비스 role이라 RLS 우회). `submitContact()`에 fire-and-forget insert 한
+  줄만 추가, 화면 동작은 그대로.
+- **`owner.html`에 실제 로그인/가입 + 사장님 인증 패널 추가** — `index.html`과 같은 이유로
+  `script.js`는 로드하지 않으므로(그 파일이 index.html DOM에 강결합) 페이지 전용 인라인
+  스크립트로 최소 구현(같은 Supabase 프로젝트, 같은 계정 체계 — 사장님 전용 회원가입이 아니라
+  로그인 후 `store_owners`에 내 행이 있는지만 확인). 세 가지 상태: 로그아웃(로그인/가입 폼) →
+  로그인했지만 미인증("문의를 남기면 연결해드려요" + 기존 CTA 안내) → `store_owners`에 행이
+  있음("✅ 인증된 사장님" + 연결된 restaurant_id 표시). 승인 방식은 코드/비밀번호 발급이 아니라
+  **관리자가 문의를 확인하고 대시보드에서 직접 `store_owners`에 행을 추가**하는 기존 C5 설계를
+  그대로 따랐다(신청/승인 인프라를 새로 만들지 않음 — 9월 현장조사 전이라 실제 계정 수가 적어
+  수동 처리가 더 간단하고, store_owners.sql의 원래 설계 의도이기도 하다).
+- 대시보드 화면 자체(매장 등록 폼 등)는 여전히 목업(`is-soon`, `9e46100`)이다 — 이번 작업은
+  "누가 인증된 사장님인지"만 가리는 것이고, 실제 등록·저장 기능은 범위 밖으로 남겨뒀다.
+
+**검증** (로컬 `node dev-server.js` + 전용 헤드리스 크롬 raw CDP, MCP `execute_sql`/`apply_migration`
+병행): 로그아웃 상태 로그인 폼 렌더 → 가입 전환·제출 → 세션 확정 후 미인증 상태 자동 렌더(테스트
+계정) → MCP로 `store_owners`에 수동 삽입 → 새로고침 시 "인증된 사장님" 상태로 정확히 전환,
+연결된 restaurant_id 표시 → 로그아웃 시 로그인 폼으로 복귀. `index.html?apply=owner#join` →
+사장님 제휴 문의 폼 제출 → `contact_submissions`에 실제 행 적재 확인(MCP로 대조) → **anon
+publishable key로 같은 표를 직접 REST 조회하면 빈 배열**(select 정책 없음, 의도한 대로 차단)까지
+확인. 콘솔 에러·예외 0건. 테스트 계정·행은 모두 정리(delete)했다.
+
+## 2026-08-29 세션(이어서 3): 관리자 마이페이지 — 사장님 제휴 문의 승인 화면
+
+바로 위 항목("store_owners 행 추가는 여전히 수동")을 이번 세션에서 실제로 처리했다 — 관리자가
+Supabase 대시보드에 안 들어가고도 사이트 안에서 문의를 보고 승인할 수 있게 됐다.
+
+처음엔 별도 `admin-owners.html` + 자체 로그인 폼으로 설계했는데, 사용자가 "jeaneeyi2004@gmail.com로
+로그인하면 마이페이지 안에 관리자용 화면이 보여야 한다"고 방향을 바로잡아줘서, **새 페이지 대신
+기존 마이페이지(`renderMypage()`)에 관리자에게만 보이는 4번째 탭**을 추가하는 걸로 다시 설계했다.
+새 로그인 폼을 안 만들어도 되니 코드가 훨씬 줄었다.
+
+- **`api/admin-contacts.js`(신규)** — `list`/`setStatus`/`approve` 세 액션을 처리하는 서버 엔드포인트.
+  요청의 Supabase 세션 토큰을 `GET /auth/v1/user`로 검증해 이메일을 얻고, 서버 환경변수
+  `ADMIN_EMAIL`과 일치할 때만 `SUPABASE_SECRET_KEY`(RLS 우회)로 `contact_submissions`/
+  `store_owners`를 읽고 쓴다. **관리자 이메일은 클라이언트 코드 어디에도 없다** — 이 저장소가
+  GitHub public이라 개인 이메일을 소스에 박지 않으려고 일부러 이렇게 짰다(기존
+  `ADMIN_PASSPHRASE`처럼 소스에 그대로 노출되는 가짜 보안과는 성격이 다르다). `approve`는
+  `GET /auth/v1/admin/users?email=...`로 가입 여부를 먼저 확인하고, 없으면 `not_signed_up`을
+  돌려준다(관리자가 화면에서 "아직 가입 전이에요" 안내를 봄) — 신청 폼의 `reach`가 전화번호였거나
+  가입 이메일이 다른 경우를 대비해 관리자가 이메일을 화면에서 직접 고칠 수 있게 열어뒀다.
+- **`script.js`** — `isAdmin`/`adminContacts` 전역 + `loadAdminStatus(session)`을
+  `syncAuthFromSession()`에서 호출(기존 `loadStoreOwnership()` 바로 옆). 마이페이지가 열려있을
+  때마다 `/api/admin-contacts`에 `action:'list'`로 찔러보고, 200이면 관리자 탭이 뜨고
+  403이면 조용히 숨는다 — **판정은 전부 서버에서** 한다. `renderMypageAdminList()` +
+  `submitAdminApprove()`/`submitAdminStatus()`가 카드 UI와 승인/상태변경 액션을 담당.
+  일반 회원의 사장님 여부(`isStoreOwner()`, C5)와 이 사이트 관리자 여부(`isAdmin`)는 서로
+  다른 개념이라는 걸 주석에 명시해뒀다 — 헷갈리기 쉬운 지점이라 다음 세션도 참고할 것.
+- `supabase/contact_submissions.sql`에 `admin_note text` 컬럼 추가(거절 사유·메모용, 향후 확장
+  대비 — 사용자가 명시적으로 요청). RLS는 그대로 insert-only 유지, select/update 정책은 여전히
+  안 열었다(관리자 접근은 전부 서버를 거치므로 필요 없음).
+- `.env.local`에 `SUPABASE_URL`/`ADMIN_EMAIL`은 채워뒀다. **`SUPABASE_SECRET_KEY`는 비어있다** —
+  Supabase 대시보드 → Project Settings → API → service_role 값을 붙여넣어야 이 기능이 실제로
+  켜진다(MCP로 조회할 수 없는/없어야 하는 값이라 이 세션에서 채울 수 없었다). 배포본(Vercel)에도
+  같은 세 환경변수 등록 필요.
+- 부수적으로: `.env.local`의 `KAKAO_REST_KEY` 값 끝에 무관한 한글 문장 조각이 붙어 있던 걸
+  발견해서 정리했다(원인 불명 — 다른 곳에 입력하려던 메모가 잘못 들어간 것으로 보임). 실제
+  카카오 검색 기능이 그 줄을 그대로 읽으므로 방치했으면 다음에 카카오 검색이 또 "키 문제"처럼
+  보이는 원인이 될 뻔했다.
+
+**검증**: 헤드리스 크롬 + raw CDP로 실제 사용자 계정(jeaneeyi2004@gmail.com) 로그인/로그아웃
+정상 동작 확인(콘솔 에러 0). `SUPABASE_SECRET_KEY`가 비어있는 현재 상태에서 로그인해도
+관리자 탭이 안 뜨고 에러 없이 조용히 넘어가는 것까지 확인(설정 안 된 상태에서의 안전한 저하
+경로). **`SUPABASE_SECRET_KEY`를 채운 뒤의 실제 승인 플로우(문의 목록 조회 → 사장님 등록 →
+`store_owners` 행 생성)는 이번 세션에서 검증하지 못했다** — 다음 세션 최우선 항목.
+
+## 남은 것 — 다음 세션
+
+1. **`SUPABASE_SECRET_KEY`를 `.env.local`(로컬)과 Vercel 환경변수(배포본)에 채우고,
+   관리자 승인 플로우를 실제로 검증할 것.** 시나리오: (a) 테스트 문의를 MCP로 하나 넣고 관리자
+   계정으로 로그인 → 마이페이지에 "관리자" 탭이 뜨는지, (b) 목록에 그 문의가 보이는지,
+   (c) "사장님으로 등록" 클릭(미가입 이메일 → `not_signed_up` 안내, 가입된 이메일 → 실제
+   `store_owners` 행 생성을 MCP로 대조), (d) 연락함/거절 상태 변경. 이게 끝나야 owner.html
+   접근 제어(C5)와 이번 관리자 승인 화면이 실제로 맞물려 돌아가는 걸 증명한 게 된다.
+- **사장님 제휴 문의에 대한 알림 수단이 없다.** `contact_submissions`에 쌓이고 이제 사이트 안에서
+  볼 수는 있지만, 관리자가 마이페이지를 스스로 열어봐야만 새 신청을 안다(이메일 알림 등 자동
+  통지 없음). 당장은 문제 없지만 신청이 늘면 놓치기 쉽다 — 필요해지면 Supabase Database Webhook
+  이나 간단한 이메일 발송(Resend 등, C6 커스텀 SMTP와 같이 붙이면 됨)을 고려.
+- **owner.html 로그인 폼에는 `novalidate`/브라우저 언어 문제, 이메일 형식 인증 등 index.html
+  auth 폼이 갖춘 디테일(예: 한/영/중 오류 메시지)이 없다** — 지금은 한국어 고정 최소 구현이라
+  `owner.html`도 언어 토글이 없어 문제는 안 되지만, 나중에 다국어를 붙이면 손봐야 한다.

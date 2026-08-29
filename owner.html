@@ -38,8 +38,10 @@
       <a href="index.html?apply=owner#join" class="btn-primary" style="display:inline-block;">
         🏮 사장님 제휴·입점 문의하기
       </a>
-      <p class="owner-hero-note">문의를 남겨주시면 검토 후 순서대로 안내드립니다. 사장님 전용 로그인·계정 기능은 아직 준비 중입니다.</p>
+      <p class="owner-hero-note">문의를 남겨주시면 검토 후 순서대로 안내드립니다.</p>
     </div>
+
+    <div class="owner-card" id="ownerAuthPanel" style="max-width:480px;margin:0 auto 28px;"></div>
 
     <div class="mock-banner">
       <span class="emoji">🚧</span>
@@ -348,6 +350,121 @@
     <div class="footer-bottom">© 2026 밥 먹으러 와 · KU조대! 사장님을 부탁해. 맛집 KU조대 (고려대학교 세종캠퍼스).</div>
   </div>
 </footer>
+
+<!-- 손주 로그인과 같은 계정 체계를 그대로 쓴다 — 사장님 전용 회원가입이 아니라, 로그인한 뒤
+     store_owners 표에 이 사람 행이 있는지로만 "사장님 권한"을 가린다(next.md C5).
+     index.html과 같은 이유로 script.js는 로드하지 않는다(그 파일의 DOM 구조에 강하게 결합돼 있다) —
+     이 페이지 전용 인라인 스크립트로 최소 구현만 둔다. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3/dist/umd/supabase.js" integrity="sha384-qafw21c/iciq0VXsi9FzkfoQv5I/V0iqE4lSNcKXPnW9/UTJLnv5CcN4FHxVLnKg" crossorigin="anonymous"></script>
+<script>
+(function(){
+  var SUPABASE_URL = 'https://oqsydupzmgfgrkuibbqm.supabase.co';
+  var SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_mLipCnG1P2J2iJckvbaVZg_daYRe2VR';
+  var sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) : null;
+  var panel = document.getElementById('ownerAuthPanel');
+  var mode = 'login'; // 'login' | 'signup'
+
+  function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+
+  // Supabase 영문 오류를 그대로 보여주지 않는다(script.js의 authErrorMessage()와 같은 취지) —
+  // 여기서는 문의 폼 정도의 최소 대응만 둔다.
+  function authErrorText(error){
+    var m = (error && error.message) || '';
+    if(/already registered/i.test(m)) return '이미 가입된 이메일이에요. 로그인을 시도해주세요.';
+    if(/invalid login credentials/i.test(m)) return '이메일 또는 비밀번호가 올바르지 않아요.';
+    if(/password/i.test(m) && /(least|short|6)/i.test(m)) return '비밀번호는 6자 이상으로 입력해주세요.';
+    return '문제가 발생했어요. 잠시 후 다시 시도해주세요.';
+  }
+
+  if(!panel){ /* no-op */ }
+  else if(!sb){
+    panel.innerHTML = '<p style="text-align:center;color:var(--ink-soft);font-size:0.86rem;">로그인 기능을 불러오지 못했어요. 새로고침해보시거나, 위 버튼으로 문의를 남겨주세요.</p>';
+  } else {
+    renderChecking();
+    sb.auth.getSession().then(function(res){ onSession(res && res.data && res.data.session); });
+    sb.auth.onAuthStateChange(function(_evt, session){ onSession(session); });
+  }
+
+  function renderChecking(){
+    panel.innerHTML = '<p style="text-align:center;color:var(--ink-soft);font-size:0.86rem;">로그인 상태를 확인하고 있어요…</p>';
+  }
+
+  function onSession(session){
+    if(session && session.user){
+      renderChecking();
+      sb.from('store_owners').select('restaurant_id').eq('user_id', session.user.id).then(function(res){
+        renderOwnerStatus(session.user, (res && res.data) || []);
+      }, function(){ renderOwnerStatus(session.user, []); });
+    } else {
+      renderAuthForm();
+    }
+  }
+
+  function renderOwnerStatus(user, rows){
+    var email = esc(user.email || '');
+    if(rows.length > 0){
+      var ids = rows.map(function(r){ return esc(r.restaurant_id); }).join(', ');
+      panel.innerHTML =
+        '<div style="text-align:center;">' +
+        '<h4 style="color:var(--slate-dark);margin-bottom:6px;">✅ 인증된 사장님이에요</h4>' +
+        '<p style="font-size:0.86rem;color:var(--ink-soft);margin-bottom:2px;">' + email + '</p>' +
+        '<p style="font-size:0.86rem;color:var(--ink-soft);margin-bottom:14px;">연결된 매장: ' + ids + '</p>' +
+        '<p style="font-size:0.8rem;color:var(--ink-soft);margin-bottom:14px;">실제 매장 등록·관리 기능은 아직 준비 중이에요 — 아래는 미리보기 화면입니다.</p>' +
+        '<button type="button" class="btn-ghost" id="ownerLogoutBtn" style="padding:8px 16px;font-size:0.82rem;">로그아웃</button>' +
+        '</div>';
+      document.getElementById('ownerLogoutBtn').addEventListener('click', function(){ sb.auth.signOut(); });
+    } else {
+      panel.innerHTML =
+        '<div style="text-align:center;">' +
+        '<h4 style="color:var(--slate-dark);margin-bottom:6px;">🔒 아직 사장님 권한이 연결되지 않았어요</h4>' +
+        '<p style="font-size:0.86rem;color:var(--ink-soft);margin-bottom:2px;">' + email + '</p>' +
+        '<p style="font-size:0.86rem;color:var(--ink-soft);margin-bottom:14px;">위 "제휴·입점 문의하기"로 신청해주시면 확인 후 이 계정에 매장을 연결해드려요.</p>' +
+        '<button type="button" class="btn-ghost" id="ownerLogoutBtn" style="padding:8px 16px;font-size:0.82rem;">로그아웃</button>' +
+        '</div>';
+      document.getElementById('ownerLogoutBtn').addEventListener('click', function(){ sb.auth.signOut(); });
+    }
+  }
+
+  function renderAuthForm(){
+    var isSignup = mode === 'signup';
+    panel.innerHTML =
+      '<div class="auth-head" style="margin-bottom:14px;">' +
+      '<h3 style="font-size:1.05rem;">' + (isSignup ? '사장님 계정 만들기' : '사장님 로그인') + '</h3>' +
+      '<p>이미 신청·연결된 사장님이시면 로그인해서 인증 상태를 확인하세요.</p>' +
+      '</div>' +
+      '<form id="ownerAuthForm" novalidate>' +
+      (isSignup ? '<div class="auth-field"><label>이름</label><input type="text" id="ownerName" placeholder="이름 또는 상호"></div>' : '') +
+      '<div class="auth-field"><label>이메일</label><input type="text" id="ownerEmail" placeholder="이메일 주소"></div>' +
+      '<div class="auth-field"><label>비밀번호</label><input type="password" id="ownerPassword" placeholder="비밀번호"></div>' +
+      '<p class="auth-error" id="ownerAuthError"></p>' +
+      '<div class="game-action-row">' +
+      '<button type="button" class="btn-ghost" id="ownerAuthToggle" style="flex:1;">' + (isSignup ? '로그인으로' : '계정 만들기') + '</button>' +
+      '<button type="submit" class="survey-close-btn" style="flex:1;">' + (isSignup ? '가입하기' : '로그인') + '</button>' +
+      '</div>' +
+      '</form>';
+    document.getElementById('ownerAuthToggle').addEventListener('click', function(){ mode = isSignup ? 'login' : 'signup'; renderAuthForm(); });
+    document.getElementById('ownerAuthForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      var errEl = document.getElementById('ownerAuthError');
+      errEl.textContent = '';
+      var email = document.getElementById('ownerEmail').value.trim();
+      var password = document.getElementById('ownerPassword').value;
+      if(!isEmail(email)){ errEl.textContent = '이메일 형식을 확인해주세요.'; return; }
+      if(!password || password.length < 6){ errEl.textContent = '비밀번호는 6자 이상으로 입력해주세요.'; return; }
+      var submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      var task = isSignup
+        ? sb.auth.signUp({ email:email, password:password, options:{ data:{ name: (document.getElementById('ownerName').value || '').trim() } } })
+        : sb.auth.signInWithPassword({ email:email, password:password });
+      task.then(function(res){
+        if(res.error){ submitBtn.disabled = false; errEl.textContent = authErrorText(res.error); return; }
+        // onAuthStateChange가 세션 확정 후 renderOwnerStatus를 그려준다
+      });
+    });
+  }
+})();
+</script>
 
 </body>
 </html>

@@ -513,6 +513,31 @@ function loadStoreOwnership(){
     }, ignore);
 }
 
+// ---- 사이트 관리자(다른 개념) — "내가 사장님인가"가 아니라 "내가 문의를 승인할 수 있는가" ----
+// 관리자를 클라이언트에서 판정하지 않는다. 마이페이지가 열릴 때마다 서버에 문의 목록을 요청만
+// 해보고, 서버(api/admin-contacts.js)가 세션 토큰의 이메일을 ADMIN_EMAIL과 직접 대조해 200/403을
+// 준다 — 관리자 이메일은 이 파일 어디에도 없다(공개 저장소 소스에 노출하지 않기 위해).
+let isAdmin = false;
+let adminContacts = [];
+function loadAdminStatus(session){
+  if(!session){ isAdmin = false; adminContacts = []; return; }
+  fetch('/api/admin-contacts', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + session.access_token },
+    body: JSON.stringify({ action:'list' }),
+  })
+    .then(r => r.json().then(data => ({ ok:r.ok, data })))
+    .then(({ ok, data }) => {
+      if(ok && data && data.ok){
+        isAdmin = true;
+        adminContacts = data.items || [];
+      } else {
+        isAdmin = false; // 대부분의 로그인 사용자에게 정상적인 결과다(403) — 조용히 넘어간다
+      }
+      if(mypageOverlay && mypageOverlay.classList.contains('show')) renderMypage();
+    }, () => { isAdmin = false; });
+}
+
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
@@ -4058,6 +4083,7 @@ function syncAuthFromSession(session){
   pullSaved();
   pullPassOrders();
   loadStoreOwnership();
+  loadAdminStatus(session);
 }
 
 // 첫 렌더는 이미 로그아웃 상태로 그려진 뒤다. 세션 확인은 비동기라
@@ -4277,8 +4303,11 @@ function closeMypage(){ mypageOverlay.classList.remove('show'); }
 function closeMypageOnOverlay(e){ if(e.target === mypageOverlay) closeMypage(); }
 
 function renderMypage(){
-  // 식권 탭은 가게 목록이 아니라 예약 내역이라 카드 모양이 달라서 분기한다
-  const body = mypageTab === 'pass' ? renderMypagePassList() : renderMypagePlaceList();
+  // 식권 탭은 예약 내역, 관리자 탭은 문의 목록이라 카드 모양이 달라서 분기한다
+  const body = mypageTab === 'admin' ? renderMypageAdminList()
+    : mypageTab === 'pass' ? renderMypagePassList()
+    : renderMypagePlaceList();
+  const isAdminTab = mypageTab === 'admin';
   mypageBody.innerHTML = `
     <div class="mypage-head">
       <div class="emoji">🌱</div>
@@ -4288,8 +4317,10 @@ function renderMypage(){
       <button type="button" class="mypage-tab ${mypageTab==='saved'?'active':''}" id="tabSaved">${t('mypageTabSaved') || '가보고 싶은 곳'}</button>
       <button type="button" class="mypage-tab ${mypageTab==='visited'?'active':''}" id="tabVisited">${t('mypageTabVisited') || '가본 곳'}</button>
       <button type="button" class="mypage-tab ${mypageTab==='pass'?'active':''}" id="tabPass">${t('mypageTabPass') || '식권'}</button>
+      ${isAdmin ? `<button type="button" class="mypage-tab ${mypageTab==='admin'?'active':''}" id="tabAdmin">관리자</button>` : ''}
     </div>
     <div class="mypage-list">${body}</div>
+    ${isAdminTab ? '' : `
     <div class="mypage-allergy">
       <div class="mypage-allergy-head">${t('allergyTitle') || '🥜 알레르기 등록'}</div>
       <p class="mypage-allergy-sub">${t('allergySub') || '고른 재료가 들어갈 수 있는 가게를 열면 미리 알려드려요.'}</p>
@@ -4301,6 +4332,7 @@ function renderMypage(){
       <button type="button" class="mypage-reset-link" onclick="resetSection('${mypageTab}')">${sectionResetLabel(mypageTab)}</button>
       <button type="button" class="mypage-reset-link" onclick="resetMyData()">${t('mypageResetLink') || '내 활동 기록 전체 초기화'}</button>
     </div>
+    `}
     <div class="game-action-row" style="margin-top:10px;">
       <button type="button" class="btn-ghost" style="flex:1;" onclick="logout()">${t('mypageLogoutBtn') || '로그아웃'}</button>
       <button type="button" class="survey-close-btn" style="flex:1;" onclick="closeMypage()">${t('closeBtn') || '닫기'}</button>
@@ -4319,6 +4351,38 @@ function renderMypage(){
   document.getElementById('tabSaved').addEventListener('click', () => { mypageTab='saved'; renderMypage(); });
   document.getElementById('tabVisited').addEventListener('click', () => { mypageTab='visited'; renderMypage(); });
   document.getElementById('tabPass').addEventListener('click', () => { mypageTab='pass'; renderMypage(); });
+  if(isAdmin){
+    const tabAdminBtn = document.getElementById('tabAdmin');
+    if(tabAdminBtn) tabAdminBtn.addEventListener('click', () => { mypageTab='admin'; renderMypage(); });
+  }
+  if(isAdminTab){
+    mypageBody.querySelectorAll('.admin-approve-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.admin-contact-card');
+        const id = card.dataset.id;
+        const ownerEmail = card.querySelector('.admin-owner-email').value.trim();
+        const restaurantId = card.querySelector('.admin-restaurant-id').value.trim();
+        const errEl = card.querySelector('.admin-approve-error');
+        errEl.textContent = '';
+        if(!restaurantId){ errEl.textContent = '가게 슬러그를 입력해주세요.'; return; }
+        if(!ownerEmail){ errEl.textContent = '가입 이메일을 입력해주세요.'; return; }
+        btn.disabled = true;
+        submitAdminApprove(id, restaurantId, ownerEmail).then(res => {
+          btn.disabled = false;
+          if(res.ok) renderMypage();
+          else errEl.textContent = res.error === 'not_signed_up'
+            ? '아직 가입 전이에요 — 가입 후 다시 시도해주세요.'
+            : '처리에 실패했어요. 다시 시도해주세요.';
+        });
+      });
+    });
+    mypageBody.querySelectorAll('.admin-status-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.admin-contact-card');
+        submitAdminStatus(card.dataset.id, btn.dataset.status).then(res => { if(res.ok) renderMypage(); });
+      });
+    });
+  }
   // 되돌리기: 담기 해제 · 방문 취소 · 식권 예약 취소는 전부 같은 확인 모달을 거친다
   // (식권 취소 버튼도 같은 .mypage-remove-btn 스타일을 쓰므로, :not()으로 중복 바인딩을 막는다)
   mypageBody.querySelectorAll('.mypage-remove-btn:not(.mypage-cancel-pass-btn)').forEach(btn => {
@@ -4380,6 +4444,72 @@ function renderMypagePassList(){
       <button type="button" class="mypage-remove-btn mypage-cancel-pass-btn" data-id="${o.id}" title="${t('mypageCancelPassTitle')||'예약 취소'}">✕</button>
     </div>
   `).join('');
+}
+
+// ---- 관리자 탭: 사장님 제휴 등 문의 승인 (마이페이지 안, isAdmin일 때만 보임) ----
+const ADMIN_STATUS_LABEL = { new:'신규', contacted:'연락함', approved:'승인됨', rejected:'거절' };
+
+function renderMypageAdminList(){
+  if(adminContacts.length === 0) return `<div class="mypage-empty">아직 들어온 문의가 없어요.</div>`;
+  return adminContacts.map(c => `
+    <div class="survey-result-card admin-contact-card" data-id="${escapeHtml(c.id)}" style="flex-direction:column;align-items:stretch;gap:8px;">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;">
+        <strong>${escapeHtml(c.name)} <span style="font-weight:400;color:var(--ink-soft);font-size:0.82rem;">(${escapeHtml(c.type)})</span></strong>
+        <span class="badge-live" style="white-space:nowrap;">${ADMIN_STATUS_LABEL[c.status] || escapeHtml(c.status)}</span>
+      </div>
+      <div style="font-size:0.84rem;color:var(--ink-soft);">
+        ${escapeHtml(c.reach)}${c.field ? ' · ' + escapeHtml(c.field) : ''}
+        ${c.message ? '<br>' + escapeHtml(c.message) : ''}
+        <br>${escapeHtml(String(c.created_at || '').slice(0, 16).replace('T', ' '))}
+      </div>
+      ${c.type === 'partnerStore' && c.status !== 'approved' ? `
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <input type="text" class="review-select admin-owner-email" placeholder="가입 이메일" value="${escapeHtml(c.reach)}" style="flex:1;min-width:140px;height:38px;padding:0 10px;">
+          <input type="text" class="review-select admin-restaurant-id" placeholder="가게 슬러그" style="flex:1;min-width:120px;height:38px;padding:0 10px;">
+          <button type="button" class="btn-primary admin-approve-btn" style="padding:8px 14px;font-size:0.82rem;white-space:nowrap;">사장님으로 등록</button>
+        </div>
+        <p class="auth-error admin-approve-error" style="margin:0;"></p>
+      ` : ''}
+      <div style="display:flex;gap:6px;">
+        <button type="button" class="btn-ghost admin-status-btn" data-status="contacted" style="padding:6px 12px;font-size:0.78rem;">연락함</button>
+        <button type="button" class="btn-ghost admin-status-btn" data-status="rejected" style="padding:6px 12px;font-size:0.78rem;">거절</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function adminAuthHeaders(){
+  if(!sb) return Promise.resolve(null);
+  return sb.auth.getSession().then(({ data }) => data.session ? {
+    'Content-Type':'application/json',
+    'Authorization':'Bearer ' + data.session.access_token,
+  } : null);
+}
+
+function applyAdminItemUpdate(item){
+  if(!item) return;
+  const idx = adminContacts.findIndex(c => c.id === item.id);
+  if(idx >= 0) adminContacts[idx] = item;
+}
+
+function submitAdminApprove(id, restaurantId, ownerEmail){
+  return adminAuthHeaders().then(headers => {
+    if(!headers) return { ok:false, error:'no_session' };
+    return fetch('/api/admin-contacts', {
+      method:'POST', headers,
+      body: JSON.stringify({ action:'approve', id, restaurantId, ownerEmail }),
+    }).then(r => r.json());
+  }).then(data => { applyAdminItemUpdate(data.item); return data; }, () => ({ ok:false, error:'network' }));
+}
+
+function submitAdminStatus(id, status){
+  return adminAuthHeaders().then(headers => {
+    if(!headers) return { ok:false, error:'no_session' };
+    return fetch('/api/admin-contacts', {
+      method:'POST', headers,
+      body: JSON.stringify({ action:'setStatus', id, status }),
+    }).then(r => r.json());
+  }).then(data => { applyAdminItemUpdate(data.item); return data; }, () => ({ ok:false, error:'network' }));
 }
 
 // ---- 섹션별 초기화 ----
@@ -5022,6 +5152,19 @@ function submitContact(e, type){
   const c = contactTypes[type] || contactTypes.expand;
   const useTranslated = currentLang !== 'ko';
   const cTitle = useTranslated && c.key ? (t(`${c.key}_title`) || c.title) : c.title;
+  const fieldEl = document.getElementById('contactField');
+  const messageEl = document.getElementById('contactMessage');
+  // 화면에는 접수 확인만 보여주고 끝났지만, 지금까지 이 문의는 어디에도 남지 않았다 —
+  // 관리자가 실제로 확인할 방법이 없었다. store_owners와 같은 철학으로 문의함에 조용히 적재만 한다
+  // (RLS가 insert만 열려 있어 클라이언트는 다시 못 읽는다, 관리자는 대시보드 Table Editor로 확인).
+  if(sb){
+    sb.from('contact_submissions').insert({
+      type, name, reach,
+      field: fieldEl ? fieldEl.value : null,
+      message: messageEl ? messageEl.value.trim() : null,
+      user_id: isLoggedIn ? currentUserId : null,
+    }).then(ignore, ignore);
+  }
   contactBody.innerHTML = `
     <div class="auth-welcome">
       <div class="emoji">🌾</div>
