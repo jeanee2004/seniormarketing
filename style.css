@@ -825,7 +825,7 @@ footer ul a:hover{color:#fff;}
   font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
 }
 /* 예전엔 .google-review-link(텍스트 링크)를 같이 썼는데, 바로 아래 붙는 .detail-stub-note
-   (점선 박스 "준비 중" 안내)와 시각적으로 구분이 안 돼 "길찾기도 준비중인 섹션"으로
+   (점선 박스 "준비 중" 안내)와 시각적으로 구분이 안 돼 "지도 보기도 준비중인 섹션"으로
    오인되는 문제가 있었다. 실제로 동작하는 기능이라는 게 한눈에 보이게 CTA 버튼으로 분리했다. */
 .detail-directions{
   display:inline-flex;align-items:center;gap:6px;
@@ -833,26 +833,9 @@ footer ul a:hover{color:#fff;}
   font-weight:800;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.86rem;
   margin:14px 0 24px;box-shadow:var(--shadow);
   transition:transform .15s ease, box-shadow .15s ease;
+  border:none;cursor:pointer;
 }
 .detail-directions:hover{ transform:translateY(-2px);box-shadow:var(--shadow-hover);color:#fff; }
-
-/* 경로선은 안 그리지만 대략적인 도보 경로를 텍스트로 미리 보여주는 자리 — 버튼은
-   길찾기(빨강, CTA)와 나란히 있어도 헷갈리지 않게 슬레이트 톤(.btn-ghost)으로 둔다. */
-.detail-route{ margin:-10px 0 24px; }
-.detail-route-btn{ display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;padding:9px 18px; }
-.route-text-body:empty{ display:none; }
-.route-text-summary{
-  margin-top:12px;font-weight:800;color:var(--ink);
-  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.9rem;
-}
-.route-text-steps{
-  margin:10px 0 0;padding-left:20px;color:var(--ink-soft);
-  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.82rem;line-height:1.6;
-}
-.route-text-loading, .route-text-error{
-  margin-top:10px;font-size:0.82rem;color:var(--slate-light);
-  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;
-}
 
 .detail-stub-note{
   background:var(--base-bg);border:1.5px dashed var(--slate-light);border-radius:14px;

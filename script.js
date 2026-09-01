@@ -7,6 +7,7 @@ const MAPS_KEY = (window.APP_CONFIG && window.APP_CONFIG.Google_Javascript_API_k
 // 여기서 선언해야 한다 — 아래에서 선언하면 첫 렌더가 TDZ ReferenceError로 죽는다.
 let gmap = null;
 let gMarkers = [];
+let gMarkerById = new Map(); // r.id -> marker, "지도에서 위치 보기"가 필터와 무관하게 마커를 찾는 데 쓴다
 
 // ---- Dummy restaurant data ----
 const restaurants = [
@@ -663,11 +664,8 @@ const i18n = { en: {
   closeBtn:"Close",
   googleReviewTitle:"Google Reviews", googleReviewLoading:"Loading reviews...", googleReviewError:"Couldn't load reviews. Please try again shortly.",
   aiSummaryTitle:"AI Review Summary", aiSummaryLoading:"🤖 Summarizing reviews...",
-  detailDirections:"🧭 Directions (Google Maps)",
-  detailNoLocationNote:"🧭 This is example data with no real location yet, so directions aren't available.",
-  detailRouteBtn:"📍 View walking route as text", detailRouteLoading:"Loading route…",
-  detailRouteNoGeo:"This browser doesn't support location.", detailRouteNoPermission:"Allow location access to see the route.",
-  detailRouteUnavailable:"Route info isn't available right now.",
+  detailMapFocus:"🗺️ View on map",
+  detailNoLocationNote:"🧭 This is example data with no real location yet, so it can't be shown on the map.",
   googleReviewNotFound:"😢 We couldn't find this restaurant on Google Maps.", googleReviewNone:"No reviews yet.",
   googleReviewLink:"See all reviews on Google Maps →", googleReviewAnon:"Anonymous",
   liveSearchLoading:"Searching...", liveSearchEmpty:"No results found.", liveSearchError:"Search failed. Please try again shortly.",
@@ -945,11 +943,8 @@ const i18n = { en: {
   closeBtn:"关闭",
   googleReviewTitle:"谷歌评论", googleReviewLoading:"正在加载评论...", googleReviewError:"无法加载评论，请稍后再试。",
   aiSummaryTitle:"AI评论摘要", aiSummaryLoading:"🤖 正在总结评论……",
-  detailDirections:"🧭 路线导航（谷歌地图）",
-  detailNoLocationNote:"🧭 这是示例数据，暂无真实位置信息，无法提供路线导航。",
-  detailRouteBtn:"📍 查看文字版步行路线", detailRouteLoading:"正在加载路线…",
-  detailRouteNoGeo:"此浏览器不支持定位功能。", detailRouteNoPermission:"需要允许定位权限才能查看路线。",
-  detailRouteUnavailable:"暂时无法获取路线信息。",
+  detailMapFocus:"🗺️ 在地图上查看",
+  detailNoLocationNote:"🧭 这是示例数据，暂无真实位置信息，无法在地图上显示。",
   googleReviewNotFound:"😢 在谷歌地图上找不到这家店。", googleReviewNone:"暂无评论。",
   googleReviewLink:"在谷歌地图查看全部评论 →", googleReviewAnon:"匿名",
   liveSearchLoading:"搜索中...", liveSearchEmpty:"没有找到结果。", liveSearchError:"搜索失败，请稍后再试。",
@@ -1289,11 +1284,8 @@ const i18n = { en: {
   closeBtn:"Cerrar",
   googleReviewTitle:"Reseñas de Google", googleReviewLoading:"Cargando reseñas...", googleReviewError:"No se pudieron cargar las reseñas. Inténtalo de nuevo en un momento.",
   aiSummaryTitle:"Resumen de reseñas con IA", aiSummaryLoading:"🤖 Resumiendo reseñas...",
-  detailDirections:"🧭 Cómo llegar (Google Maps)",
-  detailNoLocationNote:"🧭 Son datos de ejemplo sin ubicación real todavía, así que no hay ruta disponible.",
-  detailRouteBtn:"📍 Ver ruta a pie en texto", detailRouteLoading:"Cargando ruta…",
-  detailRouteNoGeo:"Este navegador no admite la ubicación.", detailRouteNoPermission:"Permite el acceso a tu ubicación para ver la ruta.",
-  detailRouteUnavailable:"La información de la ruta no está disponible ahora.",
+  detailMapFocus:"🗺️ Ver en el mapa",
+  detailNoLocationNote:"🧭 Son datos de ejemplo sin ubicación real todavía, así que no se puede mostrar en el mapa.",
   googleReviewNotFound:"😢 No pudimos encontrar este restaurante en Google Maps.", googleReviewNone:"Aún no hay reseñas.",
   googleReviewLink:"Ver todas las reseñas en Google Maps →", googleReviewAnon:"Anónimo",
   liveSearchLoading:"Buscando...", liveSearchEmpty:"No se encontraron resultados.", liveSearchError:"La búsqueda falló. Inténtalo de nuevo en un momento.",
@@ -1589,11 +1581,8 @@ const i18n = { en: {
   closeBtn:"Fermer",
   googleReviewTitle:"Avis Google", googleReviewLoading:"Chargement des avis…", googleReviewError:"Impossible de charger les avis. Réessayez dans un instant.",
   aiSummaryTitle:"Résumé des avis par IA", aiSummaryLoading:"🤖 Résumé des avis en cours…",
-  detailDirections:"🧭 Itinéraire (Google Maps)",
-  detailNoLocationNote:"🧭 Ce sont des données d'exemple, sans emplacement réel pour l'instant : aucun itinéraire n'est disponible.",
-  detailRouteBtn:"📍 Voir l'itinéraire à pied en texte", detailRouteLoading:"Chargement de l'itinéraire…",
-  detailRouteNoGeo:"Ce navigateur ne prend pas en charge la géolocalisation.", detailRouteNoPermission:"Autorisez l'accès à votre position pour voir l'itinéraire.",
-  detailRouteUnavailable:"Les informations d'itinéraire ne sont pas disponibles pour le moment.",
+  detailMapFocus:"🗺️ Voir sur la carte",
+  detailNoLocationNote:"🧭 Ce sont des données d'exemple, sans emplacement réel pour l'instant : impossible de l'afficher sur la carte.",
   googleReviewNotFound:"😢 Nous n'avons pas trouvé ce restaurant sur Google Maps.", googleReviewNone:"Aucun avis pour l'instant.",
   googleReviewLink:"Voir tous les avis sur Google Maps →", googleReviewAnon:"Anonyme",
   liveSearchLoading:"Recherche en cours…", liveSearchEmpty:"Aucun résultat trouvé.", liveSearchError:"La recherche a échoué. Réessayez dans un instant.",
@@ -1854,8 +1843,8 @@ const priceMinInput = document.getElementById('priceMin');
 const priceMaxInput = document.getElementById('priceMax');
 let currentCat = "전체";
 let currentSort = "recommend";
-// 길찾기 출발지 + "가까운 순" 정렬이 함께 쓰는 현재 위치. 페이지 진입 시 자동으로 묻지 않고,
-// 길찾기 버튼을 누르거나 "가까운 순"을 고르는 시점(사용자 행동)에만 요청한다.
+// "가까운 순" 정렬이 쓰는 현재 위치. 페이지 진입 시 자동으로 묻지 않고,
+// "가까운 순"을 고르는 시점(사용자 행동)에만 요청한다.
 let userLocation = null;
 
 // 실제 가게는 r.rating이 전부 null이고 평점이 구글에서 온다 — 정렬도 카드 라벨과 같은 값을 봐야 한다.
@@ -3193,7 +3182,7 @@ function renderStubDetail(r){
     <p class="detail-desc">${rDesc(r)}</p>
     <div id="aiSummaryBody" class="ai-summary-body"></div>
     ${infoRows ? `<div class="detail-info-grid">${infoRows}</div>` : ''}
-    ${r.realAddress ? `${renderDirectionsLink(r)}${renderRouteTextBlock(r)}` : ''}
+    ${r.realAddress ? renderMapFocusLink(r) : ''}
     <div class="detail-stub-note">
       ${isKo
         ? `<strong>상세 정보 준비 중</strong> — ${r.realAddress ? '영업시간·메뉴 구성·원산지' : '주소·영업시간·메뉴 구성·원산지'} 같은 상세 정보는 9월 현장 조사 후 채워질 예정이에요. 예시로 <b>${escapeHtml(rName(restaurants[0]))}</b> 카드에서 어떤 정보가 담길지 미리 확인해보세요.`
@@ -3230,8 +3219,7 @@ function renderFullDetail(r){
     <div id="aiSummaryBody" class="ai-summary-body"></div>
 
     <div class="detail-info-grid">${infoRows}</div>
-    ${renderDirectionsLink(r)}
-    ${renderRouteTextBlock(r)}
+    ${renderMapFocusLink(r)}
 
     <h4 class="detail-menu-title">${t('detailMenuTitle') || '메뉴'}</h4>
     <div class="detail-menu-list">
@@ -3252,133 +3240,14 @@ function renderFullDetail(r){
   `;
 }
 
-// 길찾기 "버튼"은 여전히 사이트 안에서 경로선을 그리지 않고 구글 지도로 넘긴다 — 실제로
-// 길을 따라가는 건 어차피 지도 앱이 낫고, 모바일에서는 앱이 바로 열린다.
-// 다만 지도로 넘어가기 전에 대략 어떤 경로인지 알고 싶다는 요청이 있어, 텍스트 요약만은
-// Directions API로 따로 보여준다(아래 renderRouteTextBlock/loadRouteText) — 지도 위에 선을
-// 그리지 않으니 DirectionsRenderer는 안 쓰지만, 호출 자체는 같은 유료 API라 버튼을 눌렀을 때만 부른다.
-// origin이 있으면(사용자 위치) 내 위치 기준 경로로, 없으면 예전처럼 목적지만 넘긴다.
-function directionsUrl(r, origin){
-  let url = 'https://www.google.com/maps/dir/?api=1&destination='
-    + encodeURIComponent(r.lat + ',' + r.lng);
-  if(origin) url += '&origin=' + encodeURIComponent(origin.lat + ',' + origin.lng);
-  return url;
-}
-function renderDirectionsLink(r){
+// 길찾기(외부 지도 앱 이동)·텍스트 경로 미리보기는 걷어내고, 사이트 안 지도 섹션으로
+// 이동해 마커를 보여주는 쪽으로 통일했다(버튼 자체는 focusMapMarker, script.js 상단 지도
+// 블록에 있다 — CLAUDE.md 원칙대로 마커 관련 로직은 지도 블록 한 곳에 둔다).
+function renderMapFocusLink(r){
   if(!(r.lat && r.lng)){
-    return `<p class="detail-example-note">${t('detailNoLocationNote') || '🧭 예시로 채워둔 데이터라 아직 위치 정보가 없어서 길찾기를 열 수 없어요.'}</p>`;
+    return `<p class="detail-example-note">${t('detailNoLocationNote') || '🧭 예시로 채워둔 데이터라 아직 위치 정보가 없어서 지도에서 볼 수 없어요.'}</p>`;
   }
-  return `<a class="detail-directions" href="${directionsUrl(r)}" target="_blank" rel="noopener" onclick="return openDirections(event, '${r.id}')">`
-    + `${t('detailDirections') || '🧭 길찾기 (구글 지도)'}</a>`;
-}
-
-// 텍스트 추천 경로 — 클라이언트에서 바로 Directions(레거시)를 부르면 프로젝트에 별도로
-// 활성화해야 하고 신형 Routes API로의 전환이 권장되는 상태라, 서버 엔드포인트(api/walk-route.js,
-// Routes API REST)를 거친다. 구글 리뷰(google-reviews.js)와 같은 서버-키 경유 관례.
-function renderRouteTextBlock(r){
-  if(!(r.lat && r.lng)) return '';
-  return `
-    <div class="detail-route">
-      <button type="button" class="btn-ghost detail-route-btn" onclick="loadRouteText('${r.id}')">${t('detailRouteBtn') || '📍 여기서 가는 길 텍스트로 보기'}</button>
-      <div id="routeTextBody" class="route-text-body"></div>
-    </div>
-  `;
-}
-// 길찾기 버튼과 같은 원칙 — 이 버튼을 실제로 눌렀을 때만 위치 권한을 묻는다.
-// 이미 길찾기로 위치를 받아둔 상태면(userLocation) 다시 묻지 않고 바로 쓴다.
-async function loadRouteText(id){
-  const r = restaurants.find(x => x.id === id);
-  const body = document.getElementById('routeTextBody');
-  if(!r || !body) return;
-  body.innerHTML = `<p class="route-text-loading">${t('detailRouteLoading') || '경로를 불러오는 중…'}</p>`;
-
-  if(!userLocation){
-    if(!('geolocation' in navigator)){
-      body.innerHTML = `<p class="route-text-error">${t('detailRouteNoGeo') || '이 브라우저는 위치 정보를 지원하지 않아요.'}</p>`;
-      return;
-    }
-    // openDirections와 같은 이유 — 권한 팝업을 그냥 두면 콜백이 오지 않아
-    // "경로를 불러오는 중…"이 영원히 남는다. 권한 대기까지 재는 시계를 따로 건다.
-    userLocation = await new Promise(resolve => {
-      let settled = false;
-      const finish = v => { if(settled) return; settled = true; resolve(v); };
-      const watchdog = setTimeout(() => finish(null), 6000);
-      navigator.geolocation.getCurrentPosition(
-        pos => { clearTimeout(watchdog); finish({ lat: pos.coords.latitude, lng: pos.coords.longitude }); },
-        () => { clearTimeout(watchdog); finish(null); },
-        { timeout: 5000 }
-      );
-    });
-  }
-  if(!userLocation){
-    body.innerHTML = `<p class="route-text-error">${t('detailRouteNoPermission') || '위치 권한을 허용하지 않으면 경로를 볼 수 없어요.'}</p>`;
-    return;
-  }
-
-  try{
-    const url = `/api/walk-route?originLat=${userLocation.lat}&originLng=${userLocation.lng}`
-      + `&destLat=${r.lat}&destLng=${r.lng}&lang=${mapsLanguage()}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if(!res.ok || !data.found){
-      body.innerHTML = `<p class="route-text-error">${t('detailRouteUnavailable') || '지금은 경로 안내를 불러올 수 없어요.'}</p>`;
-      return;
-    }
-    const mins = data.durationSeconds != null ? Math.round(data.durationSeconds / 60) : null;
-    const km = data.distanceMeters != null ? (data.distanceMeters / 1000).toFixed(1) : null;
-    const minUnit = { ko:'분', en:' min', zh:'分钟', es:' min', fr:' min' }[currentLang] || 'min';
-    const summary = (mins != null && km != null) ? `🚶 ${mins}${minUnit} · ${km}km` : '';
-    const steps = (data.steps || []).map(s => `<li>${escapeHtml(s)}</li>`).join('');
-    body.innerHTML = `
-      ${summary ? `<p class="route-text-summary">${summary}</p>` : ''}
-      ${steps ? `<ol class="route-text-steps">${steps}</ol>` : ''}
-    `;
-  }catch(e){
-    body.innerHTML = `<p class="route-text-error">${t('detailRouteUnavailable') || '지금은 경로 안내를 불러올 수 없어요.'}</p>`;
-  }
-}
-// 위치 권한은 "길찾기"를 실제로 누른 시점에만 묻는다 — 들어오자마자 위치를 요청하는 사이트는
-// 대부분 거절당한다. 거절/미지원이면 조용히 목적지만 넘기는 기존 동작으로 degrade한다.
-// 새 탭은 클릭 이벤트 안에서 동기적으로 먼저 열어둔다 — 위치 응답을 기다렸다가 열면
-// 브라우저 팝업 차단에 걸리기 쉽다(사용자 제스처와의 연결이 끊긴 것으로 판단됨).
-function openDirections(e, id){
-  if(e) e.preventDefault();
-  const r = restaurants.find(x => x.id === id);
-  if(!r) return false;
-  track('directions_click', { item_id: id });
-  if(userLocation){
-    window.open(directionsUrl(r, userLocation), '_blank');
-    return false;
-  }
-  const win = window.open('about:blank', '_blank');
-  // 팝업이 차단되면 새 탭 자체가 없다 — 위에서 preventDefault로 앵커의 기본 이동까지 막아둔
-  // 상태라, 여기서 폴백하지 않으면 눌러도 아무 일도 일어나지 않는 버튼이 된다.
-  if(!win){ location.href = directionsUrl(r); return false; }
-  if(!('geolocation' in navigator)){
-    win.location.href = directionsUrl(r);
-    return false;
-  }
-  // getCurrentPosition의 timeout 시계는 "권한이 허용된 뒤"부터 돈다. 사용자가 권한 팝업을
-  // 그냥 두면 success/error 둘 다 영영 오지 않아 새 탭이 about:blank로 멈춘다 — 게다가 새 탭이
-  // 포커스를 가져가서 권한 팝업은 뒤로 가려진 원래 탭에 뜬다(사용자는 빈 탭만 보게 된다).
-  // 그래서 권한 대기 시간까지 포함하는 시계를 따로 걸고, 늦으면 목적지만 넘겨서라도 연다.
-  let done = false;
-  const go = origin => {
-    if(done) return;
-    done = true;
-    win.location.href = directionsUrl(r, origin);
-  };
-  const watchdog = setTimeout(() => go(null), 6000);
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      clearTimeout(watchdog);
-      userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-      go(userLocation);
-    },
-    () => { clearTimeout(watchdog); go(null); },
-    { timeout: 5000 }
-  );
-  return false;
+  return `<button type="button" class="detail-directions" onclick="focusMapMarker('${r.id}')">${t('detailMapFocus') || '🗺️ 지도에서 위치 보기'}</button>`;
 }
 
 // ---- 구글 리뷰 (Places API New, /api/google-reviews 경유) ----
@@ -3631,6 +3500,7 @@ function renderMarkers(){
 
   gMarkers.forEach(m => m.setMap(null));
   gMarkers = [];
+  gMarkerById = new Map();
 
   getFilteredList().filter(r => r.lat && r.lng && passesMapFilter(r)).forEach(r => {
     const idx = restaurants.indexOf(r);
@@ -3646,7 +3516,28 @@ function renderMarkers(){
     marker.addListener('mouseover', () => { marker.setIcon(markerIcon(r.emoji, fill, line, 19)); marker.setZIndex(999); });
     marker.addListener('mouseout',  () => { marker.setIcon(markerIcon(r.emoji, fill, line, 15)); marker.setZIndex(null); });
     gMarkers.push(marker);
+    gMarkerById.set(r.id, marker);
   });
+}
+
+// "지도에서 위치 보기" — 상세 모달을 닫고 지도 섹션으로 이동해 이 가게의 마커를 강조한다.
+// 마커는 항상 getFilteredList()/mapFilter를 따르므로(위 renderMarkers 주석 참고), 카테고리·가격·
+// 지도 필터에 걸려 마커가 안 뜬 상태일 수 있다 — 새 필터 함수를 만드는 대신 기존 필터를 전체로
+// 되돌려(resetFilters와 같은 값) 마커가 반드시 뜨게 한다.
+function focusMapMarker(id){
+  const r = restaurants.find(x => x.id === id);
+  if(!r || !(r.lat && r.lng)) return;
+  closeDetail();
+  resetFilters();
+  setMapFilter('all');
+  document.getElementById('map').scrollIntoView({ behavior:'smooth' });
+  if(!gmap) return;
+  const marker = gMarkerById.get(id);
+  if(!marker) return;
+  gmap.setCenter(marker.getPosition());
+  gmap.setZoom(18);
+  marker.setAnimation(google.maps.Animation.BOUNCE);
+  setTimeout(() => marker.setAnimation(null), 1400);
 }
 
 loadGoogleMaps();
