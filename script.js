@@ -2929,6 +2929,7 @@ function renderCards(){
         <button class="save-toggle ${saved ? 'saved':''}" data-idx="${idx}" title="가보고 싶은 곳">${saved ? '♥':'♡'}</button>
         <div class="visit-badge ${visited ? 'show':''}">${t('cardVisitBadge') || '✔ 가본 곳'}</div>
         <div class="live-review-badge ${r.liveReview ? 'show':''}">${t('cardLiveBadge') || '🌐 구글 실시간 리뷰'}</div>
+        ${(r.lat && r.lng) ? `<button class="map-focus-toggle" data-id="${r.id}" title="${t('detailMapFocus') || '🗺️ 지도에서 위치 보기'}">🗺️</button>` : ''}
       </div>
       <div class="food-body">
         <span class="food-cat">${rCat(r)}</span>
@@ -2989,6 +2990,12 @@ function bindFoodCardButtons(container){
       } else {
         confirmMark(r, '💌', t('confirmSave') || '이 맛집을 가보고 싶은 곳에 담으시겠습니까?', () => { r.saved = true; });
       }
+    });
+  });
+  container.querySelectorAll('.map-focus-toggle').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      focusMapMarker(e.currentTarget.dataset.id);
     });
   });
   container.querySelectorAll('.visit-flow-btn').forEach(btn => {
