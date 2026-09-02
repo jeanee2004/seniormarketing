@@ -4663,7 +4663,7 @@ let rouletteSpinning = false; // 중복 클릭 방지
 let rouletteSlotCount = 6;    // 칸 수 — 메뉴 개수와 별개로 사용자가 직접 정한다
 const ROULETTE_MIN_SLOTS = 2;
 const ROULETTE_MAX_SLOTS = 12;
-const ROULETTE_PALETTE_VARS = ['--base-bg-2', '--slate-tint', '--paper', '--base-bg'];
+const ROULETTE_PALETTE_VARS = ['--red', '--slate-surface', '--red-dark', '--slate'];
 
 function openGame(){
   renderGameChoice();
@@ -4773,7 +4773,9 @@ function renderRoulette(){
   document.getElementById('rouletteSlotInput').addEventListener('change', (e) => setRouletteSlotCount(e.target.value));
   document.getElementById('rouletteAddBtn').addEventListener('click', addRouletteItem);
   document.getElementById('rouletteInput').addEventListener('keydown', (e) => {
-    if(e.key === 'Enter'){ e.preventDefault(); addRouletteItem(); }
+    // e.isComposing 체크가 없으면 한글 등 IME로 조합 중인 마지막 글자가 Enter로 조합을
+    // 끝내는 순간의 값으로 잘려 들어간다("국밥" 입력 중 Enter → "밥"만 추가되는 원인).
+    if(e.key === 'Enter' && !e.isComposing){ e.preventDefault(); addRouletteItem(); }
   });
   document.getElementById('rouletteSpinBtn').addEventListener('click', spinRoulette);
   updateRouletteSpinState();
@@ -4826,10 +4828,11 @@ function rouletteWedgeItems(){
 }
 
 // 휠 색은 :root 디자인 토큰을 런타임에 읽어 쓴다 — renderMarkers()의 마커 색 처리와 같은 관례.
-// 레드는 CTA·포인터 전용 몫이라(60/30/10 규칙) 칸 채우기에는 슬레이트·베이스 계열만 순환한다.
+// 레드·슬레이트의 진한 톤만 순환해서 선명하게 — 다크모드에서도 --red/--slate-surface가
+// 각각 알아서 재정의되므로(style.css) 라이트와 대비되는 색감이 자동으로 따라온다.
 function rouletteWedgeColors(n){
   const css = getComputedStyle(document.documentElement);
-  const palette = ROULETTE_PALETTE_VARS.map(v => css.getPropertyValue(v).trim() || '#EFEAE0');
+  const palette = ROULETTE_PALETTE_VARS.map(v => css.getPropertyValue(v).trim() || '#48607A');
   const colors = Array.from({length:n}, (_, i) => palette[i % palette.length]);
   if(n > 2 && colors[n-1] === colors[0]){
     const alt = palette.find(c => c !== colors[n-1] && c !== colors[n-2]);
