@@ -23,7 +23,7 @@ const SCHEMA = {
   required: ['kind', 'nameMatch', 'reason'],
 };
 
-const LANG_NAME = { ko: '한국어', en: 'English', zh: '중국어(간체)', es: 'Spanish', fr: 'French' };
+const LANG_NAME = { ko: '한국어', en: 'English', zh: '중국어(간체)', es: 'Spanish', fr: 'French', de: 'German' };
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -101,7 +101,7 @@ module.exports = async function handler(req, res) {
 
   const name = String(body.name || '').trim();
   const address = String(body.address || '').trim();
-  const lang = ['ko', 'en', 'zh', 'es', 'fr'].includes(body.lang) ? body.lang : 'ko';
+  const lang = ['ko', 'en', 'zh', 'es', 'fr', 'de'].includes(body.lang) ? body.lang : 'ko';
   const image = parseDataUrl(body.image);
 
   if (!name || !image) {

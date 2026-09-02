@@ -199,9 +199,32 @@
     footerNavHome:"Accueil", footerNavPrivacy:"Politique de confidentialité", footerNavTerms:"Conditions d'utilisation",
     footerBottom:"© 2026 Bap Meokeoreo Wa · KU-jodae ! Aidons les patrons du quartier. Matjip KU-jodae (université de Corée, campus de Sejong).",
   };
-  var DICTS = { en: EN, zh: ZH, es: ES, fr: FR };
-  var CYCLE = ['ko', 'en', 'zh', 'es', 'fr'];
-  var NEXT_LABEL = { ko:'English', en:'中文', zh:'Español', es:'Français', fr:'한국어' };
+  var DE = {
+    metaTitle:"Nutzungsbedingungen — Bap Meokeoreo Wa",
+    navHome:"Startseite",
+    backHome:"← Zurück zu Bap Meokeoreo Wa",
+    h1:"Nutzungsbedingungen",
+    legalMeta:"Dies ist ein Entwurf, der die Absicht des Gesetzes zum Verbraucherschutz im elektronischen Handel und des Gesetzes zur Förderung der Nutzung von Informations- und Kommunikationsnetzwerken widerspiegelt. Bap Meokeoreo Wa wird derzeit als gemeinnütziges Projekt zum gesellschaftlichen Beitrag betrieben. Bei einem Übergang zu einem kostenpflichtigen oder werbefinanzierten kommerziellen Betrieb werden diese Bedingungen sowie die Gewerbeinformationen des Betreibers gemäß dem geltenden Recht aktualisiert.",
+    translationNote:"Diese deutsche Übersetzung dient nur zur Orientierung; das koreanische Original ist maßgeblich.",
+    art1:'<h3>Artikel 1 (Zweck)</h3><p>Diese Bedingungen regeln die Nutzungsbedingungen und -verfahren aller von Bap Meokeoreo Wa (der „Service“) bereitgestellten Dienste sowie die Rechte, Pflichten und Verantwortlichkeiten der Nutzer:innen und des Service-Betreibers.</p>',
+    art2:'<h3>Artikel 2 (Begriffsbestimmungen)</h3><ol><li>„Mitglied“ bezeichnet eine Person, die diesen Bedingungen zugestimmt und sich für den Service registriert hat.</li><li>„Inhalt“ bezeichnet Bewertungen, Fotos und andere Beiträge, die ein:e Nutzer:in innerhalb des Services veröffentlicht.</li></ol>',
+    art3:'<h3>Artikel 3 (Wirksamkeit und Änderung der Bedingungen)</h3><p>Diese Bedingungen treten in Kraft, sobald sie auf dem Service-Bildschirm veröffentlicht oder den Mitgliedern anderweitig mitgeteilt werden, und können geändert werden, soweit sie nicht gegen geltendes Recht verstoßen.</p>',
+    art4:'<h3>Artikel 4 (Bereitstellung und Änderung des Services)</h3><p>Der Service umfasst Informationen zu lokalen Restaurants sowie Speicher- und Bewertungsfunktionen; sein Inhalt kann je nach betrieblichem oder technischem Bedarf geändert werden.</p>',
+    art5:'<h3>Artikel 5 (Pflichten der Mitglieder)</h3><p>Mitglieder dürfen keine falschen Informationen registrieren, die Informationen einer anderen Person missbrauchen oder den Betrieb des Services stören, und müssen Bewertungen auf Grundlage tatsächlicher Inhalte verfassen.</p>',
+    art6:'<h3>Artikel 6 (Verwaltung von Beiträgen)</h3><p>Der Service kann von einem Mitglied veröffentlichte Inhalte ohne vorherige Ankündigung entfernen, wenn sie die Rechte anderer verletzen oder gegen die öffentliche Ordnung und gute Sitten verstoßen.</p>',
+    art7:'<h3>Artikel 7 (Haftungsausschluss)</h3><p>Der Service übernimmt keine Gewähr für die Richtigkeit der von Mitgliedern registrierten Informationen (Restaurantinformationen, Bewertungen usw.) und haftet nicht für daraus resultierende Schäden.</p>',
+    art8:'<h3>Anhang — Offenlegung von Gewerbeinformationen</h3><p>Sollte der Service durch eine Gewerbeanmeldung in einen formellen kommerziellen Betrieb übergehen (kostenpflichtige Funktionen, Werbeeinnahmen usw.), werden Firmenname, Name der vertretungsberechtigten Person, Gewerbeanmeldungsnummer, Registrierungsnummer für den Versandhandel, Adresse und Telefonnummer gemäß dem Gesetz zum Verbraucherschutz im elektronischen Handel zusätzlich am Seitenende offengelegt.</p>',
+    footerOperator:"<b>Betreiber</b> Matjip KU-jodae, ein Studententeam vom Sejong-Campus der Korea University",
+    footerProject:"<b>Projektname</b> KU-jodae! Helft den lokalen Wirten",
+    footerServiceName:"<b>Servicename</b> Bap Meokeoreo Wa",
+    footerEmail:"<b>Kontakt-E-Mail</b> (wird noch bekannt gegeben)",
+    footerOfficer:"<b>Datenschutzbeauftragte:r</b> (wird noch bekannt gegeben)",
+    footerNavHome:"Startseite", footerNavPrivacy:"Datenschutzerklärung", footerNavTerms:"Nutzungsbedingungen",
+    footerBottom:"© 2026 Bap Meokeoreo Wa · KU-jodae! Helft den lokalen Wirten. Matjip KU-jodae (Sejong-Campus der Korea University).",
+  };
+  var DICTS = { en: EN, zh: ZH, es: ES, fr: FR, de: DE };
+  var CYCLE = ['ko', 'en', 'zh', 'es', 'fr', 'de'];
+  var NEXT_LABEL = { ko:'English', en:'中文', zh:'Español', es:'Français', fr:'Deutsch', de:'한국어' };
   var STORE_KEY = 'bmw:v1';
   function getStoredLang(){
     try {

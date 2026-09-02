@@ -29,9 +29,9 @@ const restaurants = [
     ]
   },
   // pass가 있는 가게만 손주 식권 섹션과 검색에 노출된다 (detail과 같은 방식 — 일부만 채워둔 예시)
-  pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", benefitZh:"买10送1", benefitEs:"Compra 10, llévate 1 gratis", benefitFr:"10 achetés, 1 offert", validDays:180}},
+  pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", benefitZh:"买10送1", benefitEs:"Compra 10, llévate 1 gratis", benefitFr:"10 achetés, 1 offert", benefitDe:"10 kaufen, 1 gratis", validDays:180}},
   {id:"yeokjeon-wang-donkatsu", name:"역전 왕돈까스", cat:"양식", emoji:"🍱", desc:"두툼한 수제 돈까스, 넉넉한 인심", rating:4.7, reviewCount:151, price:"₩", priceValue:9000, saved:false, visited:false,
-    pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", benefitZh:"买10送1", benefitEs:"Compra 10, llévate 1 gratis", benefitFr:"10 achetés, 1 offert", validDays:90},
+    pass:{unit:9000, bundles:[{count:5,bonus:0},{count:10,bonus:1}], benefit:"10장 사면 1장 더", benefitEn:"Buy 10, get 1 free", benefitZh:"买10送1", benefitEs:"Compra 10, llévate 1 gratis", benefitFr:"10 achetés, 1 offert", benefitDe:"10 kaufen, 1 gratis", validDays:90},
     detail:{
       isExample:true,
       address:"세종특별자치시 조치원읍 원리 78-1 (임의 주소 · 실제 주소 아님)",
@@ -63,7 +63,7 @@ const restaurants = [
   {id:"sushi-power-plant-12g", name:"초밥발전소12g", cat:"일식", emoji:"🍣", desc:"조치원읍 골목의 초밥·롤 전문점", rating:null, reviewCount:null, price:"₩₩", priceValue:13000, saved:false, visited:false,
     liveReview:true, lat:36.60695328676086, lng:127.2894090160121, realAddress:"세종특별자치시 조치원읍 내창3길 8"},
   {id:"halmoni-tteokbokki", name:"할머니 떡볶이", cat:"분식", emoji:"🍢", desc:"매콤달콤 옛날 떡볶이, 학생 최애 간식", rating:4.9, reviewCount:264, price:"₩", priceValue:4000, saved:true, visited:false,
-    pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", benefitEn:"Buy 20, get 3 free", benefitZh:"买20送3", benefitEs:"Compra 20, llévate 3 gratis", benefitFr:"20 achetés, 3 offerts", validDays:180},
+    pass:{unit:4000, bundles:[{count:10,bonus:1},{count:20,bonus:3}], benefit:"20장 사면 3장 더", benefitEn:"Buy 20, get 3 free", benefitZh:"买20送3", benefitEs:"Compra 20, llévate 3 gratis", benefitFr:"20 achetés, 3 offerts", benefitDe:"20 kaufen, 3 gratis", validDays:180},
     detail:{
       isExample:true,
       address:"세종특별자치시 조치원읍 봉산리 5-2 (임의 주소 · 실제 주소 아님)",
@@ -1960,6 +1960,352 @@ const i18n = { en: {
   communityQrSoon:"Le groupe n'est pas encore créé. Dès qu'il sera ouvert, un QR code apparaîtra ici.",
   grandchildDefaultName:"Petit-enfant", mealPassWord:"Ticket repas", ownerBonusLabel:"Bonus du patron",
   mypagePassBonusWord:"bonus", mypagePassDateLine:"Réservé le {date}", reviewCharUnit:"",
+}, de: {
+  pageTitle:"Bap Meokeoreo Wa — Entdecke Jochiwons lokale Restaurants",
+  navSearch:"Suche", navGame:"Menü-Roulette-Spiel", navSurvey:"Geschmacksumfrage", navLang:"Sprache", navTheme:"Hell-/Dunkelmodus wechseln", navLogin:"Anmelden",
+  mapFilterAria:"Kartenanzeigetyp", mapFilterAll:"Alle", mapFilterFood:"Essen", mapFilterCafe:"Cafés",
+  navMenuAria:"Hauptbereiche", navMenuEat:"Restaurants", navMenuMap:"Karte", navMenuAbout:"Über uns", navMenuJoin:"Mitmachen",
+  navLogout:"Abmelden",
+  headerSearchPh:"Restaurants, Essensgutscheine, Partner, Seiten suchen",
+  heroEyebrow:"KU-jodae! Helft den lokalen Wirten",
+  heroTitle:'Wusstest du, dass es tolle Restaurants gibt, die bei Naver fehlen oder kaum gelistet sind? <span>Jetzt weißt du es.</span>',
+  heroBody:'Ein Studententeam vom Sejong-Campus der Korea University, <b>Matjip KU-jodae</b>, durchstreift die Seitengassen von Jochiwon-eup, um sie zu finden. Wir beginnen damit, echte lokale Restaurants aufzuspüren, die entweder komplett auf Naver/Kakao Map fehlen oder nur mit sehr wenigen Informationen gelistet sind. Entdecke preiswerte lokale Restaurants, die Studierende der Korea University und Hongik University am Sejong-Campus sowie Anwohner:innen gemeinsam genießen können.',
+  heroBrowse:"Restaurants durchsuchen", heroNotify:"Beim Start benachrichtigen",
+  heroQuickpick:"Entscheidungshilfe · Wähle in 3 Sekunden für mich", heroSpeech:"Komm mit uns essen!",
+  problemEyebrow:"WARUM BAP MEOKEOREO WA", problemTitle:"Wer nur Karten-Apps vertraut, verpasst gutes Essen",
+  problemSub:"Eine vertraute Geschichte für Studierende der Korea University und Hongik University am Sejong-Campus, Austauschstudierende, Mitarbeitende und Anwohner:innen.",
+  problem1Title:"Fehlt auf Karten oder kaum gelistet",
+  problem1Body:"Alteingesessene lokale Restaurants fehlen oft komplett auf Naver/Kakao Map oder sind ohne ein einziges Foto gelistet – so tauchen sie nicht einmal bei der Suche auf.",
+  problem2Title:"Immer dieselbe Mensa",
+  problem2Body:"In der Nähe gibt es preiswertere, leckerere lokale Restaurants, aber ohne Möglichkeit, sie zu finden, triffst du immer wieder dieselbe Wahl.",
+  problem3Title:"Wir müssen einander helfen",
+  problem3Body:"Kund:innen entdecken versteckte Perlen, und Wirte gewinnen mehr Sichtbarkeit und Umsatz – eine Struktur, in der unsere ganze Nachbarschaft gemeinsam wächst.",
+  discoverEyebrow:"DEMNÄCHST", discoverTitle:"Nach Semesterbeginn besuchen wir die lokalen Wirte persönlich",
+  discoverBody:"Echte lokale Restaurants, die komplett unlisted sind oder kaum Informationen haben – unser Studententeam wird nach dem Semesterbeginn im September die Seitengassen von Jochiwon-eup durchstreifen, die Wirte treffen und sie hier nach und nach vorstellen. Restaurants mit dem 🌐-Abzeichen unten zeigen als Vorschau, wie die Live-Google-Bewertungsintegration aussieht; die echte Liste der lokalen Restaurants, die wir selbst gefunden und unterstützt haben, füllt diesen Platz bald.",
+  discoverStep1:"Feldrecherche in den Seitengassen von Jochiwon-eup (nach Semesterbeginn im September)",
+  discoverStep2:"Wenig gelistete lokale Wirte finden und ihre Infos ergänzen",
+  discoverStep3:"Sie hier nach und nach als echte lokale Restaurants veröffentlichen",
+  discoverBtn:"Melde ein lokales Restaurant in deiner Nähe",
+  mapEyebrow:"KARTE", mapTitle:"Jochiwon-Minikarte",
+  mapBody:"Standorte von Restaurants, die wir tatsächlich bestätigt haben. Tippe auf eine Markierung für Details. Der Rest kommt nach der Feldrecherche im September nach und nach dazu.",
+  mapCampusLabel:"🏫 Sejong-Campus der Korea University",
+  mapAuthFail:"Die Karte konnte nicht geladen werden.",
+  eatLocalEyebrow:"LOKAL ESSEN", eatLocalTitle:"Was gibt's heute zu essen?",
+  realGridTitle:"📍 Bestätigte echte Restaurants · Live-Google-Bewertungen",
+  realGridSub:"Restaurants, die tatsächlich bei Kakao/Google registriert sind. Klick auf eines, um sofort echte Bewertungen und Rezensionen zu sehen.",
+  liveSearchPh:"Findest du ein Restaurant nicht? Gib einen Namen ein, um in Echtzeit in der Nähe zu suchen",
+  liveSearchBtn:"Suchen",
+  catAll:"Alle", catKorean:"Koreanisch", catWestern:"Westlich", catChinese:"Chinesisch", catJapanese:"Japanisch", catSnack:"Snacks", catCafe:"Cafés",
+  descVarCafe0:"Ein Café mit guter Atmosphäre in einer Seitengasse von Jochiwon-eup",
+  descVarCafe1:"Ein Café in der Seitengasse für einen schnellen Kaffee",
+  descVarCafe2:"Ein Café in der Seitengasse, ideal für zwischen den Vorlesungen",
+  descVarCafe3:"Ein Café in einer Seitengasse von Jochiwon-eup zum Verweilen",
+  descVarCafe4:"Ein Café in einer Seitengasse von Jochiwon-eup für noch eine Tasse",
+  descVarKorean0:"Ein herzhaftes koreanisches Lokal in einer Seitengasse von Jochiwon-eup",
+  descVarKorean1:"Eine sättigende Mahlzeit in einer Seitengasse von Jochiwon-eup",
+  descVarKorean2:"Das koreanische Lokal in der Seitengasse für „Was esse ich heute“",
+  descVarKorean3:"Ein Lokal in einer Seitengasse von Jochiwon-eup für Hausmannskost-Sehnsucht",
+  descVarWestern0:"Ein gemütliches westliches Restaurant in einer Seitengasse von Jochiwon-eup",
+  descVarWestern1:"Eine Mahlzeit mit Messer und Gabel in einer Seitengasse von Jochiwon-eup",
+  descVarWestern2:"Ein westliches Lokal in der Seitengasse von Jochiwon-eup für einen besonderen Tag",
+  descVarChinese0:"Ein chinesisches Lokal mit Wok-Aroma in einer Seitengasse von Jochiwon-eup",
+  descVarChinese1:"Eine Schüssel chinesisches Essen in einer Seitengasse von Jochiwon-eup",
+  descVarChinese2:"Das Lokal in der Seitengasse von Jochiwon-eup für die Jjajangmyeon-oder-Jjamppong-Debatte",
+  descVarJapanese0:"Ein ruhiges japanisches Restaurant in einer Seitengasse von Jochiwon-eup",
+  descVarJapanese1:"Eine Schüssel japanisches Essen in einer Seitengasse von Jochiwon-eup",
+  descVarJapanese2:"Ein japanisches Lokal in der Seitengasse von Jochiwon-eup, das man restlos leert",
+  descVarSnack0:"Ein nostalgischer Bunsik-Laden in einer Seitengasse von Jochiwon-eup",
+  descVarSnack1:"Ein Bunsik-Laden in der Seitengasse für einen leichten Snack",
+  descVarSnack2:"Ein Lokal in einer Seitengasse von Jochiwon-eup für Tteokbokki-Lust",
+  // 가게 이름 다국어 — restaurants[]에서 이전(rName()이 조회). id 순서 = restaurants[] 순서.
+  "name_jochiwon-halmae-gukbap":"Jochiwon Omas Gukbap (조치원 할매국밥)",
+  "name_yeokjeon-wang-donkatsu":"Yeokjeon König des Donkatsu (역전 왕돈까스)",
+  "name_an-chef-jjambbong":"An-Chef Fleisch- und Meeresfrüchte-Jjamppong (안쉐프고기해물짬뽕)",
+  "name_jagal-dondon":"Jagal Dondon (자갈돈돈)",
+  "name_wooridul-sikdang":"Wooridul Sikdang (우리들식당)",
+  "name_paul-barna":"Paul, Barna (폴바나)",
+  "name_donseu":"Donseu (돈스)",
+  "name_the-ramen":"The Ramen (더라멘)",
+  "name_sushi-power-plant-12g":"Sushi-Kraftwerk 12g (초밥발전소12g)",
+  "name_halmoni-tteokbokki":"Omas Tteokbokki (할머니 떡볶이)",
+  "name_parangsae-bunsik":"Blauvogel-Bunsik (파랑새분식)",
+  "name_sookine-bapsang":"Sookis Tisch (숙이네밥상)",
+  "name_seochangri-181":"Seochang-ri 181 (서창리181)",
+  "name_sammat-cafe":"Samat Cafe (삼맛카페)",
+  "name_vanilla-garden":"Vanilla Garden (바닐라가든)",
+  "name_dankong":"Dankong (단콩)",
+  "name_paul-and-banabas":"Paul and Barnabas (폴앤바나바스)",
+  "name_cafe-sujak":"Cafe Sujak (카페수작)",
+  "name_cafe-calendar":"Cafe Calendar (카페캘린더)",
+  "name_hong-cafe":"Hong Cafe (홍카페)",
+  "name_matna-sikdang-bunsik":"Matna Restaurant & Bunsik (맛나식당분식)",
+  "name_imone-dwaeji-gukbap":"Imones Schweine-Gukbap (이모네돼지국밥)",
+  "name_bundang-ilpum-guksu":"Bundang Ilpum Nudeln (분당일품국수)",
+  "name_urban-lounge":"Urban Lounge (어반라운지)",
+  "name_gyodong-jjambbong":"Gyodong Jjamppong (교동짬뽕)",
+  "name_naive":"Naive (나이브)",
+  "name_yuram-coffee-roasters":"Yuram Coffee Roasters (유람 커피로스터스)",
+  "name_daily-point":"Dilly Point (딜리포인트)",
+  "name_hunminjeongeum":"Hunminjeongeum (훈민정음)",
+  "name_siot":"Siot (시옷)",
+  "name_vib":"Vibe (비브)",
+  "name_neomeo":"Neomeo (너머)",
+  "name_chas":"Chas (차스)",
+  "name_second-road":"Second Road (세컨로드)",
+  "name_merry-go-round":"Merry-Go-Round (메리고라운드)",
+  "name_roastery-cafe-in":"Roastery Cafe IN (로스터리 카페IN)",
+  "name_defense":"Defense (디펜스)",
+  // 가게 설명 다국어 — descVariant()에 안 걸리는 가게만(rDesc()가 조회).
+  "desc_jochiwon-halmae-gukbap":"Ein bekanntes Gukbap-Lokal mit 40 Jahren Tradition und kräftiger Brühe",
+  "desc_yeokjeon-wang-donkatsu":"Dicker, handgemachter Donkatsu in großzügigen Portionen",
+  "desc_an-chef-jjambbong":"Ein scharfes Jjamppong-Lokal mit Fleisch und Meeresfrüchten",
+  "desc_jagal-dondon":"Ein Grillrestaurant in einer Seitengasse von Jochiwon-eup",
+  "desc_wooridul-sikdang":"Ein koreanisches Hausmannskost-Restaurant in einer Seitengasse von Jochiwon-eup",
+  "desc_donseu":"Ein Donkatsu- und Udon-Lokal in einer Seitengasse von Jochiwon-eup",
+  "desc_the-ramen":"Ein Ramen-Laden in einer Seitengasse von Jochiwon-eup",
+  "desc_sushi-power-plant-12g":"Ein Sushi- und Maki-Spezialist in einer Seitengasse von Jochiwon-eup",
+  "desc_halmoni-tteokbokki":"Süß-scharfes Tteokbokki nach altem Rezept, der Lieblingssnack der Studierenden",
+  "desc_sookine-bapsang":"Ein koreanisches Hausmannskost-Restaurant in einer Seitengasse von Jochiwon-eup",
+  pagerAria:"Seiten der Restaurantliste", pagerPrev:"Vorherige Seite", pagerNext:"Nächste Seite",
+  sortRecommend:"Empfohlen", sortName:"Name (A-Z)", sortRating:"Bestbewertet", sortReviews:"Meiste Bewertungen", sortLatest:"Neueste", sortDistance:"Nächstgelegen",
+  priceMin:"Min", priceMax:"Max", priceWon:"Won",
+  filterEmpty:"Noch keine Restaurants passen zu diesen Filtern.",
+  filterEmptySub:"Wie wäre es mit diesen?", filterReset:"Filter zurücksetzen und alles anzeigen",
+  filterEmptyKorean:"🍚 Koreanisch", filterEmptyJapanese:"🍜 Japanisch", filterEmptyWestern:"🍝 Westlich",
+  exampleGridTitle:"🔎 Beispielrestaurants (Feldrecherche steht noch aus)",
+  exampleGridSub:'Platzhalterinfos, bis die Feldrecherche abgeschlossen ist. Tippe aufs Herz, um einen Ort bei „Möchte ich besuchen“ zu speichern.',
+  loadMore:'Mehr Restaurants anzeigen <span class="badge-soon">Start im September</span>',
+  reviewEyebrow:"BEWERTUNG", reviewTitle:"Geschichten von Leuten, die schon da waren",
+  reviewSearchPh:"Bewertungen durchsuchen (Restaurantname, Stichwort)",
+  reviewWriteBtn:"Schreib auch du eine Bewertung",
+  reviewSoon:"<strong>Bewertungsdaten kommen bald</strong> — sobald sich nach dem Semesterbeginn im September echte Besuchsbewertungen ansammeln, startet auch eine KI-Bewertungszusammenfassung.",
+  surveyTitle:"Erzähl uns etwas über deinen Geschmack", surveyBody:"Beantworte eine kurze Umfrage zu Schärfegrad, Lieblingskategorien und Budget, um passende Restaurantvorschläge zu erhalten.", surveyBtn:"Geschmacksumfrage starten",
+  shareEyebrow:"TEILEN", shareTitle:"Erzähl es auch deinen Freund:innen an der Uni",
+  shareBody:'Versteckte Perlen werden noch besser, je mehr sie geteilt werden. Empfiehl „Bap Meokeoreo Wa“ einem Freund oder einer Freundin.',
+  shareKakao:"Auf KakaoTalk teilen", shareCopy:"Link kopieren", shareText:"Per SMS teilen", shareInsta:"Auf Instagram teilen",
+  joinEyebrow:"GEMEINSAM", joinTitle:"Lass uns das gemeinsam aufbauen",
+  joinBody:"Für Wirte, für uns, für Nachbar:innen – wir haben Platz für alle geschaffen, die bei diesem Projekt mitmachen wollen.",
+  join1Title:'Bist du Restaurantbesitzer:in?<span class="badge-soon">Start im September</span>',
+  join1Body:"Ein Anmeldebereich für lokale Wirte in Jochiwon, die ihr Restaurant vorgestellt haben möchten.",
+  join2Title:"Hilf uns", join2Body:"Wir suchen Leute, die als Teammitglieder bei Planung, Entwicklung, Design und Feldrecherche mitmachen.",
+  join3Title:"Erzähl uns auch von lokalen Orten in deiner Gegend", join3Body:"Auch außerhalb von Jochiwon – wenn dich unsere Idee anspricht, melde dich jederzeit.",
+  signupTitle:"Sei als Erste:r informiert", signupBody:"Wir schicken dir zuerst eine E-Mail, wenn die Beta startet und wenn neue Restaurants hinzukommen.",
+  signupEmailPh:"Gib deine E-Mail-Adresse ein", signupBtn:"Früh registrieren",
+  signupErrEmail:"Diese E-Mail-Adresse sieht etwas seltsam aus! 💌",
+  signupMsg:"Du bist angemeldet! Wir informieren dich zuerst, wenn wir starten 🌾",
+  footerAbout:'„KU-jodae! Helft den lokalen Wirten“ — ein Sozialprojekt von Matjip KU-jodae, einem Studententeam vom Sejong-Campus der Korea University, das gemeinsam mit dem lokalen Gewerbe wachsen soll.',
+  footerServiceHead:"Service", footerMapLink:"Karte ansehen", footerPassLink:'Enkel-Essensgutschein<span class="badge-live">Reservierung möglich</span>', footerSponsorLink:"Unterstütze uns",
+  footerInfoHead:"Info", footerIntroLink:"Über diesen Service", footerFaqLink:"Kontakt", footerSignupLink:"Für Start-Benachrichtigung anmelden",
+  footerAdminHead:"Verwaltung", footerAnalyticsLink:"Nutzungsstatistik", footerOwnerLink:"Wirte-Seite",
+  adminGateTitle:"Admin-Prüfung", adminGateBody:"Du gehst zur Nutzungsstatistik-Seite. Bitte gib das Passwort ein.",
+  adminGateOk:"Bestätigen", adminGateWrong:"Dieses Passwort stimmt nicht.",
+  footerLegalHead:"Rechtliches", footerPrivacyLink:"Datenschutzerklärung", footerTermsLink:"Nutzungsbedingungen",
+  footerOperator:"<b>Betreiber</b> Matjip KU-jodae, ein Studententeam vom Sejong-Campus der Korea University",
+  footerProject:"<b>Projektname</b> KU-jodae! Helft den lokalen Wirten",
+  footerServiceName:"<b>Servicename</b> Bap Meokeoreo Wa",
+  footerEmail:"<b>Kontakt-E-Mail</b> (wird noch bekannt gegeben)",
+  footerOfficer:"<b>Datenschutzbeauftragte:r</b> (wird noch bekannt gegeben)",
+  footerBottom:"© 2026 Bap Meokeoreo Wa · KU-jodae! Helft den lokalen Wirten. Matjip KU-jodae (Sejong-Campus der Korea University).",
+  a11yToggle:"🔍 Großschrift-Modus",
+  confirmOk:"OK", confirmNo:"Nein",
+  cardReviewPending:"🔎 Live-Bewertungen kommen bald", cardVisitBadge:"✔ Besucht", cardLiveBadge:"🌐 Live-Google-Bewertungen", cardMockTag:"Beispieldaten",
+  cardVisitedLabel:"✔ Besuch erfasst", cardMarkVisited:"Als besucht markieren", cardWantToVisit:"Zu „Möchte ich besuchen“ hinzufügen",
+  filterCountTemplate:"{n} Restaurants",
+  detailAddress:"📍 Adresse", detailHours:"🕐 Öffnungszeiten", detailClosed:"🚫 Geschlossen", detailPhone:"☎️ Telefon", detailReservation:"📅 Reservierung",
+  copyAddressBtn:"Adresse kopieren", copyPhoneBtn:"Telefonnummer kopieren",
+  copyOkTitle:"Kopiert", copyOkBody:"In der Zwischenablage — füg es ein, wo du es brauchst.",
+  copyFailTitle:"Kopieren fehlgeschlagen", copyFailBody:"Der Browser hat das Kopieren blockiert. Bitte markiere den Text und kopiere ihn von Hand.",
+  detailCapacity:"🪑 Kapazität", detailParking:"🚗 Parken", detailMobilePay:"📱 Mobiles Bezahlen", detailVouchers:"🎟️ Gutscheine/Karten",
+  detailMenuTitle:"Menü", detailOrigin:"Herkunft: ", detailExampleNote:"* Dies sind Beispielinfos — echte Details folgen nach der Feldrecherche.",
+  detailStubTitle:"Details folgen bald", detailStubBody:" wird nach der Feldrecherche im September ergänzt. Schau dir die Karte von Jochiwon Omas Gukbap für eine Vorschau an, was enthalten sein wird.",
+  detailStubBodyFull:"Adresse, Öffnungszeiten, Menü und Zutatenherkunft",
+  detailStubBodyPartial:"Öffnungszeiten, Menü und Zutatenherkunft",
+  closeBtn:"Schließen",
+  googleReviewTitle:"Google-Bewertungen", googleReviewLoading:"Bewertungen werden geladen...", googleReviewError:"Bewertungen konnten nicht geladen werden. Bitte versuch es gleich noch einmal.",
+  aiSummaryTitle:"KI-Bewertungszusammenfassung", aiSummaryLoading:"🤖 Bewertungen werden zusammengefasst...",
+  detailMapFocus:"🗺️ Auf der Karte ansehen",
+  detailNoLocationNote:"🧭 Dies sind Beispieldaten ohne echten Standort, daher kann es nicht auf der Karte angezeigt werden.",
+  googleReviewNotFound:"😢 Wir konnten dieses Restaurant nicht auf Google Maps finden.", googleReviewNone:"Noch keine Bewertungen.",
+  googleReviewLink:"Alle Bewertungen auf Google Maps ansehen →", googleReviewAnon:"Anonym",
+  liveSearchLoading:"Suche läuft...", liveSearchEmpty:"Keine Ergebnisse gefunden.", liveSearchError:"Suche fehlgeschlagen. Bitte versuch es gleich noch einmal.",
+  searchNoResultsFor:"Keine Ergebnisse für \"{q}\".", searchDidYouMean:"Meintest du das?",
+  searchCheckSpelling:"Bitte prüfe, ob dein Suchbegriff richtig geschrieben ist.", searchMaybeThisShop:"Meintest du eines dieser Lokale?",
+  confirmLoginTitle:"Anmeldung erforderlich", confirmLoginBody:"Diese Funktion erfordert eine Anmeldung. Melde dich an und erstelle deine eigene Restaurantliste!", confirmLoginOk:"Anmelden", confirmLoginCancel:"Schließen",
+  discardTitle:"Ohne Abschluss verlassen?", discardBody:"Deine bisherige Auswahl wird nicht gespeichert.",
+  discardOk:"Verlassen", discardCancel:"Weitermachen",
+  confirmUnsave:"Aus deiner „Möchte ich besuchen“-Liste entfernen?", confirmUnsaveVisited:"Aus deiner „Möchte ich besuchen“-Liste entfernen? Dein Besuchseintrag für diesen Ort wird ebenfalls gelöscht.", confirmSave:"Dieses Restaurant zu deiner „Möchte ich besuchen“-Liste hinzufügen?", confirmVisited:"Dieses Restaurant als besucht markieren?",
+  surveyPrev:"Zurück", surveyNext:"Weiter", surveyResult:"Ergebnisse ansehen",
+  surveyResultTitle:"Wie wäre es mit diesen?", surveyResultSub:"Lokale Restaurants, passend zu deinem Geschmack ausgewählt",
+  gameTitle:"Lass uns spielerisch entscheiden, was wir essen", gameSub:"Schluss mit der Unentschlossenheit! Wähle eines von beiden",
+  gameTarotName:"Tarot des heutigen Menüs", gameTarotDesc:"Zieh eine Karte und enthülle dein Restaurant-Schicksal",
+  gameRouletteName:"Menü-Roulette", gameRouletteDesc:"Gib ein, worauf du Lust hast, und lass das Roulette entscheiden",
+  gameBack:"← Anderes Spiel wählen",
+  tarotTitle:"Tarot des heutigen Menüs", tarotSub:"{n} Karten ziehen vorbei. Tippe, um dein heutiges Essen zu ziehen",
+  tarotRedraw:"Erneut ziehen",
+  rouletteTitle:"Menü-Roulette", rouletteSub:"Füge 2 oder mehr Gerichte hinzu, auf die du Lust hast, und dreh dann",
+  roulettePh:"z. B. Gukbap, Pizza, Malatang", rouletteAdd:"Hinzufügen",
+  rouletteEmpty:"Füge ein paar Gerichte hinzu", rouletteMin:"Füge 2 oder mehr Gerichte hinzu",
+  rouletteReady:"{n} Optionen zur Auswahl", rouletteSpin:"🎡 Drehen", rouletteRespin:"🎡 Noch mal drehen",
+  authIntentSave:"Um Orte zu speichern, die du besuchen möchtest, werde zuerst eines unserer Enkelkinder!",
+  authIntentMypage:"Du musst dich registrieren, um Meine Seite zu nutzen.",
+  authIntentReview:"Bitte registriere dich zuerst, um eine Bewertung zu hinterlassen.",
+  authIntentPass:"Essensgutscheine werden in deinem Konto gespeichert, bitte registriere dich zuerst.",
+  authIntentLogin:"Willkommen zurück! Bitte melde dich in deinem Konto an.",
+  authTitle:"Werde eines unserer Enkelkinder", authTabSignup:"Registrieren", authTabLogin:"Anmelden",
+  authNameLabel:"Name", authNamePh:"Wie sollen wir dich nennen?",
+  authIdLabel:"E-Mail", authIdPh:"beispiel@mail.com",
+  authPwLabel:"Passwort", authPwPh:"Passwort",
+  authPw2Label:"Passwort bestätigen", authPw2Ph:"Gib dein Passwort erneut ein",
+  authSubmitSignup:"Registrieren und loslegen", authSubmitLogin:"Anmelden",
+  authErrFormat:"Bitte gib eine gültige E-Mail-Adresse ein.",
+  authErrPwMismatch:"Die Passwörter stimmen nicht überein. Bitte überprüfe sie noch einmal.",
+  authErrDupe:'Dieses Konto existiert bereits. Bitte melde dich über den Tab „Anmelden“ an.',
+  authErrNotFound:'Kein Konto gefunden. Bitte registriere dich zuerst über den Tab „Registrieren“.',
+  authErrPwShort:"Das Passwort muss mindestens 6 Zeichen lang sein.",
+  mypageResetSaved:"Möchte-ich-besuchen-Liste leeren", mypageResetVisited:"Besuchsliste leeren", mypageResetPass:"Gutschein-Reservierungen leeren",
+  resetSavedTitle:"Möchte-ich-besuchen-Liste leeren", resetSavedBody:"Damit werden alle gespeicherten Orte gelöscht. Deine Besuchsliste und Gutschein-Reservierungen bleiben erhalten.",
+  resetVisitedTitle:"Besuchsliste leeren", resetVisitedBody:"Damit werden alle Besuchsmarkierungen gelöscht. Deine gespeicherte Liste und deine Bewertungen bleiben erhalten.",
+  resetPassTitle:"Gutschein-Reservierungen leeren", resetPassBody:"Damit werden alle Gutschein-Reservierungen gelöscht. Deine gespeicherte Liste und Besuchsliste bleiben erhalten.",
+  authErrPwEmpty:"Bitte gib dein Passwort ein.",
+  authErrNameEmpty:"Bitte sag uns, wie wir dich nennen sollen.",
+  authErrNotConfirmed:"Deine E-Mail ist noch nicht bestätigt. Bitte überprüfe dein Postfach.",
+  authErrNeedConfirm:"Wir haben dir eine Bestätigungs-E-Mail geschickt. Bitte bestätige sie und melde dich dann an.",
+  authErrRate:"Zu viele Anfragen. Bitte versuch es gleich noch einmal.",
+  authErrNetwork:"Verbindung fehlgeschlagen. Bitte versuch es gleich noch einmal.",
+  authErrOffline:"Der Anmeldeserver ist gerade nicht erreichbar. Bitte versuch es gleich noch einmal.",
+  authErrGeneric:"Etwas ist schiefgelaufen. Bitte versuch es gleich noch einmal.",
+  authErrWrongPw:"Falsches Passwort.",
+  authWelcomeTitle:"Willkommen, {name}!", authWelcomeBody:"Registrierung abgeschlossen. Wir informieren dich zuerst, wenn wir offiziell starten.",
+  authWelcomeBodyLogin:"Willkommen zurück! Schön, dich wiederzusehen.",
+  authWelcomeMypageBtn:"Zu Meiner Seite",
+  headerAuthSavedLabel:"Meine gespeicherten Orte", headerAuthMypageTitle:"{name}s Meine Seite",
+  logoutTitle:"Abmelden?", logoutBody:"Nach dem Abmelden musst du dich erneut anmelden, um gespeicherte Listen zu nutzen, Bewertungen zu schreiben und mehr.",
+  logoutOk:"Abmelden", logoutCancel:"Abbrechen",
+  mypageTitle:"{name}s Meine Seite", mypageTitleGeneric:"Meine Seite",
+  mypageTabSaved:"Möchte ich besuchen", mypageTabVisited:"Besucht", mypageTabPass:"Essensgutscheine",
+  allergyTitle:"🥜 Allergie-Einstellungen", allergySub:"Wir warnen dich, bevor du einen Ort öffnest, der deine Auswahl verwenden könnte.",
+  allergyWarnTitle:"Vor dem Betreten beachten", allergyWarnBody:"Dieser Ort könnte Gerichte mit {list} servieren. Bitte frag den Wirt vor der Bestellung.",
+  allergyWarnOk:"Verstanden, weiter",
+  allergen_shellfish:"Schalentiere", allergen_fish:"Fisch & Meeresfrüchte", allergen_milk:"Milch", allergen_wheat:"Weizen & Gluten",
+  allergen_nuts:"Nüsse", allergen_pork:"Schweinefleisch", allergen_beef:"Rindfleisch", allergen_egg:"Ei",
+  mypageResetLink:"Meine gesamte Aktivität zurücksetzen", mypageLogoutBtn:"Abmelden",
+  mypageEmptySaved:"Noch keine gespeicherten Restaurants.", mypageEmptyVisited:"Noch keine Besuchseinträge.",
+  mypageEmptyPass:"Noch keine Essensgutscheine reserviert.<br>Wähle im Bereich Enkel-Essensgutschein ein Restaurant, das dir gefällt.",
+  mypageRemoveSavedTitle:"Aus „Möchte ich besuchen“ entfernen", mypageRemoveVisitedTitle:"Besuchseintrag stornieren",
+  mypageConfirmUnvisit:"Diesen Besuchseintrag stornieren?",
+  mypageCancelPassTitle:"Reservierung stornieren", mypageConfirmCancelPass:"Diese Essensgutschein-Reservierung stornieren?", mypageCancelPassOk:"Reservierung stornieren",
+  resetTitle:"Meine Aktivität zurücksetzen", resetBody:"Damit werden deine gespeicherten Orte, Besuchseinträge, deine Bewertungen und Essensgutschein-Reservierungen gelöscht. Das kann nicht rückgängig gemacht werden.",
+  resetOk:"Zurücksetzen", resetCancel:"Abbrechen",
+  reviewFormTitle:"Schreib auch du eine Bewertung", reviewFormSub:"Teile eine ehrliche Bewertung eines Restaurants, das du besucht hast.",
+  reviewFormNoVisitTitle:"Du kannst noch keine Bewertung schreiben", reviewFormNoVisitBody:"Du kannst nur Restaurants bewerten, die du als besucht markiert hast.",
+  reviewFormNoVisitOk:"Restaurants durchsuchen",
+  reviewRatingLabel:"Bewertung", reviewPlaceLabel:"Besuchtes Restaurant",
+  reviewVisibilityLabel:"Anzeigen als", reviewVisibilityReal:"Echter Name ({name})", reviewVisibilityAnon:"Anonym",
+  reviewPhotoLabel:"Foto anhängen", reviewOptional:"Optional",
+  visitVerifyTitle:"Bestätige deinen Besuch",
+  visitVerifySub:"Warst du wirklich bei {name}? Lade einen Kassenbon oder ein Foto des Ladenschilds hoch.",
+  visitVerifyNote:"Du kannst nur Orte bewerten, an denen du wirklich warst. Das Foto wird nur zur Prüfung verwendet und nicht gespeichert.",
+  visitVerifyPhotoLabel:"Kassenbon oder Foto der Fassade",
+  visitVerifySubmit:"Bestätigen", visitVerifyChecking:"Wird geprüft...",
+  visitVerifyPreviewAlt:"Vorschau des hochgeladenen Fotos",
+  visitVerifyErrNoPhoto:"Bitte lade zuerst ein Foto hoch.",
+  visitVerifyErrRead:"Wir konnten dieses Foto nicht lesen. Bitte versuch es mit einem anderen.",
+  visitVerifyErrServer:"Die Bestätigung ist gerade nicht verfügbar. Bitte versuch es gleich noch einmal.",
+  visitVerifyFailKind:"Das sieht nicht wie ein Kassenbon oder ein Foto des Ladenschilds aus.",
+  visitVerifyFailName:"Wir konnten den Namen dieses Restaurants auf dem Foto nicht finden.",
+  reviewContentLabel:"Bewertung", reviewContentPh:"Was hat dir hier gefallen?",
+  reviewSubmitBtn:"Bewertung veröffentlichen", reviewErrEmpty:"Bitte schreib deine Bewertung.",
+  reviewSuccessTitle:"Deine Bewertung wurde veröffentlicht!",
+  reviewSuccessBodyOk:"Danke fürs Teilen! Sie ist jetzt in der Bewertungsliste sichtbar.",
+  reviewSuccessBodyFail:"Zur Bewertungsliste hinzugefügt. Das Foto war jedoch zu groß zum Speichern — es könnte beim Neuladen verschwinden.",
+  anonReviewerName:"Anonymes Enkelkind", namedReviewerSuffix:" (Enkelkind)", defaultReviewerName:"Ein Enkelkind",
+  introSub:"Entdeckung lokaler Restaurants in Jochiwon-eup",
+  introVision:"Echte Nachbarschaftsrestaurants finden, die auf Karten fehlen oder schlecht gelistet sind, und ein lokales Gewerbe-Ökosystem aufbauen, in dem Kund:innen und Wirte gemeinsam gedeihen",
+  introOverviewHead:"Projektübersicht",
+  introOverviewBody:'„KU-jodae! Helft den lokalen Wirten“ — ein von Studierenden geleiteter Service, der als Sozialprojekt am Sejong-Campus der Korea University begann. Studierende und Anwohner:innen finden und stellen persönlich lokale Restaurants in Jochiwon-eup vor, die auf Naver/Kakao Map fehlen oder kaum gelistet sind.',
+  introMakerHead:"Wer das gemacht hat",
+  introMakerBody:"Ein Sozialprojekt, geplant und aufgebaut von Matjip KU-jodae, einem Studententeam für Wirtschaftspolitik am Sejong-Campus der Korea University.",
+  introProgressHead:"Fortschritt",
+  introProgressBody:"Wir befinden uns aktuell in der Vorstartphase mit früher Anmeldung. Wir planen, den vollständigen Service zu starten, sobald echte Restaurantdaten durch eine Feldrecherche nach dem Semesterbeginn im September vorliegen.",
+  introFaqBtn:"Häufig gestellte Fragen",
+  faqTitle:"Kontakt", faqSub:"Schau zuerst in den FAQ für eine schnelle Antwort.",
+  faqQ1:"Was ist Bap Meokeoreo Wa?",
+  faqA1:'Es ist ein Service des Projekts „KU-jodae! Helft den lokalen Wirten“. Studierende und Anwohner:innen finden und stellen persönlich lokale Restaurants in Jochiwon-eup vor, die auf Online-Karten wie Naver/Kakao Map fehlen oder kaum gelistet sind.',
+  faqQ2:"Ist das vor dem offiziellen Start?",
+  faqA2:"Ja, wir nehmen aktuell in einer Vorbereitungsphase frühe Anmeldungen entgegen und planen, den vollständigen Service mit echten Restaurantdaten nach dem Semesterbeginn im September zu starten.",
+  faqQ3:"Kann mein Restaurant auch gelistet werden?",
+  faqA3:'Ja! Wir bereiten eine Registrierungsseite für Wirte vor. Sobald sie verfügbar ist, führen wir dich über den Button „Bist du Restaurantbesitzer:in?“ durch den Prozess.',
+  faqQ4:"Kann jede:r eine Bewertung schreiben?",
+  faqA4:"Nur angemeldete Mitglieder können eine Bewertung schreiben, und nur für Restaurants, die sie als besucht markiert haben — eine minimale Absicherung gegen gefälschte Bewertungen.",
+  faqQ5:"Wie werden meine persönlichen Daten verwendet?",
+  faqA5:"Sie werden nur für die in unserer Datenschutzerklärung genannten Zwecke verwendet (Mitgliederidentifikation, Bereitstellung des Service) und gemäß den geltenden Gesetzen sicher verwaltet.",
+  faqQ6:"Ich möchte mich ehrenamtlich engagieren oder als Teammitglied mitmachen.",
+  faqA6:'Hinterlasse eine Anfrage über das Menü „Hilf uns“, und wir führen dich durch die nächsten Schritte.',
+  faqFootPrefix:"Deine Antwort nicht gefunden? Wende dich über ", faqFootBold:"Hilf uns", faqFootSuffix:" an uns.",
+  faqContactBtn:"Anfrage senden",
+  supportTitle:"Hilf uns", supportSub:"Wir warten auf helfende Hände für dieses Projekt.",
+  supportTeamTitle:"Ich möchte als Teammitglied mitmachen", supportTeamDesc:"Von Feldrecherche bis Planung und Entwicklung — es gibt einen Platz für dich.",
+  supportSponsorTitle:"Ich möchte dieses Projekt unterstützen", supportSponsorDesc:"Hilf mit, ein nicht gewinnorientiertes Projekt zu ermöglichen.",
+  contactNameLabel:"Name", contactNamePh:"Name oder Spitzname",
+  contactReachLabel:"Kontakt / E-Mail", contactReachPh:"E-Mail oder Telefonnummer, unter der wir dich erreichen",
+  contactMessageOptional:"Optional", contactSubmitBtn:"Anfrage senden",
+  contactErrName:"Bitte gib deinen Namen ein.", contactErrReach:"Bitte gib eine gültige E-Mail-Adresse oder Telefonnummer ein.",
+  contactBack:"Zurück", contactSuccessTitle:"Deine Anfrage ist eingegangen!",
+  contactSuccessBody:"Danke, {name}. Wir melden uns über die von dir angegebenen Kontaktdaten.<br>({type})",
+  ct_team_title:"Ich möchte als Teammitglied mitmachen", ct_team_sub:"Wir warten auf Teammitglieder, die uns beim Aufbau helfen.",
+  ct_team_note:"Planung, Entwicklung, Design, Feldrecherche — jede Rolle ist willkommen. Wir melden uns über die von dir hinterlassenen Kontaktdaten.",
+  ct_team_field:"Bereich, in dem du helfen möchtest",
+  ct_team_opt1:"Feldrecherche (Restaurants finden)", ct_team_opt2:"Planung / Betrieb", ct_team_opt3:"Design", ct_team_opt4:"Entwicklung", ct_team_opt5:"Marketing / Inhalte", ct_team_opt6:"Noch unsicher",
+  ct_team_msgLabel:"Möchtest du noch etwas mitteilen", ct_team_msgPh:"Erzähl uns gern, warum du mitmachen möchtest oder wann du Zeit hast.",
+  ct_sponsor_title:"Ich möchte dieses Projekt unterstützen", ct_sponsor_sub:"Jede Unterstützung hilft uns, ein weiteres lokales Restaurant zu finden.",
+  ct_sponsor_note:"Dieses Projekt läuft aktuell nicht gewinnorientiert, daher werden Spenden nur für Feldrecherche und Betriebskosten verwendet.",
+  ct_sponsor_field:"Art der Unterstützung",
+  ct_sponsor_opt1:"Einmalige Spende", ct_sponsor_opt2:"Regelmäßige Spende", ct_sponsor_opt3:"Sach- / Kompetenzspende", ct_sponsor_opt4:"Möchte erst mal nur fragen",
+  ct_sponsor_msgLabel:"Nachricht zu deiner Unterstützung", ct_sponsor_msgPh:"Teile gern Fragen oder Gedanken zur Unterstützung mit.",
+  ct_partnerStore_title:"Partnerschaftsantrag für Wirte", ct_partnerStore_sub:"Lass uns gemeinsam Essensgutscheine und Studentenvorteile vorbereiten.",
+  ct_partnerStore_note:"Listung und Partnerschaftsanträge sind kostenlos. Du legst die Gutschein-Vorteile und die Gültigkeitsdauer fest; die Gebührenstruktur wird noch diskutiert.",
+  ct_partnerStore_field:"Bevorzugter Vorteil",
+  ct_partnerStore_opt1:"10+1-Essensgutschein", ct_partnerStore_opt2:"Studentenrabatt", ct_partnerStore_opt3:"Set-Menü-Rabatt", ct_partnerStore_opt4:"Möchte erst mal nur fragen",
+  ct_partnerStore_msgLabel:"Zu deinem Restaurant / sonstiges", ct_partnerStore_msgPh:"Teile den Namen deines Restaurants, den Standort und welchen Vorteil du erwägst.",
+  ct_partnerOrg_title:"Anfrage: Partnerschaft mit Studierendenrat / Club", ct_partnerOrg_sub:"Lass uns Vorteile für die Mitglieder deiner Organisation schaffen.",
+  ct_partnerOrg_note:"Der Sejong-Campus der Korea University hat bereits Partnerrestaurants wie das KU-Membership-Programm. Wir möchten lokalen Restaurants, die nicht auf der Karte sind, helfen, demselben Bereich beizutreten — die Bedingungen werden noch diskutiert.",
+  ct_partnerOrg_field:"Art der Organisation",
+  ct_partnerOrg_opt1:"Studierendenrat", ct_partnerOrg_opt2:"Club", ct_partnerOrg_opt3:"Campus-Organisation", ct_partnerOrg_opt4:"Andere Gruppe",
+  ct_partnerOrg_msgLabel:"Welche Art von Partnerschaft du dir wünschst", ct_partnerOrg_msgPh:"Teile den Namen deiner Organisation, ihre Größe und welchen Vorteil du dir wünschst.",
+  ct_expand_title:"Finde auch lokale Restaurants in meiner Gegend", ct_expand_sub:"Auch außerhalb von Jochiwon, wenn dich unsere Idee anspricht.",
+  ct_expand_note:"Das Erlösmodell ist noch nicht festgelegt. Wir diskutieren aktuell eine nicht gewinnorientierte Expansion und wie wir zusammenarbeiten können.",
+  ct_expand_field:"Vorgeschlagene Gegend", ct_expand_fieldPh:"z. B. Dodam-dong Sejong, Sachang-dong Cheongju",
+  ct_expand_msgLabel:"Dein Vorschlag", ct_expand_msgPh:"Erzähl uns von der Nachbarschaft und warum dieser Service dort helfen würde.",
+  passPerUnit:"pro Gutschein", passValidDays:"Gültig für {n} Tage", passBuyBtn:"Essensgutschein reservieren",
+  passSelectTitle:"{name} Essensgutschein", passHowMany:"Wie viele möchtest du?",
+  passSummaryCount:"{n} Gutscheine", passSummaryBonus:"Wirtebonus +{n} Gutscheine", passSummaryTotal:"Gutscheine, die du erhältst", passSummaryAmount:"Zu zahlender Betrag",
+  passNextBtn:"Weiter", passConfirmTitle:"So reservieren?", passConfirmSub:"Wir reichen eine Reservierung mit den folgenden Angaben ein.",
+  passSummaryStore:"Restaurant", passSummaryBought:"Gekaufte Gutscheine", passSummaryValid:"Gültigkeitsdauer", passSummaryValidVal:"{n} Tage ab erster Nutzung",
+  passPrepayNote:"Damit wird nur eine <b>Vorbestellung</b> eingereicht. Die echte Zahlung wird beim offiziellen Start freigeschaltet — in dieser Phase wird kein Geld abgebucht.",
+  passSubmitBtn:"Vorbestellung senden", passBackBtn:"Zurück",
+  passSuccessTitle:"Deine Reservierung ist eingegangen!",
+  passSuccessBodyOk:"Wir haben {n} Gutscheine für {name} reserviert. Wir informieren dich zur Zahlung, sobald wir offiziell starten.",
+  passSuccessBodyFail:"Wir haben deinen {name}-Gutschein gespeichert, aber der Speicher war voll und wir konnten ihn nicht erfassen — er könnte beim Neuladen verschwinden.",
+  passSeeMyPasses:"Meine Essensgutscheine ansehen",
+  passInfoTitle:'Enkel-Essensgutschein<span class="badge-live">Reservierung möglich</span>',
+  passInfoBody:"Lade im Voraus einen Essensgutschein für ein Restaurant auf, das dir gefällt. Erhalte je nach Angebot des Wirts zusätzliche Gutscheine und nutze bei jedem Besuch einen davon.",
+  passBenefit1Title:"10 kaufen, 1 gratis", passBenefit1Body:"Kaufe im Großhandel und erhalte zusätzliche, vom Wirt festgelegte Gutscheine. Die Vorteile variieren je nach Restaurant.",
+  passBenefit2Title:"Mahlzeiten im Voraus bezahlen", passBenefit2Body:"Zahle im Voraus statt Mahlzeit für Mahlzeit und entlaste deinen Geldbeutel.",
+  passBenefit3Title:"Wirte gewinnen Stammgäste", passBenefit3Body:"Restaurants erhalten Einnahmen im Voraus und gewinnen Stammgäste — ein Gewinn für beide Seiten.",
+  passListTitle:"Restaurants, die Essensgutscheine vorbereiten",
+  passMoreNote:"Weitere Restaurants öffnen nach und nach Gutscheine, nachdem sie während der Feldrecherche im September mit den Wirten gesprochen haben.",
+  passPartnerTitle:"Wir bereiten auch Partnerschaften vor",
+  passPartnerBody:"Der Sejong-Campus der Korea University hat bereits Partnerrestaurants wie das KU-Membership-Programm. Wir glauben, dass lokale Restaurants, die nicht auf der Karte sind, demselben Bereich beitreten können, sobald sie entdeckt werden.",
+  passPartnerStoreBtn:"Partnerschaftsantrag für Wirte", passPartnerOrgBtn:"Anfrage: Partnerschaft mit Studierendenrat / Club",
+  passNotice:"<strong>Zahlung ist noch nicht möglich.</strong> Dies ist aktuell eine nicht gewinnorientierte Vorbereitungsphase, daher akzeptieren Essensgutscheine nur <b>Vorbestellungen</b> — die echte Zahlungsintegration wird später offiziell starten. Vorteile und Gültigkeitsdauer werden vom Wirt festgelegt.",
+  join4Title:"Tritt unserer Community bei", join4Body:"Der Echtzeit-Austausch findet in unserer externen Social-Media-Gruppe statt.",
+  communityTitle:"Tritt unserer Community bei",
+  communityBody:"Der Echtzeit-Austausch findet in einer externen Social-Media-Gruppe wie KakaoTalk oder Instagram statt. Diese Seite bietet nur den Beitrittslink und den QR-Code.",
+  communityJoinBtn:"Der Gruppe beitreten",
+  communityQrReady:"Scanne den QR-Code unten oder tippe auf den Button, um beizutreten.",
+  communityQrSoon:"Die Gruppe wurde noch nicht erstellt. Sobald sie eröffnet ist, erscheint hier ein QR-Code.",
+  grandchildDefaultName:"Enkelkind", mealPassWord:"Essensgutschein", ownerBonusLabel:"Wirtebonus",
+  mypagePassBonusWord:"Bonus", mypagePassDateLine:"Reserviert am {date}", reviewCharUnit:"",
 } };
 
 let currentLang = 'ko';
@@ -2096,7 +2442,7 @@ function getFilteredList(){
 function rName(r){ return t('name_' + r.id) || r.name; }
 // 검색/퍼지매칭처럼 "지금 언어" 하나가 아니라 모든 번역을 한 번에 훑어야 하는 곳에서 쓴다.
 function nameAllLangs(r){
-  return `${r.name} ${i18n.en['name_'+r.id] || ''} ${i18n.zh['name_'+r.id] || ''} ${i18n.es['name_'+r.id] || ''}`;
+  return `${r.name} ${i18n.en['name_'+r.id] || ''} ${i18n.zh['name_'+r.id] || ''} ${i18n.es['name_'+r.id] || ''} ${i18n.de['name_'+r.id] || ''}`;
 }
 // 수집 스크립트가 카테고리에서 찍어낸 정형문 6종. 카페만 19곳이라 목록이 전부 같은 문장이었다.
 // 이 문장을 그대로 쓰는 가게만 문구를 갈아끼운다 — "가정식 백반집", "초밥·롤 전문점"처럼
@@ -2137,6 +2483,7 @@ function pBenefit(p){
   if(currentLang === 'zh' && p.benefitZh) return p.benefitZh;
   if(currentLang === 'es' && p.benefitEs) return p.benefitEs;
   if(currentLang === 'fr' && p.benefitFr) return p.benefitFr;
+  if(currentLang === 'de' && p.benefitDe) return p.benefitDe;
   return p.benefit;
 }
 function rCat(r){ return t('cat' + {'전체':'All','한식':'Korean','양식':'Western','중식':'Chinese','일식':'Japanese','분식':'Snack','카페':'Cafe'}[r.cat]) || r.cat; }
@@ -2147,6 +2494,7 @@ function wonSuffix(n){
   if(currentLang === 'zh') return `${n.toLocaleString()}韩元`;
   if(currentLang === 'es') return `${n.toLocaleString()} wones`;
   if(currentLang === 'fr') return `${n.toLocaleString()} wons`;
+  if(currentLang === 'de') return `${n.toLocaleString()} Won`;
   return `${n.toLocaleString()}원`;
 }
 function passUnit(n){
@@ -2154,6 +2502,7 @@ function passUnit(n){
   if(currentLang === 'zh') return `${n}张`;
   if(currentLang === 'es') return `${n}`;
   if(currentLang === 'fr') return `${n}`;
+  if(currentLang === 'de') return `${n}`;
   return `${n}장`;
 }
 
@@ -3195,33 +3544,36 @@ function toggleBigText(){
 const surveyQuestions = [
   {
     key:'spice',
-    title:'매운맛은 어느 정도가 좋아요?', titleEn:'How spicy do you like it?', titleZh:'你喜欢多辣的口味？', titleEs:'¿Qué tan picante te gusta?', titleFr:'Vous aimez ça piquant comment ?',
-    sub:'취향에 맞는 맛집을 찾는 데 참고할게요', subEn:"We'll use this to find restaurants that match your taste", subZh:'我们会据此为你寻找符合口味的餐厅', subEs:'Usaremos esto para encontrar restaurantes que combinen con tu gusto', subFr:"Nous nous en servirons pour trouver des restaurants à votre goût",
+    title:'매운맛은 어느 정도가 좋아요?', titleEn:'How spicy do you like it?', titleZh:'你喜欢多辣的口味？', titleEs:'¿Qué tan picante te gusta?', titleFr:'Vous aimez ça piquant comment ?', titleDe:'Wie scharf magst du es?',
+    sub:'취향에 맞는 맛집을 찾는 데 참고할게요', subEn:"We'll use this to find restaurants that match your taste", subZh:'我们会据此为你寻找符合口味的餐厅', subEs:'Usaremos esto para encontrar restaurantes que combinen con tu gusto', subFr:"Nous nous en servirons pour trouver des restaurants à votre goût", subDe:'Das hilft uns, Restaurants zu finden, die zu deinem Geschmack passen',
     options:['안 매운 게 좋아요','보통이 좋아요','매콤한 게 좋아요','아주 매워야 해요'],
     optionsEn:['Not spicy at all','A little spicy is fine','I like it spicy','Has to be very spicy'],
     optionsZh:['完全不辣', '微辣就好', '喜欢辣一点', '必须非常辣'],
     optionsEs:['Nada picante', 'Un poco picante está bien', 'Me gusta picante', 'Tiene que ser muy picante'],
-    optionsFr:['Pas piquant du tout', 'Un peu piquant, ça va', "J'aime quand ça pique", 'Il faut que ça brûle']
+    optionsFr:['Pas piquant du tout', 'Un peu piquant, ça va', "J'aime quand ça pique", 'Il faut que ça brûle'],
+    optionsDe:['Gar nicht scharf', 'Ein bisschen Schärfe ist okay', 'Ich mag es scharf', 'Es muss richtig scharf sein']
   },
   {
     key:'cat',
-    title:'어떤 음식이 제일 끌리세요?', titleEn:'What kind of food sounds best?', titleZh:'你最想吃哪种类型的食物？', titleEs:'¿Qué tipo de comida te apetece más?', titleFr:"Quel type de cuisine vous tente le plus ?",
-    sub:'가장 자주 생각나는 카테고리를 골라주세요', subEn:'Pick the category you crave most often', subZh:'请选择你最常想到的类型', subEs:'Elige la categoría que más se te antoja', subFr:"Choisissez la catégorie qui vous vient le plus souvent à l'esprit",
+    title:'어떤 음식이 제일 끌리세요?', titleEn:'What kind of food sounds best?', titleZh:'你最想吃哪种类型的食物？', titleEs:'¿Qué tipo de comida te apetece más?', titleFr:"Quel type de cuisine vous tente le plus ?", titleDe:'Welche Art von Essen reizt dich am meisten?',
+    sub:'가장 자주 생각나는 카테고리를 골라주세요', subEn:'Pick the category you crave most often', subZh:'请选择你最常想到的类型', subEs:'Elige la categoría que más se te antoja', subFr:"Choisissez la catégorie qui vous vient le plus souvent à l'esprit", subDe:'Wähle die Kategorie, auf die du am häufigsten Lust hast',
     options:['한식','양식','중식','일식','분식'],
     optionsEn:['Korean','Western','Chinese','Japanese','Snacks'],
     optionsZh:['韩餐','西餐','中餐','日料','小吃'],
     optionsEs:['Coreana', 'Occidental', 'China', 'Japonesa', 'Bocadillos'],
-    optionsFr:['Coréen', 'Occidental', 'Chinois', 'Japonais', 'Snacks']
+    optionsFr:['Coréen', 'Occidental', 'Chinois', 'Japonais', 'Snacks'],
+    optionsDe:['Koreanisch', 'Westlich', 'Chinesisch', 'Japanisch', 'Snacks']
   },
   {
     key:'budget',
-    title:'한 끼 예산은 어느 정도가 좋아요?', titleEn:"What's your budget for a meal?", titleZh:'你一餐的预算大概是多少？', titleEs:'¿Cuál es tu presupuesto para una comida?', titleFr:'Quel budget pour un repas ?',
-    sub:'가성비에 맞는 곳부터 보여드릴게요', subEn:"We'll show you great-value spots first", subZh:'我们会优先展示性价比高的地方', subEs:'Te mostraremos primero los lugares con mejor relación calidad-precio', subFr:"Nous vous montrerons d'abord les meilleurs rapports qualité-prix",
+    title:'한 끼 예산은 어느 정도가 좋아요?', titleEn:"What's your budget for a meal?", titleZh:'你一餐的预算大概是多少？', titleEs:'¿Cuál es tu presupuesto para una comida?', titleFr:'Quel budget pour un repas ?', titleDe:'Wie hoch ist dein Budget für eine Mahlzeit?',
+    sub:'가성비에 맞는 곳부터 보여드릴게요', subEn:"We'll show you great-value spots first", subZh:'我们会优先展示性价比高的地方', subEs:'Te mostraremos primero los lugares con mejor relación calidad-precio', subFr:"Nous vous montrerons d'abord les meilleurs rapports qualité-prix", subDe:'Wir zeigen dir zuerst Orte mit gutem Preis-Leistungs-Verhältnis',
     options:['₩ 가볍게','₩₩ 넉넉하게'],
     optionsEn:['₩ Light meal','₩₩ Generous meal'],
     optionsZh:['₩ 简单一餐','₩₩ 丰盛一餐'],
     optionsEs:['₩ Comida ligera', '₩₩ Comida abundante'],
-    optionsFr:['₩ Repas léger', '₩₩ Repas copieux']
+    optionsFr:['₩ Repas léger', '₩₩ Repas copieux'],
+    optionsDe:['₩ Leichte Mahlzeit', '₩₩ Reichhaltige Mahlzeit']
   },
 ];
 const priceMap = {'₩ 가볍게':'₩', '₩₩ 넉넉하게':'₩₩'};
@@ -3258,9 +3610,9 @@ function renderSurvey(){
   if(surveyStep < surveyQuestions.length){
     const q = surveyQuestions[surveyStep];
     const picked = surveyAnswers[q.key];
-    const qTitle = (currentLang === 'en' && q.titleEn) ? q.titleEn : (currentLang === 'zh' && q.titleZh) ? q.titleZh : (currentLang === 'es' && q.titleEs) ? q.titleEs : (currentLang === 'fr' && q.titleFr) ? q.titleFr : q.title;
-    const qSub = (currentLang === 'en' && q.subEn) ? q.subEn : (currentLang === 'zh' && q.subZh) ? q.subZh : (currentLang === 'es' && q.subEs) ? q.subEs : (currentLang === 'fr' && q.subFr) ? q.subFr : q.sub;
-    const qOptions = (currentLang === 'en' && q.optionsEn) ? q.optionsEn : (currentLang === 'zh' && q.optionsZh) ? q.optionsZh : (currentLang === 'es' && q.optionsEs) ? q.optionsEs : (currentLang === 'fr' && q.optionsFr) ? q.optionsFr : q.options;
+    const qTitle = (currentLang === 'en' && q.titleEn) ? q.titleEn : (currentLang === 'zh' && q.titleZh) ? q.titleZh : (currentLang === 'es' && q.titleEs) ? q.titleEs : (currentLang === 'fr' && q.titleFr) ? q.titleFr : (currentLang === 'de' && q.titleDe) ? q.titleDe : q.title;
+    const qSub = (currentLang === 'en' && q.subEn) ? q.subEn : (currentLang === 'zh' && q.subZh) ? q.subZh : (currentLang === 'es' && q.subEs) ? q.subEs : (currentLang === 'fr' && q.subFr) ? q.subFr : (currentLang === 'de' && q.subDe) ? q.subDe : q.sub;
+    const qOptions = (currentLang === 'en' && q.optionsEn) ? q.optionsEn : (currentLang === 'zh' && q.optionsZh) ? q.optionsZh : (currentLang === 'es' && q.optionsEs) ? q.optionsEs : (currentLang === 'fr' && q.optionsFr) ? q.optionsFr : (currentLang === 'de' && q.optionsDe) ? q.optionsDe : q.options;
     surveyBody.innerHTML = `
       <div class="survey-step">
         <h3>${qTitle}</h3>
@@ -3571,7 +3923,7 @@ const CAMPUS_CENTER = { lat: 36.6109529892437, lng: 127.286987211083 }; // 고�
 // 그래서 "로드 시점의 사이트 언어"를 따른다 — 언어를 바꾸고 새로고침하면 지도도 따라온다.
 // 지도만 다시 불러오려고 스크립트를 두 번 주입하면 오히려 깨진다.
 function mapsLanguage(){
-  return { ko:'ko', en:'en', zh:'zh-CN', es:'es', fr:'fr' }[currentLang] || 'ko';
+  return { ko:'ko', en:'en', zh:'zh-CN', es:'es', fr:'fr', de:'de' }[currentLang] || 'ko';
 }
 
 async function resolveMapsKey(){
@@ -4858,11 +5210,11 @@ function submitReview(e){
 }
 
 // ================= 언어 선택 =================
-// SUPPORTED_LANGS(ko/en/zh/es/fr)는 실제로 동작(전체 경로 번역, applyLanguage 참고).
-// 日本語·Deutsch는 아직 번역이 없어 선택만 저장되고 "준비중" 안내만 뜬다.
+// SUPPORTED_LANGS(ko/en/zh/es/fr/de)는 실제로 동작(전체 경로 번역, applyLanguage 참고).
+// 日本語는 아직 번역이 없어 선택만 저장되고 "준비중" 안내만 뜬다.
 const langOverlay = document.getElementById('langOverlay');
 const langBody = document.getElementById('langBody');
-const SUPPORTED_LANGS = ['ko', 'en', 'zh', 'es', 'fr'];
+const SUPPORTED_LANGS = ['ko', 'en', 'zh', 'es', 'fr', 'de'];
 
 // 각 언어 이름은 해당 언어 표기로 (영어를 원하면 English 버튼을 누르도록)
 const languages = [
@@ -4887,7 +5239,7 @@ function renderLang(){
     <div class="auth-head">
       <div class="emoji">🌐</div>
       <h3>언어 선택 / Language</h3>
-      <p>한국어·English·中文·Español·Français는 바로 적용돼요. 日本語·Deutsch는 정식 오픈 때 제공될 예정이에요.</p>
+      <p>한국어·English·中文·Español·Français·Deutsch는 바로 적용돼요. 日本語는 정식 오픈 때 제공될 예정이에요.</p>
     </div>
     <div class="lang-grid">
       ${languages.map(l => `
