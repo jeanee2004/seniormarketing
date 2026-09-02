@@ -14,6 +14,20 @@ function haversineMeters(lat1, lng1, lat2, lng2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+// locationBias(순위 힌트)만 쓰면, 근처에 이름이 비슷한 가게가 없을 때 구글이 이름만
+// 맞는 멀리 떨어진 다른 가게를 1순위로 돌려준다(실측: "뉴애상마라탕 고대점" 검색 →
+// 111km 떨어진 "백미향마라탕 고대점"). 아래 haversine 체크가 결국 걸러내긴 하지만,
+// locationRestriction(강제 범위 제한)을 같이 쓰면 애초에 그 멀리 있는 오매칭이
+// 검색 결과 자리(maxResultCount:1)를 차지하지 않는다.
+function radiusToRectangle(lat, lng, meters) {
+  const dLat = meters / 111320;
+  const dLng = meters / (111320 * Math.cos((lat * Math.PI) / 180));
+  return {
+    low: { latitude: lat - dLat, longitude: lng - dLng },
+    high: { latitude: lat + dLat, longitude: lng + dLng },
+  };
+}
+
 module.exports = async function handler(req, res) {
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;
   if (!apiKey) {
@@ -42,11 +56,8 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         textQuery: name,
         languageCode,
-        locationBias: {
-          circle: {
-            center: { latitude: latNum, longitude: lngNum },
-            radius: SEARCH_RADIUS_METERS,
-          },
+        locationRestriction: {
+          rectangle: radiusToRectangle(latNum, lngNum, SEARCH_RADIUS_METERS),
         },
         maxResultCount: 1,
       }),
