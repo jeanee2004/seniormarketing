@@ -1019,7 +1019,14 @@ footer ul a:hover{color:#fff;}
   min-height:26px;margin-top:2px;margin-bottom:4px;font-size:1.2rem;font-weight:800;text-align:center;
   font-family:'Gaegu','Gowun Dodum',sans-serif;color:var(--slate-dark);
 }
-.roulette-result.landed{color:var(--red-dark);}
+.roulette-result.landed{
+  color:var(--red-dark);font-size:2.2rem;margin:10px 0 16px;
+  animation:rouletteResultPop .3s ease;
+}
+@keyframes rouletteResultPop{
+  from{transform:scale(0.75);opacity:0;}
+  to{transform:scale(1);opacity:1;}
+}
 
 /* ===== 손주 로그인/가입 모달 ===== */
 .auth-box{ max-width:400px; }
