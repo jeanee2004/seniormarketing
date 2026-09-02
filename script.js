@@ -717,7 +717,7 @@ const i18n = { en: {
   detailNoLocationNote:"🧭 This is example data with no real location yet, so it can't be shown on the map.",
   googleReviewNotFound:"😢 We couldn't find this restaurant on Google Maps.", googleReviewNone:"No reviews yet.",
   googleReviewLink:"See all reviews on Google Maps →", googleReviewAnon:"Anonymous",
-  liveSearchLoading:"Searching...", liveSearchEmpty:"No results found.", liveSearchError:"Search failed. Please try again shortly.",
+  liveSearchLoading:"Searching...", liveSearchEmpty:"No results found.", liveSearchError:"Search failed. Please try again shortly.", liveSearchCuratedLink:"✔ Already featured here · View the card",
   searchNoResultsFor:"No results for \"{q}\".", searchDidYouMean:"Did you mean?",
   searchCheckSpelling:"Please check that your search term is spelled correctly.", searchMaybeThisShop:"Did you mean one of these shops?",
   confirmLoginTitle:"Sign-in required", confirmLoginBody:"This feature requires signing in. Sign in and build your own restaurant list!", confirmLoginOk:"Sign in", confirmLoginCancel:"Close",
@@ -1045,7 +1045,7 @@ const i18n = { en: {
   detailNoLocationNote:"🧭 这是示例数据，暂无真实位置信息，无法在地图上显示。",
   googleReviewNotFound:"😢 在谷歌地图上找不到这家店。", googleReviewNone:"暂无评论。",
   googleReviewLink:"在谷歌地图查看全部评论 →", googleReviewAnon:"匿名",
-  liveSearchLoading:"搜索中...", liveSearchEmpty:"没有找到结果。", liveSearchError:"搜索失败，请稍后再试。",
+  liveSearchLoading:"搜索中...", liveSearchEmpty:"没有找到结果。", liveSearchError:"搜索失败，请稍后再试。", liveSearchCuratedLink:"✔ 本站已收录该店 · 查看卡片",
   searchNoResultsFor:"没有找到与“{q}”相关的结果。", searchDidYouMean:"您是不是在找这些？",
   searchCheckSpelling:"请确认搜索词是否正确。", searchMaybeThisShop:"您要找的是这家店吗？",
   confirmLoginTitle:"需要登录", confirmLoginBody:"此功能需要登录。登录后即可创建你自己的餐厅列表！", confirmLoginOk:"登录", confirmLoginCancel:"关闭",
@@ -1435,7 +1435,7 @@ const i18n = { en: {
   detailNoLocationNote:"🧭 Son datos de ejemplo sin ubicación real todavía, así que no se puede mostrar en el mapa.",
   googleReviewNotFound:"😢 No pudimos encontrar este restaurante en Google Maps.", googleReviewNone:"Aún no hay reseñas.",
   googleReviewLink:"Ver todas las reseñas en Google Maps →", googleReviewAnon:"Anónimo",
-  liveSearchLoading:"Buscando...", liveSearchEmpty:"No se encontraron resultados.", liveSearchError:"La búsqueda falló. Inténtalo de nuevo en un momento.",
+  liveSearchLoading:"Buscando...", liveSearchEmpty:"No se encontraron resultados.", liveSearchError:"La búsqueda falló. Inténtalo de nuevo en un momento.", liveSearchCuratedLink:"✔ Ya está en nuestra lista · Ver la ficha",
   searchNoResultsFor:"No hay resultados para \"{q}\".", searchDidYouMean:"¿Quisiste decir esto?",
   searchCheckSpelling:"Comprueba que el término de búsqueda sea correcto.", searchMaybeThisShop:"¿Buscabas alguno de estos locales?",
   confirmLoginTitle:"Se requiere iniciar sesión", confirmLoginBody:"Esta función requiere iniciar sesión. ¡Inicia sesión y crea tu propia lista de restaurantes!", confirmLoginOk:"Iniciar sesión", confirmLoginCancel:"Cerrar",
@@ -1781,7 +1781,7 @@ const i18n = { en: {
   detailNoLocationNote:"🧭 Ce sont des données d'exemple, sans emplacement réel pour l'instant : impossible de l'afficher sur la carte.",
   googleReviewNotFound:"😢 Nous n'avons pas trouvé ce restaurant sur Google Maps.", googleReviewNone:"Aucun avis pour l'instant.",
   googleReviewLink:"Voir tous les avis sur Google Maps →", googleReviewAnon:"Anonyme",
-  liveSearchLoading:"Recherche en cours…", liveSearchEmpty:"Aucun résultat trouvé.", liveSearchError:"La recherche a échoué. Réessayez dans un instant.",
+  liveSearchLoading:"Recherche en cours…", liveSearchEmpty:"Aucun résultat trouvé.", liveSearchError:"La recherche a échoué. Réessayez dans un instant.", liveSearchCuratedLink:"✔ Déjà répertorié ici · Voir la fiche",
   searchNoResultsFor:"Aucun résultat pour « {q} ».", searchDidYouMean:"Cherchiez-vous ceci ?",
   searchCheckSpelling:"Vérifiez l'orthographe de votre recherche.", searchMaybeThisShop:"Cherchiez-vous l'une de ces boutiques ?",
   confirmLoginTitle:"Connexion requise", confirmLoginBody:"Cette fonction demande d'être connecté. Connectez-vous et composez votre propre liste de restaurants !", confirmLoginOk:"Se connecter", confirmLoginCancel:"Fermer",
@@ -2127,7 +2127,7 @@ const i18n = { en: {
   detailNoLocationNote:"🧭 Dies sind Beispieldaten ohne echten Standort, daher kann es nicht auf der Karte angezeigt werden.",
   googleReviewNotFound:"😢 Wir konnten dieses Restaurant nicht auf Google Maps finden.", googleReviewNone:"Noch keine Bewertungen.",
   googleReviewLink:"Alle Bewertungen auf Google Maps ansehen →", googleReviewAnon:"Anonym",
-  liveSearchLoading:"Suche läuft...", liveSearchEmpty:"Keine Ergebnisse gefunden.", liveSearchError:"Suche fehlgeschlagen. Bitte versuch es gleich noch einmal.",
+  liveSearchLoading:"Suche läuft...", liveSearchEmpty:"Keine Ergebnisse gefunden.", liveSearchError:"Suche fehlgeschlagen. Bitte versuch es gleich noch einmal.", liveSearchCuratedLink:"✔ Bereits hier gelistet · Zur Karte",
   searchNoResultsFor:"Keine Ergebnisse für \"{q}\".", searchDidYouMean:"Meintest du das?",
   searchCheckSpelling:"Bitte prüfe, ob dein Suchbegriff richtig geschrieben ist.", searchMaybeThisShop:"Meintest du eines dieser Lokale?",
   confirmLoginTitle:"Anmeldung erforderlich", confirmLoginBody:"Diese Funktion erfordert eine Anmeldung. Melde dich an und erstelle deine eigene Restaurantliste!", confirmLoginOk:"Anmelden", confirmLoginCancel:"Schließen",
@@ -2473,7 +2473,7 @@ const i18n = { en: {
   detailNoLocationNote:"🧭 これはサンプルデータで実際の位置情報がまだないため、地図には表示できません。",
   googleReviewNotFound:"😢 Googleマップでこのお店が見つかりませんでした。", googleReviewNone:"まだレビューがありません。",
   googleReviewLink:"Googleマップですべてのレビューを見る →", googleReviewAnon:"匿名",
-  liveSearchLoading:"検索中...", liveSearchEmpty:"結果が見つかりませんでした。", liveSearchError:"検索に失敗しました。しばらくしてから再度お試しください。",
+  liveSearchLoading:"検索中...", liveSearchEmpty:"結果が見つかりませんでした。", liveSearchError:"検索に失敗しました。しばらくしてから再度お試しください。", liveSearchCuratedLink:"✔ すでに掲載中のお店です · カードを見る",
   searchNoResultsFor:"「{q}」の検索結果はありません。", searchDidYouMean:"もしかして？",
   searchCheckSpelling:"検索キーワードのスペルをご確認ください。", searchMaybeThisShop:"こちらのお店ではありませんか？",
   confirmLoginTitle:"ログインが必要です", confirmLoginBody:"この機能を使うにはログインが必要です。ログインして自分だけのお店リストを作りましょう！", confirmLoginOk:"ログイン", confirmLoginCancel:"閉じる",
@@ -4537,6 +4537,18 @@ function fuzzyMatch(qKey, text){
 
 // 이미 이 페이지에 등록된 가게 중 철자가 비슷한 곳. 로컬 restaurants 배열만 본다 —
 // 카카오가 0건을 준 뒤 "혹시 이 가게인가요?"를 띄우는 용도라, 여기서 API를 더 부르면 안 된다.
+// 카카오 실시간 검색 결과가 이미 소개된 가게(restaurants[])와 같은 곳이면 이어준다.
+// 철자 보정용 fuzzyMatch는 애매한 경우도 걸려서(오탐 위험) 여기서는 쓰지 않고,
+// 카카오가 이미 정확한 상호명을 주므로 공백만 지우고 부분 일치(지점명 등 접미사 포함)만 본다.
+function findCuratedMatch(placeName){
+  const clean = (placeName || '').replace(/\s+/g, '');
+  if(clean.length < 2) return -1;
+  return restaurants.findIndex(r => {
+    const rn = (r.name || '').replace(/\s+/g, '');
+    return rn.length >= 2 && (clean.includes(rn) || rn.includes(clean));
+  });
+}
+
 function localShopSuggestions(query, limit = 3){
   const qKey = fuzzyKey(query);
   if(qKey.length < 2) return [];
@@ -4598,7 +4610,9 @@ function renderLiveSearchResults(q){
     });
     return;
   }
-  liveSearchResults.innerHTML = liveSearchList.map((place, i) => `
+  liveSearchResults.innerHTML = liveSearchList.map((place, i) => {
+    const curatedIdx = findCuratedMatch(place.name);
+    return `
     <div class="live-search-item">
       <div class="live-search-item-row">
         <button type="button" class="live-search-item-head" data-i="${i}">
@@ -4612,11 +4626,17 @@ function renderLiveSearchResults(q){
         <span class="live-search-item-addr">${escapeHtml(place.phone)}</span>
         ${copyBtnHtml(place.phone, 'copyPhoneBtn', '전화번호 복사')}
       </div>` : ''}
+      ${curatedIdx >= 0 ? `
+      <button type="button" class="live-search-curated-link" data-idx="${curatedIdx}">${t('liveSearchCuratedLink') || '✔ 이미 소개된 가게예요 · 카드에서 보기'}</button>` : ''}
       <div class="live-search-item-google" id="liveSearchGoogle-${i}"></div>
     </div>
-  `).join('');
+  `;
+  }).join('');
   document.querySelectorAll('.live-search-item-head').forEach(btn => {
     btn.addEventListener('click', () => loadLiveSearchGoogleReviews(Number(btn.dataset.i)));
+  });
+  document.querySelectorAll('.live-search-curated-link').forEach(btn => {
+    btn.addEventListener('click', () => openDetail(Number(btn.dataset.idx)));
   });
 }
 

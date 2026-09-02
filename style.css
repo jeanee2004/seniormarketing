@@ -635,6 +635,12 @@ html.dark .theme-dial{ transform:rotate(180deg); }
 .live-search-item-phone .live-search-item-addr{flex:1;min-width:0;}
 .live-search-item-google{display:none;padding:0 20px 18px;}
 .live-search-item-google.show{display:block;}
+.live-search-curated-link{
+  display:block;width:calc(100% - 40px);margin:0 20px 14px;padding:10px 14px;border-radius:12px;
+  background:var(--slate-tint);color:var(--slate-dark);font-weight:700;font-size:0.82rem;text-align:center;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;transition:background .15s ease;
+}
+.live-search-curated-link:hover{background:var(--hover-tint);}
 
 /* ===== Footer ===== */
 footer{background:var(--slate-surface);color:rgba(255,255,255,0.82);padding:56px 0 28px;}
