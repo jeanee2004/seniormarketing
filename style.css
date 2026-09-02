@@ -162,6 +162,12 @@ html.dark .theme-dial{ transform:rotate(180deg); }
   .icon-btn{width:31px;height:31px;font-size:0.85rem;}
   .btn-save{padding:8px 11px;}
 }
+/* 아이콘을 줄여도 로그인 버튼까지 다 들어가지 않는 폭(~320~456px)에서는
+   잘려서 안 보이는 대신 두 줄로 접는다 — 어떤 화면 폭에서도 버튼이 화면 밖으로 밀려나지 않게. */
+@media(max-width:456px){
+  .nav-wrap{flex-wrap:wrap;row-gap:8px;}
+  .nav-actions{flex-basis:100%;justify-content:flex-end;}
+}
 /* 모달 오버레이가 가로 스크롤을 만들지 않도록 */
 .toast-overlay, .survey-overlay{max-width:100vw;overflow-x:hidden;}
 
@@ -956,6 +962,14 @@ footer ul a:hover{color:#fff;}
   background:var(--slate-surface);color:#fff;padding:11px 18px;border-radius:99px;font-weight:700;
   font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.85rem;flex-shrink:0;
 }
+.roulette-slot-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.roulette-slot-row label{
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.85rem;color:var(--ink-soft);font-weight:700;
+}
+.roulette-slot-row input{
+  width:64px;padding:9px 12px;border-radius:99px;border:1.5px solid var(--slate-tint);
+  outline:none;font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.9rem;text-align:center;
+}
 .roulette-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;min-height:36px;}
 .roulette-chip{
   display:flex;align-items:center;gap:6px;
@@ -963,12 +977,47 @@ footer ul a:hover{color:#fff;}
   font-family:'Gowun Dodum','Noto Sans KR',sans-serif;font-size:0.82rem;font-weight:700;
 }
 .roulette-chip button{color:var(--red);font-weight:800;font-size:0.9rem;}
-.roulette-display{
-  background:var(--base-bg);border:2px dashed var(--slate-light);border-radius:16px;
-  padding:28px 16px;margin-bottom:18px;font-size:1.3rem;font-weight:800;color:var(--slate-dark);
-  font-family:'Gaegu','Gowun Dodum',sans-serif;min-height:34px;
+.roulette-status{
+  color:var(--ink-soft);font-size:0.88rem;margin-bottom:16px;text-align:center;
+  font-family:'Gowun Dodum','Noto Sans KR',sans-serif;min-height:20px;
 }
-.roulette-display.landed{border-color:var(--red);color:var(--red-dark);background:rgba(214,67,46,0.06);}
+.roulette-wheel-wrap{
+  position:relative;width:min(320px,100%);aspect-ratio:1/1;margin:0 auto 18px;
+}
+.roulette-wheel{
+  width:100%;height:100%;border-radius:50%;position:relative;overflow:hidden;
+  border:4px solid var(--paper);box-shadow:var(--shadow-hover);
+  transition:transform 4.2s cubic-bezier(0.17,0.67,0.12,0.99);
+  background:var(--base-bg-2);
+}
+.roulette-wheel-labels{position:absolute;inset:0;}
+.roulette-wheel-label{
+  position:absolute;top:50%;left:50%;width:50%;height:0;
+  transform-origin:0% 50%;
+  display:flex;align-items:center;justify-content:flex-end;
+  padding-right:14px;
+  font-family:'Gaegu','Gowun Dodum',sans-serif;font-size:0.78rem;font-weight:800;
+  color:var(--slate-dark);white-space:nowrap;overflow:hidden;pointer-events:none;
+}
+.roulette-wheel-label.is-flipped{justify-content:flex-start;padding-right:0;padding-left:14px;}
+.roulette-wheel-hub{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:52px;height:52px;border-radius:50%;
+  background:var(--slate-surface);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;
+  border:3px solid var(--paper);box-shadow:var(--shadow);z-index:1;
+}
+.roulette-pointer{
+  position:absolute;top:-6px;left:50%;transform:translateX(-50%);z-index:2;
+  width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;
+  border-top:18px solid var(--red);
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.25));
+}
+.roulette-result{
+  min-height:26px;margin-top:2px;margin-bottom:4px;font-size:1.2rem;font-weight:800;text-align:center;
+  font-family:'Gaegu','Gowun Dodum',sans-serif;color:var(--slate-dark);
+}
+.roulette-result.landed{color:var(--red-dark);}
 
 /* ===== 손주 로그인/가입 모달 ===== */
 .auth-box{ max-width:400px; }

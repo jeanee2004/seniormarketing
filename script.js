@@ -737,7 +737,7 @@ const i18n = { en: {
   rouletteTitle:"Menu Roulette", rouletteSub:"Add 2 or more items you're craving, then spin",
   roulettePh:"e.g. gukbap, pizza, malatang", rouletteAdd:"Add",
   rouletteEmpty:"Add some menu items", rouletteMin:"Add 2 or more menu items",
-  rouletteReady:"{n} items to pick from", rouletteSpin:"🎡 Spin", rouletteRespin:"🎡 Spin again",
+  rouletteReady:"{n} items to pick from", rouletteSpin:"🎡 Spin", rouletteRespin:"🎡 Spin again", rouletteSlotLabel:"Number of slots",
   // 손주 로그인/가입
   authIntentSave:"To save places you want to visit, become one of our grandchildren first!",
   authIntentMypage:"You'll need to register to use My Page.",
@@ -1098,7 +1098,7 @@ const i18n = { en: {
   rouletteTitle:"菜单转盘", rouletteSub:"添加2个以上想吃的菜品，然后转动",
   roulettePh:"例如：汤饭、披萨、麻辣烫", rouletteAdd:"添加",
   rouletteEmpty:"请添加菜品", rouletteMin:"请添加2个以上菜品",
-  rouletteReady:"共{n}个选项可供选择", rouletteSpin:"🎡 转动", rouletteRespin:"🎡 再转一次",
+  rouletteReady:"共{n}个选项可供选择", rouletteSpin:"🎡 转动", rouletteRespin:"🎡 再转一次", rouletteSlotLabel:"格子数",
   // 손주 로그인/가입
   authIntentSave:"要保存想去的地方，请先成为我们的孙辈！",
   authIntentMypage:"使用我的页面需要先注册。",
@@ -1453,7 +1453,7 @@ const i18n = { en: {
   rouletteTitle:"Ruleta de menú", rouletteSub:"Añade 2 o más antojos y luego gira",
   roulettePh:"ej. gukbap, pizza, malatang", rouletteAdd:"Añadir",
   rouletteEmpty:"Añade algunos platillos", rouletteMin:"Añade 2 o más platillos",
-  rouletteReady:"{n} opciones para elegir", rouletteSpin:"🎡 Girar", rouletteRespin:"🎡 Girar de nuevo",
+  rouletteReady:"{n} opciones para elegir", rouletteSpin:"🎡 Girar", rouletteRespin:"🎡 Girar de nuevo", rouletteSlotLabel:"Número de casillas",
   authIntentSave:"Para guardar lugares que quieres visitar, ¡primero conviértete en uno de nuestros nietos!",
   authIntentMypage:"Necesitarás registrarte para usar Mi Página.",
   authIntentReview:"Por favor regístrate primero para dejar una reseña.",
@@ -1799,7 +1799,7 @@ const i18n = { en: {
   rouletteTitle:"Roulette des menus", rouletteSub:"Ajoutez au moins 2 envies, puis lancez",
   roulettePh:"ex. gukbap, pizza, malatang", rouletteAdd:"Ajouter",
   rouletteEmpty:"Ajoutez quelques plats", rouletteMin:"Ajoutez au moins 2 plats",
-  rouletteReady:"{n} options parmi lesquelles choisir", rouletteSpin:"🎡 Lancer", rouletteRespin:"🎡 Relancer",
+  rouletteReady:"{n} options parmi lesquelles choisir", rouletteSpin:"🎡 Lancer", rouletteRespin:"🎡 Relancer", rouletteSlotLabel:"Nombre de cases",
   authIntentSave:"Pour garder les lieux où vous voulez aller, devenez d'abord l'un de nos petits-enfants !",
   authIntentMypage:"Il faut vous inscrire pour utiliser Mon espace.",
   authIntentReview:"Inscrivez-vous d'abord pour laisser un avis.",
@@ -2145,7 +2145,7 @@ const i18n = { en: {
   rouletteTitle:"Menü-Roulette", rouletteSub:"Füge 2 oder mehr Gerichte hinzu, auf die du Lust hast, und dreh dann",
   roulettePh:"z. B. Gukbap, Pizza, Malatang", rouletteAdd:"Hinzufügen",
   rouletteEmpty:"Füge ein paar Gerichte hinzu", rouletteMin:"Füge 2 oder mehr Gerichte hinzu",
-  rouletteReady:"{n} Optionen zur Auswahl", rouletteSpin:"🎡 Drehen", rouletteRespin:"🎡 Noch mal drehen",
+  rouletteReady:"{n} Optionen zur Auswahl", rouletteSpin:"🎡 Drehen", rouletteRespin:"🎡 Noch mal drehen", rouletteSlotLabel:"Anzahl der Felder",
   authIntentSave:"Um Orte zu speichern, die du besuchen möchtest, werde zuerst eines unserer Enkelkinder!",
   authIntentMypage:"Du musst dich registrieren, um Meine Seite zu nutzen.",
   authIntentReview:"Bitte registriere dich zuerst, um eine Bewertung zu hinterlassen.",
@@ -2491,7 +2491,7 @@ const i18n = { en: {
   rouletteTitle:"メニュールーレット", rouletteSub:"食べたいものを2つ以上追加してから回してください",
   roulettePh:"例：クッパ、ピザ、マーラータン", rouletteAdd:"追加",
   rouletteEmpty:"メニューを追加してください", rouletteMin:"メニューを2つ以上追加してください",
-  rouletteReady:"{n}個の選択肢があります", rouletteSpin:"🎡 回す", rouletteRespin:"🎡 もう一度回す",
+  rouletteReady:"{n}個の選択肢があります", rouletteSpin:"🎡 回す", rouletteRespin:"🎡 もう一度回す", rouletteSlotLabel:"コマ数",
   authIntentSave:"行きたい場所を保存するには、まず私たちの「孫」になってください！",
   authIntentMypage:"マイページを利用するには登録が必要です。",
   authIntentReview:"レビューを書くには、先に登録してください。",
@@ -4658,6 +4658,12 @@ function quickPick(){
 const gameOverlay = document.getElementById('gameOverlay');
 const gameBody = document.getElementById('gameBody');
 let rouletteItems = [];
+let rouletteAngle = 0;        // 누적 회전각 — 다시 돌리기마다 이어서 앞으로만 돈다(0으로 스냅백 금지)
+let rouletteSpinning = false; // 중복 클릭 방지
+let rouletteSlotCount = 6;    // 칸 수 — 메뉴 개수와 별개로 사용자가 직접 정한다
+const ROULETTE_MIN_SLOTS = 2;
+const ROULETTE_MAX_SLOTS = 12;
+const ROULETTE_PALETTE_VARS = ['--base-bg-2', '--slate-tint', '--paper', '--base-bg'];
 
 function openGame(){
   renderGameChoice();
@@ -4734,26 +4740,51 @@ function drawTarot(deck){
 
 function renderRoulette(){
   rouletteItems = [];
+  rouletteAngle = 0;
+  rouletteSpinning = false;
+  rouletteSlotCount = 6;
   gameBody.innerHTML = `
     <button type="button" class="game-back-btn" id="gameBackBtn">${t('gameBack') || '← 다른 게임 고르기'}</button>
     <h3 class="game-title">${t('rouletteTitle') || '메뉴 룰렛'}</h3>
     <p class="game-sub">${t('rouletteSub') || '먹고 싶은 메뉴를 2개 이상 적고 돌려보세요'}</p>
+    <div class="roulette-slot-row">
+      <label for="rouletteSlotInput">${t('rouletteSlotLabel') || '칸 수'}</label>
+      <input type="number" id="rouletteSlotInput" min="${ROULETTE_MIN_SLOTS}" max="${ROULETTE_MAX_SLOTS}" step="1" value="${rouletteSlotCount}">
+    </div>
     <div class="roulette-input-row">
       <input type="text" id="rouletteInput" placeholder="${t('roulettePh') || '예: 국밥, 피자, 마라탕'}">
       <button type="button" class="roulette-add-btn" id="rouletteAddBtn">${t('rouletteAdd') || '추가'}</button>
     </div>
     <div class="roulette-chips" id="rouletteChips"></div>
-    <div class="roulette-display" id="rouletteDisplay">${t('rouletteEmpty') || '메뉴를 추가해주세요'}</div>
+    <p class="roulette-status" id="rouletteStatus">${t('rouletteEmpty') || '메뉴를 추가해주세요'}</p>
+    <div class="roulette-wheel-wrap" id="rouletteWheelWrap">
+      <div class="roulette-pointer" aria-hidden="true"></div>
+      <div class="roulette-wheel" id="rouletteWheel" role="img" aria-label="${t('rouletteTitle') || '메뉴 룰렛'}">
+        <div class="roulette-wheel-labels" id="rouletteWheelLabels"></div>
+        <div class="roulette-wheel-hub" aria-hidden="true">🎯</div>
+      </div>
+    </div>
+    <p class="roulette-result" id="rouletteResult" aria-live="polite"></p>
     <div class="game-action-row">
       <button type="button" class="btn-primary" style="flex:1;" id="rouletteSpinBtn" disabled>${t('rouletteSpin') || '🎡 돌리기'}</button>
     </div>
   `;
   document.getElementById('gameBackBtn').addEventListener('click', renderGameChoice);
+  document.getElementById('rouletteSlotInput').addEventListener('change', (e) => setRouletteSlotCount(e.target.value));
   document.getElementById('rouletteAddBtn').addEventListener('click', addRouletteItem);
   document.getElementById('rouletteInput').addEventListener('keydown', (e) => {
     if(e.key === 'Enter'){ e.preventDefault(); addRouletteItem(); }
   });
   document.getElementById('rouletteSpinBtn').addEventListener('click', spinRoulette);
+  updateRouletteSpinState();
+}
+
+function setRouletteSlotCount(v){
+  const n = Math.max(ROULETTE_MIN_SLOTS, Math.min(ROULETTE_MAX_SLOTS, Math.round(Number(v)) || rouletteSlotCount));
+  rouletteSlotCount = n;
+  const input = document.getElementById('rouletteSlotInput');
+  if(input) input.value = n;
+  updateRouletteSpinState();
 }
 
 function renderRouletteChips(){
@@ -4772,13 +4803,71 @@ function renderRouletteChips(){
 
 function updateRouletteSpinState(){
   const spinBtn = document.getElementById('rouletteSpinBtn');
-  const display = document.getElementById('rouletteDisplay');
-  if(!spinBtn) return;
-  spinBtn.disabled = rouletteItems.length < 2;
-  display.classList.remove('landed');
-  display.textContent = rouletteItems.length < 2
-    ? (t('rouletteMin') || '메뉴를 2개 이상 추가해주세요')
-    : (t('rouletteReady') || '{n}개의 메뉴 중에서 골라드릴게요').replace('{n}', rouletteItems.length);
+  const status  = document.getElementById('rouletteStatus');
+  if(!spinBtn || !status) return;
+  const n = rouletteItems.length;
+
+  spinBtn.disabled = n < 2;
+  status.textContent = n === 0 ? (t('rouletteEmpty') || '메뉴를 추가해주세요')
+    : n < 2 ? (t('rouletteMin') || '메뉴를 2개 이상 추가해주세요')
+    : (t('rouletteReady') || '{n}개의 메뉴 중에서 골라드릴게요').replace('{n}', n);
+
+  const resultEl = document.getElementById('rouletteResult');
+  if(resultEl){ resultEl.textContent = ''; resultEl.classList.remove('landed'); }
+
+  rebuildRouletteWheel();
+}
+
+// 칸 수(rouletteSlotCount)와 메뉴 개수(rouletteItems)는 서로 독립이라, 메뉴를 칸 수만큼
+// 순환시켜 채운다 — 메뉴가 칸보다 적으면 반복되고, 많으면 앞에서부터 칸 수만큼만 배치된다.
+function rouletteWedgeItems(){
+  if(rouletteItems.length === 0) return [];
+  return Array.from({length: rouletteSlotCount}, (_, i) => rouletteItems[i % rouletteItems.length]);
+}
+
+// 휠 색은 :root 디자인 토큰을 런타임에 읽어 쓴다 — renderMarkers()의 마커 색 처리와 같은 관례.
+// 레드는 CTA·포인터 전용 몫이라(60/30/10 규칙) 칸 채우기에는 슬레이트·베이스 계열만 순환한다.
+function rouletteWedgeColors(n){
+  const css = getComputedStyle(document.documentElement);
+  const palette = ROULETTE_PALETTE_VARS.map(v => css.getPropertyValue(v).trim() || '#EFEAE0');
+  const colors = Array.from({length:n}, (_, i) => palette[i % palette.length]);
+  if(n > 2 && colors[n-1] === colors[0]){
+    const alt = palette.find(c => c !== colors[n-1] && c !== colors[n-2]);
+    if(alt) colors[n-1] = alt;
+  }
+  return colors;
+}
+
+// conic-gradient로 칸을 칠하고, 각 칸 중심 각도에 라벨을 붙인다.
+// conic-gradient는 12시 방향이 0deg(시계방향)이고, CSS rotate()의 0deg는 3시 방향이라 -90도 보정이 필요하다.
+// 왼쪽 절반(90~270deg)에 놓이는 라벨은 그대로 두면 거꾸로 보이므로 180도 더 돌리고 정렬을 반대로 뒤집는다.
+function rebuildRouletteWheel(){
+  const wheel = document.getElementById('rouletteWheel');
+  const labelsWrap = document.getElementById('rouletteWheelLabels');
+  if(!wheel) return;
+  const items = rouletteWedgeItems();
+  const n = items.length;
+  if(n < 1){
+    wheel.style.background = 'var(--base-bg-2)';
+    if(labelsWrap) labelsWrap.innerHTML = '';
+    return;
+  }
+  const colors = rouletteWedgeColors(n);
+  const step = 360 / n;
+  const stops = colors.map((c,i) => `${c} ${(i*step).toFixed(3)}deg ${((i+1)*step).toFixed(3)}deg`);
+  wheel.style.background = `conic-gradient(${stops.join(',')})`;
+
+  if(labelsWrap){
+    labelsWrap.innerHTML = items.map((item, i) => {
+      const bisector = (i + 0.5) * step;
+      let rot = bisector - 90;
+      const norm = ((rot % 360) + 360) % 360;
+      const flip = norm > 90 && norm < 270;
+      if(flip) rot += 180;
+      const label = item.length > 6 ? item.slice(0,6) + '…' : item;
+      return `<span class="roulette-wheel-label${flip ? ' is-flipped' : ''}" style="transform:rotate(${rot}deg)">${escapeHtml(label)}</span>`;
+    }).join('');
+  }
 }
 
 function addRouletteItem(){
@@ -4791,25 +4880,48 @@ function addRouletteItem(){
   updateRouletteSpinState();
 }
 
+// 당첨 칸을 먼저 무작위로 고르고, 그 칸의 정중앙이 포인터(고정, 12시 방향) 밑에 오도록 회전각을 역산한다.
+// 경계선에 걸치는 경우를 아예 없애는 방식이라 별도 오차 보정이 필요 없다.
+// rouletteAngle은 매 스핀마다 누적해서 앞으로만 돌린다(0으로 되감으면 순간 점프처럼 보인다).
 function spinRoulette(){
-  const display = document.getElementById('rouletteDisplay');
-  const spinBtn = document.getElementById('rouletteSpinBtn');
+  if(rouletteSpinning || rouletteItems.length < 2) return;
+  const wheel    = document.getElementById('rouletteWheel');
+  const spinBtn  = document.getElementById('rouletteSpinBtn');
+  const resultEl = document.getElementById('rouletteResult');
+  if(!wheel || !spinBtn) return;
+
+  rouletteSpinning = true;
   spinBtn.disabled = true;
-  display.classList.remove('landed');
-  let ticks = 0;
-  const totalTicks = 18;
-  const finalPick = rouletteItems[Math.floor(Math.random() * rouletteItems.length)];
-  const interval = setInterval(() => {
-    display.textContent = rouletteItems[Math.floor(Math.random() * rouletteItems.length)];
-    ticks++;
-    if(ticks >= totalTicks){
-      clearInterval(interval);
-      display.textContent = `🎉 ${finalPick}`;
-      display.classList.add('landed');
-      spinBtn.disabled = false;
-      spinBtn.textContent = t('rouletteRespin') || '🎡 다시 돌리기';
-    }
-  }, 90 + ticks * 4);
+  if(resultEl){ resultEl.textContent = ''; resultEl.classList.remove('landed'); }
+
+  const items = rouletteWedgeItems();
+  const n = items.length;
+  const winnerIndex = Math.floor(Math.random() * n);
+  const step = 360 / n;
+  const bisector = (winnerIndex + 0.5) * step;
+  const targetMod  = (360 - bisector) % 360;
+  const currentMod = ((rouletteAngle % 360) + 360) % 360;
+  const extraSpins = 4 + Math.floor(Math.random() * 2); // 4~5바퀴
+  let delta = (targetMod - currentMod + 360) % 360;
+  delta += extraSpins * 360;
+  rouletteAngle += delta;
+  wheel.style.transform = `rotate(${rouletteAngle}deg)`;
+
+  let settled = false;
+  const finish = () => {
+    if(settled) return;
+    settled = true;
+    wheel.removeEventListener('transitionend', onEnd);
+    clearTimeout(fallback);
+    const winner = items[winnerIndex];
+    if(resultEl){ resultEl.textContent = `🎉 ${winner}`; resultEl.classList.add('landed'); }
+    spinBtn.disabled = false;
+    spinBtn.textContent = t('rouletteRespin') || '🎡 다시 돌리기';
+    rouletteSpinning = false;
+  };
+  const onEnd = (e) => { if(e.propertyName === 'transform') finish(); };
+  wheel.addEventListener('transitionend', onEnd);
+  const fallback = setTimeout(finish, 4500); // transitionend가 안 온 경우 대비
 }
 
 // ================= 손주 로그인 / 가입 =================
