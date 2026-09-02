@@ -4663,7 +4663,9 @@ let rouletteSpinning = false; // 중복 클릭 방지
 let rouletteSlotCount = 6;    // 칸 수 — 메뉴 개수와 별개로 사용자가 직접 정한다
 const ROULETTE_MIN_SLOTS = 2;
 const ROULETTE_MAX_SLOTS = 12;
-const ROULETTE_PALETTE_VARS = ['--red', '--slate-surface', '--red-dark', '--slate'];
+// --red/--red-dark는 색이 너무 비슷해 옆칸이 하나로 뭉쳐 보였다(실측으로 발견) —
+// 서로 뚜렷이 구분되는 3색만 순환한다.
+const ROULETTE_PALETTE_VARS = ['--red', '--slate-surface', '--slate'];
 
 function openGame(){
   renderGameChoice();
@@ -4861,14 +4863,18 @@ function rebuildRouletteWheel(){
   wheel.style.background = `conic-gradient(${stops.join(',')})`;
 
   if(labelsWrap){
+    // 바깥 span(스포크)은 항상 flex-end(테두리 쪽)에 고정 — 회전각만 바꾸면 글자 위치가
+    // 중심 쪽으로 끌려온다(전에 겹치던 버그가 바로 이거였다: justify-content를
+    // flex-start로 바꾸면 스포크 안에서 글자가 중심 쪽 끝으로 이동해버린다).
+    // 왼쪽 절반이라 글자가 거꾸로 보일 때는 안쪽 span만 따로 180도 돌려 위치는 그대로 두고
+    // 글자만 바로 세운다.
     labelsWrap.innerHTML = items.map((item, i) => {
       const bisector = (i + 0.5) * step;
-      let rot = bisector - 90;
+      const rot = bisector - 90;
       const norm = ((rot % 360) + 360) % 360;
       const flip = norm > 90 && norm < 270;
-      if(flip) rot += 180;
       const label = item.length > 6 ? item.slice(0,6) + '…' : item;
-      return `<span class="roulette-wheel-label${flip ? ' is-flipped' : ''}" style="transform:rotate(${rot}deg)">${escapeHtml(label)}</span>`;
+      return `<span class="roulette-wheel-label" style="transform:rotate(${rot}deg)"><span class="roulette-wheel-label-text${flip ? ' is-flipped' : ''}">${escapeHtml(label)}</span></span>`;
     }).join('');
   }
 }

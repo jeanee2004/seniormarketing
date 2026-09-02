@@ -995,11 +995,13 @@ footer ul a:hover{color:#fff;}
   position:absolute;top:50%;left:50%;width:50%;height:0;
   transform-origin:0% 50%;
   display:flex;align-items:center;justify-content:flex-end;
-  padding-right:14px;
-  font-family:'Gaegu','Gowun Dodum',sans-serif;font-size:0.78rem;font-weight:800;
-  color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);white-space:nowrap;pointer-events:none;
+  padding-right:14px;pointer-events:none;
 }
-.roulette-wheel-label.is-flipped{justify-content:flex-start;padding-right:0;padding-left:14px;}
+.roulette-wheel-label-text{
+  font-family:'Gaegu','Gowun Dodum',sans-serif;font-size:0.78rem;font-weight:800;
+  color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);white-space:nowrap;display:inline-block;
+}
+.roulette-wheel-label-text.is-flipped{transform:rotate(180deg);}
 .roulette-wheel-hub{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
   width:52px;height:52px;border-radius:50%;
