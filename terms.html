@@ -222,9 +222,32 @@
     footerNavHome:"Startseite", footerNavPrivacy:"Datenschutzerklärung", footerNavTerms:"Nutzungsbedingungen",
     footerBottom:"© 2026 Bap Meokeoreo Wa · KU-jodae! Helft den lokalen Wirten. Matjip KU-jodae (Sejong-Campus der Korea University).",
   };
-  var DICTS = { en: EN, zh: ZH, es: ES, fr: FR, de: DE };
-  var CYCLE = ['ko', 'en', 'zh', 'es', 'fr', 'de'];
-  var NEXT_LABEL = { ko:'English', en:'中文', zh:'Español', es:'Français', fr:'Deutsch', de:'한국어' };
+  var JA = {
+    metaTitle:"利用規約 — Bap Meokeoreo Wa",
+    navHome:"ホーム",
+    backHome:"← Bap Meokeoreo Waに戻る",
+    h1:"利用規約",
+    legalMeta:"本規約は、電子商取引等における消費者保護に関する法律及び情報通信網利用促進法の趣旨を反映した必須項目の草案です。Bap Meokeoreo Waは現在、非営利の社会貢献プロジェクトとして運営されています。今後、有料化や広告収益等の商業運営に移行する場合は、関連法令に基づき本規約及び事業者情報を更新します。",
+    translationNote:"このページの日本語訳は参考用であり、韓国語の原文が優先されます。",
+    art1:'<h3>第1条（目的）</h3><p>本規約は、Bap Meokeoreo Wa（以下「本サービス」）が提供するすべてのサービスの利用条件及び手続き、利用者と運営者の権利、義務及び責任事項を定めることを目的とします。</p>',
+    art2:'<h3>第2条（用語の定義）</h3><ol><li>「会員」とは、本規約に同意し本サービスに登録した者をいいます。</li><li>「コンテンツ」とは、利用者が本サービス内に投稿したレビュー、写真等の投稿物をいいます。</li></ol>',
+    art3:'<h3>第3条（規約の効力及び変更）</h3><p>本規約は、サービス画面に掲示するかその他の方法で会員に通知することにより効力を生じ、関連法令に違反しない範囲で改定されることがあります。</p>',
+    art4:'<h3>第4条（サービスの提供及び変更）</h3><p>本サービスには、地元グルメ情報の提供、保存・レビュー機能等が含まれ、運営上・技術上の必要に応じて提供内容を変更することがあります。</p>',
+    art5:'<h3>第5条（会員の義務）</h3><p>会員は、虚偽情報の登録、他人の情報の盗用、サービス運営を妨害する行為をしてはならず、レビュー作成時には事実に基づいた内容を記載しなければなりません。</p>',
+    art6:'<h3>第6条（投稿物の管理）</h3><p>本サービスは、会員が投稿したコンテンツが他人の権利を侵害したり公序良俗に反したりする場合、事前通知なく削除することができます。</p>',
+    art7:'<h3>第7条（免責事項）</h3><p>本サービスは、会員が登録した情報（お店情報、レビュー等）の正確性を保証するものではなく、これにより生じた損害について責任を負いません。</p>',
+    art8:'<h3>付則 — 事業者情報の表示</h3><p>今後、事業者登録を通じた正式運営（有料化、広告収益等）に移行する場合、電子商取引等における消費者保護に関する法律に基づき、商号、代表者名、事業者登録番号、通信販売業申告番号、住所、電話番号をページ下部に追加で表示します。</p>',
+    footerOperator:"<b>運営</b> 高麗大学世宗キャンパス学生チーム マッチプKU助隊",
+    footerProject:"<b>プロジェクト名</b> KU助隊！オーナーさんを助けよう",
+    footerServiceName:"<b>サービス名</b> Bap Meokeoreo Wa",
+    footerEmail:"<b>お問い合わせメール</b>（後日公開予定）",
+    footerOfficer:"<b>個人情報保護責任者</b>（後日公開予定）",
+    footerNavHome:"ホーム", footerNavPrivacy:"プライバシーポリシー", footerNavTerms:"利用規約",
+    footerBottom:"© 2026 Bap Meokeoreo Wa · KU助隊！オーナーさんを助けよう。マッチプKU助隊（高麗大学世宗キャンパス）。",
+  };
+  var DICTS = { en: EN, zh: ZH, es: ES, fr: FR, de: DE, ja: JA };
+  var CYCLE = ['ko', 'en', 'zh', 'es', 'fr', 'de', 'ja'];
+  var NEXT_LABEL = { ko:'English', en:'中文', zh:'Español', es:'Français', fr:'Deutsch', de:'日本語', ja:'한국어' };
   var STORE_KEY = 'bmw:v1';
   function getStoredLang(){
     try {
