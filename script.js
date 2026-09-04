@@ -6552,3 +6552,8 @@ if(new URLSearchParams(location.search).get('apply') === 'owner'){
   openContact('partnerStore');
   history.replaceState(null, '', location.pathname + location.hash);
 }
+
+// PWA: 홈 화면 설치 지원용 서비스 워커 등록 (정적 자산 최소 캐싱, /api/는 캐싱 제외)
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js");
+}
